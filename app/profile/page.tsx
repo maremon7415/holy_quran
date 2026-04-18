@@ -28,8 +28,8 @@ export default function ProfilePage() {
     setLanguage,
     ayahFontSize,
     setAyahFontSize,
-    surahFontSize,
-    setSurahFontSize,
+    translationFontSize,
+    setTranslationFontSize,
     readingStats,
     favoriteSurahs,
     importantAyahs,
@@ -174,16 +174,16 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <p className="text-sm font-medium mb-2">Surah Font Size ({surahFontSize}px)</p>
+              <p className="text-sm font-medium mb-2">{t('translation_text_size')} ({translationFontSize}px)</p>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setSurahFontSize(Math.max(14, surahFontSize - 2))}
+                  onClick={() => setTranslationFontSize(Math.max(12, translationFontSize - 2))}
                   className="px-3 py-2 rounded-lg bg-muted text-sm"
                 >
                   A-
                 </button>
                 <button
-                  onClick={() => setSurahFontSize(Math.min(48, surahFontSize + 2))}
+                  onClick={() => setTranslationFontSize(Math.min(32, translationFontSize + 2))}
                   className="px-3 py-2 rounded-lg bg-muted text-sm"
                 >
                   A+

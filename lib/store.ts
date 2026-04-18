@@ -56,7 +56,7 @@ interface AppStore {
   language: 'en' | 'ar' | 'bn'
   fontSize: number
   theme: 'light' | 'dark' | 'system'
-  surahFontSize: number
+  translationFontSize: number
   ayahFontSize: number
   arabicFont: string
   englishFont: string
@@ -76,7 +76,7 @@ interface AppStore {
   setLanguage: (lang: 'en' | 'ar' | 'bn') => void
   setFontSize: (size: number) => void
   setTheme: (theme: 'light' | 'dark' | 'system') => void
-  setSurahFontSize: (size: number) => void
+  setTranslationFontSize: (size: number) => void
   setAyahFontSize: (size: number) => void
   setArabicFont: (font: string) => void
   setEnglishFont: (font: string) => void
@@ -213,7 +213,7 @@ export const useAppStore = create<AppStore>()(
       language: 'en',
       fontSize: 16,
       theme: 'system',
-      surahFontSize: 18,
+      translationFontSize: 16,
       ayahFontSize: 24,
       arabicFont: 'font-amiri',
       englishFont: 'font-outfit',
@@ -231,7 +231,7 @@ export const useAppStore = create<AppStore>()(
       setLanguage: (lang) => set({ language: lang }),
       setFontSize: (size) => set({ fontSize: size }),
       setTheme: (theme) => set({ theme }),
-      setSurahFontSize: (size) => set({ surahFontSize: size }),
+      setTranslationFontSize: (size) => set({ translationFontSize: size }),
       setAyahFontSize: (size) => set({ ayahFontSize: size }),
       setArabicFont: (font) => set({ arabicFont: font }),
       setEnglishFont: (font) => set({ englishFont: font }),

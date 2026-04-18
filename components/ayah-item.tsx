@@ -39,6 +39,7 @@ export default function AyahItem({
 }: AyahItemProps) {
   const {
     ayahFontSize,
+    translationFontSize,
     arabicFont,
     banglaFont,
     englishFont,
@@ -304,7 +305,7 @@ export default function AyahItem({
                       {t('english_translation_label')}
                     </span>
                   </div>
-                  <p className="leading-relaxed text-[15px]">{englishText}</p>
+                  <p className="leading-relaxed" style={{ fontSize: `${translationFontSize}px` }}>{englishText}</p>
                 </motion.div>
               )}
 
@@ -320,7 +321,7 @@ export default function AyahItem({
                       {t('bengali_translation_label')}
                     </span>
                   </div>
-                  <p className="leading-relaxed text-[16px]">{bengaliText}</p>
+                  <p className="leading-relaxed" style={{ fontSize: `${translationFontSize}px` }}>{bengaliText}</p>
                 </motion.div>
               )}
             </div>

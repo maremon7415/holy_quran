@@ -20,8 +20,8 @@ import {
 
 export default function Sidebar() {
   const {
-    surahFontSize,
-    setSurahFontSize,
+    translationFontSize,
+    setTranslationFontSize,
     ayahFontSize,
     setAyahFontSize,
     arabicFont,
@@ -35,8 +35,8 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const { t } = useI18n()
 
-  const handleSurahFontChange = (delta: number) => {
-    setSurahFontSize(Math.max(14, Math.min(48, surahFontSize + delta)))
+  const handleTranslationFontChange = (delta: number) => {
+    setTranslationFontSize(Math.max(12, Math.min(32, translationFontSize + delta)))
   }
 
   const handleAyahFontChange = (delta: number) => {
@@ -102,13 +102,13 @@ export default function Sidebar() {
 
                 <div className="space-y-4">
                   <SizeControl
-                    label={t('surah_name_size')}
-                    value={surahFontSize}
-                    onDecrease={() => handleSurahFontChange(-2)}
-                    onIncrease={() => handleSurahFontChange(2)}
+                    label={t('translation_text_size')}
+                    value={translationFontSize}
+                    onDecrease={() => handleTranslationFontChange(-2)}
+                    onIncrease={() => handleTranslationFontChange(2)}
                   />
                   <SizeControl
-                    label={t('verse_text_size')}
+                    label={t('arabic_verse_text_size')}
                     value={ayahFontSize}
                     onDecrease={() => handleAyahFontChange(-2)}
                     onIncrease={() => handleAyahFontChange(2)}
