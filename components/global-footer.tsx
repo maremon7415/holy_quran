@@ -47,7 +47,7 @@ export default function GlobalFooter() {
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-primary">Links</p>
             <div className="space-y-3">
               <a
-                href="http://www.emon.peo/"
+                href="http://www.emon.pro/"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-between rounded-2xl border border-primary/10 bg-primary/6 px-4 py-3 text-sm font-medium text-foreground hover:border-primary/30 hover:text-primary transition-all"

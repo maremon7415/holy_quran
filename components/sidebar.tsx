@@ -1,15 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Settings, Type, Languages } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Settings, Type, Languages } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import { useI18n } from '@/lib/i18n'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
@@ -76,79 +71,114 @@ export default function Sidebar() {
         <Settings className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-h-[88vh] overflow-y-auto rounded-[28px] border border-primary/15 bg-background/95 p-0 shadow-[0_40px_120px_-50px_rgba(36,81,61,0.45)] backdrop-blur-md dark:border-primary/20 dark:bg-card/95 sm:max-w-2xl">
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_right,rgba(36,81,61,0.16),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(36,81,61,0.10),transparent_26%)] opacity-90 dark:bg-[radial-gradient(circle_at_top_right,rgba(110,231,183,0.16),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(110,231,183,0.08),transparent_28%)]" />
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px]"
+            />
+            
+            {/* Modal Content */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="pointer-events-auto relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-[32px] border border-primary/15 bg-background shadow-[0_40px_100px_-40px_rgba(36,81,61,0.5)] backdrop-blur-xl dark:border-primary/20 dark:bg-card"
+              >
+                <div className="pointer-events-none absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_top_right,rgba(36,81,61,0.12),transparent_40%)] opacity-50" />
 
-          <div className="relative z-10 p-5 sm:p-6">
-            <DialogHeader className="mb-6 text-left">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/15 bg-primary/8 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                <Settings className="h-3.5 w-3.5" />
-                {t('display_settings')}
-              </div>
-              <DialogTitle className="mt-3 text-2xl font-bold text-foreground">
-                {t('display_settings')}
-              </DialogTitle>
-            </DialogHeader>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-4 top-4 z-20 p-2.5 rounded-full bg-muted/50 hover:bg-muted transition-all active:scale-90 text-muted-foreground"
+                >
+                  <X className="w-4 h-4" />
+                </button>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <section className="rounded-3xl border border-primary/10 bg-background/80 p-5 backdrop-blur-sm dark:bg-background/40">
-                <div className="mb-4 flex items-center gap-2">
-                  <Type className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-                    {t('sizes')}
-                  </h3>
+                <div className="relative z-10 p-5 sm:p-7">
+                  <header className="mb-5 flex items-center justify-between pr-10">
+                    <div>
+                      <h2 className="text-xl font-black tracking-tight text-foreground">
+                        {t('display_settings')}
+                      </h2>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="w-1 h-1 rounded-full bg-primary" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">
+                          {t('personalization', { defaultValue: 'Personalize' })}
+                        </span>
+                      </div>
+                    </div>
+                  </header>
+
+                  <div className="space-y-4">
+                    {/* Sizes Section - COMPACT */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <SizeControl
+                        label={t('translation_text_size')}
+                        value={translationFontSize}
+                        onDecrease={() => handleTranslationFontChange(-2)}
+                        onIncrease={() => handleTranslationFontChange(2)}
+                      />
+                      <SizeControl
+                        label={t('arabic_verse_text_size')}
+                        value={ayahFontSize}
+                        onDecrease={() => handleAyahFontChange(-2)}
+                        onIncrease={() => handleAyahFontChange(2)}
+                      />
+                    </div>
+
+                    {/* Fonts Section - COMPACT */}
+                    <div className="rounded-3xl border border-primary/10 bg-muted/10 p-4 space-y-3">
+                      <div className="flex items-center gap-2 mb-1 px-1">
+                        <Languages className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary/70">{t('fonts')}</span>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <CompactFontSelect
+                          label={t('arabic_font')}
+                          value={arabicFont}
+                          onValueChange={setArabicFont}
+                          options={arabicFonts}
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <CompactFontSelect
+                            label={t('english_font')}
+                            value={englishFont}
+                            onValueChange={setEnglishFont}
+                            options={englishFonts}
+                          />
+                          <CompactFontSelect
+                            label={t('bangla_font')}
+                            value={banglaFont}
+                            onValueChange={setBanglaFont}
+                            options={banglaFonts}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-center">
+                    <button 
+                      onClick={() => setIsOpen(false)}
+                      className="px-8 py-3 rounded-2xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all"
+                    >
+                      {t('apply', { defaultValue: 'Apply Changes' })}
+                    </button>
+                  </div>
                 </div>
-
-                <div className="space-y-4">
-                  <SizeControl
-                    label={t('translation_text_size')}
-                    value={translationFontSize}
-                    onDecrease={() => handleTranslationFontChange(-2)}
-                    onIncrease={() => handleTranslationFontChange(2)}
-                  />
-                  <SizeControl
-                    label={t('arabic_verse_text_size')}
-                    value={ayahFontSize}
-                    onDecrease={() => handleAyahFontChange(-2)}
-                    onIncrease={() => handleAyahFontChange(2)}
-                  />
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-primary/10 bg-background/80 p-5 backdrop-blur-sm dark:bg-background/40">
-                <div className="mb-4 flex items-center gap-2">
-                  <Languages className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-                    {t('fonts')}
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <FontSelect
-                    label={t('arabic_font')}
-                    value={arabicFont}
-                    onValueChange={setArabicFont}
-                    options={arabicFonts}
-                  />
-                  <FontSelect
-                    label={t('english_font')}
-                    value={englishFont}
-                    onValueChange={setEnglishFont}
-                    options={englishFonts}
-                  />
-                  <FontSelect
-                    label={t('bangla_font')}
-                    value={banglaFont}
-                    onValueChange={setBanglaFont}
-                    options={banglaFonts}
-                  />
-                </div>
-              </section>
+              </motion.div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </>
+        )}
+      </AnimatePresence>
     </>
   )
 }
@@ -165,39 +195,23 @@ function SizeControl({
   onIncrease: () => void
 }) {
   return (
-    <div className="rounded-2xl border border-primary/10 bg-primary/5 p-4 dark:border-primary/20 dark:bg-primary/8">
-      <div className="mb-3 flex items-center justify-between gap-4">
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-primary shadow-sm dark:bg-background/80">
-          {value}px
-        </span>
+    <div className="rounded-2xl bg-muted/20 border border-border/50 p-3 flex flex-col gap-2">
+      <div className="flex items-center justify-between px-1">
+        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{label}</span>
+        <span className="text-[11px] font-bold text-primary">{value}px</span>
       </div>
-
-      <div className="grid grid-cols-[48px_1fr_48px] items-center gap-3">
-        <button
-          onClick={onDecrease}
-          className="h-11 rounded-2xl border border-primary/12 bg-background text-base font-bold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/25 hover:text-primary"
-        >
-          A-
-        </button>
-        <div className="h-2 overflow-hidden rounded-full bg-primary/10">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${Math.max(20, Math.min(100, value * 1.6))}%` }}
-          />
+      <div className="flex items-center gap-2">
+        <button onClick={onDecrease} className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-background border border-border/60 text-xs font-black hover:border-primary/40 active:scale-90 transition-all">-</button>
+        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+          <div className="h-full bg-primary" style={{ width: `${Math.max(20, Math.min(100, value * 1.5))}%` }} />
         </div>
-        <button
-          onClick={onIncrease}
-          className="h-11 rounded-2xl border border-primary/12 bg-background text-base font-bold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/25 hover:text-primary"
-        >
-          A+
-        </button>
+        <button onClick={onIncrease} className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-background border border-border/60 text-xs font-black hover:border-primary/40 active:scale-90 transition-all">+</button>
       </div>
     </div>
   )
 }
 
-function FontSelect({
+function CompactFontSelect({
   label,
   value,
   onValueChange,
@@ -209,16 +223,16 @@ function FontSelect({
   options: Array<{ name: string; value: string }>
 }) {
   return (
-    <div className="rounded-2xl border border-primary/10 bg-primary/5 p-4 dark:border-primary/20 dark:bg-primary/8">
-      <label className="mb-2 block text-sm font-medium text-foreground">{label}</label>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">{label}</span>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="w-full rounded-2xl border-primary/12 bg-background px-4 py-6 shadow-none hover:border-primary/25">
+        <SelectTrigger className="w-full h-11 rounded-xl bg-background border-border/60 text-[11px] font-bold focus:ring-1 focus:ring-primary/20">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.name}
+          {options.map((o) => (
+            <SelectItem key={o.value} value={o.value} className="text-xs font-medium">
+              {o.name}
             </SelectItem>
           ))}
         </SelectContent>

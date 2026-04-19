@@ -202,21 +202,23 @@
     animation: fade-out 0.15s ease-in forwards;
   }
 
-  [data-slot="sheet-content"].inset-y-0.right-0.data-[state=closed]:translate-x-full {
+[data-slot="sheet-content"].inset-y-0.right-0 {
+  &[data-state="closed"] {
     transform: translateX(100%);
   }
-
-  [data-slot="sheet-content"].inset-y-0.right-0.data-[state=open]:translate-x-0 {
+  &[data-state="open"] {
     transform: translateX(0);
   }
+}
 
-  [data-slot="sheet-content"].inset-y-0.left-0.data-[state=closed]:-translate-x-full {
+[data-slot="sheet-content"].inset-y-0.left-0 {
+  &[data-state="closed"] {
     transform: translateX(-100%);
   }
-
-  [data-slot="sheet-content"].inset-y-0.left-0.data-[state=open]:translate-x-0 {
+  &[data-state="open"] {
     transform: translateX(0);
   }
+}
 
   a,
   button,

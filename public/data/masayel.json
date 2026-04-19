@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "category": "Salah",
+    "question": {
+      "en": "What is the ruling on praying behind an Imam of a different school of thought (madhab)?",
+      "bn": "ভিন্ন মাযহাবের (যেমন হানাফী হিসেবে শাফেয়ী) ইমামের পেছনে নামায পড়ার বিধান কী?"
+    },
+    "answer": {
+      "en": "It is permissible and valid according to the majority of scholars, as long as the Imam limits himself to what makes the prayer valid.",
+      "bn": "অধিকাংশ আলেমদের (এবং হানাফী মাযহাব) মতে এটি জায়েজ এবং বৈধ, যতক্ষণ না ইমাম নামাযের মৌলিক শর্তসমূহ লঙ্ঘন করেন।"
+    },
+    "reference": "Al-Bahr Ar-Raiq"
+  },
+  {
+    "id": "2",
+    "category": "Tahara",
+    "question": {
+      "en": "Does bleeding invalidate the Wudu (ablution)?",
+      "bn": "রক্তপাত হলে কি ওযু ভেঙে যায়?"
+    },
+    "answer": {
+      "en": "According to the Hanafi school, flowing blood that exceeds the wound invalidates the Wudu. Other schools differ on this.",
+      "bn": "হানাফী মাযহাব মতে শরীর থেকে রক্ত প্রবাহিত হয়ে ক্ষতের সীমা অতিক্রম করলে ওযু ভেঙে যায়।"
+    },
+    "reference": "Al-Hidayah"
+  },
+  {
+    "id": "3",
+    "category": "Sawm",
+    "question": {
+      "en": "Does using toothpaste or a toothbrush invalidate the fast?",
+      "bn": "রোজা অবস্থায় টুথপেস্ট বা ব্রাশ ব্যবহার করলে কি রোজা ভেঙে যায়?"
+    },
+    "answer": {
+      "en": "Using a miswak is sunnah and permissible. Using toothpaste is severely disliked but does not invalidate the fast unless it is swallowed.",
+      "bn": "মিসওয়াক করা সুন্নাত এবং জায়েজ। তবে টুথপেস্ট ব্যবহার করা মাকরুহ, কিন্তু গিলে না ফেললে রোজা ভাঙে না। যদিও এটা এড়িয়ে চলাই উত্তম।"
+    },
+    "reference": "Fatawa Hindiyyah"
+  }
+]

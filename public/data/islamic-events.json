@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "name": "Ramadan Begins",
+    "nameBn": "রমজান শুরু",
+    "hijriMonth": 9,
+    "hijriDay": 1,
+    "description": {
+      "en": "The month of fasting and revelation of the Quran.",
+      "bn": "রোজা এবং কোরআন নাজিলের মাস।"
+    }
+  },
+  {
+    "id": "2",
+    "name": "Eid ul-Fitr",
+    "nameBn": "ঈদুল ফিতর",
+    "hijriMonth": 10,
+    "hijriDay": 1,
+    "description": {
+      "en": "Festival of breaking the fast marking the end of Ramadan.",
+      "bn": "রমজানের সমাপ্তি উপলক্ষে রোজার উৎসব।"
+    }
+  },
+  {
+    "id": "3",
+    "name": "Arafah",
+    "nameBn": "আরাফাহ দিবস",
+    "hijriMonth": 12,
+    "hijriDay": 9,
+    "description": {
+      "en": "The Day of Arafah, the core part of Hajj.",
+      "bn": "আরাফাহ দিবস, হজ্জের মূল অংশ।"
+    }
+  },
+  {
+    "id": "4",
+    "name": "Eid ul-Adha",
+    "nameBn": "ঈদুল আজহা",
+    "hijriMonth": 12,
+    "hijriDay": 10,
+    "description": {
+      "en": "Festival of Sacrifice.",
+      "bn": "কুরবানির উৎসব।"
+    }
+  },
+  {
+    "id": "5",
+    "name": "Islamic New Year",
+    "nameBn": "ইসলামি নববর্ষ",
+    "hijriMonth": 1,
+    "hijriDay": 1,
+    "description": {
+      "en": "Beginning of the new Hijri year.",
+      "bn": "নতুন হিজরি বছরের শুরু।"
+    }
+  },
+  {
+    "id": "6",
+    "name": "Ashura",
+    "nameBn": "আশুরা",
+    "hijriMonth": 1,
+    "hijriDay": 10,
+    "description": {
+      "en": "10th of Muharram, a day of fasting.",
+      "bn": "মুহাররমের ১০ম দিন, রোজার দিন।"
+    }
+  }
+]

@@ -52,6 +52,17 @@ interface MarkAyahOptions {
   totalAyahs?: number
 }
 
+interface LocationState {
+  latitude: number | null
+  longitude: number | null
+  city: string | null
+}
+
+interface DhikrSession {
+  date: string
+  total: number
+}
+
 interface AppStore {
   language: 'en' | 'ar' | 'bn'
   fontSize: number
@@ -72,6 +83,11 @@ interface AppStore {
   readingProgress: Record<number, SurahProgress>
 
   quickAccessSurahs: number[]
+
+  bookmarkedDuas: string[]
+  dhikrSessions: DhikrSession[]
+  location: LocationState
+  prayerMethod: string
 
   setLanguage: (lang: 'en' | 'ar' | 'bn') => void
   setFontSize: (size: number) => void
@@ -100,6 +116,11 @@ interface AppStore {
   setQuickAccessSurahs: (surahs: number[]) => void
   toggleQuickAccessSurah: (surahNumber: number) => void
   setUIState: (updates: Partial<UIState>) => void
+
+  toggleDuaBookmark: (id: string) => void
+  addDhikrSession: (total: number) => void
+  setLocation: (location: LocationState) => void
+  setPrayerMethod: (method: string) => void
 }
 
 const initialReadingStats: ReadingStats = {
@@ -227,6 +248,11 @@ export const useAppStore = create<AppStore>()(
       readVerses: [],
       readingProgress: {},
       quickAccessSurahs: [1, 36, 55, 67, 112, 113, 114],
+
+      bookmarkedDuas: [],
+      dhikrSessions: [],
+      location: { latitude: null, longitude: null, city: null },
+      prayerMethod: 'Karachi',
 
       setLanguage: (lang) => set({ language: lang }),
       setFontSize: (size) => set({ fontSize: size }),
@@ -489,6 +515,34 @@ export const useAppStore = create<AppStore>()(
         const { ui } = get()
         set({ ui: { ...ui, ...updates } })
       },
+
+      toggleDuaBookmark: (id) => {
+        const { bookmarkedDuas } = get()
+        if (bookmarkedDuas.includes(id)) {
+          set({ bookmarkedDuas: bookmarkedDuas.filter((d) => d !== id) })
+        } else {
+          set({ bookmarkedDuas: [...bookmarkedDuas, id] })
+        }
+      },
+
+      addDhikrSession: (total) => {
+        const { dhikrSessions } = get()
+        const today = getLocalDateString()
+        const existing = dhikrSessions.find((s) => s.date === today)
+        
+        if (existing) {
+          set({
+            dhikrSessions: dhikrSessions.map((s) =>
+              s.date === today ? { ...s, total: s.total + total } : s
+            ),
+          })
+        } else {
+          set({ dhikrSessions: [...dhikrSessions, { date: today, total }] })
+        }
+      },
+
+      setLocation: (location) => set({ location }),
+      setPrayerMethod: (prayerMethod) => set({ prayerMethod }),
     }),
     {
       name: 'quran-store',
