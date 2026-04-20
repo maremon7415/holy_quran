@@ -10,6 +10,7 @@ import PrayerTimesWidget from '@/components/prayer-times-widget'
 import DuaOfTheDay from '@/components/dua-of-the-day'
 import DhikrWidget from '@/components/dhikr-widget'
 import QiblaWidget from '@/components/qibla-widget'
+import DailyGoalWidget from '@/components/daily-goal-widget'
 import { getAllSurahs, Surah } from '@/lib/api'
 import { useEffect, useState } from 'react'
 import { useI18n } from '@/lib/i18n'
@@ -95,11 +96,12 @@ export default function HeroDashboard() {
         transition={{ duration: 0.5, delay: 0.25 }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        <PrayerTimesWidget />
-        <DuaOfTheDay />
-        <DhikrWidget />
-        <QiblaWidget />
-      </motion.section>
+      <PrayerTimesWidget />
+      <DuaOfTheDay />
+      <DhikrWidget />
+      <QiblaWidget />
+      <DailyGoalWidget />
+    </motion.section>
 
       {/* Quick Access & Recent */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

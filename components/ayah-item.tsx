@@ -11,12 +11,20 @@ import {
   Loader2,
   Tag,
   X,
+  BookOpen,
+  StickyNote,
+  Volume2,
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAppStore } from '@/lib/store'
 import { useI18n } from '@/lib/i18n'
+import dynamic from 'next/dynamic'
+
+const AudioRecitation = dynamic(() => import('./audio-recitation'), { ssr: false })
+const TafsirViewer = dynamic(() => import('./tafsir-viewer'), { ssr: false })
+const AyahNotes = dynamic(() => import('./ayah-notes'), { ssr: false })
 
 interface AyahItemProps {
   ayahNumber: number
@@ -59,6 +67,10 @@ export default function AyahItem({
   const [newTag, setNewTag] = useState('')
   const [isImportant, setIsImportant] = useState(false)
   const [currentTags, setCurrentTags] = useState<string[]>([])
+  const [showAudio, setShowAudio] = useState(false)
+  const [showTafsir, setShowTafsir] = useState(false)
+  const [showNotes, setShowNotes] = useState(false)
+  const [hasBeenViewed, setHasBeenViewed] = useState(false)
 
   const isRead = useMemo(
     () => readVerses.some((v) => v.surahNumber === surahNumber && v.ayahNumber === ayahNumber),
@@ -73,6 +85,40 @@ export default function AyahItem({
     setIsImportant(Boolean(important))
     setCurrentTags(important?.tags || [])
   }, [importantAyahs, surahNumber, ayahNumber])
+
+  // Auto-mark as read when ayah is viewed (Intersection Observer)
+  useEffect(() => {
+    const element = document.getElementById(`ayah-${ayahNumber}`)
+    if (!element || isRead) return
+
+    // Create intersection observer to detect when ayah is in view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasBeenViewed) {
+            setHasBeenViewed(true)
+            // Mark as read after a short delay (user actually viewed it)
+            setTimeout(() => {
+              markAyahAsRead(surahNumber, ayahNumber, {
+                surahName,
+                totalAyahs,
+              })
+            }, 2000) // 2 seconds delay to ensure user actually viewed it
+          }
+        })
+      },
+      {
+        threshold: 0.5, // 50% of the ayah must be visible
+        rootMargin: '-10% 0px -10% 0px', // Slightly reduce the viewport to ensure it's actually being read
+      }
+    )
+
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [surahNumber, ayahNumber, surahName, totalAyahs, isRead, hasBeenViewed, markAyahAsRead])
 
   const toggleBookmark = async () => {
     if (!session) {
@@ -190,24 +236,54 @@ export default function AyahItem({
             <Tag className="w-4 h-4" />
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleBookmark}
-            disabled={isSaving}
-            className={`h-9 px-3 ${isBookmarked ? 'bg-primary/10 text-primary' : ''}`}
-            title={isBookmarked ? t('remove_bookmark') : t('add_bookmark')}
-          >
-            {isSaving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : isBookmarked ? (
-              <BookmarkCheck className="w-4 h-4" />
-            ) : (
-              <BookmarkPlus className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={toggleBookmark}
+        disabled={isSaving}
+        className={`h-9 px-3 ${isBookmarked ? 'bg-primary/10 text-primary' : ''}`}
+        title={isBookmarked ? t('remove_bookmark') : t('add_bookmark')}
+      >
+        {isSaving ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : isBookmarked ? (
+          <BookmarkCheck className="w-4 h-4" />
+        ) : (
+          <BookmarkPlus className="w-4 h-4" />
+        )}
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowTafsir(true)}
+        className="h-9 px-3"
+        title={t('view_tafsir', { defaultValue: 'View Tafsir' })}
+      >
+        <BookOpen className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowNotes(true)}
+        className="h-9 px-3"
+        title={t('add_note', { defaultValue: 'Add Note' })}
+      >
+        <StickyNote className="w-4 h-4" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowAudio(!showAudio)}
+        className={`h-9 px-3 ${showAudio ? 'bg-primary/10 text-primary' : ''}`}
+        title={t('play_audio', { defaultValue: 'Play Audio' })}
+      >
+        <Volume2 className="w-4 h-4" />
+      </Button>
+    </div>
+  </div>
 
       <AnimatePresence>
         {showTagPanel && (
@@ -276,14 +352,57 @@ export default function AyahItem({
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-3 mt-2 group"
         >
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          <span className="relative">
-            {expanded ? t('hide_translations') : t('view_translations')}
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all" />
-          </span>
-        </button>
-      )}
+        <span className="relative">
+          {expanded ? t('hide_translations') : t('view_translations')}
+          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all" />
+        </span>
+      </button>
+    )}
 
-      <AnimatePresence>
+    {/* Audio Recitation */}
+    {showAudio && (
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: 'auto', opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        className="overflow-hidden"
+      >
+        <div className="py-4 border-t border-border/50 mt-2">
+          <AudioRecitation
+            surahNumber={surahNumber}
+            ayahNumber={ayahNumber}
+            totalAyahs={totalAyahs}
+            onAyahChange={(num) => {
+              // Navigate to ayah
+              const element = document.getElementById(`ayah-${num}`)
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }
+            }}
+          />
+        </div>
+      </motion.div>
+    )}
+
+    {/* Tafsir Viewer Modal */}
+    <TafsirViewer
+      surahNumber={surahNumber}
+      ayahNumber={ayahNumber}
+      isOpen={showTafsir}
+      onClose={() => setShowTafsir(false)}
+      totalAyahs={totalAyahs}
+    />
+
+    {/* Ayah Notes Modal */}
+    <AyahNotes
+      surahNumber={surahNumber}
+      ayahNumber={ayahNumber}
+      surahName={surahName}
+      isOpen={showNotes}
+      onClose={() => setShowNotes(false)}
+    />
+
+    <AnimatePresence>
         {expanded && hasTranslations && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}

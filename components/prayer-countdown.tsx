@@ -24,10 +24,9 @@ export default function PrayerCountdown({ prayerTimes }: PrayerCountdownProps) {
   // If nextPrayer is 'none' (after Isha), we should technically calculate tomorrow's Fajr.
   // For simplicity here, we state "Completed for today" unless we pass tomorrow's times.
   // We'll calculate a generic 'time left' to midnight + tomorrow's fajr otherwise, but let's keep it simple first.
-  let isTomorrow = false
-  let targetTime = nextPrayerTime
+  const targetTime = nextPrayerTime
 
-  if (!nextPrayer || nextPrayer === 'none' || !nextPrayerTime) {
+  if (!nextPrayer || nextPrayer === 'none' || !targetTime) {
     return (
       <div className="p-6 rounded-2xl bg-primary/10 border border-primary/20 text-center">
         <h3 className="text-xl font-semibold text-foreground mb-1">

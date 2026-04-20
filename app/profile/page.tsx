@@ -15,6 +15,7 @@ import {
 import Navbar from '@/components/navbar'
 import Sidebar from '@/components/sidebar'
 import ShortcutPanel from '@/components/shortcut-panel'
+import BackButton from '@/components/back-button'
 import { useAppStore } from '@/lib/store'
 import { useSession } from 'next-auth/react'
 import { useI18n } from '@/lib/i18n'
@@ -54,6 +55,8 @@ export default function ProfilePage() {
       <ShortcutPanel />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+        <BackButton className="mb-4" />
+        
         <motion.section
           initial={{ opacity: 0, y: -18 }}
           animate={{ opacity: 1, y: 0 }}

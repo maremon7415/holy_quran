@@ -6,6 +6,7 @@ import { ArrowRight, BookOpen, Clock3, RotateCcw } from 'lucide-react'
 import Navbar from '@/components/navbar'
 import Sidebar from '@/components/sidebar'
 import ShortcutPanel from '@/components/shortcut-panel'
+import BackButton from '@/components/back-button'
 import { useAppStore } from '@/lib/store'
 import { getAllSurahs, Surah } from '@/lib/api'
 import { useEffect, useMemo, useState } from 'react'
@@ -43,14 +44,16 @@ export default function RecentPage() {
       <ShortcutPanel />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <BackButton className="mb-4" />
+        
         <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
               <Clock3 className="w-8 h-8 text-primary" />
               {t('recent_readings')}
             </h1>
-          <p className="text-muted-foreground">
-            {t('resume_where_left_off')}
-          </p>
+            <p className="text-muted-foreground">
+              {t('resume_where_left_off')}
+            </p>
         </motion.div>
 
         {recentItems.length === 0 ? (

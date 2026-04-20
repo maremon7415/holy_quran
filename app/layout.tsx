@@ -14,6 +14,7 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import Providers from '@/components/providers'
 import GlobalFooter from '@/components/global-footer'
+import ConstructionNoticeModal from '@/components/construction-notice-modal'
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const merriweather = Merriweather({ weight: ['400', '700'], subsets: ["latin"], variable: '--font-merriweather' });
@@ -30,11 +31,17 @@ const lateef = Lateef({ weight: ['400'], subsets: ["arabic"], variable: '--font-
 
 export const metadata: Metadata = {
   title: 'Quran App - Read & Listen',
-  description: 'Beautiful Quran app with multiple translations and recitations',
+  description: 'Beautiful Quran app with multiple translations, recitations, prayer times, and Islamic features',
   generator: 'v0.app',
+  manifest: '/manifest.json',
   icons: {
     icon: '/logo_tab.png',
     apple: '/apple-icon.png',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Quran App',
   },
 }
 
@@ -53,6 +60,7 @@ export default function RootLayout({
             <div className="flex-1">{children}</div>
             <GlobalFooter />
           </div>
+          <ConstructionNoticeModal />
         </Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

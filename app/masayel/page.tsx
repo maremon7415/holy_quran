@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { HelpCircle, Search, FileQuestion } from 'lucide-react'
+import { HelpCircle, Search, FileQuestion, BookOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import Sidebar from '@/components/sidebar'
@@ -140,7 +140,7 @@ export default function MasayelLibraryPage() {
           </div>
         ) : (
           <div className="text-center py-16 bg-muted/20 rounded-2xl border border-dashed border-border mt-8">
-            <BookOpenCheck className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+            <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-foreground mb-2">
               No rulings found
             </h3>

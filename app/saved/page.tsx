@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import Navbar from '@/components/navbar'
 import Sidebar from '@/components/sidebar'
 import ShortcutPanel from '@/components/shortcut-panel'
+import BackButton from '@/components/back-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
@@ -72,6 +73,8 @@ export default function SavedPage() {
       <Sidebar />
       <ShortcutPanel />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <BackButton className="mb-4" />
+        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
