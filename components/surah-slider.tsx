@@ -41,7 +41,7 @@ const SimpleSurahCard = ({
       className="h-full"
     >
       <div
-        onClick={() => router.push(`/surah/${surah.number}`)}
+        onClick={() => router.push(`/quran?surah=${surah.number}`)}
         className="group relative h-full cursor-pointer overflow-hidden rounded-[26px] border border-primary/12 bg-[linear-gradient(160deg,rgba(36,81,61,0.12),rgba(255,255,255,0.02))] p-5 shadow-[0_18px_50px_-35px_rgba(36,81,61,0.65)] transition-all duration-500 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_24px_60px_-30px_rgba(36,81,61,0.45)]"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(36,81,61,0.20),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(36,81,61,0.12),transparent_25%)] opacity-80 transition-opacity duration-500 group-hover:opacity-100" />

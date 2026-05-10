@@ -48,7 +48,7 @@ export default function ShortcutPanel() {
   )
 
   const handleSelect = (surah: Surah) => {
-    router.push(`/surah/${surah.number}`)
+    router.push(`/quran?surah=${surah.number}`)
     setUIState({ isSearchOpen: false })
     setSearch('')
   }

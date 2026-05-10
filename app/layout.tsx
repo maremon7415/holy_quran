@@ -13,8 +13,9 @@ import {
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import Providers from '@/components/providers'
-import GlobalFooter from '@/components/global-footer'
+import FooterWrapper from '@/components/footer-wrapper'
 import ConstructionNoticeModal from '@/components/construction-notice-modal'
+import GlobalAudioPlayer from '@/components/quran/global-audio-player'
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const merriweather = Merriweather({ weight: ['400', '700'], subsets: ["latin"], variable: '--font-merriweather' });
@@ -57,10 +58,14 @@ export default function RootLayout({
       <body className={`lang-en font-sans antialiased ${inter.variable} ${merriweather.variable} ${outfit.variable} ${notoBengali.variable} ${hindSiliguri.variable} ${tiroBangla.variable} ${amiri.variable} ${cairo.variable} ${lateef.variable}`}>
         <Providers>
           <div className="min-h-screen flex flex-col">
-            <div className="flex-1">{children}</div>
-            <GlobalFooter />
+            <div className="flex-1">
+              <FooterWrapper>
+                {children}
+              </FooterWrapper>
+            </div>
           </div>
           <ConstructionNoticeModal />
+          <GlobalAudioPlayer />
         </Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

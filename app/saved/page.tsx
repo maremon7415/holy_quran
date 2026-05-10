@@ -136,7 +136,7 @@ export default function SavedPage() {
                       transition={{ delay: idx * 0.05 }}
                     >
                       <Card className="group hover:border-primary/50 transition-all cursor-pointer">
-                        <Link href={`/surah/${bm.surahNumber}${bm.ayahNumber ? `#ayah-${bm.ayahNumber}` : ''}`}>
+                        <Link href={`/quran?surah=${bm.surahNumber}${bm.ayahNumber ? `#ayah-${bm.ayahNumber}` : ''}`}>
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg flex justify-between items-center">
                               <span className="truncate">{bm.title}</span>
@@ -183,7 +183,7 @@ export default function SavedPage() {
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between">
                               <CardTitle className="text-lg">
-                                <Link href={`/surah/${ayah.surahNumber}`} className="hover:text-primary transition-colors">
+                                <Link href={`/quran?surah=${ayah.surahNumber}`} className="hover:text-primary transition-colors">
                                   {surah?.englishName || `Surah ${ayah.surahNumber}`}
                                 </Link>
                                 <span className="text-muted-foreground font-normal ml-2">
@@ -243,7 +243,7 @@ export default function SavedPage() {
                         transition={{ delay: idx * 0.05 }}
                       >
                         <Card className="group overflow-hidden border-2 border-yellow-500/20 hover:border-yellow-500/40 transition-all">
-                          <Link href={`/surah/${num}`}>
+                          <Link href={`/quran?surah=${num}`}>
                             <CardHeader className="pb-3 relative">
                               <div className="absolute top-4 right-4">
                                 <Button
@@ -304,7 +304,7 @@ export default function SavedPage() {
                       >
                         <Card className="p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <Link href={`/surah/${num}`} className="font-semibold hover:text-primary transition-colors">
+                            <Link href={`/quran?surah=${num}`} className="font-semibold hover:text-primary transition-colors">
                               {surah.englishName}
                             </Link>
                             <span className="text-sm text-muted-foreground">{percent}%</span>

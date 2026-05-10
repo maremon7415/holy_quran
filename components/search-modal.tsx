@@ -134,7 +134,7 @@ export function SearchModal({ open, onOpenChange }: { open: boolean, onOpenChang
                     <Command.Item
                       key={surah.number}
                       value={`${surah.englishName} ${surah.name} ${surah.number} ${surah.englishNameTranslation}`}
-                      onSelect={() => handleSelect(`/surah/${surah.number}`)}
+                      onSelect={() => handleSelect(`/quran?surah=${surah.number}`)}
                       className="relative flex cursor-pointer select-none items-center rounded-sm px-4 py-3 text-sm outline-none hover:bg-primary/10 hover:text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                     >
                       <div className="flex items-center justify-between w-full">
@@ -179,7 +179,7 @@ export function SearchModal({ open, onOpenChange }: { open: boolean, onOpenChang
                           <Command.Item
                             key={`${result.surahNumber}-${result.ayahNumber}-${idx}`}
                             value={`${result.surahNumber} ${result.ayahNumber}`}
-                            onSelect={() => handleSelect(`/surah/${result.surahNumber}#ayah-${result.ayahNumber}`)}
+                            onSelect={() => handleSelect(`/quran?surah=${result.surahNumber}#ayah-${result.ayahNumber}`)}
                             className="relative flex cursor-pointer select-none items-center rounded-sm px-4 py-3 text-sm outline-none hover:bg-primary/10 hover:text-primary"
                           >
                             <div className="w-full">

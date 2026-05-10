@@ -103,7 +103,7 @@ export default function RecentPage() {
                       </p>
                     </div>
                     <Link
-                      href={`/surah/${item.surahNumber}#ayah-${item.lastAyahRead}`}
+                      href={`/quran?surah=${item.surahNumber}#ayah-${item.lastAyahRead}`}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
                     >
                       {t('continue_reading')}

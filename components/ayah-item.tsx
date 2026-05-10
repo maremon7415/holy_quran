@@ -336,10 +336,10 @@ export default function AyahItem({
 
       {arabicText && (
         <div
-          className={`text-right leading-[2.2] md:leading-[2.4] text-foreground ${arabicFont} relative`}
-          style={{ fontSize: `${ayahFontSize}px`, direction: 'rtl' }}
+          className={`leading-[2.2] md:leading-[2.4] text-foreground ${arabicFont} relative px-1`}
+          style={{ fontSize: `${ayahFontSize}px`, direction: 'rtl', unicodeBidi: 'plaintext' }}
         >
-          <span className="relative z-10">{arabicText}</span>
+          <span className="relative z-10 inline" dir="rtl">{arabicText}</span>
           {ayahNumber === 1 && (
             <div className="absolute -top-2 left-0 text-xs text-primary/50 font-medium">{surahName}</div>
           )}

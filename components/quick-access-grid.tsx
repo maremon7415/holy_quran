@@ -50,7 +50,7 @@ export default function QuickAccessGrid() {
               className="relative group"
             >
               <Link
-                href={`/surah/${num}`}
+                href={`/quran?surah=${num}`}
                 className="block aspect-square bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/20 hover:to-primary/30 border border-primary/20 hover:border-primary rounded-xl flex flex-col items-center justify-center transition-all duration-300"
               >
                 <span className="text-lg font-bold text-primary">{num}</span>

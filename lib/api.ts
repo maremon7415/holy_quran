@@ -216,7 +216,7 @@ export async function getSurahDetails(surahNumber: number): Promise<SurahDetail 
     
     if (!chapterInfo) return null
 
-    const data = await fetchWithFallback(`${API_BASE}/editions/ara-kingfahadquranc/${surahNumber}.json`)
+    const data = await fetchWithFallback(`${API_BASE}/editions/ara-quransimple/${surahNumber}.json`)
     
     const ayahs = data.chapter.map((v: any, index: number) => {
       const meta = chapterInfo.verses[index] || {}

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, Loader2, AlertCircle, Image as ImageIcon, RefreshCw } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, Loader2, AlertCircle, Image as ImageIcon, RefreshCw, Headphones } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 
@@ -14,38 +14,73 @@ interface AudioRecitationProps {
   showImage?: boolean
 }
 
-// Ayah counts for each surah (1-114)
+interface AudioFile {
+  verseKey: string
+  url: string
+}
+
 const SURAH_AYAH_COUNTS = [
   7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52, 99, 128, 111, 110, 98, 135,
   112, 78, 118, 64, 77, 227, 93, 88, 69, 60, 34, 30, 73, 54, 45, 83, 182, 88, 75, 85, 54, 53,
   89, 59, 37, 35, 38, 29, 18, 45, 60, 49, 62, 55, 78, 96, 29, 22, 24, 13, 14, 11, 11, 18, 12,
   12, 30, 52, 52, 44, 28, 28, 20, 56, 40, 31, 50, 40, 46, 42, 29, 19, 36, 25, 22, 17, 19, 26, 30,
-  20, 15, 21, 11, 8, 8, 19, 5, 8, 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6
+  20, 15, 21, 11, 8, 8, 19, 5, 8, 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6,
 ]
 
-// Calculate global ayah number (1-6236) from surah and ayah
 const calculateGlobalAyahNumber = (surah: number, ayah: number): number => {
   let globalAyah = 0
-  // Sum up all ayahs in previous surahs
   for (let i = 0; i < surah - 1; i++) {
     globalAyah += SURAH_AYAH_COUNTS[i]
   }
-  // Add current ayah
   globalAyah += ayah
   return globalAyah
 }
 
 const RECITERS = [
-  { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' },
-  { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary' },
-  { id: 'ar.minshawi', name: 'Mohamed Siddiq El-Minshawi' },
-  { id: 'ar.abdulbasit', name: 'Abdul Basit Abdul Samad' },
-  { id: 'ar.ghamadi', name: 'Saad Al-Ghamdi' },
-  { id: 'ar.shatri', name: 'Abu Bakr Al-Shatri' },
-  { id: 'ar.ayman_swaaid', name: 'Ayman Sweaid' },
+  { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', quranComId: 7 },
+  { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary', quranComId: 6 },
+  { id: 'ar.minshawi', name: 'Mohamed Siddiq El-Minshawi', quranComId: 9 },
+  { id: 'ar.abdulbasit', name: 'Abdul Basit Abdul Samad', quranComId: 1 },
+  { id: 'ar.shatri', name: 'Abu Bakr Al-Shatri', quranComId: 4 },
+  { id: 'ar.sudais', name: 'Abdur-Rahman as-Sudais', quranComId: 3 },
 ]
 
-const BITRATES = [128, 64, 48, 32] // Available bitrates
+const BITRATES = [128, 64]
+
+const URL_CACHE = new Map<string, AudioFile[]>()
+
+async function fetchQuranComUrls(reciterId: number, surahNumber: number): Promise<AudioFile[]> {
+  const cacheKey = `qc-${reciterId}-${surahNumber}`
+  if (URL_CACHE.has(cacheKey)) return URL_CACHE.get(cacheKey)!
+
+  try {
+    const res = await fetch(
+      `https://api.quran.com/api/v4/recitations/${reciterId}/by_chapter/${surahNumber}`
+    )
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    const files: AudioFile[] = data.audio_files.map((f: any) => ({
+      verseKey: f.verse_key,
+      url: `https://verses.quran.com/${f.url}`,
+    }))
+    URL_CACHE.set(cacheKey, files)
+    return files
+  } catch (err) {
+    console.error('Quran.com audio fetch error:', err)
+    return []
+  }
+}
+
+function getEveryAyahUrl(surah: number, ayah: number): string {
+  const surahStr = String(surah).padStart(3, '0')
+  const ayahStr = String(ayah).padStart(3, '0')
+  return `https://everyayah.com/data/Alafasy_128kbps/${surahStr}${ayahStr}.mp3`
+}
+
+function getIslamicNetworkUrl(surah: number, ayah: number, reciter: string, bitrate: number): string {
+  const globalAyah = calculateGlobalAyahNumber(surah, ayah)
+  return `https://cdn.islamic.network/quran/audio/${bitrate}/${reciter}/${globalAyah}.mp3`
+}
 
 export default function AudioRecitation({
   surahNumber,
@@ -60,7 +95,7 @@ export default function AudioRecitation({
   const [volume, setVolume] = useState(1)
   const [isMuted, setIsMuted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [selectedReciter, setSelectedReciter] = useState(RECITERS[0].id)
+  const [selectedReciter, setSelectedReciter] = useState(RECITERS[0])
   const [selectedBitrate, setSelectedBitrate] = useState(BITRATES[0])
   const [currentAyah, setCurrentAyah] = useState(ayahNumber || 1)
   const [error, setError] = useState<string | null>(null)
@@ -68,62 +103,31 @@ export default function AudioRecitation({
   const [showAyahImage, setShowAyahImage] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const [autoplay, setAutoplay] = useState(false)
+  const [audioUrls, setAudioUrls] = useState<AudioFile[]>([])
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Build audio URL using Islamic Network CDN (correct format)
-  const getAudioUrl = useCallback((surah: number, ayah: number) => {
-    const globalAyahNumber = calculateGlobalAyahNumber(surah, ayah)
-    return `https://cdn.islamic.network/quran/audio/${selectedBitrate}/${selectedReciter}/${globalAyahNumber}.mp3`
-  }, [selectedReciter, selectedBitrate])
+  useEffect(() => {
+    fetchQuranComUrls(selectedReciter.quranComId, surahNumber).then(setAudioUrls)
+  }, [selectedReciter.quranComId, surahNumber])
 
-  // Get ayah image URL
-  const getAyahImageUrl = useCallback(() => {
-    return `https://cdn.islamic.network/quran/images/${surahNumber}_${currentAyah}.png`
-  }, [surahNumber, currentAyah])
+  const getAudioUrl = useCallback(
+    (ayah: number): string | null => {
+      const key = `${surahNumber}:${ayah}`
+      const file = audioUrls.find((f) => f.verseKey === key)
+      return file?.url || null
+    },
+    [audioUrls, surahNumber]
+  )
 
-  // Load audio (without playing)
-  const loadAudio = useCallback((surah: number, ayah: number) => {
-    const audio = audioRef.current
-    if (!audio) return
-    
-    setLoading(true)
-    setError(null)
-    
-    const url = getAudioUrl(surah, ayah)
-    console.log('Loading audio:', url)
-    
-    audio.src = url
-    audio.volume = isMuted ? 0 : volume
-    audio.load()
-  }, [getAudioUrl, isMuted, volume])
+  const buildUrl = useCallback(
+    (surah: number, ayah: number): string => {
+      return getAudioUrl(ayah) || getEveryAyahUrl(surah, ayah)
+    },
+    [getAudioUrl]
+  )
 
-  // Load and play audio
-  const loadAndPlayAudio = useCallback(async (surah: number, ayah: number) => {
-    const audio = audioRef.current
-    if (!audio) return
-    
-    setLoading(true)
-    setError(null)
-    
-    try {
-      const url = getAudioUrl(surah, ayah)
-      console.log('Playing audio:', url)
-      
-      audio.src = url
-      audio.volume = isMuted ? 0 : volume
-      
-      await audio.play()
-      setIsPlaying(true)
-    } catch (err) {
-      console.error('Play error:', err)
-      setError('Failed to play audio. Try another reciter or bitrate.')
-      setLoading(false)
-      setIsPlaying(false)
-    }
-  }, [getAudioUrl, isMuted, volume])
-
-  // Initialize audio when component mounts or ayah changes
   useEffect(() => {
     if (ayahNumber && ayahNumber !== currentAyah) {
       setCurrentAyah(ayahNumber)
@@ -133,69 +137,105 @@ export default function AudioRecitation({
       setError(null)
       setImageLoaded(false)
       setImageError(false)
-      
-      // Load audio for new ayah
-      loadAudio(surahNumber, ayahNumber)
     }
-  }, [ayahNumber, surahNumber, currentAyah, loadAudio])
+  }, [ayahNumber, currentAyah])
 
-  // Initial load on mount
-  useEffect(() => {
-    if (!audioLoaded && !loading && surahNumber && currentAyah) {
-      loadAudio(surahNumber, currentAyah)
-    }
-  }, [audioLoaded, loading, surahNumber, currentAyah, loadAudio])
+  const loadAndPlay = useCallback(
+    async (surah: number, ayah: number) => {
+      const audio = audioRef.current
+      if (!audio) return
 
-  // Audio event handlers
+      setLoading(true)
+      setError(null)
+
+      const url1 = buildUrl(surah, ayah)
+
+      try {
+        audio.src = url1
+        audio.volume = isMuted ? 0 : volume
+        await audio.play()
+        setIsPlaying(true)
+        return
+      } catch {}
+
+      const url2 = getIslamicNetworkUrl(surah, ayah, selectedReciter.id, selectedBitrate)
+      try {
+        audio.src = url2
+        audio.volume = isMuted ? 0 : volume
+        await audio.play()
+        setIsPlaying(true)
+        return
+      } catch {}
+
+      const url3 = getEveryAyahUrl(surah, ayah)
+      if (url3 !== url1) {
+        try {
+          audio.src = url3
+          audio.volume = isMuted ? 0 : volume
+          await audio.play()
+          setIsPlaying(true)
+          return
+        } catch {}
+      }
+
+      setError('Failed to play audio. Try another reciter.')
+      setLoading(false)
+      setIsPlaying(false)
+    },
+    [buildUrl, isMuted, volume, selectedReciter.id, selectedBitrate]
+  )
+
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
 
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime)
-    const handleLoadedMetadata = () => {
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime)
+    const onLoadedMetadata = () => {
       setDuration(audio.duration)
       setAudioLoaded(true)
       setLoading(false)
     }
-    const handleEnded = () => {
+    const onEnded = () => {
       setIsPlaying(false)
       setCurrentTime(0)
-      // Auto-advance if not last ayah
-      if (totalAyahs && currentAyah < totalAyahs) {
-        const nextAyah = currentAyah + 1
-        setCurrentAyah(nextAyah)
-        onAyahChange?.(nextAyah)
-        setTimeout(() => {
-          loadAndPlayAudio(surahNumber, nextAyah)
-        }, 300)
+      if (autoplay && totalAyahs && currentAyah < totalAyahs) {
+        const next = currentAyah + 1
+        setCurrentAyah(next)
+        onAyahChange?.(next)
+        setTimeout(() => loadAndPlay(surahNumber, next), 300)
       }
     }
-    const handleError = () => {
-      console.error('Audio error for:', audio.src)
-      setError('Failed to load audio. Try another reciter or bitrate.')
+    const onError = () => {
+      const fallback = getEveryAyahUrl(surahNumber, currentAyah)
+      if (audio.src !== fallback && !audio.src.includes('everyayah')) {
+        audio.src = fallback
+        audio.load()
+        return
+      }
+      setError('Failed to load audio. Try another reciter.')
       setLoading(false)
       setIsPlaying(false)
       setAudioLoaded(false)
     }
-    const handleCanPlay = () => {
+    const onCanPlay = () => {
       setAudioLoaded(true)
       setLoading(false)
     }
 
-    audio.addEventListener('timeupdate', handleTimeUpdate)
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
-    audio.addEventListener('ended', handleEnded)
-    audio.addEventListener('error', handleError)
-    audio.addEventListener('canplay', handleCanPlay)
+    audio.addEventListener('timeupdate', onTimeUpdate)
+    audio.addEventListener('loadedmetadata', onLoadedMetadata)
+    audio.addEventListener('ended', onEnded)
+    audio.addEventListener('error', onError)
+    audio.addEventListener('canplay', onCanPlay)
 
     return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate)
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      audio.removeEventListener('ended', handleEnded)
-      audio.removeEventListener('error', handleError)
-      audio.removeEventListener('canplay', handleCanPlay)
+      audio.removeEventListener('timeupdate', onTimeUpdate)
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata)
+      audio.removeEventListener('ended', onEnded)
+      audio.removeEventListener('error', onError)
+      audio.removeEventListener('canplay', onCanPlay)
     }
-  }, [surahNumber, currentAyah, totalAyahs, onAyahChange, loadAndPlayAudio])
+  }, [surahNumber, currentAyah, totalAyahs, onAyahChange, loadAndPlay, autoplay])
 
   const togglePlay = async () => {
     const audio = audioRef.current
@@ -205,15 +245,14 @@ export default function AudioRecitation({
       audio.pause()
       setIsPlaying(false)
     } else {
-      if (!audioLoaded) {
-        await loadAndPlayAudio(surahNumber, currentAyah)
+      if (!audioLoaded || !audio.src || audio.src === window.location.href) {
+        await loadAndPlay(surahNumber, currentAyah)
       } else {
         try {
           await audio.play()
           setIsPlaying(true)
-        } catch (err) {
-          console.error('Resume error:', err)
-          await loadAndPlayAudio(surahNumber, currentAyah)
+        } catch {
+          await loadAndPlay(surahNumber, currentAyah)
         }
       }
     }
@@ -228,73 +267,67 @@ export default function AudioRecitation({
   }
 
   const handleVolumeChange = (value: number[]) => {
-    const newVolume = value[0]
-    setVolume(newVolume)
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume
-    }
-    if (newVolume > 0) setIsMuted(false)
+    const v = value[0]
+    setVolume(v)
+    if (audioRef.current) audioRef.current.volume = v
+    if (v > 0) setIsMuted(false)
   }
 
   const toggleMute = () => {
     const audio = audioRef.current
     if (audio) {
-      const newMuted = !isMuted
-      audio.muted = newMuted
-      setIsMuted(newMuted)
+      const next = !isMuted
+      audio.muted = next
+      setIsMuted(next)
     }
   }
 
   const skipBackward = () => {
     if (currentAyah > 1) {
-      const prevAyah = currentAyah - 1
-      setCurrentAyah(prevAyah)
-      onAyahChange?.(prevAyah)
-      loadAudio(surahNumber, prevAyah)
+      const prev = currentAyah - 1
+      setCurrentAyah(prev)
+      onAyahChange?.(prev)
+      if (isPlaying) loadAndPlay(surahNumber, prev)
     }
   }
 
   const skipForward = () => {
     if (totalAyahs && currentAyah < totalAyahs) {
-      const nextAyah = currentAyah + 1
-      setCurrentAyah(nextAyah)
-      onAyahChange?.(nextAyah)
-      loadAudio(surahNumber, nextAyah)
+      const next = currentAyah + 1
+      setCurrentAyah(next)
+      onAyahChange?.(next)
+      if (isPlaying) loadAndPlay(surahNumber, next)
     }
   }
 
   const formatTime = (time: number) => {
     if (!isFinite(time) || time < 0) return '0:00'
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+    const m = Math.floor(time / 60)
+    const s = Math.floor(time % 60)
+    return `${m}:${s.toString().padStart(2, '0')}`
   }
 
-  const handleReciterChange = (newReciter: string) => {
-    setSelectedReciter(newReciter)
-    setError(null)
-    setAudioLoaded(false)
-    loadAudio(surahNumber, currentAyah)
-  }
-
-  const handleBitrateChange = (newBitrate: number) => {
-    setSelectedBitrate(newBitrate)
-    setError(null)
-    setAudioLoaded(false)
-    loadAudio(surahNumber, currentAyah)
+  const handleReciterChange = (newId: string) => {
+    const reciter = RECITERS.find((r) => r.id === newId)
+    if (reciter) {
+      setSelectedReciter(reciter)
+      setError(null)
+      setAudioLoaded(false)
+      setAudioUrls([])
+      fetchQuranComUrls(reciter.quranComId, surahNumber).then(setAudioUrls)
+      if (isPlaying) loadAndPlay(surahNumber, currentAyah)
+    }
   }
 
   const retryLoad = () => {
     setError(null)
-    loadAudio(surahNumber, currentAyah)
+    loadAndPlay(surahNumber, currentAyah)
   }
 
   return (
     <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
-      {/* Hidden audio element */}
       <audio ref={audioRef} preload="metadata" />
 
-      {/* Ayah Image */}
       <AnimatePresence>
         {showImage && showAyahImage && (
           <motion.div
@@ -312,11 +345,11 @@ export default function AudioRecitation({
               {imageError ? (
                 <div className="p-8 text-center text-muted-foreground text-sm">
                   <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  Image not available for this ayah
+                  Image not available
                 </div>
               ) : (
                 <img
-                  src={getAyahImageUrl()}
+                  src={`https://cdn.islamic.network/quran/images/${surahNumber}_${currentAyah}.png`}
                   alt={`Surah ${surahNumber} Ayah ${currentAyah}`}
                   className="w-full h-auto"
                   onLoad={() => setImageLoaded(true)}
@@ -331,13 +364,12 @@ export default function AudioRecitation({
         )}
       </AnimatePresence>
 
-      {/* Reciter Selection */}
       <div className="mb-4">
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
           Select Reciter
         </label>
         <select
-          value={selectedReciter}
+          value={selectedReciter.id}
           onChange={(e) => handleReciterChange(e.target.value)}
           disabled={loading}
           className="w-full px-3 py-2 bg-muted rounded-lg text-sm border border-border focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
@@ -350,16 +382,12 @@ export default function AudioRecitation({
         </select>
       </div>
 
-      {/* Bitrate Selection */}
-      <div className="mb-4">
-        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-          Audio Quality
-        </label>
+      <div className="mb-4 flex items-center gap-3">
         <div className="flex gap-2">
           {BITRATES.map((bitrate) => (
             <button
               key={bitrate}
-              onClick={() => handleBitrateChange(bitrate)}
+              onClick={() => setSelectedBitrate(bitrate)}
               disabled={loading}
               className={`px-3 py-1.5 rounded-lg text-sm transition-colors disabled:opacity-50 ${
                 selectedBitrate === bitrate
@@ -371,12 +399,22 @@ export default function AudioRecitation({
             </button>
           ))}
         </div>
+        <div className="flex items-center gap-1.5 ml-auto">
+          <span className="text-[10px] text-muted-foreground">Autoplay</span>
+          <button
+            onClick={() => setAutoplay(!autoplay)}
+            className={`w-8 h-4.5 rounded-full transition-colors relative ${autoplay ? 'bg-primary' : 'bg-muted'}`}
+          >
+            <div
+              className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow transition-transform ${autoplay ? 'translate-x-4' : 'translate-x-0.5'}`}
+            />
+          </button>
+        </div>
       </div>
 
-      {/* Error Message */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
@@ -391,7 +429,6 @@ export default function AudioRecitation({
         )}
       </AnimatePresence>
 
-      {/* Progress Bar */}
       <div className="mb-4">
         <Slider
           value={[currentTime]}
@@ -407,14 +444,8 @@ export default function AudioRecitation({
         </div>
       </div>
 
-      {/* Controls */}
       <div className="flex items-center justify-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={skipBackward}
-          disabled={currentAyah <= 1}
-        >
+        <Button variant="ghost" size="icon" onClick={skipBackward} disabled={currentAyah <= 1}>
           <SkipBack className="h-5 w-5" />
         </Button>
 
@@ -444,7 +475,6 @@ export default function AudioRecitation({
         </Button>
       </div>
 
-      {/* Volume Control */}
       <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
         <Button variant="ghost" size="icon" onClick={toggleMute}>
           {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -458,7 +488,6 @@ export default function AudioRecitation({
         />
       </div>
 
-      {/* Footer: Ayah indicator + Image toggle */}
       <div className="mt-4 flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
           Ayah {currentAyah} / {totalAyahs}

@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { useI18n } from '@/lib/i18n'
 
 export default function HeroDashboard() {
-  const { favoriteSurahs, recentlyViewed, readingStats } = useAppStore()
+  const { favoriteSurahs, recentlyViewed, readingStats, readingProgress } = useAppStore()
   const [surahs, setSurahs] = useState<Record<number, Surah>>({})
   const { t, locale } = useI18n()
 
@@ -32,6 +32,9 @@ export default function HeroDashboard() {
 
   const favSurahs = favoriteSurahs.slice(0, 3).map(n => surahs[n]).filter(Boolean)
   const recentSurahs = recentlyViewed.slice(0, 3)
+  const lastViewed = recentlyViewed[0]
+  const lastProgress = lastViewed ? readingProgress[lastViewed.surahNumber] : null
+  const lastSurah = lastViewed ? surahs[lastViewed.surahNumber] : null
 
   return (
     <div className="space-y-12">
@@ -63,7 +66,7 @@ export default function HeroDashboard() {
 
           <div className="flex flex-wrap gap-4">
             <Link
-              href="/surah/1"
+              href="/quran?surah=1"
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
             >
               <span>{t('start_reading')}</span>
@@ -79,6 +82,40 @@ export default function HeroDashboard() {
           </div>
         </div>
       </motion.section>
+
+      {/* Continue Reading Banner */}
+      {lastViewed && lastSurah && lastProgress && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-background border border-primary/15 p-5"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl" />
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium text-primary uppercase tracking-wider mb-1">{t('continue_reading')}</p>
+              <h3 className="text-lg font-bold text-foreground">{lastSurah.englishName}</h3>
+              <p className="text-sm text-muted-foreground font-arabic" dir="rtl">{lastSurah.name}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('verse')} {lastViewed.lastAyahRead} {t('of')} {lastSurah.numberOfAyahs} • {Math.round((lastProgress.versesRead / (lastSurah.numberOfAyahs || 1)) * 100)}% complete
+              </p>
+              <div className="w-48 h-1.5 bg-muted rounded-full mt-2 overflow-hidden">
+                <div 
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${Math.min(100, (lastProgress.versesRead / (lastSurah.numberOfAyahs || 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+            <Link
+              href={`/quran?surah=${lastViewed.surahNumber}#quran-ayah-${lastViewed.lastAyahRead}`}
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-lg"
+            >
+              {t('resume_reading')}
+            </Link>
+          </div>
+        </motion.section>
+      )}
 
       {/* Stats Section */}
       <motion.section
@@ -136,7 +173,7 @@ export default function HeroDashboard() {
               {recentSurahs.map((item, idx) => (
                 <Link
                   key={`${item.surahNumber}-${idx}`}
-                  href={`/surah/${item.surahNumber}`}
+                  href={`/quran?surah=${item.surahNumber}`}
                   className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-primary/5 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
@@ -186,7 +223,7 @@ export default function HeroDashboard() {
             {favSurahs.map((surah, idx) => (
               <Link
                 key={surah!.number}
-                href={`/surah/${surah!.number}`}
+                href={`/quran?surah=${surah!.number}`}
                 className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-500/5 via-background to-background border-2 border-yellow-500/20 hover:border-yellow-500/40 transition-all p-6"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-yellow-500/10 transition-all" />

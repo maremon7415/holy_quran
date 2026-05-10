@@ -15,10 +15,12 @@ interface SurahCardProps {
 
 export default function SurahCard({ surah, index }: SurahCardProps) {
   const { data: session } = useSession()
-  const { favoriteSurahs, toggleFavoriteSurah, arabicFont } = useAppStore()
+  const { favoriteSurahs, toggleFavoriteSurah, arabicFont, readingProgress } = useAppStore()
   const { t } = useI18n()
   const isFavorite = favoriteSurahs.includes(surah.number)
   const revelationLabel = surah.revelationType === 'Meccan' ? t('meccan') : t('medinan')
+  const progress = readingProgress[surah.number]
+  const progressPercent = progress && surah.numberOfAyahs ? Math.min(100, (progress.versesRead / surah.numberOfAyahs) * 100) : 0
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -37,7 +39,7 @@ export default function SurahCard({ surah, index }: SurahCardProps) {
       transition={{ duration: 0.4, delay: index * 0.03 }}
       className="h-full"
     >
-      <Link href={`/surah/${surah.number}`}>
+      <Link href={`/quran?surah=${surah.number}`}>
         <div className="group relative h-full overflow-hidden rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.96))] p-4 shadow-[0_16px_36px_-30px_rgba(15,23,42,0.2)] transition-all duration-400 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_24px_56px_-32px_rgba(36,81,61,0.25)] dark:border-primary/12 dark:bg-[linear-gradient(145deg,rgba(36,81,61,0.08),rgba(255,255,255,0.02))] dark:shadow-[0_20px_60px_-35px_rgba(36,81,61,0.55)] dark:hover:shadow-[0_28px_70px_-30px_rgba(36,81,61,0.45)]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(36,81,61,0.08),transparent_34%),linear-gradient(180deg,rgba(36,81,61,0.03),transparent_45%)] opacity-100 transition-opacity duration-500 dark:bg-[radial-gradient(circle_at_top_right,rgba(36,81,61,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(36,81,61,0.12),transparent_30%)] dark:opacity-90 dark:group-hover:opacity-100" />
           <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-primary/8 blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/14 transition-all duration-500 dark:bg-primary/10 dark:group-hover:bg-primary/20" />
@@ -73,6 +75,21 @@ export default function SurahCard({ surah, index }: SurahCardProps) {
                 <ArrowUpRight className="h-4 w-4" />
               </div>
             </div>
+
+            {progressPercent > 0 && (
+              <div className="mb-3">
+                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                  <span>{progress?.versesRead || 0}/{surah.numberOfAyahs} verses</span>
+                  <span>{Math.round(progressPercent)}%</span>
+                </div>
+                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary/70 rounded-full transition-all"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="mt-auto rounded-[20px] border border-slate-200 bg-slate-50/90 p-3.5 backdrop-blur-sm dark:border-white/5 dark:bg-background/45">
               <div className={`mb-3 text-right text-xl font-medium tracking-wide text-slate-900 dark:text-foreground/85 ${arabicFont}`}>

@@ -59,6 +59,8 @@
   --font-amiri: var(--font-amiri);
   --font-cairo: var(--font-cairo);
   --font-lateef: var(--font-lateef);
+  --font-scheherazade: var(--font-scheherazade);
+  --font-noto-naskh: var(--font-noto-naskh);
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
   --color-card: rgb(var(--card));
@@ -295,4 +297,35 @@ body.lang-bn {
 
 [dir='rtl'] .rtl\:text-left {
   text-align: left;
+}
+
+.quran-arabic-text,
+.quran-translation-text {
+  transition: font-size 0.15s ease-out;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground));
 }

@@ -63,6 +63,16 @@ interface DhikrSession {
   total: number
 }
 
+interface AudioState {
+  surahNumber: number
+  ayahNumber: number
+  isPlaying: boolean
+  reciterId: number
+  autoplay: boolean
+  volume: number
+  isMuted: boolean
+}
+
 interface AppStore {
   language: 'en' | 'ar' | 'bn'
   fontSize: number
@@ -88,6 +98,8 @@ interface AppStore {
   dhikrSessions: DhikrSession[]
   location: LocationState
   prayerMethod: string
+  audioState: AudioState
+  dailyGoal: number
 
   setLanguage: (lang: 'en' | 'ar' | 'bn') => void
   setFontSize: (size: number) => void
@@ -97,6 +109,13 @@ interface AppStore {
   setArabicFont: (font: string) => void
   setEnglishFont: (font: string) => void
   setBanglaFont: (font: string) => void
+  setAudioPlaying: (playing: boolean) => void
+  playAyah: (surah: number, ayah: number) => void
+  stopAudio: () => void
+  setAudioReciter: (id: number) => void
+  setAudioAutoplay: (enabled: boolean) => void
+  setAudioVolume: (vol: number) => void
+  setDailyGoal: (goal: number) => void
 
   incrementVersesRead: (count: number) => void
   markAyahAsRead: (surahNumber: number, ayahNumber: number, options?: MarkAyahOptions) => void
@@ -251,8 +270,18 @@ export const useAppStore = create<AppStore>()(
 
       bookmarkedDuas: [],
       dhikrSessions: [],
-      location: { latitude: null, longitude: null, city: null },
-      prayerMethod: 'Karachi',
+  location: { latitude: null, longitude: null, city: null },
+  prayerMethod: 'Karachi',
+  audioState: {
+    surahNumber: 1,
+    ayahNumber: 1,
+    isPlaying: false,
+    reciterId: 7,
+    autoplay: false,
+    volume: 1,
+    isMuted: false,
+  },
+  dailyGoal: 7,
 
       setLanguage: (lang) => set({ language: lang }),
       setFontSize: (size) => set({ fontSize: size }),
@@ -541,9 +570,35 @@ export const useAppStore = create<AppStore>()(
         }
       },
 
-      setLocation: (location) => set({ location }),
-      setPrayerMethod: (prayerMethod) => set({ prayerMethod }),
-    }),
+  setLocation: (location) => set({ location }),
+  setPrayerMethod: (prayerMethod) => set({ prayerMethod }),
+  
+  setAudioPlaying: (playing: boolean) => set((state) => ({
+    audioState: { ...state.audioState, isPlaying: playing }
+  })),
+  
+  playAyah: (surah: number, ayah: number) => set((state) => ({
+    audioState: { ...state.audioState, surahNumber: surah, ayahNumber: ayah, isPlaying: true }
+  })),
+  
+  stopAudio: () => set((state) => ({
+    audioState: { ...state.audioState, isPlaying: false, surahNumber: 1, ayahNumber: 1 }
+  })),
+  
+  setAudioReciter: (id: number) => set((state) => ({
+    audioState: { ...state.audioState, reciterId: id }
+  })),
+  
+  setAudioAutoplay: (enabled: boolean) => set((state) => ({
+    audioState: { ...state.audioState, autoplay: enabled }
+  })),
+  
+  setAudioVolume: (vol: number) => set((state) => ({
+    audioState: { ...state.audioState, volume: vol }
+  })),
+  
+  setDailyGoal: (goal: number) => set({ dailyGoal: goal }),
+}),
     {
       name: 'quran-store',
     }
