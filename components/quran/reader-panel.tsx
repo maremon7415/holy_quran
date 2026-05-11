@@ -337,7 +337,7 @@ export default function ReaderPanel({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto px-6 lg:px-10 pb-28">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 lg:px-10 pb-28">
         <div className="text-center pt-4 pb-2">
           {revelationType && (
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium mb-2 ${
@@ -358,7 +358,7 @@ export default function ReaderPanel({
           </p>
         </div>
 
-        <div className="flex items-start justify-start mt-3 mb-4">
+        <div className="flex flex-wrap items-start justify-start gap-2 mt-3 mb-4">
           {(['arabic', 'english', 'bengali'] as const).map((lang) => (
             <button
               key={lang}

@@ -21,6 +21,8 @@ import {
   Calendar,
   Hand,
   CircleDot,
+  PanelLeftClose,
+  PanelRightClose,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useAppStore } from '@/lib/store'
@@ -234,23 +236,23 @@ function QuranPageContent() {
           </button>
 
           <div className="flex items-center gap-1 lg:hidden">
-            <button
-              onClick={() => setMobilePanel(mobilePanel === 'left' ? 'none' : 'left')}
-              className={`p-2 rounded-xl transition-colors ${mobilePanel === 'left' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'}`}
-            >
-              <LayoutGrid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setMobilePanel(mobilePanel === 'right' ? 'none' : 'right')}
-              className={`p-2 rounded-xl transition-colors ${mobilePanel === 'right' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'}`}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+<button
+            onClick={() => setMobilePanel(mobilePanel === 'left' ? 'none' : 'left')}
+            className={`p-2 rounded-xl transition-colors ${mobilePanel === 'left' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'}`}
+          >
+            {mobilePanel === 'left' ? <PanelLeftClose className="w-5 h-5" /> : <LayoutGrid className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={() => setMobilePanel(mobilePanel === 'right' ? 'none' : 'right')}
+            className={`p-2 rounded-xl transition-colors ${mobilePanel === 'right' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'}`}
+          >
+            {mobilePanel === 'right' ? <PanelRightClose className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         <nav className="hidden lg:flex flex-col w-16 shrink-0 border-r border-border/40 bg-card/50 py-4 items-center gap-1">
           {navItems.map(({ id, icon: Icon, label, href }) => {
             const isActive = isNavActive({ id, icon: Icon, label, href, alwaysActive: false })
@@ -271,6 +273,26 @@ function QuranPageContent() {
           })}
         </nav>
 
+        {/* Mobile Left Edge Slider - Shows when left panel is closed (only on small mobile) */}
+        {!mobilePanel && (
+          <button
+            onClick={() => setMobilePanel('left')}
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-5 h-14 bg-primary/90 text-primary-foreground rounded-r-md shadow-md hover:bg-primary transition-all hover:translate-x-1"
+          >
+            <PanelLeftClose className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {/* Mobile Right Edge Slider - Shows when right panel is closed (only on small mobile) */}
+        {!mobilePanel && (
+          <button
+            onClick={() => setMobilePanel('right')}
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-5 h-14 bg-primary/90 text-primary-foreground rounded-l-md shadow-md hover:bg-primary transition-all hover:-translate-x-1"
+          >
+            <PanelRightClose className="w-3.5 h-3.5" />
+          </button>
+        )}
+
         <AnimatePresence>
           {mobilePanel === 'left' && (
             <>
@@ -279,14 +301,14 @@ function QuranPageContent() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setMobilePanel('none')}
-                className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+                className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
               />
               <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-                className="fixed inset-y-0 left-0 z-40 w-[85vw] max-w-[360px] bg-background border-r border-border shadow-2xl lg:hidden"
+                className="fixed inset-y-0 left-0 z-40 w-[85vw] max-w-[360px] bg-background border-r border-border shadow-2xl md:hidden"
                 style={{ top: '64px' }}
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -307,6 +329,14 @@ function QuranPageContent() {
             </>
           )}
         </AnimatePresence>
+
+        <div className="hidden md:flex lg:hidden w-[280px] shrink-0 border-r border-border/40 bg-card/30">
+          <SurahListPanel
+            surahs={surahs}
+            selectedSurah={selectedSurah}
+            onSelectSurah={handleSelectSurah}
+          />
+        </div>
 
         <div className="hidden lg:flex w-[340px] xl:w-[380px] shrink-0 border-r border-border/40 bg-card/30">
           <SurahListPanel
@@ -345,14 +375,14 @@ function QuranPageContent() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setMobilePanel('none')}
-                className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+                className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
               />
               <motion.div
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-                className="fixed inset-y-0 right-0 z-40 w-[85vw] max-w-[320px] bg-background border-l border-border shadow-2xl lg:hidden"
+                className="fixed inset-y-0 right-0 z-40 w-[85vw] max-w-[320px] bg-background border-l border-border shadow-2xl md:hidden"
                 style={{ top: '64px' }}
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -373,6 +403,14 @@ function QuranPageContent() {
             </>
           )}
         </AnimatePresence>
+
+        <div className="hidden md:flex lg:hidden w-[260px] shrink-0 border-l border-border/40 bg-card/30">
+          <SettingsPanel
+            surahNumber={selectedSurah}
+            currentAyah={currentAyahForSettings}
+            totalAyahs={ayahs.length}
+          />
+        </div>
 
         <div className="hidden lg:flex w-[300px] xl:w-[320px] shrink-0 border-l border-border/40 bg-card/30">
           <SettingsPanel
