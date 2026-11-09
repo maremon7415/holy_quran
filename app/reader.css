@@ -147,3 +147,6 @@ html:not([data-reader-mode='reading']) .only-in-mushaf { display: none; }
 @media print {
   .ayah-actions, .reader-chrome { display: none !important; }
 }
+
+/* Single-ayah landing pages show every translation regardless of reader prefs */
+.force-tr [data-tr] { display: block !important; }

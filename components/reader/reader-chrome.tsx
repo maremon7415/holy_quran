@@ -25,6 +25,8 @@ export interface ReaderChromeProps {
   titleAr: string
   /** number of ayahs (surah pages) – enables "jump to ayah" by number */
   total?: number
+  /** single-ayah pages: panels + controller only (no mini header / dock) */
+  minimal?: boolean
 }
 
 /** Mirror SiteHeader's hide-on-scroll-down logic so the mini bar can sit under it when it's visible. */
@@ -47,6 +49,18 @@ function useScrollState(threshold: number) {
     return () => window.removeEventListener('scroll', on)
   }, [threshold])
   return state
+}
+
+function useIsLg() {
+  const [v, setV] = useState(false)
+  useEffect(() => {
+    const m = window.matchMedia('(min-width: 1024px)')
+    const on = () => setV(m.matches)
+    on()
+    m.addEventListener('change', on)
+    return () => m.removeEventListener('change', on)
+  }, [])
+  return v
 }
 
 function ProgressBar() {
@@ -75,7 +89,25 @@ function ProgressBar() {
   )
 }
 
-export function ReaderChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromeProps) {
+export function ReaderChrome(props: ReaderChromeProps) {
+  if (props.minimal) return <MinimalChrome {...props} />
+  return <FullChrome {...props} />
+}
+
+function MinimalChrome({ surah, chapterIds }: ReaderChromeProps) {
+  return (
+    <>
+      <ReaderController surah={surah} />
+      <ArabicLayers chapters={chapterIds} />
+      <SettingsPanel />
+      <TafsirPanel />
+      <ShareImagePanel />
+      <AyahMenu />
+    </>
+  )
+}
+
+function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromeProps) {
   const t = useTx()
   const lang = useLang()
   const { past, headerShown } = useScrollState(420)
@@ -117,7 +149,8 @@ export function ReaderChrome({ surah, chapterIds, title, titleAr, total }: Reade
   }
 
   const showBar = past && !immersive
-  const dockBottom = immersive ? '1.5rem' : `calc(${hasPlayer ? '10.5rem' : '6.25rem'} + env(safe-area-inset-bottom))`
+  const isLg = useIsLg()
+  const dockBottom = immersive || isLg ? (hasPlayer && !immersive ? '6.5rem' : '1.5rem') : `calc(${hasPlayer ? '10.5rem' : '6.25rem'} + env(safe-area-inset-bottom))`
 
   return (
     <>
@@ -129,7 +162,7 @@ export function ReaderChrome({ surah, chapterIds, title, titleAr, total }: Reade
         initial={false}
         animate={{ y: showBar ? (headerShown ? 64 : 0) : -80, opacity: showBar ? 1 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-        className="reader-chrome glass fixed inset-x-0 top-0 z-40 border-b shadow-[0_10px_30px_-22px_rgb(var(--shadow-color)/0.5)]"
+        className="reader-chrome fixed inset-x-0 top-0 z-40 border-b bg-background/90 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-22px_rgb(var(--shadow-color)/0.5)]"
         style={{ pointerEvents: showBar ? 'auto' : 'none' }}
         aria-hidden={!showBar}
       >
@@ -175,7 +208,7 @@ export function ReaderChrome({ surah, chapterIds, title, titleAr, total }: Reade
         className="reader-chrome fixed right-3 z-40 sm:right-5 lg:right-8"
         style={{ bottom: dockBottom }}
       >
-        <div className="glass flex flex-col items-center gap-1 rounded-full border p-1.5 shadow-[0_18px_40px_-16px_rgb(var(--shadow-color)/0.55)]">
+        <div className="flex flex-col items-center gap-1 rounded-full border bg-popover/90 p-1.5 backdrop-blur-xl lg:flex-row-reverse shadow-[0_18px_40px_-16px_rgb(var(--shadow-color)/0.55)]">
           <motion.button
             type="button"
             whileTap={{ scale: 0.88 }}
@@ -192,7 +225,7 @@ export function ReaderChrome({ surah, chapterIds, title, titleAr, total }: Reade
           <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-11 place-items-center rounded-full text-foreground/80 transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস' })}>
             <SlidersHorizontal className="size-[19px]" />
           </motion.button>
-          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('grid size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'text-primary' : 'text-foreground/80')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড' })} title="Focus (f)">
+          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'grid text-primary' : 'hidden text-foreground/80 sm:grid')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড' })} title="Focus (f)">
             {immersive ? <Minimize2 className="size-[18px]" /> : <Maximize2 className="size-[18px]" />}
           </motion.button>
         </div>

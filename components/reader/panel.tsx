@@ -58,7 +58,7 @@ export function Panel({
                 transition={{ duration: 0.25 }}
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount>
+            <Dialog.Content asChild forceMount onOpenAutoFocus={(e) => e.preventDefault()}>
               <motion.div
                 className={cn(
                   'reader-chrome fixed z-[81] flex flex-col overflow-hidden border bg-popover text-popover-foreground shadow-[0_30px_80px_-20px_rgb(var(--shadow-color)/0.45)] outline-none',

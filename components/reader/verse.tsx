@@ -52,15 +52,12 @@ export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; sur
         <p data-tr="tl" className="text-[length:calc(var(--trans-size,17px)*0.92)] italic leading-relaxed text-muted-foreground">{v.tl}</p>
         <div data-tr="en" data-ed="sahih">
           <p className="text-[length:var(--trans-size,17px)] leading-[1.75] text-foreground/90">{v.en}</p>
-          <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">Saheeh International</p>
         </div>
         <div data-tr="en" data-ed="haleem">
           <p className="text-[length:var(--trans-size,17px)] leading-[1.75] text-foreground/90">{v.enH}</p>
-          <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">Abdel Haleem</p>
         </div>
         <div data-tr="bn" lang="bn">
           <p className="font-bangla text-[length:calc(var(--trans-size,17px)*1.04)] leading-[1.85] text-foreground/90">{v.bn}</p>
-          <p className="mt-1 font-bangla text-[11px] font-semibold tracking-wide text-muted-foreground/70">তাইসীরুল কুরআন</p>
         </div>
       </div>
     </article>
