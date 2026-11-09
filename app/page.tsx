@@ -30,9 +30,9 @@ const FEATURES = [
 ]
 
 const MOODS = [
-  { en: 'Anxious', bn: 'দুশ্চিন্তাগ্রস্ত', emoji: '🌧️' }, { en: 'Sad', bn: 'দুঃখিত', emoji: '💧' }, { en: 'Grateful', bn: 'কৃতজ্ঞ', emoji: '🌿' },
-  { en: 'Lonely', bn: 'একাকী', emoji: '🌙' }, { en: 'Hopeless', bn: 'হতাশ', emoji: '🕯️' }, { en: 'Angry', bn: 'রাগান্বিত', emoji: '🔥' },
-  { en: 'Guilty', bn: 'অনুতপ্ত', emoji: '🤲' }, { en: 'Afraid', bn: 'ভীত', emoji: '🛡️' },
+  { slug: 'anxiety', en: 'Anxious', bn: 'দুশ্চিন্তাগ্রস্ত', emoji: '🌧️' }, { slug: 'grief-sadness', en: 'Sad', bn: 'দুঃখিত', emoji: '💧' }, { slug: 'gratitude', en: 'Grateful', bn: 'কৃতজ্ঞ', emoji: '🌿' },
+  { slug: 'loneliness', en: 'Lonely', bn: 'একাকী', emoji: '🌙' }, { slug: 'hopelessness', en: 'Hopeless', bn: 'হতাশ', emoji: '🕯️' }, { slug: 'anger', en: 'Angry', bn: 'রাগান্বিত', emoji: '🔥' },
+  { slug: 'guilt-forgiveness', en: 'Guilty', bn: 'অনুতপ্ত', emoji: '🤲' }, { slug: 'fear', en: 'Afraid', bn: 'ভীত', emoji: '🛡️' },
 ]
 
 const POPULAR = [36, 67, 18, 55, 56, 1, 2, 112]
@@ -138,7 +138,7 @@ export default async function Home() {
           <Reveal delay={0.1}>
             <div className="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2.5">
               {MOODS.map((m) => (
-                <Link key={m.en} href={`/topics?feeling=${m.en.toLowerCase()}`} className="group inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2.5 text-sm font-medium transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent active:scale-95">
+                <Link key={m.en} href={`/topics/${m.slug}`} className="group inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2.5 text-sm font-medium transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent active:scale-95">
                   <span className="transition-transform group-hover:scale-125">{m.emoji}</span> {m.en} <span className="font-bangla text-muted-foreground">· {m.bn}</span>
                 </Link>
               ))}

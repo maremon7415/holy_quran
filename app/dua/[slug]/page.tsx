@@ -12,7 +12,7 @@ import { UiIcon } from '@/components/ui-icon'
 import { duas, duaBySlug, duaCategories } from '@/data/content/duas'
 import { topics } from '@/data/content/topics'
 import { resolveDua, refLabel } from '@/lib/content/resolve'
-import { articleLd, buildMeta, clip, howToLd } from '@/lib/content/seo'
+import { articleLd, buildMeta, clip, howToLd, shortTitle } from '@/lib/content/seo'
 import { chapters, readerHref } from '@/lib/quran/chapters'
 
 type P = { params: Promise<{ slug: string }> }
@@ -45,8 +45,8 @@ export default async function DuaPage({ params }: P) {
   const copyText = `${d.ar}\n\n${d.tl}\n\n${d.meaning.en}\n\n${d.meaning.bn}\n\n— ${d.source}`
 
   const faqs = [
-    { q: `What is the meaning of ${d.title.en.split(/[:—]/)[0].trim()}?`, a: d.meaning.en },
-    { q: `${d.title.bn.split(/[:—]/)[0].trim()} এর অর্থ কী?`, a: d.meaning.bn },
+    { q: `What is the meaning of ${shortTitle(d.title.en)}?`, a: d.meaning.en },
+    { q: `${shortTitle(d.title.bn)} এর অর্থ কী?`, a: d.meaning.bn },
     { q: 'When should I recite this dua?', a: d.when.en + (d.count ? ` Number of times: ${d.count}.` : '') },
     { q: 'What is the source of this dua?', a: `${d.source}.` },
   ]
@@ -62,7 +62,7 @@ export default async function DuaPage({ params }: P) {
         articleLd({ headline: d.title.en, description: d.meaning.en, path, about: 'Dua', keywords: [...(d.keywords ?? [])] }),
         howToLd({ name: `How to recite: ${d.title.en}`, description: `When and how to make this dua. ${d.source}.`, path, steps }),
       ]} />
-      <Breadcrumbs items={[{ name: 'Duas', href: '/dua' }, { name: cat.title.en, href: `/dua#${cat.id}` }, { name: d.title.en.split(/[:—]/)[0].trim(), href: path }]} className="mb-4" />
+      <Breadcrumbs items={[{ name: 'Duas', href: '/dua' }, { name: cat.title.en, href: `/dua#${cat.id}` }, { name: shortTitle(d.title.en), href: path }]} className="mb-4" />
 
       <PageHero eyebrow={`${cat.title.en} · ${cat.title.bn}`} icon={cat.icon} title={d.title.en} subtitle={undefined}>
         <p lang="bn" className="font-bangla mt-2 text-xl font-medium text-gold sm:text-2xl">{d.title.bn}</p>

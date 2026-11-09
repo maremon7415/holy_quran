@@ -204,30 +204,17 @@ export default async function AyahPage({ params }: Props) {
       {words.length > 0 && (
         <section aria-labelledby="wbw" className="mt-10">
           <h2 id="wbw" className="mb-4 flex items-center gap-2 font-display text-2xl font-semibold"><UiIcon name="word" size={26} /> Word by word</h2>
-          <div className="card-soft overflow-hidden">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-surface-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3 text-right">Arabic</th>
-                  <th className="hidden px-4 py-3 sm:table-cell">Transliteration</th>
-                  <th className="px-4 py-3">English</th>
-                  <th className="px-4 py-3 font-bangla normal-case tracking-normal">বাংলা</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {words.map((w) => (
-                  <tr key={w.position} className="transition-colors hover:bg-surface-2/60">
-                    <td className="px-4 py-3 text-xs tabular-nums text-muted-foreground">{w.position}</td>
-                    <td className="px-4 py-2 text-right font-arabic text-2xl leading-[1.9] text-arabic" lang="ar" dir="rtl">{w.ar}<span className="mt-0.5 block text-[11px] italic leading-tight text-muted-foreground sm:hidden" dir="ltr">{w.tl}</span></td>
-                    <td className="hidden px-4 py-3 italic text-muted-foreground sm:table-cell">{w.tl}</td>
-                    <td className="px-4 py-3">{w.en}</td>
-                    <td className="px-4 py-3 font-bangla" lang="bn">{w.bn}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4" dir="rtl">
+            {words.map((w) => (
+              <li key={w.position} className="card-soft relative flex flex-col items-center px-3 pb-3 pt-2 text-center">
+                <span className="absolute left-2.5 top-2 text-[10px] font-bold tabular-nums text-muted-foreground/70" dir="ltr">{w.position}</span>
+                <span className="font-arabic text-[1.7rem] leading-[1.9] text-arabic" lang="ar">{w.ar}</span>
+                {w.tl && <span className="text-xs italic text-muted-foreground" dir="ltr">{w.tl}</span>}
+                <span className="mt-1.5 text-sm font-semibold leading-snug" dir="ltr">{w.en}</span>
+                {w.bn && <span className="mt-0.5 font-bangla text-sm leading-snug text-foreground/75" lang="bn" dir="ltr">{w.bn}</span>}
+              </li>
+            ))}
+          </ol>
         </section>
       )}
 

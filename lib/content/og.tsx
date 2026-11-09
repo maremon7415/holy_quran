@@ -41,6 +41,9 @@ export interface OgProps {
   arabicSize?: number
 }
 
+/** Satori's bundled shaping copes with plain Arabic + harakat but not Uthmani-only marks; normalise them away. */
+const plainArabic = (s: string) => s.replace(/ٱ/g, 'ا').replace(/[\u0670\u06D6-\u06ED\u08D3-\u08FF\u0640]/g, '').replace(/\s+/g, ' ').trim()
+
 export async function renderOg({ kicker, title, subtitle, arabic, arabicSize = 96 }: OgProps) {
   const font = await loadArabicFont()
   const showArabic = !!(arabic && font)
@@ -57,7 +60,7 @@ export async function renderOg({ kicker, title, subtitle, arabic, arabicSize = 9
           {kicker && <div style={{ marginLeft: 12, padding: '6px 18px', borderRadius: 40, background: '#ffffff1f', fontSize: 24, color: '#f3e7cc', display: 'flex' }}>{kicker}</div>}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {showArabic && <div style={{ fontFamily: 'Tajawal', fontSize: arabicSize, color: GOLD, lineHeight: 1.25, display: 'flex', justifyContent: 'flex-start' }}>{arabic}</div>}
+          {showArabic && <div style={{ fontFamily: 'Tajawal', fontSize: arabicSize, color: GOLD, lineHeight: 1.3, width: '100%', display: 'flex', direction: 'rtl', justifyContent: 'flex-end' }}>{plainArabic(arabic!)}</div>}
           <div style={{ fontSize: titleSize, fontWeight: 800, lineHeight: 1.1, display: 'flex' }}>{title}</div>
           {subtitle && <div style={{ fontSize: 30, color: '#d6e6df', lineHeight: 1.35, display: 'flex' }}>{subtitle}</div>}
         </div>

@@ -54,7 +54,7 @@ export default async function NamePage({ params }: P) {
       <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-accent via-card to-gold-soft/50 px-5 py-10 text-center sm:py-14">
         <div aria-hidden className="bg-pattern absolute inset-0 -z-10 [mask-image:radial-gradient(circle,#000,transparent_72%)]" />
         <span className="inline-grid size-10 place-items-center rounded-full bg-card/80 text-sm font-bold text-primary">{n.n}</span>
-        <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold mt-2 text-[clamp(4rem,16vw,8rem)] leading-[1.5]">{n.ar}</p>
+        <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold mt-2 text-[clamp(4rem,16vw,8rem)] py-3 leading-[1.9]">{n.ar}</p>
         <h1 className="font-display text-3xl font-semibold sm:text-5xl">{n.tl}</h1>
         <p className="font-bangla mt-1 text-xl text-gold">{n.tlBn}</p>
         <p className="mx-auto mt-5 max-w-xl text-lg">{n.en}</p>

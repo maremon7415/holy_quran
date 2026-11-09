@@ -29,12 +29,12 @@ function FlipCard({ item, index }: { item: NameItem; index: number }) {
           type="button"
           aria-label={`${item.tl}: ${item.en}. Flip card`}
           aria-pressed={flipped}
-          onClick={() => setFlipped((f) => !f)}
+          onClick={(e) => { if (!canHover() || e.detail === 0) setFlipped((f) => !f) }}
           className="card-soft absolute inset-0 flex flex-col items-center justify-center rounded-3xl p-4 text-center [backface-visibility:hidden]"
         >
           <span className="absolute left-3.5 top-3 grid size-7 place-items-center rounded-full bg-accent text-[11px] font-bold text-accent-foreground">{item.n}</span>
           <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 rounded-3xl [mask-image:radial-gradient(circle_at_50%_40%,#000,transparent_70%)]" />
-          <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative text-[2.6rem] leading-[1.6]">{item.ar}</span>
+          <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative py-2 text-[2.6rem] leading-[1.9]">{item.ar}</span>
           <span className="relative mt-1 font-display text-[15px] font-semibold">{item.tl}</span>
           <span className="font-bangla relative text-xs text-muted-foreground">{item.tlBn}</span>
         </button>
@@ -85,7 +85,7 @@ function Flashcards({ names }: { names: NameItem[] }) {
           className="card-soft relative mt-5 flex min-h-[20rem] w-full flex-col items-center justify-center rounded-[2rem] p-6 text-center"
         >
           <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 rounded-[2rem] [mask-image:radial-gradient(circle,#000,transparent_75%)]" />
-          <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative text-6xl leading-[1.7] sm:text-7xl">{cur.ar}</span>
+          <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative py-2 text-6xl leading-[1.9] sm:text-7xl">{cur.ar}</span>
           {show ? (
             <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="relative mt-4 block">
               <span className="font-display block text-xl font-semibold">{cur.tl} · {cur.en}</span>
@@ -128,7 +128,7 @@ function Quiz({ names }: { names: NameItem[] }) {
       <div className="card-soft relative overflow-hidden rounded-[2rem] p-6 text-center">
         <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(circle,#000,transparent_75%)]" />
         <p className="relative text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'What does this Name mean?', bn: 'এই নামের অর্থ কী?' })}</p>
-        <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative mt-2 text-6xl leading-[1.7]">{round.target.ar}</p>
+        <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative mt-2 py-2 text-6xl leading-[1.9]">{round.target.ar}</p>
         {picked != null && <p className="relative font-display text-lg font-semibold">{round.target.tl}</p>}
       </div>
       <div className="mt-4 grid gap-2.5">

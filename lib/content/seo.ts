@@ -90,3 +90,6 @@ export function buildMeta(m: { title: string; description: string; path: string;
     ...(m.noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }
+
+/** "Ayatul Kursi (Quran 2:255)" stays whole; "Title: subtitle" and "Title — subtitle" are cut at the separator. */
+export const shortTitle = (t: string) => t.split(/:\s| — /)[0].trim()

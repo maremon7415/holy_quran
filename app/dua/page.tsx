@@ -6,7 +6,7 @@ import { PageHero, pageShell } from '@/components/content/page-hero'
 import { DuaLibrary } from '@/components/content/dua-library'
 import { duaCategories } from '@/data/content/duas'
 import { resolveAllDuas } from '@/lib/content/resolve'
-import { buildMeta, collectionLd } from '@/lib/content/seo'
+import { buildMeta, collectionLd, shortTitle } from '@/lib/content/seo'
 
 export const metadata: Metadata = buildMeta({
   title: 'Daily Duas from the Quran & Sunnah: Arabic, Meaning & Bangla | দোয়া সমূহ',
@@ -39,7 +39,7 @@ export default async function DuaPage() {
         <p lang="bn" className="font-bangla mt-2">প্রতিটি দোয়ার সঙ্গে কুরআনের আয়াত বা হাদিসের গ্রন্থের উৎস দেওয়া আছে। পাঠের নিয়ম ও বিধান জানতে যোগ্য আলেমের পরামর্শ নিন।</p>
         <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
           <span className="font-semibold text-foreground">Popular:</span>
-          {popular.map((s) => { const d = all.find((x) => x.slug === s)!; return <Link key={s} href={`/dua/${s}`} className="text-primary hover:underline">{d.title.en.split(':')[0].split('—')[0].trim()}</Link> })}
+          {popular.map((s) => { const d = all.find((x) => x.slug === s)!; return <Link key={s} href={`/dua/${s}`} className="text-primary hover:underline">{shortTitle(d.title.en)}</Link> })}
         </p>
       </section>
     </div>
