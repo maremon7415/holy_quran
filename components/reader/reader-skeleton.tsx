@@ -34,6 +34,3 @@ export function ReaderSkeleton() {
   )
 }
 
-export function ReaderNotFound({ kind = 'surah' }: { kind?: 'surah' | 'ayah' | 'juz' }) {
-  return null as unknown as JSX.Element
-}

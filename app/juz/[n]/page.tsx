@@ -14,7 +14,6 @@ import { UiIcon } from '@/components/ui-icon'
 import { Breadcrumbs, Chip } from '@/components/reader/surah-header'
 import { Bismillah, VerseBlock, needsBismillah } from '@/components/reader/verse'
 import { ReaderChrome } from '@/components/reader/reader-chrome'
-import { ReaderPrefsInline } from '@/components/reader/prefs-script'
 import { TranslationCredits } from '@/components/reader/translation-credits'
 import { SettingsButton } from '@/components/reader/client-bits'
 import { TajweedNotice } from '@/components/reader/side-rails'
@@ -75,7 +74,6 @@ export default async function JuzPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-[860px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6 lg:pb-20">
       <JsonLd data={ld} />
-      <ReaderPrefsInline />
       <header data-reader-hero className="relative overflow-hidden rounded-[2rem] border bg-card px-5 pb-8 pt-6 text-center sm:rounded-[2.5rem] sm:px-10 sm:pt-8">
         <div className="bg-pattern pointer-events-none absolute inset-0" />
         <div className="pointer-events-none absolute -top-32 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--glow),transparent)]" />
@@ -94,9 +92,9 @@ export default async function JuzPage({ params }: Props) {
             <Chip icon="read">{first.k} → {last.k}</Chip>
             <Chip icon="read">Page {first.p}–{last.p}</Chip>
           </div>
-          <div className="mt-5 flex flex-wrap justify-center gap-2">
+          <div className="no-scrollbar -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0">
             {chapterIds.map((s) => (
-              <Link key={s} href={surahHref(s)} className="rounded-full border bg-background/60 px-3 py-1.5 text-xs font-semibold transition hover:border-primary/40 hover:text-primary">
+              <Link key={s} href={surahHref(s)} className="shrink-0 rounded-full border bg-background/60 px-3 py-1.5 text-xs font-semibold transition hover:border-primary/40 hover:text-primary">
                 {s}. {chapters[s - 1].nameSimple} <span className="text-muted-foreground">{j.map[String(s)]}</span>
               </Link>
             ))}

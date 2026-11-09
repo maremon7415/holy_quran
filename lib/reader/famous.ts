@@ -17,7 +17,7 @@ const famous: Record<string, FamousAyah> = {
   '2:255': { en: 'Ayatul Kursi', bn: 'আয়াতুল কুরসি', ar: 'آية الكرسي', aka: ['Ayat al-Kursi', 'Throne Verse'] },
   '2:256': { en: 'La Ikraha fid-Din', bn: 'লা ইকরাহা ফিদ্দীন', aka: ['No compulsion in religion'] },
   '2:285': { en: 'Amanar Rasul', bn: 'আমানার রাসূল', ar: 'آمن الرسول', aka: ['Last two ayahs of Al-Baqarah'] },
-  '2:286': { en: 'La Yukallifullahu Nafsan (Amanar Rasul)', bn: 'লা ইউকাল্লিফুল্লাহু নাফসান', aka: ['Last ayah of Al-Baqarah'] },
+  '2:286': { en: 'Amanar Rasul – La Yukallifullahu Nafsan', bn: 'লা ইউকাল্লিফুল্লাহু নাফসান', aka: ['Last ayah of Al-Baqarah'] },
   '3:8': { en: 'Rabbana La Tuzigh Qulubana', bn: 'রাব্বানা লা তুযিগ কুলূবানা' },
   '3:26': { en: 'Qulillahumma Malikal Mulk', bn: 'কুলিল্লাহুম্মা মালিকাল মুলক' },
   '3:139': { en: 'Do not lose hope nor be sad', bn: 'হতাশ হয়ো না, দুঃখ করো না' },

@@ -150,3 +150,4 @@ html:not([data-reader-mode='reading']) .only-in-mushaf { display: none; }
 
 /* Single-ayah landing pages show every translation regardless of reader prefs */
 .force-tr [data-tr] { display: block !important; }
+.ayah-marker.ayah-marker-3 { font-size: 0.5em; min-width: 2em; height: 2em; }

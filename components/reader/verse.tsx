@@ -37,12 +37,12 @@ export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; sur
         <p className="quran-text ar-plain text-right text-[length:var(--quran-size,34px)]" lang="ar" dir="rtl">
           {tokens.map((t, i) =>
             t.pos ? (
-              <span key={i} className="w" data-w={t.pos}>{t.text}{' '}</span>
+              <span key={i} className="w" data-w={t.pos}>{t.text}{t.waqf && <>{'\u00a0'}<span className="waqf">{t.waqf}</span></>}{i === tokens.length - 1 ? '\u00a0' : ' '}</span>
             ) : (
-              <span key={i} className="waqf">{t.text}{' '}</span>
+              <span key={i} className="waqf">{t.text}{i === tokens.length - 1 ? '\u00a0' : ' '}</span>
             )
           )}
-          <span className="ayah-marker" aria-label={`Ayah ${v.n}`}>{toArabicDigits(v.n)}</span>
+          <span className={v.n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'} aria-label={`Ayah ${v.n}`}>{toArabicDigits(v.n)}</span>
         </p>
         <div className="tj-slot" data-slot-tj={v.k} />
         <div className="wbw-slot" data-slot-wbw={v.k} />

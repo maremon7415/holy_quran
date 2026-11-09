@@ -31,7 +31,6 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
     const unsub = useReader.subscribe(apply)
     return () => {
       unsub()
-      delete document.documentElement.dataset.readerMode
       useUi.getState().setImmersive(false)
     }
   }, [])
@@ -92,9 +91,11 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
       raf = 0
       let best: HTMLElement | null = null
       let bestTop = Infinity
+      const minBottom = window.innerHeight * 0.3 // ignore an ayah whose tail is just peeking under the bar
       for (const el of visible.keys()) {
-        const top = el.getBoundingClientRect().top
-        if (top < bestTop) { bestTop = top; best = el }
+        const r = el.getBoundingClientRect()
+        if (r.bottom < minBottom) continue
+        if (r.top < bestTop) { bestTop = r.top; best = el }
       }
       if (!best) return
       const key = best.dataset.ayah!
@@ -115,6 +116,8 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
       { rootMargin: '-90px 0px -40% 0px', threshold: 0 }
     )
     els.forEach((el) => io.observe(el))
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(pickInView) }
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     const tick = window.setInterval(() => {
       const now = Date.now()
@@ -155,6 +158,7 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
 
     return () => {
       io.disconnect()
+      window.removeEventListener('scroll', onScroll)
       window.clearInterval(tick)
       window.clearInterval(flushTimer)
       document.removeEventListener('visibilitychange', onHide)

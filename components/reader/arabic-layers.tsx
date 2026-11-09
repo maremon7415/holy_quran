@@ -23,9 +23,9 @@ function useSlots(attr: 'data-slot-tj' | 'data-slot-wbw', enabled: boolean) {
 function tajweedToHtml(html: string, n: number) {
   const tokens = tokenizeTajweedHtml(html)
   const body = tokens
-    ? tokens.map((t) => (t.pos ? `<span class="w" data-w="${t.pos}">${t.text}</span>` : `<span class="waqf">${t.text}</span>`)).join(' ')
+    ? tokens.map((t) => (t.pos ? `<span class="w" data-w="${t.pos}">${t.text}${t.waqf ? `&nbsp;<span class="waqf">${t.waqf}</span>` : ''}</span>` : `<span class="waqf">${t.text}</span>`)).join(' ')
     : html.replace(/<span class=end>[^<]*<\/span>/g, '')
-  return `${body} <span class="ayah-marker">${toArabicDigits(n)}</span>`
+  return `${body}&nbsp;<span class="ayah-marker${n >= 100 ? ' ayah-marker-3' : ''}">${toArabicDigits(n)}</span>`
 }
 
 const TajweedLine = memo(function TajweedLine({ html, n }: { html: string; n: number }) {
@@ -50,7 +50,7 @@ const WbwTiles = memo(function WbwTiles({ words, n }: { words: WbwWord[]; n: num
           {w.tr && <span dir="auto" className="mt-0.5 max-w-[8rem] text-[12px] font-medium leading-snug text-foreground/85">{w.tr}</span>}
         </button>
       ))}
-      <span className="ayah-marker self-center text-[length:calc(var(--quran-size,34px)*0.9)]">{toArabicDigits(n)}</span>
+      <span className={`ayah-marker self-center text-[length:calc(var(--quran-size,34px)*0.9)]${n >= 100 ? ' ayah-marker-3' : ''}`}>{toArabicDigits(n)}</span>
     </div>
   )
 })

@@ -13,7 +13,6 @@ import { Bismillah, VerseBlock, needsBismillah } from '@/components/reader/verse
 import { ReaderChrome } from '@/components/reader/reader-chrome'
 import { SurahPager } from '@/components/reader/surah-pager'
 import { AyahRail, SurahRail, TajweedNotice } from '@/components/reader/side-rails'
-import { ReaderPrefsInline } from '@/components/reader/prefs-script'
 import { TranslationCredits } from '@/components/reader/translation-credits'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -92,7 +91,6 @@ export default async function SurahPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-[1440px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6 lg:pb-20">
       <JsonLd data={[chapterLd, breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Quran', path: '/quran' }, { name: `Surah ${c.nameSimple}`, path: surahHref(id) }])]} />
-      <ReaderPrefsInline />
       <div className="xl:grid xl:grid-cols-[240px_minmax(0,860px)_240px] xl:justify-center xl:gap-8">
         <aside className="reader-chrome hidden xl:block" aria-label="Surahs">
           <div className="sticky top-24"><SurahRail current={id} /></div>

@@ -170,8 +170,8 @@ export default async function AyahPage({ params }: Props) {
 
           <div className="ayah-ar mt-6">
             <p className="quran-text ar-plain text-center text-[length:calc(var(--quran-size,34px)*1.15)] leading-[2.3]" lang="ar" dir="rtl">
-              {tokens.map((t, i) => (t.pos ? <span key={i} className="w" data-w={t.pos}>{t.text} </span> : <span key={i} className="waqf">{t.text} </span>))}
-              <span className="ayah-marker">{toArabicDigits(p.n)}</span>
+              {tokens.map((t, i) => (t.pos ? <span key={i} className="w" data-w={t.pos}>{t.text}{t.waqf && <>{'\u00a0'}<span className="waqf">{t.waqf}</span></>}{i === tokens.length - 1 ? '\u00a0' : ' '}</span> : <span key={i} className="waqf">{t.text} </span>))}
+              <span className={p.n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'}>{toArabicDigits(p.n)}</span>
             </p>
             <div className="tj-slot" data-slot-tj={key} />
             <div className="wbw-slot" data-slot-wbw={key} />

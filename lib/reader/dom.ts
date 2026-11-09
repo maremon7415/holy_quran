@@ -8,7 +8,7 @@ export const ayahEl = (key: string) => document.querySelector<HTMLElement>(`[dat
 export function readAyahText(key: string) {
   const el = ayahEl(key)
   const q = (sel: string) => el?.querySelector<HTMLElement>(sel)?.innerText.trim() ?? ''
-  const ar = el ? Array.from(el.querySelectorAll<HTMLElement>('.ar-plain [data-w], .ar-plain .waqf')).map((w) => w.textContent).join(' ') : ''
+  const ar = el ? Array.from(el.querySelectorAll<HTMLElement>('.ar-plain > .w, .ar-plain > .waqf')).map((w) => w.textContent?.trim()).join(' ') : ''
   return { ar, en: q('[data-tr="en"][data-ed="sahih"]'), enH: q('[data-tr="en"][data-ed="haleem"]'), bn: q('[data-tr="bn"]'), tl: q('[data-tr="tl"]') }
 }
 
