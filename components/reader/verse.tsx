@@ -18,13 +18,13 @@ export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; sur
       data-ayah={v.k}
       data-j={v.j}
       data-p={v.p}
-      className="ayah group/ayah scroll-mt-28 px-3 py-6 sm:px-6 sm:py-8"
+      className="ayah group/ayah"
       aria-label={`Ayah ${v.k}`}
     >
-      <div className="ayah-head mb-3 flex items-center justify-between gap-3">
+      <div className="ayah-head">
         <Link
           href={surahHref(surah, v.n)}
-          className="ayah-num inline-flex h-8 min-w-8 items-center justify-center gap-1 rounded-full border bg-surface-2 px-2.5 text-xs font-bold tabular-nums text-muted-foreground transition-colors duration-300 hover:border-primary/40 hover:text-primary"
+          className="ayah-num"
           title={`Open ayah ${v.k}`}
         >
           {v.k}
@@ -34,7 +34,7 @@ export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; sur
       </div>
 
       <div className="ayah-ar">
-        <p className="quran-text ar-plain text-right text-[length:var(--quran-size,34px)]" lang="ar" dir="rtl">
+        <p className="quran-text ar-plain" lang="ar" dir="rtl">
           {tokens.map((t, i) =>
             t.pos ? (
               <span key={i} className="w" data-w={t.pos}>{t.text}{t.waqf && <>{'\u00a0'}<span className="waqf">{t.waqf}</span></>}{i === tokens.length - 1 ? '\u00a0' : ' '}</span>
@@ -48,16 +48,16 @@ export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; sur
         <div className="wbw-slot" data-slot-wbw={v.k} />
       </div>
 
-      <div className="ayah-tr mt-4 space-y-3.5">
-        <p data-tr="tl" className="text-[length:calc(var(--trans-size,17px)*0.92)] italic leading-relaxed text-muted-foreground">{v.tl}</p>
+      <div className="ayah-tr">
+        <p data-tr="tl" className="tr-tl">{v.tl}</p>
         <div data-tr="en" data-ed="sahih">
-          <p className="text-[length:var(--trans-size,17px)] leading-[1.75] text-foreground/90">{v.en}</p>
+          <p className="tr-en">{v.en}</p>
         </div>
         <div data-tr="en" data-ed="haleem">
-          <p className="text-[length:var(--trans-size,17px)] leading-[1.75] text-foreground/90">{v.enH}</p>
+          <p className="tr-en">{v.enH}</p>
         </div>
         <div data-tr="bn" lang="bn">
-          <p className="font-bangla text-[length:calc(var(--trans-size,17px)*1.04)] leading-[1.85] text-foreground/90">{v.bn}</p>
+          <p className="tr-bn">{v.bn}</p>
         </div>
       </div>
     </article>

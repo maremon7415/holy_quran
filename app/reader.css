@@ -151,3 +151,29 @@ html:not([data-reader-mode='reading']) .only-in-mushaf { display: none; }
 /* Single-ayah landing pages show every translation regardless of reader prefs */
 .force-tr [data-tr] { display: block !important; }
 .ayah-marker.ayah-marker-3 { font-size: 0.5em; min-width: 2em; height: 2em; }
+
+/* ---- compact per-ayah toolbar (keeps 286-ayah pages light) ---- */
+.ayah-actions { display: flex; align-items: center; gap: 0.125rem; margin-right: -0.375rem; opacity: 0.9; transition: opacity 0.3s; }
+@media (min-width: 1024px) { .ayah-actions { opacity: 0.6; } .group\/ayah:hover .ayah-actions, .ayah-actions:focus-within { opacity: 1; } }
+.ab { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; color: var(--muted-foreground); transition: color 0.2s, background-color 0.2s, transform 0.2s; }
+.ab:hover, .ab:focus-visible { background: var(--muted); color: var(--foreground); }
+.ab:active { transform: scale(0.9); }
+.ab[data-on] { background: var(--accent); color: var(--primary); }
+.ab-save[data-on] { background: transparent; color: var(--gold); }
+.ab-save[data-on] .ai { fill: currentColor; transform: scale(1.1); }
+.ab-wide { display: none; }
+@media (min-width: 640px) { .ab-wide { display: grid; } .ab-narrow { display: none; } }
+.ai { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
+
+/* ---- verse markup classes (short names keep long surahs light) ---- */
+.ayah { scroll-margin-top: 7rem; padding: 1.5rem 0.75rem; }
+@media (min-width: 640px) { .ayah { padding: 2rem 1.5rem; } }
+.ayah-head { margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.ayah-num { display: inline-flex; height: 2rem; min-width: 2rem; align-items: center; justify-content: center; gap: 0.25rem; border-radius: 9999px; border: 1px solid var(--border); background: var(--surface-2); padding: 0 0.625rem; font-size: 0.75rem; line-height: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted-foreground); transition: color 0.3s, border-color 0.3s; }
+.ayah-num:hover { color: var(--primary); border-color: color-mix(in oklab, var(--primary) 40%, var(--border)); }
+.ar-plain { text-align: right; font-size: var(--quran-size, 34px); }
+.ayah-tr { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.875rem; }
+.ayah-tr > [data-tr] { margin: 0; }
+.tr-tl { font-size: calc(var(--trans-size, 17px) * 0.92); font-style: italic; line-height: 1.625; color: var(--muted-foreground); }
+.tr-en { font-size: var(--trans-size, 17px); line-height: 1.75; color: color-mix(in oklab, var(--foreground) 90%, transparent); }
+.tr-bn { font-family: var(--font-bangla); font-size: calc(var(--trans-size, 17px) * 1.04); line-height: 1.85; color: color-mix(in oklab, var(--foreground) 90%, transparent); }

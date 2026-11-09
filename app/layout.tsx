@@ -12,6 +12,7 @@ import { SiteFooter } from '@/components/shell/site-footer'
 import { CommandPalette } from '@/components/shell/command-palette'
 import { PlayerRoot } from '@/components/player/player-root'
 import { ServiceWorkerRegister } from '@/components/shell/sw-register'
+import { ReaderIconSprite } from '@/components/reader/icon-sprite'
 import { readerPrefsScript } from '@/lib/stores/reader'
 import { site, absoluteUrl } from '@/lib/site'
 import { JsonLd } from '@/components/seo/json-ld'
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <JsonLd data={websiteLd} />
       </head>
       <body className="min-h-dvh">
+        <ReaderIconSprite />
         <Providers>
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">Skip to content</a>
           <SiteHeader />
