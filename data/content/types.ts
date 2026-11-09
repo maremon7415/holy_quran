@@ -49,6 +49,8 @@ export interface AsmaName {
   slug: string
   ar: string
   tl: string
+  /** Bangla transliteration, e.g. আর-রহমান */
+  tlBn: string
   en: string
   bn: string
   /** one-sentence explanation */

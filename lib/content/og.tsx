@@ -5,12 +5,14 @@ export const ogSize = { width: 1200, height: 630 }
 export const ogContentType = 'image/png'
 
 const FONT_URLS = [
-  'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/harmattan/Harmattan-Regular.ttf',
-  'https://raw.githubusercontent.com/google/fonts/main/ofl/amiri/Amiri-Regular.ttf',
+  'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/tajawal/Tajawal-Medium.ttf',
+  'https://raw.githubusercontent.com/google/fonts/main/ofl/tajawal/Tajawal-Medium.ttf',
 ]
 let fontPromise: Promise<ArrayBuffer | null> | null = null
 
-/** Amiri (Arabic) fetched once per build/process. Returns null when offline so OG images fall back to Latin-only. */
+/**
+ * Arabic font fetched once per build/process. Amiri (and other Naskh fonts) use GSUB lookups that Satori cannot parse
+ * ("lookupType: 5 - substFormat: 3"), so we use Tajawal, which shapes correctly. Returns null when offline so OG images fall back to Latin-only. */
 function loadArabicFont() {
   fontPromise ??= (async () => {
     for (const url of FONT_URLS) {
@@ -55,7 +57,7 @@ export async function renderOg({ kicker, title, subtitle, arabic, arabicSize = 9
           {kicker && <div style={{ marginLeft: 12, padding: '6px 18px', borderRadius: 40, background: '#ffffff1f', fontSize: 24, color: '#f3e7cc', display: 'flex' }}>{kicker}</div>}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {showArabic && <div style={{ fontFamily: 'Amiri', fontSize: arabicSize, color: GOLD, lineHeight: 1.25, display: 'flex', justifyContent: 'flex-start' }}>{arabic}</div>}
+          {showArabic && <div style={{ fontFamily: 'Tajawal', fontSize: arabicSize, color: GOLD, lineHeight: 1.25, display: 'flex', justifyContent: 'flex-start' }}>{arabic}</div>}
           <div style={{ fontSize: titleSize, fontWeight: 800, lineHeight: 1.1, display: 'flex' }}>{title}</div>
           {subtitle && <div style={{ fontSize: 30, color: '#d6e6df', lineHeight: 1.35, display: 'flex' }}>{subtitle}</div>}
         </div>
@@ -65,6 +67,6 @@ export async function renderOg({ kicker, title, subtitle, arabic, arabicSize = 9
         </div>
       </div>
     ),
-    { ...ogSize, fonts: font ? [{ name: 'Amiri', data: font, style: 'normal', weight: 400 }] : undefined },
+    { ...ogSize, fonts: font ? [{ name: 'Tajawal', data: font, style: 'normal', weight: 400 }] : undefined },
   )
 }
