@@ -11,6 +11,7 @@ import { MobileTabBar } from '@/components/shell/mobile-tabbar'
 import { SiteFooter } from '@/components/shell/site-footer'
 import { CommandPalette } from '@/components/shell/command-palette'
 import { PlayerRoot } from '@/components/player/player-root'
+import { ServiceWorkerRegister } from '@/components/shell/sw-register'
 import { readerPrefsScript } from '@/lib/stores/reader'
 import { site, absoluteUrl } from '@/lib/site'
 import { JsonLd } from '@/components/seo/json-ld'
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <MobileTabBar />
           <CommandPalette />
           <PlayerRoot />
+          <ServiceWorkerRegister />
         </Providers>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
