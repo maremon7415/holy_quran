@@ -20,7 +20,7 @@ export function openApiSpec() {
     },
     servers: [{ url: site.url }],
     externalDocs: { description: 'Developer guide', url: `${site.url}/developers` },
-    tags: [{ name: 'Quran' }, { name: 'Duas' }, { name: 'Topics' }, { name: 'Names of Allah' }],
+    tags: [{ name: 'Quran' }, { name: 'Duas' }, { name: 'Topics' }, { name: 'Names of Allah' }, { name: 'Islamic events' }],
     paths: {
       '/api/v1/ayah/{ref}': {
         get: {
@@ -45,6 +45,18 @@ export function openApiSpec() {
             { name: 'lang', in: 'query', schema: { type: 'string', enum: ['en', 'bn', 'ar'] } },
           ],
           responses: { 200: okJson('SearchResult', 'Ranked ayahs'), 400: err },
+        },
+      },
+      '/api/v1/ask': {
+        get: {
+          tags: ['Quran'], operationId: 'askQuran', summary: 'Ask the Quran — meaning-based (semantic) search in English, Bangla or Arabic',
+          description: 'A natural question ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Cosine similarity of multilingual-e5-small embeddings (question vs. each ayah’s English + Bangla translation) plus small boosts for shared words and curated topics; consecutive ayahs are merged into ranges. No generated text. If the model is unavailable the response has `mode: "lexical"` and a `note`.',
+          parameters: [
+            { name: 'q', in: 'query', required: true, schema: { type: 'string', minLength: 2, maxLength: 300 }, example: 'what does the Quran say about patience in hardship' },
+            { name: 'lang', in: 'query', schema: { type: 'string', enum: ['en', 'bn', 'ar'] }, description: 'Translation returned with the Arabic (default: English + Bangla); bn adds Bangla uccharon' },
+            { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 20, default: 10 } },
+          ],
+          responses: { 200: okJson('AskResult', 'Ranked ayah ranges with canonical URLs and citations'), 400: err },
         },
       },
       '/api/v1/hadith': { get: { tags: ['Hadith'], operationId: 'listHadithCollections', summary: 'Hadith collections (Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasai, Ibn Majah, Malik, Nawawi, Qudsi) with counts', responses: { 200: { description: 'Collections' } } } },
@@ -91,9 +103,28 @@ export function openApiSpec() {
       },
       '/api/v1/names': { get: { tags: ['Names of Allah'], operationId: 'listNames', summary: 'The 99 Names of Allah', responses: { 200: { description: 'Names' } } } },
       '/api/v1/names/{id}': { get: { tags: ['Names of Allah'], operationId: 'getName', summary: 'One Name by number, slug or Arabic', parameters: [{ name: 'id', in: 'path', required: true, schema: str, example: 'ar-rahman' }], responses: { 200: okJson('Name', 'Name'), 404: err } } },
+      '/api/v1/events': {
+        get: {
+          tags: ['Islamic events'], operationId: 'listEvents', summary: 'Islamic events with Saudi (Umm al-Qura) and expected Bangladesh dates: the next 12 months, or one Gregorian year (current year −1 … +4); ?event= returns one event',
+          parameters: [
+            { name: 'year', in: 'query', schema: { type: 'integer', minimum: 1900, maximum: 2200 }, description: 'Gregorian year (current year −1 … +4)' },
+            { name: 'event', in: 'query', schema: { type: 'string', enum: ['ramadan-start', 'laylatul-qadr', 'eid-al-fitr', 'day-of-arafah', 'eid-al-adha', 'islamic-new-year', 'ashura', 'white-days'] }, description: 'Return only this event (a name such as "Eid ul Adha" also works)' },
+          ],
+          responses: { 200: { description: 'Events' }, 400: err, 404: err },
+        },
+      },
+      '/api/v1/events/{slug}': {
+        get: {
+          tags: ['Islamic events'], operationId: 'getEvent', summary: 'One Islamic event: next occurrence, or ?year=',
+          parameters: [{ name: 'slug', in: 'path', required: true, schema: str, example: 'eid-al-adha' }, { name: 'year', in: 'query', schema: { type: 'integer' } }],
+          responses: { 200: okJson('IslamicEvent', 'Event dates (Saudi Umm al-Qura + expected Bangladesh), Quran/hadith sources, canonical URL and citation'), 400: err, 404: err },
+        },
+      },
     },
     components: {
       schemas: {
+        IslamicEvent: { type: 'object', properties: { event: str, name: { type: 'object' }, hijriLabel: str, year: { type: ['integer', 'null'] }, occurrences: { type: 'array', items: { type: 'object', properties: { hijri: { type: 'object' }, saudi: { type: 'object', description: 'Umm al-Qura dates' }, bangladeshExpected: { type: 'object', description: 'Saudi date + 1 day (moon sighting; not an announcement)' }, days: { type: 'array', items: { type: 'object' } } } } }, note: str, quran: { type: 'array', items: { type: 'object' } }, hadith: { type: 'array', items: { type: 'object' } }, url, urlBn: url, markdown: url, citation: str } },
+        AskResult: { type: 'object', properties: { query: str, mode: { type: 'string', enum: ['semantic', 'lexical'] }, note: str, model: str, method: str, askPage: url, results: { type: 'array', items: { type: 'object', properties: { reference: { ...str, description: '"2:153" or a range "2:155-157"' }, surah: { type: 'object' }, score: { type: 'number' }, similarity: { type: 'number', description: 'cosine similarity of the best ayah' }, matched: { type: 'object', properties: { words: { type: 'array', items: str }, topics: { type: 'array', items: str } } }, ayahs: { type: 'array', items: { type: 'object', properties: { key: str, arabic: str, saheeh: str, bangla: str, uccharon: str } } }, url, urlBn: url, markdown: url, citation: str } } } } },
         Error: { type: 'object', required: ['error'], properties: { error: { type: 'object', properties: { status: { type: 'integer' }, code: str, message: str } } } },
         Links: { type: 'object', required: ['url', 'citation'], properties: { url: { ...url, description: 'Canonical page — cite this' }, urlBn: { ...url, description: 'Bangla page' }, markdown: { ...url, description: 'Markdown alternate' }, citation: str } },
         SurahRef: { type: 'object', properties: { id: { type: 'integer' }, slug: str, name: str, nameArabic: str, nameBangla: str, meaning: str, revelationPlace: str, versesCount: { type: 'integer' }, url } },

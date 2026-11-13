@@ -24,13 +24,16 @@ export const mcpMeta = (locale: Locale): Metadata =>
   buildMeta({ ...copy[locale], path: '/mcp', locale, keywords: ['Quran MCP server', 'Model Context Protocol Quran', 'Quran ChatGPT connector', 'Quran Claude connector', 'Islamic AI tools', 'কুরআন AI'] })
 
 export const MCP_TOOLS: { name: string; args: string; en: string; bn: string }[] = [
+  { name: 'ask_quran', args: 'question, lang?, limit?', en: 'Meaning-based search: a natural question in English, Bangla or Arabic → the most relevant ayahs, even without shared keywords.', bn: 'অর্থভিত্তিক অনুসন্ধান: বাংলা, ইংরেজি বা আরবিতে প্রশ্ন → সবচেয়ে প্রাসঙ্গিক আয়াত, শব্দ না মিললেও।' },
   { name: 'search_quran', args: 'query, lang?, limit?', en: 'Full-text search in Arabic, English and Bangla.', bn: 'আরবি, ইংরেজি ও বাংলায় কুরআন অনুসন্ধান।' },
   { name: 'get_ayah', args: 'reference ("2:255" | "2:255-257"), translations?', en: 'Arabic, Saheeh, Abdel Haleem, Bangla, transliteration, uccharon, URL and citation.', bn: 'আরবি, ইংরেজি, বাংলা, উচ্চারণ, লিংক ও উদ্ধৃতি।' },
   { name: 'get_surah', args: 'surah (number | name)', en: 'Facts, summary and introduction of a surah.', bn: 'সূরার তথ্য, সারসংক্ষেপ ও ভূমিকা।' },
   { name: 'get_tafsir', args: 'reference, edition? (ibn-kathir | ahsanul-bayaan | muyassar)', en: 'Classical tafsir (cached from Quran.com).', bn: 'তাফসীর (Quran.com থেকে, ক্যাশসহ)।' },
   { name: 'find_dua', args: 'query | occasion | category | slug', en: 'Authentic duas with source and when to recite.', bn: 'উৎস ও পড়ার সময়সহ প্রামাণ্য দোয়া।' },
   { name: 'get_topic_verses', args: 'topic, lang?', en: 'What the Quran says about a topic: quick answer and verses.', bn: 'কোনো বিষয়ে কুরআন কী বলে: সংক্ষিপ্ত উত্তর ও আয়াত।' },
+  { name: 'get_islamic_event', args: 'name (e.g. "Eid ul Adha"), year? (optional)', en: 'Dates of an Islamic event (Ramadan, Laylatul Qadr, Eid, Arafah, Ashura, white days): Saudi Umm al-Qura and expected Bangladesh date, sources, URL.', bn: 'ইসলামি দিবসের তারিখ — সৌদি (উম্মুল কুরা) ও বাংলাদেশের সম্ভাব্য তারিখ, উৎস ও লিংক।' },
   { name: 'get_name_of_allah', args: 'name (number | transliteration | Arabic)', en: 'One of the 99 Names with meaning and Quran reference.', bn: 'আল্লাহর ৯৯ নামের একটি — অর্থ ও কুরআনের রেফারেন্সসহ।' },
+  { name: 'get_learn_guide', args: 'topic ("how to pray" | "wudu" | "tajweed/izhar" | "six kalimas" | "arabic alphabet"), lang?', en: 'Step-by-step learning guides as markdown (Hanafi method with notes where schools differ) with the canonical URL.', bn: 'ধাপে ধাপে শিক্ষা-গাইড (মার্কডাউন; হানাফী পদ্ধতি, মতভেদের নোটসহ) ও স্থায়ী লিংক।' },
   { name: 'search / fetch', args: 'query / id', en: 'Document search + fetch (ChatGPT connectors & deep research).', bn: 'ডকুমেন্ট অনুসন্ধান ও আনা (ChatGPT কানেক্টর)।' },
 ]
 

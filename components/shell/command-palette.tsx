@@ -12,6 +12,7 @@ import { moreNav, primaryNav } from '@/lib/nav'
 import { UiIcon } from '@/components/ui-icon'
 import { useLocalizedHref } from '@/lib/i18n/locale-context'
 import { parseHadithReference } from '@/lib/hadith/search-utils'
+import { looksLikeQuestion } from '@/lib/ask/text'
 import { collectionMeta } from '@/lib/hadith/collections'
 import { hadithUrl } from '@/lib/hadith/url'
 
@@ -24,6 +25,15 @@ const POPULAR = [
   { ref: '18', en: 'Surah Kahf', bn: 'সূরা কাহফ', ar: 'سورة الكهف' },
   { ref: '55', en: 'Surah Rahman', bn: 'সূরা আর-রহমান', ar: 'سورة الرحمن' },
   { ref: '2:285', en: 'Last 2 ayahs of Al-Baqarah', bn: 'সূরা বাকারার শেষ দুই আয়াত', ar: 'خواتيم سورة البقرة' },
+]
+
+/** Quick links to the learning guides (searches like "namaz sikkha", "tajweed", "6 kalima"). */
+const LEARN_LINKS = [
+  { href: '/learn/salah', icon: 'mosque', en: 'How to pray salah', bn: 'নামাজ শিক্ষা', ar: 'تعلّم الصلاة' },
+  { href: '/learn/wudu', icon: 'hands', en: 'How to perform wudu', bn: 'অজুর নিয়ম', ar: 'كيفية الوضوء' },
+  { href: '/learn/tajweed', icon: 'tajweed', en: 'Tajweed rules', bn: 'তাজবীদ শিক্ষা', ar: 'أحكام التجويد' },
+  { href: '/learn/kalima', icon: 'sparkle', en: 'Six Kalimas', bn: '৬ কালেমা', ar: 'الكلمات الست' },
+  { href: '/learn/arabic-alphabet', icon: 'read', en: 'Arabic alphabet', bn: 'আরবি বর্ণমালা', ar: 'الحروف العربية' },
 ]
 
 export function CommandPalette() {
@@ -137,6 +147,14 @@ export function CommandPalette() {
                   {loading ? t({ en: 'Searching 6,236 ayahs…', bn: '৬,২৩৬ আয়াতে খোঁজা হচ্ছে…', ar: 'جارٍ البحث في ٦٢٣٦ آية…' }) : t({ en: 'No results. Try another word or a reference like 2:255.', bn: 'কিছু পাওয়া যায়নি। অন্য শব্দ বা ২:২৫৫ এর মতো লিখুন।', ar: 'لا نتائج. جرّب كلمة أخرى أو مرجعًا مثل 2:255.' })}
                 </Command.Empty>
 
+                {looksLikeQuestion(q) && (
+                  <Command.Group heading={t({ en: 'Ask', bn: 'প্রশ্ন', ar: 'اسأل' })}>
+                    <Item icon="sparkle" onSelect={() => go(`/ask?q=${encodeURIComponent(q.trim())}`)}
+                      title={t({ en: `Ask the Quran: “${q.trim()}”`, bn: `কুরআনে প্রশ্ন করুন: “${q.trim()}”`, ar: `اسأل القرآن: «${q.trim()}»` })}
+                      sub={t({ en: 'Find verses by meaning', bn: 'অর্থ অনুযায়ী আয়াত খুঁজুন', ar: 'ابحث عن الآيات بالمعنى' })} />
+                  </Command.Group>
+                )}
+
                 {ref && (
                   <Command.Group heading={t({ en: 'Go to', bn: 'যান', ar: 'انتقل إلى' })}>
                     <Item onSelect={() => go(ref.a ? readerHref(ref.s, ref.a) : surahHref(ref.s))} icon="read"
@@ -159,6 +177,9 @@ export function CommandPalette() {
                         const [s, a] = p.ref.split(':').map(Number)
                         return <Item key={p.ref} icon="sparkle" onSelect={() => go(a ? surahHref(s, a) : surahHref(s))} title={t(p)} sub={p.ref} right={chapters[s - 1].nameArabic} />
                       })}
+                    </Command.Group>
+                    <Command.Group heading={t({ en: 'Learn', bn: 'শিক্ষা', ar: 'تعلّم' })}>
+                      {LEARN_LINKS.map((l) => <Item key={l.href} icon={l.icon} onSelect={() => go(l.href)} title={t(l)} />)}
                     </Command.Group>
                     <Command.Group heading={t({ en: 'Explore', bn: 'এক্সপ্লোর', ar: 'استكشف' })}>
                       {[...primaryNav, ...moreNav].map((n) => <Item key={n.href} icon={n.icon} onSelect={() => go(n.href)} title={t(n.label)} sub={n.desc ? t(n.desc) : undefined} />)}

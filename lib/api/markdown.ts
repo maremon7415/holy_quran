@@ -12,6 +12,8 @@ import { refLabelL } from '@/lib/i18n/quran'
 import { bnNum } from '@/lib/i18n/t'
 import { ayahCitation } from '@/lib/content/cite'
 import { hadithMd } from '@/lib/hadith/markdown'
+import { eventsMd } from '@/lib/events/markdown'
+import { learnMd } from '@/lib/learn/markdown'
 import { ayahTafsirSummary, getDua, getName, getSurah, getTopic, getJuz } from './corpus'
 
 export interface MdDoc { body: string; canonical: string }
@@ -38,6 +40,8 @@ export async function markdownFor(pathname: string): Promise<MdDoc | null> {
   if (locale === 'bn') parts.shift()
   const [kind, a, b, ...rest] = parts
   if (rest.length) return null
+  if (kind === 'events') return eventsMd(a, b, locale)
+  if (kind === 'learn') return learnMd(a, b, locale)
   if (kind === 'hadith' && a && b) return hadithMd(a, b, locale)
   if (kind === 'surah' && a && b) return ayahMd(a, b, locale)
   if (kind === 'surah' && a && !b) return surahMd(a, locale)

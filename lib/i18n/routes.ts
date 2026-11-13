@@ -22,9 +22,12 @@ export const BN_ROUTES = [
   '/prayer-times', '/prayer-times/*', '/prayer-times/*/*',
   '/ramadan', '/ramadan/*', '/ramadan/*/*',
   '/hijri-date',
+  '/events', '/events/*', '/events/*/*',
   '/zakat-calculator',
   '/hadith', '/hadith/*', '/hadith/*/*', '/hadith/*/book/*', '/hadith/*/book/*/page/*',
   '/mcp', '/developers',
+  '/learn', '/learn/*', '/learn/tajweed/*',
+  '/ask',
 ] as const
 
 const patterns = BN_ROUTES.map((p) => new RegExp('^' + p.replace(/\*/g, '[^/]+') + '$'))

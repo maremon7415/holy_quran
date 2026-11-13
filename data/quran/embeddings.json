@@ -1,0 +1,14 @@
+{
+  "model": "Xenova/multilingual-e5-small",
+  "dims": 384,
+  "count": 6236,
+  "dtype": "int8",
+  "scale": "per-vector float32 after the int8 block (v ≈ q * scale)",
+  "pooling": "mean",
+  "normalized": true,
+  "queryPrefix": "query: ",
+  "passage": "passage: {Saheeh International English} {Taisirul Quran Bangla}",
+  "bytes": 2419568,
+  "sha256": "07e3cfb94db118f8",
+  "built": "2026-11-13"
+}

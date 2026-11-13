@@ -19,6 +19,7 @@ const POPULAR_PAGES: { href: string; label: Tr }[] = [
   { href: '/topics', label: { en: 'What the Quran says about…', bn: 'বিষয়ভিত্তিক কুরআন', ar: 'ماذا يقول القرآن عن…' } },
   { href: '/hifz', label: { en: 'Memorise the Quran (Hifz)', bn: 'কুরআন হিফজ করুন', ar: 'احفظ القرآن' } },
   { href: '/juz/30', label: { en: 'Juz Amma (Para 30)', bn: 'আমপারা (৩০ নম্বর পারা)', ar: 'جزء عمّ (الجزء ٣٠)' } },
+  { href: '/learn', label: { en: 'Learn: salah, wudu, tajweed & kalimas', bn: 'শিক্ষা: নামাজ, অজু, তাজবীদ ও কালেমা', ar: 'تعلّم: الصلاة والوضوء والتجويد' } },
   { href: '/prayer-times', label: { en: 'Prayer times today', bn: 'আজকের নামাজের সময়', ar: 'مواقيت الصلاة اليوم' } },
 ]
 
@@ -32,6 +33,13 @@ const BANGLA_LINKS = [
   { href: '/dua', label: 'দৈনন্দিন দোয়া' },
   { href: '/hadith', label: 'হাদিস সমগ্র: বুখারী, মুসলিম' },
   { href: '/topics/anxiety', label: 'দুশ্চিন্তা দূর করার আয়াত' },
+  { href: '/learn/salah', label: 'নামাজ শিক্ষা' },
+  { href: '/learn/kalima', label: '৬ কালেমা বাংলা উচ্চারণ সহ' },
+  { href: '/learn/wudu', label: 'অজুর নিয়ম' },
+  { href: '/learn/tajweed', label: 'তাজবীদ শিক্ষা' },
+  { href: '/events/eid-al-adha', label: 'ঈদুল আজহা কবে' },
+  { href: '/events/laylatul-qadr', label: 'শবে কদর কবে' },
+  { href: '/events/eid-al-fitr', label: 'ঈদুল ফিতর কবে' },
 ].map((l) => ({ ...l, href: localeHref('bn', l.href) }))
 
 /** Popular city timetables (static labels: the footer must not pull the 150-city dataset into every page). */
@@ -99,6 +107,7 @@ export function SiteFooter() {
         <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
           {POPULAR_CITIES.map((c) => <li key={c.slug}><Link href={`/prayer-times/${c.slug}`} className="hover:text-foreground">{t(c.label)}</Link></li>)}
           <li><Link href="/ramadan" className="hover:text-foreground">{t({ en: 'Ramadan timetable', bn: 'রমজানের সময়সূচি', ar: 'جدول رمضان' })}</Link></li>
+          <li><Link href="/events" className="hover:text-foreground">{t({ en: 'Islamic events & Eid dates', bn: 'ইসলামি দিবস ও ঈদের তারিখ', ar: 'المناسبات الإسلامية' })}</Link></li>
           <li><Link href="/hijri-date" className="hover:text-foreground">{t({ en: 'Hijri date today', bn: 'আজকের হিজরি তারিখ', ar: 'التاريخ الهجري' })}</Link></li>
           <li><Link href="/zakat-calculator" className="hover:text-foreground">{t({ en: 'Zakat calculator', bn: 'যাকাত ক্যালকুলেটর', ar: 'حاسبة الزكاة' })}</Link></li>
         </ul>

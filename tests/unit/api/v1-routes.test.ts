@@ -10,6 +10,8 @@ import { GET as topic } from '@/app/api/v1/topics/[slug]/route'
 import { GET as namesRoute } from '@/app/api/v1/names/route'
 import { GET as name } from '@/app/api/v1/names/[id]/route'
 import { GET as openapi } from '@/app/openapi.json/route'
+import { GET as askRoute } from '@/app/api/v1/ask/route'
+import { useFakeEmbedder, restoreEmbedder } from '../../helpers/fake-embedder'
 import { OPTIONS } from '@/lib/api/http'
 
 const req = (p: string) => new Request(`http://localhost${p}`)
@@ -104,13 +106,35 @@ describe('/api/v1 — public JSON API', () => {
     for (const id of ['0', '100', 'zzz']) expect((await name(req('/x'), ctx('id', id))).status, id).toBe(404)
   })
 
+  it('ask: meaning-based search (embedding mocked), validation, lexical fallback', async () => {
+    expect((await askRoute(req('/api/v1/ask?q=a'))).status).toBe(400)
+    expect((await askRoute(req('/api/v1/ask?q=patience&lang=xx'))).status).toBe(400)
+    useFakeEmbedder({}, '31:14')
+    try {
+      const b = await body(await askRoute(req('/api/v1/ask?q=how%20should%20I%20treat%20my%20mother&limit=5&lang=en')))
+      expect(b.mode).toBe('semantic')
+      expect(b.results.length).toBeLessThanOrEqual(5)
+      expect(b.results[0].reference).toMatch(/^31:14/)
+      expect(b.results[0].url).toMatch(CANON)
+      expect(b.results[0].citation).toContain(b.results[0].url)
+      expect(b.results[0].ayahs[0].saheeh).toMatch(/parents/)
+    } finally {
+      restoreEmbedder()
+    }
+    // no model in unit tests → lexical mode, still 200 with results
+    const lex = await body(await askRoute(req('/api/v1/ask?q=patience%20and%20prayer')))
+    expect(lex.mode).toBe('lexical')
+    expect(lex.note).toBeTruthy()
+    expect(lex.results.length).toBeGreaterThan(0)
+  })
+
   it('OPTIONS preflight + openapi.json is valid OpenAPI 3.1 covering every route', async () => {
     const o = OPTIONS()
     expect(o.status).toBe(204)
     expect(o.headers.get('access-control-allow-origin')).toBe('*')
     const spec = await (openapi()).json()
     expect(spec.openapi).toBe('3.1.0')
-    for (const p of ['/api/v1/ayah/{ref}', '/api/v1/surah/{id}', '/api/v1/search', '/api/v1/duas', '/api/v1/duas/{slug}', '/api/v1/topics/{slug}', '/api/v1/names']) expect(spec.paths[p], p).toBeDefined()
+    for (const p of ['/api/v1/ayah/{ref}', '/api/v1/surah/{id}', '/api/v1/search', '/api/v1/duas', '/api/v1/duas/{slug}', '/api/v1/topics/{slug}', '/api/v1/names', '/api/v1/ask']) expect(spec.paths[p], p).toBeDefined()
     // every $ref resolves
     const refs = [...JSON.stringify(spec).matchAll(/"\$ref":"#\/components\/schemas\/(\w+)"/g)].map((m) => m[1])
     for (const r of refs) expect(spec.components.schemas[r], r).toBeDefined()

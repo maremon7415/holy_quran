@@ -26,16 +26,47 @@ const MODEL = process.env.EMBED_MODEL || 'Xenova/multilingual-e5-small'
 const OUT = path.resolve(arg('out', path.join(root, 'data/quran')))
 const LIMIT = Number(arg('limit', '0')) || Infinity
 const BATCH = Number(arg('batch', '16'))
-const E5 = /e5/i.test(MODEL)
+const TEXT = arg('text', 'both') // en | bn | both (experiments)
 
-const { pipeline, env } = await import('@huggingface/transformers')
+/** Per-model-family settings; copied into the header so query-time embedding (server + browser) matches. */
+const FAMILY = /embeddinggemma/i.test(MODEL)
+  ? { kind: 'sentence_embedding', dtype: arg('dtype', 'q4'), queryPrefix: 'task: search result | query: ', passagePrefix: 'title: none | text: ', truncate: Number(arg('dims', '768')) }
+  : /e5/i.test(MODEL)
+    ? { kind: 'mean', dtype: arg('dtype', 'q8'), queryPrefix: 'query: ', passagePrefix: 'passage: ', truncate: 0 }
+    : { kind: 'mean', dtype: arg('dtype', 'q8'), queryPrefix: '', passagePrefix: '', truncate: 0 }
+
+const { pipeline, AutoTokenizer, AutoModel, env } = await import('@huggingface/transformers')
 env.cacheDir = path.join(root, 'scripts/.cache/hf')
 env.allowLocalModels = false
 
 /** The passage text that gets embedded for an ayah (kept in sync with the header's `passage` field). */
 function passageText(v) {
-  const t = `${v.en}\n${v.bn}`.replace(/\s+/g, ' ').trim()
-  return E5 ? `passage: ${t}` : t
+  const t = (TEXT === 'en' ? v.en : TEXT === 'bn' ? v.bn : `${v.en}\n${v.bn}`).replace(/\s+/g, ' ').trim()
+  return FAMILY.passagePrefix + t
+}
+
+/** texts → { data: Float32Array (rows × dims, L2-normalised), dims } */
+async function makeEmbedder() {
+  if (FAMILY.kind === 'mean') {
+    const extractor = await pipeline('feature-extraction', MODEL, { dtype: FAMILY.dtype })
+    return async (texts) => { const o = await extractor(texts, { pooling: 'mean', normalize: true }); return { data: o.data, dims: o.dims[1] } }
+  }
+  const tokenizer = await AutoTokenizer.from_pretrained(MODEL)
+  const model = await AutoModel.from_pretrained(MODEL, { dtype: FAMILY.dtype })
+  return async (texts) => {
+    const inputs = await tokenizer(texts, { padding: true, truncation: true, max_length: 512 })
+    const { sentence_embedding } = await model(inputs)
+    const full = sentence_embedding.dims[1]
+    const d = FAMILY.truncate && FAMILY.truncate < full ? FAMILY.truncate : full
+    const out = new Float32Array(texts.length * d)
+    for (let r = 0; r < texts.length; r++) {
+      let n = 0
+      for (let i = 0; i < d; i++) n += sentence_embedding.data[r * full + i] ** 2
+      n = Math.sqrt(n) || 1
+      for (let i = 0; i < d; i++) out[r * d + i] = sentence_embedding.data[r * full + i] / n
+    }
+    return { data: out, dims: d }
+  }
 }
 
 const chapters = JSON.parse(await readFile(path.join(root, 'data/quran/chapters.json'), 'utf8'))
@@ -48,15 +79,15 @@ for (const c of chapters) {
 const items = rows.slice(0, Math.min(rows.length, LIMIT))
 console.log(`Embedding ${items.length} ayahs with ${MODEL} (batch ${BATCH})…`)
 
-const extractor = await pipeline('feature-extraction', MODEL, { dtype: 'q8' })
+const embed = await makeEmbedder()
 let dims = 0
 let q8, scales
 const t0 = Date.now()
 for (let i = 0; i < items.length; i += BATCH) {
   const batch = items.slice(i, i + BATCH)
-  const out = await extractor(batch.map(passageText), { pooling: 'mean', normalize: true })
+  const out = await embed(batch.map(passageText))
   if (!dims) {
-    dims = out.dims[1]
+    dims = out.dims
     q8 = new Int8Array(items.length * dims)
     scales = new Float32Array(items.length)
   }
@@ -84,10 +115,11 @@ const header = {
   count: items.length,
   dtype: 'int8',
   scale: 'per-vector float32 after the int8 block (v ≈ q * scale)',
-  pooling: 'mean',
+  kind: FAMILY.kind,
+  modelDtype: FAMILY.dtype,
   normalized: true,
-  queryPrefix: E5 ? 'query: ' : '',
-  passage: `${E5 ? 'passage: ' : ''}{Saheeh International English} {Taisirul Quran Bangla}`,
+  queryPrefix: FAMILY.queryPrefix,
+  passage: `${FAMILY.passagePrefix}{Saheeh International English} {Taisirul Quran Bangla}`,
   bytes: buf.length,
   sha256: createHash('sha256').update(buf).digest('hex').slice(0, 16),
   built: new Date().toISOString().slice(0, 10),

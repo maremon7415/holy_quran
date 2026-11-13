@@ -102,6 +102,7 @@ export function HijriDatePage({ locale }: { locale: Locale }) {
         </ul>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href={localeHref(locale, `/ramadan/${ram.start.y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${ram.start.y} timetable`, bn: `রমজান ${bnDigits(ram.start.y)} সময়সূচি`, ar: `جدول رمضان ${ram.start.y}` })}</Link>
+          <Link href={localeHref(locale, '/events')} className={chipCls}>{lt(locale, { en: 'All Islamic events & Eid dates', bn: 'সব ইসলামি দিবস ও ঈদের তারিখ', ar: 'كل المناسبات الإسلامية' })}</Link>
           <Link href="/calendar" className={chipCls}>{lt(locale, { en: 'Hijri calendar', bn: 'হিজরি ক্যালেন্ডার', ar: 'التقويم الهجري' })}</Link>
           <Link href={localeHref(locale, '/prayer-times/dhaka')} className={chipCls}>{lt(locale, { en: 'Dhaka prayer times', bn: 'ঢাকার নামাজের সময়', ar: 'مواقيت دكا' })}</Link>
         </div>

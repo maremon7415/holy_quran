@@ -10,6 +10,8 @@ import { localeHref } from '@/lib/i18n/routes'
 import { getCollections } from '@/lib/hadith/hadith'
 import { featured } from '@/lib/hadith/featured'
 import { collectionMeta } from '@/lib/hadith/collections'
+import { learnGuides } from '@/data/learn/guides'
+import { tajweedRules } from '@/data/learn/tajweed'
 
 const u = absoluteUrl
 /** Bangla twin URL (falls back to the English URL until a /bn page exists). */
@@ -39,7 +41,7 @@ Every ayah, surah, juz, topic, dua and Name page has a "Cite this" block (plain,
 
 ## For AI agents
 
-- [MCP server](${u('/mcp')}): Model Context Protocol endpoint ${u('/api/mcp')} (Streamable HTTP, no auth) with tools search_quran, get_ayah, get_surah, get_tafsir, find_dua, get_topic_verses, get_name_of_allah, search, fetch. Every result includes the canonical URL and a citation.
+- [MCP server](${u('/mcp')}): Model Context Protocol endpoint ${u('/api/mcp')} (Streamable HTTP, no auth) with tools ask_quran, search_quran, get_ayah, get_surah, get_tafsir, find_dua, get_topic_verses, get_name_of_allah, get_islamic_event, get_learn_guide, search, fetch. Every result includes the canonical URL and a citation.
 - [JSON API](${u('/developers')}): ${u('/api/v1/ayah/2:255')}, ${u('/api/v1/surah/al-mulk')}, ${u('/api/v1/search?q=mercy')}, ${u('/api/v1/duas')}, ${u('/api/v1/topics/patience')}, ${u('/api/v1/names')} (CORS, keyless)
 - [OpenAPI 3.1 description](${u('/openapi.json')})
 
@@ -63,8 +65,11 @@ Append \`.md\` to any ayah, surah, juz, topic, dua or Names page for clean markd
 - [Hadith library](${u('/hadith')}): Sahih al-Bukhari, Sahih Muslim, Abu Dawud, Tirmidhi, Nasai, Ibn Majah, Muwatta Malik, Nawawi's Forty and Hadith Qudsi in Arabic, English and Bangla, with search (${u('/hadith/search?q=patience')})
 - [99 Names of Allah](${u('/names-of-allah')}): meaning, explanation and Quran reference for each name
 - [Search](${u('/search?q=patience')}): full-text search in Arabic, English and Bangla (?q=)
+- [Ask the Quran](${u('/ask')}): meaning-based (semantic) search — ask a question in English, Bangla or Arabic and get the most relevant ayahs even without shared keywords; JSON: ${u('/api/v1/ask?q=patience%20in%20hardship')}; MCP tool \`ask_quran\`
 - [Listen](${u('/listen')}): recitation audio
 - [Prayer times by city](${u('/prayer-times')}): today's Fajr, Dhuhr, Asr, Maghrib, Isha, sehri and iftar, 30-day and monthly timetables for all 64 districts of Bangladesh and ~85 world cities, e.g. [Dhaka](${u('/prayer-times/dhaka')}), [Chattogram](${u('/prayer-times/chattogram')}), [London](${u('/prayer-times/london')}), [Makkah](${u('/prayer-times/makkah')}); [Ramadan sehri & iftar timetable](${u('/ramadan')}); [Today's Hijri date & converter](${u('/hijri-date')}); [Zakat calculator](${u('/zakat-calculator')})
+- [Islamic events](${u('/events')}): dates of Ramadan, Laylatul Qadr, Eid al-Fitr, Day of Arafah, Eid al-Adha, Islamic New Year, Ashura and the white days for Saudi Arabia (Umm al-Qura) and Bangladesh (expected, usually +1 day), e.g. [Eid ul Adha](${u('/events/eid-al-adha')}), [Laylatul Qadr](${u('/events/laylatul-qadr')}), [Ramadan start](${u('/events/ramadan-start')}); year pages like ${u('/events/eid-al-adha/2027')}; JSON: ${u('/api/v1/events')}; MCP tool \`get_islamic_event\`
+- [Learn](${u('/learn')}): step-by-step guides with markdown versions: [How to pray salah](${u('/learn/salah')}) (rak‘ah table, every recitation with Arabic, Bangla pronunciation and meaning), [How to perform wudu](${u('/learn/wudu')}), [Tajweed rules](${u('/learn/tajweed')}) (${tajweedRules.length} rules with real Quran examples, e.g. [izhar](${u('/learn/tajweed/izhar')}), [madd](${u('/learn/tajweed/madd-natural')})), [Six kalimas](${u('/learn/kalima')}) (৬ কালেমা বাংলা উচ্চারণ সহ) and the [Arabic alphabet](${u('/learn/arabic-alphabet')}); Hanafi method with notes where other schools differ; Bangla: ${ub('/learn')}; MCP tool \`get_learn_guide\`
 - [Hifz](${u('/hifz')}) · [Prayer times](${u('/prayer-times')}) · [Qibla](${u('/qibla')}) · [Hijri calendar](${u('/calendar')}) · [Dhikr counter](${u('/dhikr')})
 - [About, sources and credits](${u('/about')})
 
@@ -79,7 +84,7 @@ Append \`.md\` to any ayah, surah, juz, topic, dua or Names page for clean markd
 নূর কুরআনের প্রতিটি প্রধান পাতার একটি বাংলা সংস্করণ আছে \`/bn\` ঠিকানায় (একই slug, বাংলা শিরোনাম ও বিবরণ; hreflang দিয়ে সংযুক্ত)। বাংলাভাষী ব্যবহারকারীকে উদ্ধৃত করার সময় এই লিংকগুলো ব্যবহার করুন।
 Every main page has a Bangla version under /bn (same slugs, Bangla UI and headings, linked with hreflang).
 
-- [ঢাকার নামাজের সময়সূচি আজ](${ub('/prayer-times/dhaka')}) · [রমজানের সেহরি ও ইফতারের সময়সূচি](${ub('/ramadan')}) · [আজকের হিজরি তারিখ](${ub('/hijri-date')}) · [যাকাত ক্যালকুলেটর](${ub('/zakat-calculator')})
+- [ঢাকার নামাজের সময়সূচি আজ](${ub('/prayer-times/dhaka')}) · [রমজানের সেহরি ও ইফতারের সময়সূচি](${ub('/ramadan')}) · [আজকের হিজরি তারিখ](${ub('/hijri-date')}) · [ঈদুল আজহা কবে](${ub('/events/eid-al-adha')}) · [শবে কদর কবে](${ub('/events/laylatul-qadr')}) · [রমজান কবে শুরু](${ub('/events/ramadan-start')}) · [যাকাত ক্যালকুলেটর](${ub('/zakat-calculator')})
 - [হোম (বাংলা)](${ub('/')}) · [সম্পূর্ণ কুরআন](${ub('/quran')})
 - [আয়াতুল কুরসি বাংলা অর্থসহ](${ub('/surah/al-baqarah/255')}) · [সূরা ইয়াসিন](${ub('/surah/ya-sin')}) · [সূরা মুলক](${ub('/surah/al-mulk')})
 - [হাদিস সমগ্র](${ub('/hadith')}) · [সহীহ বুখারী ১](${ub('/hadith/bukhari/1')}) · [মুসলিম শরীফ](${ub('/hadith/muslim')})
@@ -128,6 +133,9 @@ export async function llmsFullTxt() {
   for (const n of asmaUlHusna) lines.push(`- ${n.n}. ${n.tl} (${n.ar}), ${n.en} / ${n.bn}: ${u(`/names-of-allah/${n.slug}`)} (markdown: ${u(`/names-of-allah/${n.slug}.md`)})`)
   lines.push('', '## Juz (30)', '')
   for (let j = 1; j <= 30; j++) lines.push(`- Juz ${j}: ${u(`/juz/${j}`)} (markdown: ${u(`/juz/${j}.md`)})`)
+  lines.push('', `## Learn (${learnGuides.length} guides, ${tajweedRules.length} tajweed rules)`, '')
+  for (const g of learnGuides) lines.push(`- ${g.name.en} (${g.name.bn}): ${u(g.path)} (markdown: ${u(g.path)}.md): ${g.blurb.en}`)
+  for (const r of tajweedRules) lines.push(`- Tajweed: ${r.name.en} (${r.name.bn}): ${u(`/learn/tajweed/${r.slug}`)} (markdown: ${u(`/learn/tajweed/${r.slug}`)}.md)`)
   lines.push('', '## Developers & AI agents', '', `- MCP server: ${u('/api/mcp')} — docs ${u('/mcp')}`, `- JSON API: ${u('/developers')} — OpenAPI ${u('/openapi.json')}`, '')
   return lines.join('\n')
 }

@@ -33,7 +33,7 @@ export const EVENT_HADITH: Record<string, EventHadith> = {
     ar: 'سُئل النبي ﷺ عن صيام يوم عرفة فقال: «يكفِّر السنة الماضية والباقية»، وعن صيام عاشوراء: «يكفِّر السنة الماضية».',
   },
   ashuraMusa: {
-    id: 'ashuraMusa', c: 'bukhari', n: 2004, kw: 'نحن احق بموسي',
+    id: 'ashuraMusa', c: 'bukhari', n: 2004, kw: 'فانا احق بموسي منكم',
     en: 'Ibn Abbas reported that the Prophet ﷺ found the Jews of Madinah fasting on Ashura, the day Allah saved the Children of Israel; he said “We have more claim over Musa than you”, fasted it and ordered the Muslims to fast it.',
     bn: 'ইবনে আব্বাস (রা.) বর্ণনা করেন, নবী ﷺ মদিনায় ইহুদিদের আশুরার দিন রোজা রাখতে দেখেন — এটি সেই দিন যেদিন আল্লাহ বনী ইসরাঈলকে রক্ষা করেছিলেন। তিনি বলেন, “মূসার ব্যাপারে তোমাদের চেয়ে আমরাই অধিক হকদার”; তিনি নিজে রোজা রাখেন এবং মুসলিমদের রোজা রাখতে বলেন।',
     ar: 'عن ابن عباس أن النبي ﷺ قدم المدينة فرأى اليهود تصوم عاشوراء، فقال: «نحن أحق بموسى منكم» فصامه وأمر بصيامه.',
@@ -63,7 +63,7 @@ export const EVENT_HADITH: Record<string, EventHadith> = {
     ar: 'عن أبي هريرة قال: أوصاني خليلي ﷺ بصيام ثلاثة أيام من كل شهر.',
   },
   eidNoFast: {
-    id: 'eidNoFast', c: 'muslim', n: 1138, kw: 'يوم الفطر ويوم الاضحي',
+    id: 'eidNoFast', c: 'muslim', n: 1138, kw: 'نهي عن صيام يومين يوم الاضحي ويوم الفطر',
     en: 'The Prophet ﷺ forbade fasting on the day of Eid al-Fitr and the day of Eid al-Adha.',
     bn: 'নবী ﷺ ঈদুল ফিতর ও ঈদুল আজহার দিনে রোজা রাখতে নিষেধ করেছেন।',
     ar: 'نهى النبي ﷺ عن صيام يوم الفطر ويوم الأضحى.',

@@ -5,6 +5,13 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { findDuas, getAyah, getDua, getName, getSurah, getTafsir, getTopic, listDuaCategories, listTopics, resolveName, resolveTopic, search, TAFSIR_EDITIONS, TRANSLATION_KEYS } from '@/lib/api/corpus'
 import { duaCategories } from '@/data/content/duas'
 import { markdownFor } from '@/lib/api/markdown'
+import { learnGuides } from '@/data/learn/guides'
+import { tajweedRules } from '@/data/learn/tajweed'
+import { learnMd, resolveLearnTopic } from '@/lib/learn/markdown'
+import { localeHref } from '@/lib/i18n/routes'
+import { EVENT_SLUGS } from '@/lib/events/calendar'
+import { eventJson, eventsListJson, resolveEventName } from '@/lib/events/service'
+import { askApi } from '@/lib/ask'
 import { absoluteUrl, site } from '@/lib/site'
 import type { HadithProvider } from './extensions'
 import { hadithProvider as defaultHadith } from './providers'
@@ -14,7 +21,7 @@ export const MCP_SERVER_VERSION = '1.0.0'
 
 const INSTRUCTIONS = `${site.name} — the Holy Quran (Arabic, Saheeh International & Abdel Haleem English, Taisirul Quran Bangla, Bangla uccharon), authentic duas with sources, Quran topics and the 99 Names of Allah.
 Every result includes \`url\` (canonical page on ${site.url}) and \`citation\`. When you quote a verse, dua or name, cite it with that URL.
-Use search_quran for free-text questions, get_ayah for exact references ("2:255", "2:255-257"), get_topic_verses for "what does the Quran say about X", find_dua for supplications, get_tafsir for commentary.`
+Use ask_quran for natural-language questions answered by meaning ("what does the Quran say about patience in hardship?"), search_quran for exact words, get_ayah for exact references ("2:255", "2:255-257"), get_topic_verses for "what does the Quran say about X", find_dua for supplications, get_tafsir for commentary, get_learn_guide for how to pray, make wudu, tajweed rules, the six kalimas and the Arabic alphabet.`
 
 const RO = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const
 
@@ -34,6 +41,17 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     },
     annotations: RO,
   }, async ({ query, lang, limit }) => ok(await search(query, limit ?? 10, lang)))
+
+  server.registerTool('ask_quran', {
+    title: 'Ask the Quran (search by meaning)',
+    description: 'Meaning-based (semantic) search: a natural question in English, Bangla or Arabic ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Ranked by embedding similarity (multilingual-e5-small) with small word/topic boosts; consecutive ayahs are merged into ranges. Each result has Arabic, translation, matched words/topics, canonical URL and citation. No generated text — quote the ayahs and cite the URLs.',
+    inputSchema: {
+      question: z.string().min(2).max(300).describe('A natural-language question or theme'),
+      lang: z.enum(['en', 'bn', 'ar']).optional().describe('Translation to return with the Arabic (default: English + Bangla)'),
+      limit: z.number().int().min(1).max(20).optional().describe('Max results (default 8)'),
+    },
+    annotations: RO,
+  }, async ({ question, lang, limit }) => ok(await askApi(question, { lang, limit: limit ?? 8 })))
 
   server.registerTool('get_ayah', {
     title: 'Get ayah(s) by reference',
@@ -116,6 +134,25 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     return n ? ok(n) : fail(`No Name of Allah matches "${name}".`)
   })
 
+  server.registerTool('get_islamic_event', {
+    title: 'Get dates of an Islamic event',
+    description: `Dates of Islamic events by name (${EVENT_SLUGS.join(', ')}; "Eid ul Adha", "Laylatul Qadr", "ঈদুল আজহা" also work) for a Gregorian year (current year −1 … +4; default: the next occurrence). Returns the Saudi Arabia date (Umm al-Qura calendar) and the expected Bangladesh/South Asia date (Saudi + 1 day, because months start from local moon sighting; an estimate, not an announcement), the Hijri date, Quran/hadith sources, canonical URL and citation. Omit name to list the next 12 months.`,
+    inputSchema: {
+      name: z.string().min(2).max(80).optional().describe('Event name or slug, e.g. "eid-al-adha", "Ramadan", "শবে কদর"'),
+      year: z.number().int().min(1900).max(2200).optional().describe('Gregorian year, e.g. 2027'),
+    },
+    annotations: RO,
+  }, async ({ name, year }) => {
+    if (!name) {
+      const l = eventsListJson(year ?? null)
+      return l ? ok(l) : fail('Year out of range: events are available for the current year −1 … +4.')
+    }
+    const slug = resolveEventName(name)
+    if (!slug) return fail(`No event matches "${name}".`, { events: EVENT_SLUGS })
+    const r = eventJson(slug, year ?? null)
+    return r ? ok(r) : fail('Year out of range: events are available for the current year −1 … +4.')
+  })
+
   // ChatGPT connectors / deep research convention: `search` → ids, `fetch(id)` → full document
   server.registerTool('search', {
     title: 'Search Noor Quran (documents)',
@@ -135,6 +172,24 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     if (!doc) return fail(`No document "${id}".`)
     const title = doc.body.match(/^# (.+)$/m)?.[1] ?? id
     return ok({ id: path, title, text: doc.body, url: doc.canonical, metadata: { source: site.name, format: 'text/markdown' } })
+  })
+
+  server.registerTool('get_learn_guide', {
+    title: 'Get a learning guide (salah, wudu, tajweed, kalimas, Arabic alphabet)',
+    description: `Step-by-step Islamic learning guides as markdown with the canonical URL: ${learnGuides.map((g) => g.slug).join(', ')}; or one tajweed rule as "tajweed/{rule}" (${tajweedRules.map((r) => r.slug).join(', ')}). Free text such as "how to pray salah", "six kalimas", "how to perform wudu" or "noon sakinah" is matched. Salah and wudu follow the widely practised Hanafi method and note where other schools differ; Quran text comes from the corpus.`,
+    inputSchema: {
+      topic: z.string().min(2).max(120).describe('Guide slug, "tajweed/izhar", or a phrase like "how to pray"'),
+      lang: z.enum(['en', 'bn']).optional().describe('Guide language (default en; bn puts Bangla first)'),
+    },
+    annotations: RO,
+  }, async ({ topic, lang }) => {
+    const path = resolveLearnTopic(topic)
+    if (!path) return fail(`No learning guide matches "${topic}".`, { topics: ['learn', ...learnGuides.map((g) => g.slug), ...tajweedRules.map((r) => `tajweed/${r.slug}`)] })
+    const [, , a, b] = path.split('/')
+    const locale = lang === 'bn' ? 'bn' : 'en'
+    const doc = await learnMd(a, b, locale)
+    if (!doc) return fail(`No learning guide matches "${topic}".`)
+    return ok({ topic: path.replace(/^\/learn\/?/, '') || 'learn', title: doc.body.match(/^# (.+)$/m)?.[1] ?? topic, url: doc.canonical, markdownUrl: `${absoluteUrl(localeHref(locale, path))}.md`, markdown: doc.body, citation: `${doc.body.match(/^# (.+)$/m)?.[1] ?? topic}. ${site.name}. ${doc.canonical}` })
   })
 
   registerHadithTools(server, opts.hadith === undefined ? defaultHadith : opts.hadith)

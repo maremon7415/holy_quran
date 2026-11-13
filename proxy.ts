@@ -62,6 +62,10 @@ export const config = {
     '/bn/surah/:path*',
     // markdown alternates of juz / topic / dua / name pages (surah + ayah .md are covered above)
     '/((?:bn/)?(?:juz|topics|dua|names-of-allah)/[^/]+\\.md)',
+    // markdown alternates of the Islamic-events pages: /events.md, /events/eid-al-adha.md, /events/eid-al-adha/2027.md
+    '/((?:bn/)?events(?:/[^/]+){0,2}\\.md)',
+    // markdown alternates of the learning guides: /learn.md, /learn/salah.md, /learn/tajweed/izhar.md
+    '/((?:bn/)?learn(?:/[^/]+){0,2}\\.md)',
     // short ayah URLs
     '/((?:bn/)?\\d{1,3}(?::|%3A|%3a|\\.)\\d{1,3}(?:-\\d{1,3})?)',
     '/((?:bn/)?\\d{1,3}/\\d{1,3})',

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { GET, OPTIONS, POST } from '@/app/api/mcp/route'
 import { createMcpServer, registerHadithTools } from '@/lib/mcp/server'
 import type { HadithProvider } from '@/lib/mcp/extensions'
+import { useFakeEmbedder, restoreEmbedder } from '../../helpers/fake-embedder'
 
 const HEADERS = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' }
 let id = 0
@@ -27,7 +28,7 @@ describe('MCP endpoint /api/mcp (JSON-RPC over Streamable HTTP, stateless)', () 
   it('tools/list lists the Quran tools with read-only annotations', async () => {
     const { result } = await rpc('tools/list')
     const names = result.tools.map((t: { name: string }) => t.name)
-    expect(names).toEqual(expect.arrayContaining(['search_quran', 'get_ayah', 'get_surah', 'get_tafsir', 'find_dua', 'get_topic_verses', 'get_name_of_allah']))
+    expect(names).toEqual(expect.arrayContaining(['search_quran', 'get_ayah', 'get_surah', 'get_tafsir', 'find_dua', 'get_topic_verses', 'get_name_of_allah', 'get_islamic_event']))
     expect(names).toEqual(expect.arrayContaining(['get_hadith', 'search_hadith'])) // hadith provider is wired
     for (const t of result.tools) {
       expect(t.annotations?.readOnlyHint).toBe(true)
@@ -47,6 +48,22 @@ describe('MCP endpoint /api/mcp (JSON-RPC over Streamable HTTP, stateless)', () 
     expect(a.translations.bangla).toMatch(/[ঀ-৿]/)
     expect(a.uccharon).toMatch(/[ঀ-৿]/)
     expect(data.famousAs.en).toMatch(/Kursi/i)
+  })
+
+  it('get_islamic_event returns Saudi + expected Bangladesh dates, sources, URL and citation', async () => {
+    const y = new Date().getUTCFullYear() + 1
+    const { isError, data } = await call('get_islamic_event', { name: 'Eid ul Adha', year: y })
+    expect(isError).toBe(false)
+    expect(data.event).toBe('eid-al-adha')
+    expect(data.occurrences[0].saudi.headline).toMatch(new RegExp(`^${y}-`))
+    expect(new Date(data.occurrences[0].bangladeshExpected.headline).getTime() - new Date(data.occurrences[0].saudi.headline).getTime()).toBe(864e5)
+    expect(data.note).toMatch(/moon sighting/)
+    expect(data.url).toMatch(new RegExp(`/events/eid-al-adha/${y}$`))
+    expect(data.citation).toContain(data.url)
+    expect((await call('get_islamic_event', { name: 'শবে কদর' })).data.event).toBe('laylatul-qadr')
+    expect((await call('get_islamic_event', {})).data.events.length).toBeGreaterThan(5)
+    expect((await call('get_islamic_event', { name: 'banana' })).isError).toBe(true)
+    expect((await call('get_islamic_event', { name: 'ashura', year: y + 20 })).isError).toBe(true)
   })
 
   it('get_ayah ranges + invalid refs', async () => {
@@ -83,6 +100,28 @@ describe('MCP endpoint /api/mcp (JSON-RPC over Streamable HTTP, stateless)', () 
     }
   })
 
+  it('ask_quran answers a natural question by meaning with canonical URLs + citations', async () => {
+    const tools = (await rpc('tools/list')).result.tools.map((t: { name: string }) => t.name)
+    expect(tools).toContain('ask_quran')
+    useFakeEmbedder({}, '94:5')
+    try {
+      const r = await call('ask_quran', { question: 'will things get easier after hard times?', limit: 4 })
+      expect(r.isError).toBe(false)
+      expect(r.data.mode).toBe('semantic')
+      expect(r.data.results.length).toBeLessThanOrEqual(4)
+      const top = r.data.results[0]
+      expect(top.reference).toMatch(/^94:5/)
+      expect(top.url).toMatch(/^https:\/\/.+\/surah\/ash-sharh\/5$/)
+      expect(top.citation).toContain(top.url)
+      expect(top.ayahs[0].arabic).toMatch(/[\u0600-\u06FF]{3,}/)
+      const bn = await call('ask_quran', { question: 'কষ্টের পরে কি স্বস্তি আসে', lang: 'bn', limit: 2 })
+      expect(bn.data.results[0].ayahs[0].bangla).toMatch(/[ঀ-৿]/)
+      expect((await rpc('tools/call', { name: 'ask_quran', arguments: { question: 'x' } })).result?.isError ?? true).toBeTruthy()
+    } finally {
+      restoreEmbedder()
+    }
+  })
+
   it('unknown tool / invalid args → JSON-RPC or tool error, never a 500', async () => {
     const r = await rpc('tools/call', { name: 'nope', arguments: {} })
     expect(r.error ?? r.result?.isError).toBeTruthy()
@@ -108,6 +147,36 @@ describe('MCP endpoint /api/mcp (JSON-RPC over Streamable HTTP, stateless)', () 
     registerHadithTools(server, provider)
     // @ts-expect-error private registry, enough to prove registration
     expect(Object.keys(server._registeredTools)).toEqual(expect.arrayContaining(['get_hadith', 'search_hadith']))
+  })
+})
+
+describe('MCP get_learn_guide', () => {
+  it('is registered, read-only, and returns the guide markdown with the canonical URL', async () => {
+    const tools = (await rpc('tools/list')).result.tools as { name: string; annotations?: { readOnlyHint?: boolean } }[]
+    expect(tools.find((t) => t.name === 'get_learn_guide')?.annotations?.readOnlyHint).toBe(true)
+    const salah = await call('get_learn_guide', { topic: 'how to pray salah' })
+    expect(salah.isError).toBe(false)
+    expect(salah.data.url).toMatch(/^https:\/\/.+\/learn\/salah$/)
+    expect(salah.data.markdownUrl).toMatch(/\/learn\/salah\.md$/)
+    expect(salah.data.markdown).toMatch(/^# How to pray salah/)
+    expect(salah.data.markdown).toMatch(/Hanafi/)
+    expect(salah.data.citation).toContain(salah.data.url)
+    const rule = await call('get_learn_guide', { topic: 'tajweed/izhar' })
+    expect(rule.data.url).toMatch(/\/learn\/tajweed\/izhar$/)
+    expect(rule.data.markdown).toMatch(/[\u0600-\u06FF]{3,}/)
+    const bn = await call('get_learn_guide', { topic: 'six kalimas', lang: 'bn' })
+    expect(bn.data.url).toMatch(/\/bn\/learn\/kalima$/)
+    expect(bn.data.markdown).toMatch(/কালেমা/)
+    const wudu = await call('get_learn_guide', { topic: 'অজু করার নিয়ম' })
+    expect(wudu.data.url).toMatch(/\/learn\/wudu$/)
+    const miss = await call('get_learn_guide', { topic: 'quantum chromodynamics' })
+    expect(miss.isError).toBe(true)
+    expect(miss.data.topics).toContain('salah')
+  })
+  it('fetch resolves learn paths to markdown as well', async () => {
+    const f = await call('fetch', { id: '/learn/kalima' })
+    expect(f.data.url).toMatch(/\/learn\/kalima$/)
+    expect(f.data.text).toMatch(/Kalima Tayyibah/)
   })
 })
 

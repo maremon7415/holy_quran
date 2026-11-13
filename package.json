@@ -14,9 +14,13 @@
     "test:e2e": "playwright test --trace off",
     "validate:content": "node --experimental-strip-types scripts/validate-content.mjs",
     "verify:hadith": "node --experimental-strip-types scripts/verify-hadith-sources.mjs",
+    "verify:learn": "node --experimental-strip-types scripts/verify-learn-sources.mjs",
+    "build:tajweed": "node scripts/build-tajweed-examples.mjs",
     "check": "pnpm typecheck && pnpm test && pnpm validate:content",
     "indexnow": "node scripts/indexnow.mjs",
-    "wikidata:surahs": "node scripts/build-wikidata-surahs.mjs"
+    "wikidata:surahs": "node scripts/build-wikidata-surahs.mjs",
+    "eval:ask": "vitest run --config tests/eval/vitest.config.ts",
+    "build:embeddings": "node scripts/build-embeddings.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.2",

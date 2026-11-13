@@ -6,6 +6,7 @@ import { duas } from '@/data/content/duas'
 import { asmaUlHusna } from '@/data/content/asma-ul-husna'
 import { hasBnTwin, localeHref, type Locale } from '@/lib/i18n/routes'
 import { HADITH_SITEMAP_FILES, hadithSitemapChunk } from '@/lib/hadith/sitemap'
+import { learnPaths } from '@/data/learn/guides'
 
 const CHUNK = 5000 // well under the 50,000-URL sitemap limit
 const TOTAL_AYAH = chapters.reduce((a, c) => a + c.versesCount, 0) // 6236
@@ -61,6 +62,8 @@ function corePages(): [string, number, Entry['changeFrequency']][] {
     ['/about', 0.4, 'yearly'],
     ['/developers', 0.5, 'monthly'],
     ['/mcp', 0.5, 'monthly'],
+    ['/ask', 0.7, 'monthly'],
+    ...learnPaths().map((p) => [p, p === '/learn' ? 0.9 : p.split('/').length > 3 ? 0.7 : 0.85, 'monthly'] as const),
     ...chapters.map((c) => [surahHref(c.id), 0.85, 'monthly'] as const),
     ...Array.from({ length: 30 }, (_, i) => [juzHref(i + 1), 0.7, 'monthly'] as const),
     ...topics.map((t) => [`/topics/${t.slug}`, 0.8, 'monthly'] as const),

@@ -4,6 +4,7 @@ import { cities } from './cities'
 import { monthKey } from './export'
 import { currentOrNextRamadan } from './hijri'
 import { cityToday, zonedYmd } from './times'
+import { EVENT_SLUGS, eventYears } from '@/lib/events/calendar'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;')
 
@@ -15,6 +16,13 @@ export function placeEntries(now = Date.now()): Entry[] {
     { path: '/hijri-date', changefreq: 'daily', priority: 0.8 },
     { path: '/zakat-calculator', changefreq: 'monthly', priority: 0.8 },
   ]
+  // Islamic events: hub, evergreen page per event, year pages (current year −1 … +4)
+  out.push({ path: '/events', changefreq: 'daily', priority: 0.9 })
+  const cy = zonedYmd(now, 'Asia/Dhaka').y
+  for (const s of EVENT_SLUGS) {
+    out.push({ path: `/events/${s}`, changefreq: 'weekly', priority: 0.85 })
+    for (const y of eventYears(cy)) out.push({ path: `/events/${s}/${y}`, changefreq: y >= cy ? 'weekly' : 'yearly', priority: y === cy || y === cy + 1 ? 0.8 : 0.6 })
+  }
   const ram = currentOrNextRamadan(zonedYmd(now, 'Asia/Dhaka')).range
   out.push({ path: `/ramadan/${ram.start.y}`, changefreq: 'weekly', priority: 0.8 })
   for (const c of cities) {

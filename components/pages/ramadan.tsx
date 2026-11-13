@@ -177,6 +177,12 @@ export async function RamadanYearPage({ locale, params }: { locale: Locale } & Y
           : <>1 Ramadan (Umm al-Qura): {fmtDate(r.start, 'en', { weekday: true })} · last fast: {fmtDate(r.end, 'en')} · Eid al-Fitr: {fmtDate(r.eid, 'en')}</>}
       />
       <div className="mt-6"><Notice locale={locale} r={r} /></div>
+      <div data-print-hide className="mt-4 flex flex-wrap gap-2" aria-label={bn ? 'সংশ্লিষ্ট ইসলামি দিবস' : 'Related Islamic events'}>
+        <Link href={localeHref(locale, `/events/ramadan-start/${y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${y} start date`, bn: `রমজান ${bnDigits(y)} কবে শুরু`, ar: `بداية رمضان ${y}` })}</Link>
+        <Link href={localeHref(locale, `/events/laylatul-qadr/${y}`)} className={chipCls}>{lt(locale, { en: `Laylatul Qadr ${y}`, bn: `শবে কদর ${bnDigits(y)} কবে`, ar: `ليلة القدر ${y}` })}</Link>
+        <Link href={localeHref(locale, `/events/eid-al-fitr/${y}`)} className={chipCls}>{lt(locale, { en: `Eid ul Fitr ${y}`, bn: `ঈদুল ফিতর ${bnDigits(y)} কবে`, ar: `عيد الفطر ${y}` })}</Link>
+        <Link href={localeHref(locale, '/events')} className={chipCls}>{lt(locale, { en: 'All Islamic events', bn: 'সব ইসলামি দিবস', ar: 'كل المناسبات' })}</Link>
+      </div>
 
       <section className="mt-10" aria-labelledby="div-h">
         <h2 id="div-h" className="font-display mb-2 text-2xl font-semibold">{lt(locale, { en: 'Divisional cities — first day of Ramadan', bn: 'বিভাগীয় শহর — রমজানের প্রথম দিন', ar: 'مدن الأقسام — اليوم الأول' })}</h2>

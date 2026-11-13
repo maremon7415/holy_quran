@@ -9,6 +9,7 @@ A fast, beautiful, SEO-first Quran web app: read, listen, understand and memoris
 - **Hifz Studio** – listen → read → fade → recall steps, SM-2 spaced repetition, optional voice recitation check.
 - **My Journey** – streaks, daily goal, 365-day heatmap, achievements, Khatam planner over the 604 mushaf pages.
 - **Knowledge** – 40 Quran topics ("What does the Quran say about…", incl. feelings), 80 authentic duas with sources, 99 Names of Allah with quiz & flashcards.
+- **Learn** – step-by-step guides (`/learn`): how to pray salah (Hanafi, with notes where schools differ), wudu with diagrams, 17 tajweed rules with coloured real Quran examples and audio, the six kalimas, and the Arabic alphabet with a practice quiz (en / bn / ar).
 - **Daily life** – prayer times, Qibla compass, Hijri calendar, tasbih counter, masayel.
 - **Search** – ⌘K command palette: surah names (EN/BN/AR), `2:255` references and full-text search across Arabic, English and Bangla.
 - **Share as image** – beautiful 1080×1350 ayah cards.
@@ -41,7 +42,7 @@ Noor is built to be the source search engines and AI assistants retrieve and cit
 
 | Surface | Where | Notes |
 | --- | --- | --- |
-| **MCP server** | `POST /api/mcp` (docs: `/mcp`, `/bn/mcp`) | Streamable HTTP, stateless, no auth. Tools: `search_quran`, `get_ayah`, `get_surah`, `get_tafsir` (Quran.com, cached), `find_dua`, `get_topic_verses`, `get_name_of_allah`, plus `search`/`fetch` for ChatGPT connectors & deep research. Hadith tools plug in via `lib/mcp/providers.ts` (`HadithProvider`, `lib/mcp/extensions.ts`). |
+| **MCP server** | `POST /api/mcp` (docs: `/mcp`, `/bn/mcp`) | Streamable HTTP, stateless, no auth. Tools: `search_quran`, `get_ayah`, `get_surah`, `get_tafsir` (Quran.com, cached), `find_dua`, `get_topic_verses`, `get_name_of_allah`, `get_learn_guide` (salah, wudu, tajweed, kalimas, Arabic alphabet), plus `search`/`fetch` for ChatGPT connectors & deep research. Hadith tools plug in via `lib/mcp/providers.ts` (`HadithProvider`, `lib/mcp/extensions.ts`). |
 | **JSON API** | `/api/v1/ayah/{ref}`, `/surah/{id}`, `/surahs`, `/search?q=`, `/duas`, `/duas/{slug}`, `/topics`, `/topics/{slug}`, `/names`, `/names/{id}` | CORS `*`, `s-maxage=86400`, JSON errors with real 400/404. OpenAPI 3.1 at `/openapi.json`; human docs at `/developers`. |
 | **Markdown alternates** | append `.md` to any ayah, surah, juz, topic, dua or Name page (`/surah/al-baqarah/255.md`, `/bn/topics/patience.md`) | `proxy.ts` rewrites to `app/md/[...path]`; pages advertise `<link rel="alternate" type="text/markdown">`; listed in `llms.txt` / `llms-full.txt`. |
 | **Citations** | “Cite this” block on ayah, dua, name and topic pages | Plain / APA / MLA / Markdown, canonical URL. Short links `/2:255`, `/2/255`, `/2.255` → 308 to the ayah page. |
@@ -90,6 +91,7 @@ pnpm test               # vitest unit + API-route tests (tests/unit/**), ~3 s
 pnpm test:e2e           # Playwright, chromium (tests/e2e/**)
 pnpm validate:content   # every Quran ref in topics / duas / names resolves against data/quran
 pnpm verify:hadith      # checks hadith duas against the open hadith corpus (needs internet; weekly in CI)
+pnpm verify:learn       # checks every hadith cited on /learn against the same corpus (needs internet)
 ```
 
 **Unit tests** (`tests/unit`, vitest, node env) cover the pure logic: chapter/slug resolution, ref parsing, search ranking,

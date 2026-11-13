@@ -97,6 +97,16 @@ for (const d of duas) {
     report.push(`✗  ${d.slug}: ${s.label} matches only ${Math.round(best * 100)}% → best in ${s.book}: #${num} (${Math.round((top?.c ?? 0) * 100)}%)`)
   }
 }
+// Hadith cited on the Islamic-events pages (lib/events/hadith-refs.ts): each entry's Arabic keyword must occur in the
+// Arabic hadith at exactly that collection + number.
+const { EVENT_HADITH } = await import(pathToFileURL(path.join(root, 'lib/events/hadith-refs.ts')).href)
+for (const h of Object.values(EVENT_HADITH)) {
+  const hs = (lookup[h.c] ??= await edition(h.c))
+  const cand = h.c === 'muslim' ? hs.filter((x) => Math.floor(parseFloat(x.arabicnumber)) === h.n) : hs.filter((x) => x.hadithnumber === h.n)
+  if (cand.some((x) => norm(x.text).includes(norm(h.kw)))) { ok++; report.push(`✓  events/${h.id}: ${h.c} ${h.n} contains “${h.kw}”`) }
+  else { bad++; report.push(`✗  events/${h.id}: ${h.c} ${h.n} does not contain “${h.kw}”`) }
+}
+
 console.log(report.join('\n'))
 console.log(`\n${ok} verified, ${bad} mismatched, ${skipped} skipped (Quranic or no hadith number)`)
 process.exit(bad ? 1 : 0)

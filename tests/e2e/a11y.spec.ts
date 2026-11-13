@@ -9,9 +9,11 @@ const known: Known = JSON.parse(fs.readFileSync(path.join(__dirname, 'a11y-known
 const ROUTES = [
   '/', '/quran', '/surah/al-mulk', '/surah/al-baqarah/255', '/topics', '/topics/patience', '/dua', '/dua/dua-morning-asbahna',
   '/names-of-allah', '/names-of-allah/ar-rahman', '/search?q=mercy', '/hifz', '/journey', '/prayer-times', '/qibla', '/calendar',
-  '/dhikr', '/saved', '/settings', '/about', '/listen', '/mcp', '/developers',
+  '/dhikr', '/saved', '/settings', '/about', '/listen', '/mcp', '/developers', '/ask',
   '/prayer-times/dhaka', '/hijri-date', '/zakat-calculator',
+  '/events', '/events/laylatul-qadr/2027',
   '/hadith', '/hadith/bukhari', '/hadith/bukhari/1', '/hadith/abudawud/5095', '/hadith/search?q=intended&c=nawawi40',
+  '/learn', '/learn/salah', '/learn/wudu', '/learn/tajweed', '/learn/tajweed/ikhfa', '/learn/tajweed/waqf-signs', '/learn/kalima', '/learn/arabic-alphabet',
 ]
 
 /** wait until no element is mid-fade (entrance animations blend colours and skew contrast results) */
