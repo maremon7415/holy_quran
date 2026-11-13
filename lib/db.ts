@@ -2,9 +2,6 @@ import mongoose from 'mongoose'
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
-}
 
 let cached = (global as any).mongoose
 
@@ -13,6 +10,8 @@ if (!cached) {
 }
 
 export async function connectDB() {
+  // Checked lazily so the app builds and runs without an account database.
+  if (!MONGODB_URI) throw new Error('Accounts are disabled: MONGODB_URI is not configured')
   if (cached.conn) {
     return cached.conn
   }

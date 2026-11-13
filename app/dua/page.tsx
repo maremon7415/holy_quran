@@ -1,140 +1,47 @@
-'use client'
+import Link from 'next/link'
+import type { Metadata } from 'next'
+import { Breadcrumbs } from '@/components/seo/breadcrumbs'
+import { JsonLd } from '@/components/seo/json-ld'
+import { PageHero, pageShell } from '@/components/content/page-hero'
+import { DuaLibrary } from '@/components/content/dua-library'
+import { duaCategories } from '@/data/content/duas'
+import { resolveAllDuas } from '@/lib/content/resolve'
+import { buildMeta, collectionLd, shortTitle } from '@/lib/content/seo'
 
-import { useEffect, useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { BookOpen, Search } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import Navbar from '@/components/navbar'
-import Sidebar from '@/components/sidebar'
-import DuaCard from '@/components/dua-card'
-import { Dua, getAllDuas } from '@/lib/dua-data'
-import { useI18n } from '@/lib/i18n'
+export const metadata: Metadata = buildMeta({
+  title: 'Daily Duas from the Quran & Sunnah: Arabic, Meaning & Bangla | দোয়া সমূহ',
+  description: 'Authentic duas with Arabic, transliteration and English & Bangla meaning: morning and evening, sleep, travel, anxiety, rizq, forgiveness, the Rabbana duas of the Quran and more. প্রামাণ্য দোয়া, অর্থসহ।',
+  path: '/dua',
+  keywords: ['dua', 'duas', 'dua for anxiety', 'morning evening adhkar', 'Rabbana duas', 'daily duas', 'দোয়া', 'রিজিক বৃদ্ধির দোয়া', 'সকাল সন্ধ্যার দোয়া', 'ঘুমের দোয়া'],
+})
 
-export default function DuaLibraryPage() {
-  const [duas, setDuas] = useState<Dua[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState<string>('All')
-  const { t } = useI18n()
-  const router = useRouter()
-
-  useEffect(() => {
-    const fetchDuas = async () => {
-      try {
-        const data = await getAllDuas()
-        setDuas(data)
-      } catch (error) {
-        console.error('Failed to fetch duas', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchDuas()
-  }, [])
-
-  const categories = useMemo(() => {
-    const cats = new Set(duas.map(d => d.category))
-    return ['All', ...Array.from(cats)]
-  }, [duas])
-
-  const filteredDuas = useMemo(() => {
-    return duas.filter(dua => {
-      const matchesSearch = 
-        dua.translation.en.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        dua.translation.bn.includes(searchQuery) ||
-        dua.arabic.includes(searchQuery) ||
-        dua.transliteration.toLowerCase().includes(searchQuery.toLowerCase())
-      
-      const matchesCategory = activeCategory === 'All' || dua.category === activeCategory
-
-      return matchesSearch && matchesCategory
-    })
-  }, [duas, searchQuery, activeCategory])
-
+export default async function DuaPage() {
+  const all = await resolveAllDuas()
+  const items = all.map((d) => ({ slug: d.slug, cat: d.cat, title: d.title, ar: d.ar, tl: d.tl, meaning: d.meaning, source: d.source, keywords: d.keywords }))
+  const popular = ['dua-for-anxiety', 'ayatul-kursi', 'dua-before-sleeping', 'dua-for-rizq-halal', 'dua-qunut', 'rabbana-atina-fid-dunya-hasanah']
   return (
-    <main className="min-h-screen bg-background pb-20 md:pb-0">
-      <Navbar />
-      <Sidebar />
-
-      <div className="max-w-5xl mx-auto px-4 py-8 mt-16 md:mt-0">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <button 
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
-          >
-            <BookOpen className="w-4 h-4 rotate-180" /> {t('back', { defaultValue: 'Back' })}
-          </button>
-
-          <div className="flex items-center gap-3 mb-6">
-            <BookOpen className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">
-              {t('dua_library', { defaultValue: "Du'a Library" })}
-            </h1>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder={t('search', { defaultValue: 'Search supplications...' })}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
-              />
-            </div>
-          </div>
-
-          {!loading && categories.length > 1 && (
-            <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-none mb-8">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    activeCategory === category
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-64 bg-muted/50 rounded-2xl animate-pulse"></div>
-            ))}
-          </div>
-        ) : filteredDuas.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredDuas.map((dua) => (
-              <motion.div
-                key={dua.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <DuaCard dua={dua} />
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground text-lg">
-              {t('no_dua_found', { defaultValue: 'No supplications found.' })}
-            </p>
-          </div>
-        )}
+    <div className={pageShell}>
+      <JsonLd data={collectionLd({ name: 'Duas from the Quran and Sunnah', description: metadata.description as string, path: '/dua', items: all.map((d) => ({ name: d.title.en, href: `/dua/${d.slug}` })) })} />
+      <Breadcrumbs items={[{ name: 'Duas', href: '/dua' }]} className="mb-4" />
+      <PageHero
+        eyebrow="Duas · দোয়া"
+        icon="dua"
+        arabic="ٱدْعُونِىٓ أَسْتَجِبْ لَكُمْ"
+        title="Duas from the Quran & Sunnah"
+        subtitle={`${all.length} authentic supplications with Arabic, transliteration and meaning in English and Bangla. Every dua cites its source; Quranic duas are shown straight from the Quran text. প্রতিটি দোয়ার উৎস উল্লেখ করা আছে।`}
+      />
+      <div className="mt-6">
+        <DuaLibrary duas={items} cats={duaCategories.map((c) => ({ id: c.id, title: c.title, icon: c.icon }))} />
       </div>
-    </main>
+      <section className="mt-14 rounded-3xl border border-border bg-card p-6 text-sm leading-relaxed text-muted-foreground">
+        <h2 className="font-display mb-2 text-lg font-semibold text-foreground">About these duas</h2>
+        <p>Duas are listed with the Quran verse or hadith collection they come from, such as Sahih al-Bukhari or Sahih Muslim. Where a hadith number is shown it points to the standard numbering of that collection. For rulings on how and when to recite, please consult a qualified scholar.</p>
+        <p lang="bn" className="font-bangla mt-2">প্রতিটি দোয়ার সঙ্গে কুরআনের আয়াত বা হাদিসের গ্রন্থের উৎস দেওয়া আছে। পাঠের নিয়ম ও বিধান জানতে যোগ্য আলেমের পরামর্শ নিন।</p>
+        <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+          <span className="font-semibold text-foreground">Popular:</span>
+          {popular.map((s) => { const d = all.find((x) => x.slug === s)!; return <Link key={s} href={`/dua/${s}`} className="text-primary hover:underline">{shortTitle(d.title.en)}</Link> })}
+        </p>
+      </section>
+    </div>
   )
 }

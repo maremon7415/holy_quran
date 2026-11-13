@@ -1,0 +1,179 @@
+/* ------------------------------------------------------------------ *
+ *  Noor reader styles (surah / juz / ayah / index routes).
+ *  Imported from the reader pages; everything is scoped to reader classes.
+ * ------------------------------------------------------------------ */
+
+/* ---------- UI-language helpers (html[data-lang] is set before paint) ---------- */
+.bn-only { display: none; }
+html[data-lang='bn'] .bn-only { display: revert; }
+html[data-lang='bn'] .en-only { display: none; }
+
+/* ---------- English edition switch ---------- */
+[data-ed='haleem'] { display: none; }
+html[data-en-ed='haleem']:not([data-show-en='0']) [data-ed='haleem'] { display: block; }
+html[data-en-ed='haleem'] [data-ed='sahih'] { display: none; }
+/* explicit (single-ayah page shows both editions side by side) */
+.show-both-eds [data-ed] { display: block !important; }
+
+/* ---------- Ayah block ---------- */
+.ayah {
+  position: relative;
+  border-radius: 1.75rem;
+  transition: background-color 0.6s var(--ease-soft), box-shadow 0.6s var(--ease-soft);
+}
+.ayah[data-current='1'] {
+  background: var(--highlight);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary) 22%, transparent);
+}
+.ayah[data-current='1'] .ayah-num { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+.ayah[data-glow='1'] { animation: ayah-glow 2.4s var(--ease-soft) both; }
+@keyframes ayah-glow {
+  0% { box-shadow: 0 0 0 0 var(--glow), inset 0 0 0 1px color-mix(in oklab, var(--primary) 40%, transparent); background: var(--highlight); }
+  25% { box-shadow: 0 0 0 10px var(--glow), inset 0 0 0 1px color-mix(in oklab, var(--primary) 40%, transparent); background: var(--highlight); }
+  100% { box-shadow: 0 0 0 0 transparent, inset 0 0 0 1px transparent; }
+}
+.ayah-divider { height: 1px; margin-inline: 1.25rem; background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent); }
+
+/* Arabic words — recited-word highlight driven by data-active (set by ReaderController) */
+.quran-text .w { position: relative; border-radius: 0.35em; transition: color 0.25s var(--ease-soft), text-shadow 0.35s var(--ease-soft); }
+.quran-text .w[data-active] { color: var(--word-active); text-shadow: 0 0 22px var(--glow); }
+.quran-text .w[data-active]::after {
+  content: '';
+  position: absolute;
+  inset-inline: 10%;
+  bottom: -0.05em;
+  height: 0.09em;
+  min-height: 2px;
+  border-radius: 99px;
+  background: var(--word-active);
+  box-shadow: 0 0 12px var(--word-active);
+  opacity: 0.75;
+  animation: word-underline 0.4s var(--ease-soft) both;
+}
+@keyframes word-underline { from { transform: scaleX(0.2); opacity: 0; } to { transform: none; opacity: 0.75; } }
+.quran-text .waqf { color: var(--gold); }
+
+/* Layer swaps: tajweed / word-by-word replace the plain Arabic once loaded */
+.ayah-ar:has(> .tj-slot:not(:empty)) > .ar-plain { display: none; }
+html:not([data-reader-mode='reading']) .ayah-ar:has(> .wbw-slot:not(:empty)) > :is(.ar-plain, .tj-slot) { display: none; }
+.tj-slot:empty, .wbw-slot:empty { display: none; }
+
+/* Word-by-word tiles */
+.wbw-tile[data-active] { background: var(--highlight); border-color: color-mix(in oklab, var(--word-active) 55%, transparent); }
+.wbw-tile[data-active] .wbw-ar { color: var(--word-active); }
+
+/* Tajweed colours: fix dim themes (class is on <html> together with the theme) */
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.madda_necessary { color: #8b95ff; }
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.madda_obligatory { color: #6f8cff; }
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.madda_permissible { color: #7c87ff; }
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.qalaqah { color: #ff5a5f; }
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.ikhafa,
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.ikhafa_shafawi { color: #d77bff; }
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.idgham_wo_ghunnah,
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.idgham_mutajanisayn,
+html.tajweed-on:is(.dusk, .dark, .black) .quran-text tajweed.idgham_mutaqaribayn { color: #3fd0a8; }
+
+/* ---------- Mushaf flow (reading) mode ---------- */
+html[data-reader-mode='reading'] .verse-list {
+  direction: rtl;
+  text-align: justify;
+  text-align-last: center;
+  padding: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 4vw, 3.25rem);
+  border-radius: 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 0 6px var(--card), inset 0 0 0 7px color-mix(in oklab, var(--gold) 45%, transparent), 0 20px 50px -30px rgb(var(--shadow-color) / 0.35);
+}
+html[data-reader-mode='reading'] .verse-list > .ayah { display: inline; padding: 0 !important; margin: 0 !important; background: none; box-shadow: none; border-radius: 0; }
+html[data-reader-mode='reading'] .verse-list > .ayah > :not(.ayah-ar) { display: none !important; }
+html[data-reader-mode='reading'] .verse-list .ayah-ar,
+html[data-reader-mode='reading'] .verse-list .ayah-ar > .tj-slot,
+html[data-reader-mode='reading'] .verse-list .ayah-ar .quran-text { display: inline; margin: 0; padding: 0; text-align: inherit; }
+html[data-reader-mode='reading'] .verse-list .ayah-ar:has(> .tj-slot:not(:empty)) > .ar-plain { display: none; }
+html[data-reader-mode='reading'] .verse-list .wbw-slot,
+html[data-reader-mode='reading'] .verse-list .ayah-divider { display: none; }
+html[data-reader-mode='reading'] .verse-list .ayah[data-current='1'] .quran-text {
+  background: var(--highlight); border-radius: 0.4em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+html[data-reader-mode='reading'] .verse-list .surah-sep { direction: ltr; text-align: center; text-align-last: auto; }
+html[data-reader-mode='reading'] .verse-list .surah-sep-trans { display: none; }
+html[data-reader-mode='reading'] .hide-in-mushaf { display: none; }
+html:not([data-reader-mode='reading']) .only-in-mushaf { display: none; }
+
+/* ---------- Long-form prose (chapter info, tafsir) ---------- */
+.reader-prose { font-size: 1rem; line-height: 1.8; color: color-mix(in oklab, var(--foreground) 88%, transparent); }
+.reader-prose h1, .reader-prose h2, .reader-prose h3 { font-family: var(--font-display); color: var(--foreground); font-weight: 600; line-height: 1.3; margin: 1.6em 0 0.5em; }
+.reader-prose h2 { font-size: 1.3rem; }
+.reader-prose h3 { font-size: 1.1rem; }
+.reader-prose > :first-child { margin-top: 0; }
+.reader-prose p { margin: 0.75em 0; }
+.reader-prose a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in oklab, var(--primary) 40%, transparent); }
+.reader-prose ul, .reader-prose ol { margin: 0.75em 0; padding-inline-start: 1.4em; }
+.reader-prose ul { list-style: disc; }
+.reader-prose ol { list-style: decimal; }
+.reader-prose li { margin: 0.3em 0; }
+.reader-prose blockquote { margin: 1em 0; padding: 0.6em 1em; border-inline-start: 3px solid var(--gold); background: var(--surface-2); border-radius: 0.75rem; }
+.reader-prose strong { color: var(--foreground); }
+.reader-prose [lang='ar'], .reader-prose .arabic, .reader-prose .ar, .reader-prose .qpc-hafs { font-family: var(--font-arabic); font-size: 1.35em; line-height: 2; }
+.reader-prose[dir='rtl'] { font-family: var(--font-arabic); font-size: 1.3rem; line-height: 2.1; }
+.reader-prose:lang(bn) { font-family: var(--font-bangla); }
+
+/* Collapsible with height animation (grid trick, content stays in the DOM for SEO) */
+.collapse-grid { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease-soft); }
+.collapse-grid[data-open='1'] { grid-template-rows: 1fr; }
+.collapse-grid > * { overflow: hidden; min-height: 0; }
+
+/* Fade mask for clamped previews */
+.fade-bottom { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent); }
+
+/* Eight-point star badge (surah numbers) */
+.star-badge { position: relative; display: grid; place-items: center; isolation: isolate; }
+.star-badge::before, .star-badge::after {
+  content: ''; position: absolute; inset: 12%; z-index: -1; border-radius: 0.35rem;
+  border: 1.5px solid color-mix(in oklab, var(--gold) 70%, transparent);
+  background: color-mix(in oklab, var(--gold-soft) 70%, transparent);
+  transition: transform 0.6s var(--ease-soft), background-color 0.4s;
+}
+.star-badge::after { transform: rotate(45deg); }
+.group:hover .star-badge::before { transform: rotate(45deg); }
+.group:hover .star-badge::after { transform: rotate(90deg); }
+
+/* Range input used for size sliders */
+.reader-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary) var(--fill, 50%), var(--muted) var(--fill, 50%)); outline: none; }
+.reader-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--card); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgb(var(--shadow-color) / 0.25); cursor: pointer; transition: transform 0.2s var(--ease-soft); }
+.reader-range::-webkit-slider-thumb:active { transform: scale(1.15); }
+.reader-range::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 2px solid var(--primary); cursor: pointer; }
+
+@media print {
+  .ayah-actions, .reader-chrome { display: none !important; }
+}
+
+/* Single-ayah landing pages show every translation regardless of reader prefs */
+.force-tr [data-tr] { display: block !important; }
+.ayah-marker.ayah-marker-3 { font-size: 0.5em; min-width: 2em; height: 2em; }
+
+/* ---- compact per-ayah toolbar (keeps 286-ayah pages light) ---- */
+.ayah-actions { display: flex; align-items: center; gap: 0.125rem; margin-right: -0.375rem; opacity: 0.9; transition: opacity 0.3s; }
+@media (min-width: 1024px) { .ayah-actions { opacity: 0.6; } .group\/ayah:hover .ayah-actions, .ayah-actions:focus-within { opacity: 1; } }
+.ab { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; color: var(--muted-foreground); transition: color 0.2s, background-color 0.2s, transform 0.2s; }
+.ab:hover, .ab:focus-visible { background: var(--muted); color: var(--foreground); }
+.ab:active { transform: scale(0.9); }
+.ab[data-on] { background: var(--accent); color: var(--primary); }
+.ab-save[data-on] { background: transparent; color: var(--gold); }
+.ab-save[data-on] .ai { fill: currentColor; transform: scale(1.1); }
+.ab-wide { display: none; }
+@media (min-width: 640px) { .ab-wide { display: grid; } .ab-narrow { display: none; } }
+.ai { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
+
+/* ---- verse markup classes (short names keep long surahs light) ---- */
+.ayah { scroll-margin-top: 7rem; padding: 1.5rem 0.75rem; }
+@media (min-width: 640px) { .ayah { padding: 2rem 1.5rem; } }
+.ayah-head { margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.ayah-num { display: inline-flex; height: 2rem; min-width: 2rem; align-items: center; justify-content: center; gap: 0.25rem; border-radius: 9999px; border: 1px solid var(--border); background: var(--surface-2); padding: 0 0.625rem; font-size: 0.75rem; line-height: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted-foreground); transition: color 0.3s, border-color 0.3s; }
+.ayah-num:hover { color: var(--primary); border-color: color-mix(in oklab, var(--primary) 40%, var(--border)); }
+.ar-plain { text-align: right; font-size: var(--quran-size, 34px); }
+.ayah-tr { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.875rem; }
+.ayah-tr > [data-tr] { margin: 0; }
+.tr-tl { font-size: calc(var(--trans-size, 17px) * 0.92); font-style: italic; line-height: 1.625; color: var(--muted-foreground); }
+.tr-en { font-size: var(--trans-size, 17px); line-height: 1.75; color: color-mix(in oklab, var(--foreground) 90%, transparent); }
+.tr-bn { font-family: var(--font-bangla); font-size: calc(var(--trans-size, 17px) * 1.04); line-height: 1.85; color: color-mix(in oklab, var(--foreground) 90%, transparent); }

@@ -1,17 +1,28 @@
 'use client'
 
 import { ThemeProvider } from 'next-themes'
-import { SessionProvider } from 'next-auth/react'
-import { ReactNode } from 'react'
-import DocumentDirection from '@/components/document-direction'
+import { ReactNode, useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
+import { Toaster } from 'sonner'
+import { useReader, applyReaderPrefsToDocument } from '@/lib/stores/reader'
+import { THEME_IDS } from '@/components/shell/theme-picker'
+
+function ReaderPrefsSync() {
+  const p = useReader()
+  useEffect(() => {
+    applyReaderPrefsToDocument(p)
+  }, [p])
+  return null
+}
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      <SessionProvider>
-        <DocumentDirection />
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem themes={THEME_IDS} disableTransitionOnChange={false}>
+      <MotionConfig reducedMotion="user">
+        <ReaderPrefsSync />
         {children}
-      </SessionProvider>
+        <Toaster position="top-center" richColors closeButton />
+      </MotionConfig>
     </ThemeProvider>
   )
 }
