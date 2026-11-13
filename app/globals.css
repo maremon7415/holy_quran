@@ -242,6 +242,13 @@
   }
   ::selection { background: color-mix(in oklab, var(--primary) 28%, transparent); }
   html[lang='bn'] body, .lang-bn { font-family: var(--font-bangla); }
+  /* Arabic UI (i18n): Naskh for Arabic glyphs, Manrope for Latin; cursive script must never be letter-spaced. */
+  html[lang='ar'] body, .lang-ar body { font-family: var(--font-noto-naskh), var(--font-ui), ui-sans-serif, sans-serif; }
+  html.lang-ar .font-display { font-family: var(--font-noto-naskh), var(--font-display-serif), serif; }
+  /* Bangla conjuncts and Arabic cursive break with letter-spacing (uppercase/tracking kickers). */
+  html.lang-ar body *, html[lang='bn'] body * { letter-spacing: normal !important; }
+  /* In the RTL interface, English/Bangla content blocks keep their own direction. */
+  html[dir='rtl'] :is([lang='en'], [lang='bn'], [data-tr='en'], [data-tr='bn'], [data-tr='tl']) { direction: ltr; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 18%, transparent); border-radius: 99px; border: 3px solid var(--background); }

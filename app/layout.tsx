@@ -14,6 +14,8 @@ import { PlayerRoot } from '@/components/player/player-root'
 import { ServiceWorkerRegister } from '@/components/shell/sw-register'
 import { ReaderIconSprite } from '@/components/reader/icon-sprite'
 import { readerPrefsScript } from '@/lib/stores/reader'
+import { localeScript } from '@/lib/i18n/script'
+import { HtmlLangSync } from '@/components/shell/html-lang-sync'
 import { site, absoluteUrl } from '@/lib/site'
 import { JsonLd } from '@/components/seo/json-ld'
 
@@ -50,7 +52,8 @@ export const metadata: Metadata = {
     alternateLocale: [...site.alternateLocales],
   },
   twitter: { card: 'summary_large_image', title: site.name, description: site.description },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
+  // index/follow is the default; spelling it out here would contradict the automatic noindex on 404 pages
+  robots: { googleBot: { 'max-image-preview': 'large', 'max-snippet': -1 } },
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: site.name },
   icons: { apple: '/apple-icon.png' },
   category: 'religion',
@@ -87,12 +90,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning className={fonts}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: readerPrefsScript }} />
+        <script dangerouslySetInnerHTML={{ __html: localeScript }} />
         <JsonLd data={websiteLd} />
       </head>
       <body className="min-h-dvh">
         <ReaderIconSprite />
         <Providers>
-          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">Skip to content</a>
+          <HtmlLangSync />
+          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">Skip to content</a>
           <SiteHeader />
           <main id="main" className="relative">{children}</main>
           <SiteFooter />

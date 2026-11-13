@@ -51,7 +51,7 @@ export function ReciteCheck({ words, onResult }: { words: string[]; onResult?: (
       setTranscript(latest.current)
     }
     r.onerror = (e: any) => {
-      setError(e?.error === 'not-allowed' ? t({ en: 'Microphone permission was denied.', bn: 'মাইক্রোফোনের অনুমতি দেওয়া হয়নি।' }) : t({ en: 'Could not hear you — try again.', bn: 'শোনা যায়নি — আবার চেষ্টা করুন।' }))
+      setError(e?.error === 'not-allowed' ? t({ en: 'Microphone permission was denied.', bn: 'মাইক্রোফোনের অনুমতি দেওয়া হয়নি।', ar: 'تم رفض إذن الميكروفون.' }) : t({ en: 'Could not hear you — try again.', bn: 'শোনা যায়নি — আবার চেষ্টা করুন।', ar: 'لم نتمكن من سماعك — حاول مرة أخرى.' }))
       setListening(false)
     }
     r.onend = () => {
@@ -71,8 +71,8 @@ export function ReciteCheck({ words, onResult }: { words: string[]; onResult?: (
     <div className="mt-5 rounded-3xl border border-border bg-surface-2/60 p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold">{t({ en: 'Recite to check', bn: 'তিলাওয়াত করে যাচাই করুন' })}</p>
-          <p className="text-xs text-muted-foreground">{t({ en: 'Speak from memory — we compare word by word.', bn: 'মুখস্থ বলুন — শব্দে শব্দে মিলিয়ে দেখা হবে।' })}</p>
+          <p className="text-sm font-semibold">{t({ en: 'Recite to check', bn: 'তিলাওয়াত করে যাচাই করুন', ar: 'اتلُ للتحقق' })}</p>
+          <p className="text-xs text-muted-foreground">{t({ en: 'Speak from memory — we compare word by word.', bn: 'মুখস্থ বলুন — শব্দে শব্দে মিলিয়ে দেখা হবে।', ar: 'اتلُ من حفظك — نقارن كلمة بكلمة.' })}</p>
         </div>
         <button
           onClick={listening ? stop : start}
@@ -101,10 +101,10 @@ export function ReciteCheck({ words, onResult }: { words: string[]; onResult?: (
             ))}
           </p>
           <p className="mt-2 text-center text-sm font-medium">
-            {Math.round(result.accuracy * 100)}% {t({ en: 'matched', bn: 'মিলেছে' })}
-            {result.extra.length > 0 && <span className="text-muted-foreground"> · +{result.extra.length} {t({ en: 'extra', bn: 'অতিরিক্ত' })}</span>}
+            {Math.round(result.accuracy * 100)}% {t({ en: 'matched', bn: 'মিলেছে', ar: 'مطابقة' })}
+            {result.extra.length > 0 && <span className="text-muted-foreground"> · +{result.extra.length} {t({ en: 'extra', bn: 'অতিরিক্ত', ar: 'زائدة' })}</span>}
           </p>
-          <p className="mt-1 text-center text-[11px] text-muted-foreground">{t({ en: 'Speech recognition is approximate — use it as a guide.', bn: 'স্পিচ রিকগনিশন আনুমানিক — নির্দেশনা হিসেবে দেখুন।' })}</p>
+          <p className="mt-1 text-center text-[11px] text-muted-foreground">{t({ en: 'Speech recognition is approximate — use it as a guide.', bn: 'স্পিচ রিকগনিশন আনুমানিক — নির্দেশনা হিসেবে দেখুন।', ar: 'التعرّف على الكلام تقريبي — استخدمه للاسترشاد فقط.' })}</p>
         </motion.div>
       )}
     </div>

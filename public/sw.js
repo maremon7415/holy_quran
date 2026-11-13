@@ -29,9 +29,25 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CORE)
       .then((c) => Promise.allSettled(PRECACHE.map((u) => c.add(u).catch(() => {}))))
+      .then(() => warmCore())
       .then(() => self.skipWaiting()),
   )
 })
+
+/** Cache the JS/CSS/fonts the precached /offline page needs so the fallback page itself renders offline. */
+async function warmCore() {
+  try {
+    const core = await caches.open(CORE)
+    const hit = await core.match('/offline')
+    if (!hit) return
+    const assets = await caches.open(ASSETS)
+    await Promise.allSettled([...pageAssetUrls(await hit.text())].map(async (u) => {
+      if (await assets.match(u)) return
+      const res = await fetch(u)
+      if (cacheable(res)) await assets.put(u, res)
+    }))
+  } catch (_) {}
+}
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
@@ -144,10 +160,11 @@ const cssUrls = (text, base) => {
   return out
 }
 const pageAssetUrls = (text) => {
+  // <script src="/_next/static/…"> and the RSC flight payload, which lists lazy chunks as "static/chunks/….js" (no /_next/ prefix)
   const out = new Set()
-  const re = /\/_next\/static\/[^"'\s<>\\)]+?\.(?:js|css|woff2?|png|svg|jpg|webp|ico)/g
+  const re = /(?:\/_next\/)?static\/(?:chunks|media|css)\/[^"'\s<>\\)]+?\.(?:js|css|woff2?)/g
   let m
-  while ((m = re.exec(text))) out.add(m[0])
+  while ((m = re.exec(text))) out.add(m[0].startsWith('/') ? m[0] : '/_next/' + m[0])
   return out
 }
 const cleanHeaders = (h) => {
@@ -211,29 +228,41 @@ async function runDownload({ jobId, urls, force }) {
     failed = 0
     const queue = [...assetSet]
     let q = 0
+    let active = 0
     const aworker = async () => {
       while (!job.cancel) {
-        const u = queue[q++]
-        if (!u) return
+        const u = queue[q]
+        if (u === undefined) {
+          if (active === 0) return // nothing queued and nobody can add more
+          await new Promise((r) => setTimeout(r, 25))
+          continue
+        }
+        q++
+        active++
         try {
           const req = new Request(u)
-          if (!(await assets.match(req))) {
-            const res = await fetchRetry(req)
-            if (!cacheable(res)) throw new Error('bad')
-            const copy = res.clone()
-            const blob = await res.blob()
+          let res = await assets.match(req)
+          let blob
+          if (res) {
+            blob = await res.blob()
+          } else {
+            const net = await fetchRetry(req)
+            if (!cacheable(net)) throw new Error('bad')
+            const h = cleanHeaders(net.headers)
+            blob = await net.blob()
             bytes += blob.size
-            await assets.put(req, new Response(blob, { status: 200, headers: cleanHeaders(copy.headers) }))
-            if (/\.css(\?|$)/.test(u)) {
-              for (const f of cssUrls(await blob.text(), self.location.origin + u)) if (!queue.includes(f)) { queue.push(f); assetSet.add(f) }
-            }
-          } else if (/\.css(\?|$)/.test(u)) {
-            const hit = await assets.match(req)
-            for (const f of cssUrls(await hit.text(), self.location.origin + u)) if (!queue.includes(f)) { queue.push(f); assetSet.add(f) }
+            await assets.put(req, new Response(blob, { status: 200, headers: h }))
+          }
+          // follow references: CSS -> fonts/images; JS -> lazily loaded chunks ("static/chunks/xxx.js")
+          if (/\.(css|js)(\?|$)/.test(u)) {
+            const text = await blob.text()
+            const more = /\.css(\?|$)/.test(u) ? cssUrls(text, self.location.origin + u) : [...pageAssetUrls(text)]
+            for (const f of more) if (!assetSet.has(f)) { queue.push(f); assetSet.add(f) }
           }
         } catch (_) {
           failed++
         }
+        active--
         done++
         if (done % 4 === 0) report('assets', 'running')
       }

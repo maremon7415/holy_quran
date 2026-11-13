@@ -12,7 +12,7 @@ export function DuaBookmark({ slug, variant = 'icon', className }: { slug: strin
   const saved = useAppStore((s) => s.bookmarkedDuas.includes(slug))
   const toggle = useAppStore((s) => s.toggleDuaBookmark)
   const on = mounted && saved
-  const label = on ? t({ en: 'Saved', bn: 'সংরক্ষিত' }) : t({ en: 'Save', bn: 'সংরক্ষণ' })
+  const label = on ? t({ en: 'Saved', bn: 'সংরক্ষিত', ar: 'محفوظ' }) : t({ en: 'Save', bn: 'সংরক্ষণ', ar: 'حفظ' })
   return (
     <motion.button
       type="button"

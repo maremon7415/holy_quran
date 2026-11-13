@@ -54,11 +54,11 @@ export function Heatmap({ data }: { data: Record<string, number> }) {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>{t({ en: `${total} verses & ayahs across ${activeDays} active days`, bn: `${activeDays} সক্রিয় দিনে ${total}টি আয়াত` })}</span>
+        <span>{t({ en: `${total} verses & ayahs across ${activeDays} active days`, bn: `${activeDays} সক্রিয় দিনে ${total}টি আয়াত`, ar: `${total} آية خلال ${activeDays} يومًا من النشاط` })}</span>
         <span className="flex items-center gap-1">
-          {t({ en: 'Less', bn: 'কম' })}
+          {t({ en: 'Less', bn: 'কম', ar: 'أقل' })}
           {[0, 1, 5, 10, 20].map((n) => <span key={n} className="h-[11px] w-[11px] rounded-[3px]" style={{ background: levelFill(n) }} />)}
-          {t({ en: 'More', bn: 'বেশি' })}
+          {t({ en: 'More', bn: 'বেশি', ar: 'أكثر' })}
         </span>
       </div>
     </div>

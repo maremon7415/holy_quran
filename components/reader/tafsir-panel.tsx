@@ -11,6 +11,7 @@ import { chapters, surahHref } from '@/lib/quran/chapters'
 import { useLang, useTx } from '@/lib/lang'
 import { cn } from '@/lib/utils'
 import { Panel } from './panel'
+import { ExtraTranslations } from './extra-translations'
 
 type State = { status: 'loading' } | { status: 'error' } | { status: 'ok'; html: string; covers: string[] }
 
@@ -76,6 +77,7 @@ export function TafsirPanel() {
       {ar && (
         <p className="quran-text mb-4 rounded-3xl bg-surface-2 px-4 py-3 text-right text-[26px] leading-[2.1]" lang="ar">{ar}</p>
       )}
+      {k && <ExtraTranslations k={k} className="mb-4" />}
       <div className="sticky top-0 z-10 -mx-5 mb-4 bg-popover/95 px-5 pb-2 pt-1 backdrop-blur">
         <div className="flex gap-1 rounded-2xl bg-muted p-1" role="tablist">
           {TAFSIRS.map((x) => (

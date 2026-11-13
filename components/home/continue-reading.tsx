@@ -29,9 +29,9 @@ export function ContinueReading() {
         <div aria-hidden className="bg-pattern absolute inset-0" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{c ? t({ en: 'Continue reading', bn: 'পড়া চালিয়ে যান' }) : t({ en: 'Begin your journey', bn: 'যাত্রা শুরু করুন' })}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{c ? t({ en: 'Continue reading', bn: 'পড়া চালিয়ে যান', ar: 'تابع القراءة' }) : t({ en: 'Begin your journey', bn: 'যাত্রা শুরু করুন', ar: 'ابدأ رحلتك' })}</p>
             <h3 className="mt-2 font-display text-2xl font-semibold">{c ? c.nameSimple : 'Al-Fatihah'}</h3>
-            <p className="text-sm text-muted-foreground">{c ? `${t({ en: 'Ayah', bn: 'আয়াত' })} ${last!.lastAyahRead || 1} / ${c.versesCount}` : t({ en: 'The Opening — 7 ayahs', bn: 'সূচনা — ৭ আয়াত' })}</p>
+            <p className="text-sm text-muted-foreground">{c ? `${t({ en: 'Ayah', bn: 'আয়াত', ar: 'آية' })} ${last!.lastAyahRead || 1} / ${c.versesCount}` : t({ en: 'The Opening — 7 ayahs', bn: 'সূচনা — ৭ আয়াত', ar: 'الفاتحة — ٧ آيات' })}</p>
           </div>
           <span className="font-arabic text-4xl text-gold">{c ? c.nameArabic : 'الفاتحة'}</span>
         </div>
@@ -39,16 +39,16 @@ export function ContinueReading() {
           <motion.div className="h-full rounded-full bg-gradient-to-r from-primary to-gold" initial={{ width: 0 }} animate={{ width: `${Math.max(4, surahPct * 100)}%` }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} />
         </div>
         <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-          {t({ en: 'Resume', bn: 'শুরু করুন' })} <span className="transition-transform group-hover:translate-x-1">→</span>
+          {t({ en: 'Resume', bn: 'শুরু করুন', ar: 'متابعة' })} <span className="transition-transform group-hover:translate-x-1">→</span>
         </span>
       </Link>
 
       <Link href="/journey" className="card-soft lift flex items-center gap-5 p-6">
         <Ring pct={pct} />
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t({ en: "Today's goal", bn: 'আজকের লক্ষ্য' })}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{t({ en: "Today's goal", bn: 'আজকের লক্ষ্য', ar: 'هدف اليوم' })}</p>
           <p className="mt-1 font-display text-2xl font-semibold">{todayRead}<span className="text-base text-muted-foreground"> / {goal}</span></p>
-          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><UiIcon name="streak" size={18} /> {stats.currentStreak} {t({ en: 'day streak', bn: 'দিনের ধারাবাহিকতা' })}</p>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><UiIcon name="streak" size={18} /> {stats.currentStreak} {t({ en: 'day streak', bn: 'দিনের ধারাবাহিকতা', ar: 'أيام متتالية' })}</p>
         </div>
       </Link>
     </div>

@@ -177,3 +177,34 @@ html:not([data-reader-mode='reading']) .only-in-mushaf { display: none; }
 .tr-tl { font-size: calc(var(--trans-size, 17px) * 0.92); font-style: italic; line-height: 1.625; color: var(--muted-foreground); }
 .tr-en { font-size: var(--trans-size, 17px); line-height: 1.75; color: color-mix(in oklab, var(--foreground) 90%, transparent); }
 .tr-bn { font-family: var(--font-bangla); font-size: calc(var(--trans-size, 17px) * 1.04); line-height: 1.85; color: color-mix(in oklab, var(--foreground) 90%, transparent); }
+
+/* ---------- Bangla uccharon (pronunciation guide) ----------
+ * html[data-show-bt] = '1' | '0' | 'auto' (set before paint). auto → shown when the UI language is Bangla. */
+html[data-show-bt='0'] [data-tr='bt'],
+html:not([data-show-bt='1']):not([data-lang='bn']) [data-tr='bt']:not([lang='bn'] *) { display: none; }
+.tr-bt {
+  font-family: var(--font-bangla);
+  font-size: calc(var(--trans-size, 17px) * 1.08);
+  font-weight: 500;
+  line-height: 1.8;
+  color: color-mix(in oklab, var(--primary) 78%, var(--foreground));
+}
+
+/* ---------- Extra translations (Quran.com catalogue, injected by verse-enhancer.tsx) ---------- */
+.xt-slot:empty { display: none; }
+.xt-slot { display: flex; flex-direction: column; gap: 0.875rem; }
+.xt-text { font-size: var(--trans-size, 17px); line-height: 1.75; color: color-mix(in oklab, var(--foreground) 88%, transparent); }
+.xt-text[dir='rtl'] { font-family: var(--font-noto-naskh), var(--font-arabic), serif; font-size: calc(var(--trans-size, 17px) * 1.2); line-height: 2.1; text-align: right; }
+.xt-text:lang(bn) { font-family: var(--font-bangla); line-height: 1.85; }
+.xt-name { display: block; margin-bottom: 0.2rem; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-foreground); opacity: 0.85; }
+.xt-card { padding: 1.25rem; }
+@media (min-width: 640px) { .xt-card { padding: 1.5rem; } }
+.xt-card .xt-name { margin-bottom: 0.5rem; color: var(--primary); opacity: 1; }
+.xt-card .xt-text { line-height: 1.8; }
+
+/* ---------- Render speed: skip layout/paint of off-screen ayahs (not in mushaf flow, where ayahs are inline) ---------- */
+html:not([data-reader-mode='reading']) .verse-list > .ayah { content-visibility: auto; contain-intrinsic-size: auto 360px; }
+/* toolbar is added after hydration — reserve its height so nothing shifts */
+.verse-list .ayah-head { min-height: 2.25rem; }
+.ayah-actions[data-gen] { animation: ab-in 0.35s var(--ease-soft) both; }
+@keyframes ab-in { from { opacity: 0; } }

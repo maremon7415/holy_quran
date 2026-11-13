@@ -5,6 +5,7 @@ export function TranslationCredits({ className = '' }: { className?: string }) {
       <span data-tr="en" data-ed="sahih">Saheeh International</span>
       <span data-tr="en" data-ed="haleem">M.A.S. Abdel Haleem</span>
       <span data-tr="bn" className="font-bangla normal-case tracking-normal">· তাইসীরুল কুরআন</span>
+      <span data-tr="bt" lang="bn" className="font-bangla normal-case tracking-normal" title="Auto-generated pronunciation guide">· বাংলা উচ্চারণ (স্বয়ংক্রিয়)</span>
       <span data-tr="tl">· Transliteration</span>
     </p>
   )

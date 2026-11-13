@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { chapters, juzHref, surahHref, surahNamesBn, toArabicDigits, toBanglaDigits } from '@/lib/quran/chapters'
-import { getJuzs, getJuzVerses } from '@/lib/quran/data'
+import { getJuzs, getJuzVerses, getUccharon } from '@/lib/quran/data'
 import { absoluteUrl, site } from '@/lib/site'
 import { getJuzName } from '@/lib/reader/juz'
 import { breadcrumbLd, publisherLd, quranBookLd } from '@/lib/reader/seo'
@@ -48,6 +48,7 @@ export default async function JuzPage({ params }: Props) {
   const n = parse((await params).n)
   if (!n) notFound()
   const [verses, juzs] = await Promise.all([getJuzVerses(n), getJuzs()])
+  const btBySurah = new Map(await Promise.all([...new Set(verses.map((v) => v.surah))].map(async (s) => [s, await getUccharon(s)] as const)))
   const j = juzs.find((x) => x.juz === n)
   if (!j || !verses.length) notFound()
   const name = getJuzName(n)
@@ -125,7 +126,7 @@ export default async function JuzPage({ params }: Props) {
                 </div>
               )}
               {!startsSurah && <div className="ayah-divider" aria-hidden />}
-              <VerseBlock verse={v} surah={v.surah} scoped />
+              <VerseBlock verse={v} surah={v.surah} scoped bt={btBySurah.get(v.surah)?.[v.n - 1]} />
             </Fragment>
           )
         })}

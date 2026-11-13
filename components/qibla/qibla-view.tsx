@@ -100,8 +100,8 @@ export function QiblaView() {
           <div aria-hidden className="bg-pattern absolute inset-0 opacity-60" />
           <div className="relative">
             <UiIcon name="qibla" size={88} className="mx-auto" />
-            <h1 className="mt-4 font-display text-2xl font-semibold">{t({ en: 'Find the Qibla', bn: 'কিবলা খুঁজুন' })}</h1>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{t({ en: 'We need your location to point towards the Kaaba in Makkah.', bn: 'কাবার দিক দেখাতে আপনার অবস্থান প্রয়োজন।' })}</p>
+            <h1 className="mt-4 font-display text-2xl font-semibold">{t({ en: 'Find the Qibla', bn: 'কিবলা খুঁজুন', ar: 'حدّد القبلة' })}</h1>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{t({ en: 'We need your location to point towards the Kaaba in Makkah.', bn: 'কাবার দিক দেখাতে আপনার অবস্থান প্রয়োজন।', ar: 'نحتاج إلى موقعك لنشير إلى الكعبة في مكة المكرمة.' })}</p>
             <LocationPicker className="mt-6 text-left" />
           </div>
         </div>
@@ -116,11 +116,11 @@ export function QiblaView() {
     <div className="mx-auto max-w-4xl px-4 pb-32 pt-6 sm:px-6 lg:pb-16 lg:pt-10">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Qibla compass', bn: 'কিবলা কম্পাস' })}</p>
-          <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">{t({ en: 'Qibla Direction', bn: 'কিবলার দিক' })}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Qibla compass', bn: 'কিবলা কম্পাস', ar: 'بوصلة القبلة' })}</p>
+          <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">{t({ en: 'Qibla Direction', bn: 'কিবলার দিক', ar: 'اتجاه القبلة' })}</h1>
         </div>
         <button onClick={() => setChanging((v) => !v)} className="inline-flex h-10 items-center gap-2 rounded-full border bg-card px-4 text-sm font-medium transition hover:border-primary/40">
-          <MapPin className="size-4 text-primary" /> {location.city ?? t({ en: 'My location', bn: 'আমার অবস্থান' })}
+          <MapPin className="size-4 text-primary" /> {location.city ?? t({ en: 'My location', bn: 'আমার অবস্থান', ar: 'موقعي' })}
         </button>
       </div>
       {changing && <div className="card-soft mb-4 p-4"><LocationPicker compact /></div>}
@@ -134,9 +134,9 @@ export function QiblaView() {
         {/* status */}
         <div className="relative mb-4 text-center">
           <p className={cn('inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition', aligned ? 'bg-primary text-primary-foreground' : 'bg-surface-2 text-muted-foreground')}>
-            {aligned ? <>{t({ en: 'You are facing the Qibla', bn: 'আপনি কিবলার দিকে মুখ করে আছেন' })} ✓</>
-              : live ? t({ en: `Turn ${rel! > 0 ? 'right' : 'left'} ${Math.abs(Math.round(rel!))}°`, bn: `${Math.abs(Math.round(rel!))}° ${rel! > 0 ? 'ডানে' : 'বামে'} ঘুরুন` })
-              : t({ en: 'Static bearing from North', bn: 'উত্তর থেকে স্থির দিক' })}
+            {aligned ? <>{t({ en: 'You are facing the Qibla', bn: 'আপনি কিবলার দিকে মুখ করে আছেন', ar: 'أنت متجه نحو القبلة' })} ✓</>
+              : live ? t({ en: `Turn ${rel! > 0 ? 'right' : 'left'} ${Math.abs(Math.round(rel!))}°`, bn: `${Math.abs(Math.round(rel!))}° ${rel! > 0 ? 'ডানে' : 'বামে'} ঘুরুন`, ar: `استدر ${rel! > 0 ? 'يمينًا' : 'يسارًا'} ${Math.abs(Math.round(rel!))}°` })
+              : t({ en: 'Static bearing from North', bn: 'উত্তর থেকে স্থির দিক', ar: 'الاتجاه الثابت من الشمال' })}
           </p>
         </div>
 
@@ -180,9 +180,9 @@ export function QiblaView() {
         {/* readouts */}
         <div className="relative mt-6 grid grid-cols-3 gap-3 text-center">
           {[
-            { k: t({ en: 'Bearing', bn: 'দিক' }), v: `${Math.round(bearing)}°`, s: cardinal(bearing) },
-            { k: t({ en: 'Distance', bn: 'দূরত্ব' }), v: Math.round(km).toLocaleString(), s: 'km' },
-            { k: t({ en: 'Heading', bn: 'আপনার মুখ' }), v: live ? `${Math.round(((heading! % 360) + 360) % 360)}°` : '—', s: live ? cardinal(((heading! % 360) + 360) % 360) : t({ en: 'no sensor', bn: 'সেন্সর নেই' }) },
+            { k: t({ en: 'Bearing', bn: 'দিক', ar: 'الاتجاه' }), v: `${Math.round(bearing)}°`, s: cardinal(bearing) },
+            { k: t({ en: 'Distance', bn: 'দূরত্ব', ar: 'المسافة' }), v: Math.round(km).toLocaleString(), s: 'km' },
+            { k: t({ en: 'Heading', bn: 'আপনার মুখ', ar: 'الوجهة' }), v: live ? `${Math.round(((heading! % 360) + 360) % 360)}°` : '—', s: live ? cardinal(((heading! % 360) + 360) % 360) : t({ en: 'no sensor', bn: 'সেন্সর নেই', ar: 'لا يوجد مستشعر' }) },
           ].map((r) => (
             <div key={r.k} className="rounded-2xl bg-surface-2 px-2 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{r.k}</p>
@@ -195,14 +195,14 @@ export function QiblaView() {
         {perm === 'needs' && !live && (
           <div className="relative mt-5 text-center">
             <button onClick={request} className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 font-semibold text-primary-foreground shadow-[0_14px_30px_-14px_var(--glow)] transition active:scale-[0.98]">
-              <Smartphone className="size-4" /> {t({ en: 'Enable live compass', bn: 'লাইভ কম্পাস চালু করুন' })}
+              <Smartphone className="size-4" /> {t({ en: 'Enable live compass', bn: 'লাইভ কম্পাস চালু করুন', ar: 'تفعيل البوصلة الحية' })}
             </button>
           </div>
         )}
-        {perm === 'denied' && <p className="relative mt-4 text-center text-sm text-muted-foreground">{t({ en: 'Compass access was denied. Allow motion & orientation in Safari settings, or use the bearing above.', bn: 'কম্পাস অনুমতি দেওয়া হয়নি। সেটিংসে মোশন অনুমতি দিন, অথবা উপরের দিক ব্যবহার করুন।' })}</p>}
+        {perm === 'denied' && <p className="relative mt-4 text-center text-sm text-muted-foreground">{t({ en: 'Compass access was denied. Allow motion & orientation in Safari settings, or use the bearing above.', bn: 'কম্পাস অনুমতি দেওয়া হয়নি। সেটিংসে মোশন অনুমতি দিন, অথবা উপরের দিক ব্যবহার করুন।', ar: 'تم رفض الوصول إلى البوصلة. اسمح بالحركة والاتجاه في إعدادات Safari، أو استخدم الاتجاه أعلاه.' })}</p>}
         {!live && perm !== 'needs' && perm !== 'denied' && (
           <p className="relative mt-4 text-center text-sm text-muted-foreground">
-            {t({ en: `No compass sensor detected. Face North, then turn ${Math.round(bearing)}° clockwise (${cardinal(bearing)}) towards the Kaaba. Open this page on your phone for a live compass.`, bn: `কম্পাস সেন্সর নেই। উত্তরমুখী হয়ে ${Math.round(bearing)}° ঘড়ির কাঁটার দিকে ঘুরুন (${cardinal(bearing)})। লাইভ কম্পাসের জন্য ফোনে খুলুন।` })}
+            {t({ en: `No compass sensor detected. Face North, then turn ${Math.round(bearing)}° clockwise (${cardinal(bearing)}) towards the Kaaba. Open this page on your phone for a live compass.`, bn: `কম্পাস সেন্সর নেই। উত্তরমুখী হয়ে ${Math.round(bearing)}° ঘড়ির কাঁটার দিকে ঘুরুন (${cardinal(bearing)})। লাইভ কম্পাসের জন্য ফোনে খুলুন।`, ar: `لم يُكتشف مستشعر بوصلة. اتجه نحو الشمال، ثم استدر ${Math.round(bearing)}° باتجاه عقارب الساعة (${cardinal(bearing)}) نحو الكعبة. افتح هذه الصفحة على هاتفك للحصول على بوصلة حية.` })}
           </p>
         )}
       </section>
@@ -210,11 +210,11 @@ export function QiblaView() {
       <div className="card-soft mt-4 flex items-center gap-4 p-4 sm:p-5">
         <UiIcon name="kaaba" size={56} />
         <div>
-          <p className="font-display text-lg font-semibold">{t({ en: 'Kaaba, Makkah al-Mukarramah', bn: 'কাবা, মক্কা আল-মুকাররমা' })}</p>
+          <p className="font-display text-lg font-semibold">{t({ en: 'Kaaba, Makkah al-Mukarramah', bn: 'কাবা, মক্কা আল-মুকাররমা', ar: 'الكعبة المشرفة، مكة المكرمة' })}</p>
           <p className="text-sm text-muted-foreground">{KAABA.lat.toFixed(4)}°N, {KAABA.lon.toFixed(4)}°E · {Math.round(km).toLocaleString()} km</p>
         </div>
       </div>
-      <p className="mt-4 text-center text-xs text-muted-foreground">{t({ en: 'Keep your phone flat and away from magnets or metal for best accuracy.', bn: 'সঠিক ফলাফলের জন্য ফোন সমতলে রাখুন এবং চুম্বক বা ধাতু থেকে দূরে রাখুন।' })}</p>
+      <p className="mt-4 text-center text-xs text-muted-foreground">{t({ en: 'Keep your phone flat and away from magnets or metal for best accuracy.', bn: 'সঠিক ফলাফলের জন্য ফোন সমতলে রাখুন এবং চুম্বক বা ধাতু থেকে দূরে রাখুন।', ar: 'أبقِ هاتفك مستويًا وبعيدًا عن المغناطيس والمعادن لأفضل دقة.' })}</p>
     </div>
   )
 }

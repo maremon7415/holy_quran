@@ -36,30 +36,30 @@ export function RegisterForm() {
       } else {
         const data = (await res.json().catch(() => ({}))) as { code?: string }
         setError(
-          data.code === 'email_taken' ? t({ en: 'An account with this email already exists. Try signing in.', bn: 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে। সাইন ইন করুন।' })
-          : data.code === 'weak_password' ? t({ en: 'Password must be at least 8 characters.', bn: 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।' })
-          : data.code === 'invalid_email' ? t({ en: 'Enter a valid email address.', bn: 'সঠিক ইমেইল দিন।' })
-          : t({ en: 'Registration failed.', bn: 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।' }),
+          data.code === 'email_taken' ? t({ en: 'An account with this email already exists. Try signing in.', bn: 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে। সাইন ইন করুন।', ar: 'يوجد حساب بهذا البريد الإلكتروني. جرّب تسجيل الدخول.' })
+          : data.code === 'weak_password' ? t({ en: 'Password must be at least 8 characters.', bn: 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।', ar: 'يجب ألا تقل كلمة المرور عن ٨ أحرف.' })
+          : data.code === 'invalid_email' ? t({ en: 'Enter a valid email address.', bn: 'সঠিক ইমেইল দিন।', ar: 'أدخل بريدًا إلكترونيًا صالحًا.' })
+          : t({ en: 'Registration failed.', bn: 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।', ar: 'فشل التسجيل.' }),
         )
       }
     } catch {
-      setError(t({ en: 'Something went wrong. Please try again.', bn: 'কিছু ভুল হয়েছে। আবার চেষ্টা করুন।' }))
+      setError(t({ en: 'Something went wrong. Please try again.', bn: 'কিছু ভুল হয়েছে। আবার চেষ্টা করুন।', ar: 'حدث خطأ ما. يُرجى المحاولة مرة أخرى.' }))
     } finally { setLoading(false) }
   }
 
   return (
     <AuthCard
-      title={t({ en: 'Create your account', bn: 'অ্যাকাউন্ট খুলুন' })}
-      subtitle={t({ en: 'Keep your bookmarks and progress safe across devices', bn: 'সব ডিভাইসে বুকমার্ক ও অগ্রগতি নিরাপদ রাখুন' })}
-      footer={<>{t({ en: 'Already have an account?', bn: 'আগেই অ্যাকাউন্ট আছে?' })} <Link href={`/login?callbackUrl=${encodeURIComponent(callback)}`} className="font-semibold text-primary hover:underline">{t({ en: 'Sign in', bn: 'সাইন ইন' })}</Link></>}
+      title={t({ en: 'Create your account', bn: 'অ্যাকাউন্ট খুলুন', ar: 'أنشئ حسابك' })}
+      subtitle={t({ en: 'Keep your bookmarks and progress safe across devices', bn: 'সব ডিভাইসে বুকমার্ক ও অগ্রগতি নিরাপদ রাখুন', ar: 'احفظ علاماتك وتقدّمك بأمان عبر أجهزتك' })}
+      footer={<>{t({ en: 'Already have an account?', bn: 'আগেই অ্যাকাউন্ট আছে?', ar: 'لديك حساب بالفعل؟' })} <Link href={`/login?callbackUrl=${encodeURIComponent(callback)}`} className="font-semibold text-primary hover:underline">{t({ en: 'Sign in', bn: 'সাইন ইন', ar: 'تسجيل الدخول' })}</Link></>}
     >
-      {google && (<><GoogleButton onClick={() => void signInWithGoogle(callback)} label={t({ en: 'Sign up with Google', bn: 'গুগল দিয়ে সাইন আপ' })} /><OrDivider label={t({ en: 'or with email', bn: 'অথবা ইমেইল দিয়ে' })} /></>)}
+      {google && (<><GoogleButton onClick={() => void signInWithGoogle(callback)} label={t({ en: 'Sign up with Google', bn: 'গুগল দিয়ে সাইন আপ', ar: 'التسجيل باستخدام Google' })} /><OrDivider label={t({ en: 'or with email', bn: 'অথবা ইমেইল দিয়ে', ar: 'أو بالبريد الإلكتروني' })} /></>)}
       <form onSubmit={submit} className="space-y-4">
-        <label className="block"><span className={labelCls}>{t({ en: 'Name', bn: 'নাম' })}</span><input name="name" type="text" required maxLength={80} autoComplete="name" className={fieldCls} /></label>
-        <label className="block"><span className={labelCls}>{t({ en: 'Email', bn: 'ইমেইল' })}</span><input name="email" type="email" required autoComplete="email" className={fieldCls} /></label>
-        <div><label className="block"><span className={labelCls}>{t({ en: 'Password', bn: 'পাসওয়ার্ড' })}</span><input value={pw} onChange={(e) => setPw(e.target.value)} type="password" required minLength={8} maxLength={72} autoComplete="new-password" className={fieldCls} /></label><PasswordMeter value={pw} t={t} /></div>
+        <label className="block"><span className={labelCls}>{t({ en: 'Name', bn: 'নাম', ar: 'الاسم' })}</span><input name="name" type="text" required maxLength={80} autoComplete="name" className={fieldCls} /></label>
+        <label className="block"><span className={labelCls}>{t({ en: 'Email', bn: 'ইমেইল', ar: 'البريد الإلكتروني' })}</span><input name="email" type="email" required autoComplete="email" className={fieldCls} /></label>
+        <div><label className="block"><span className={labelCls}>{t({ en: 'Password', bn: 'পাসওয়ার্ড', ar: 'كلمة المرور' })}</span><input value={pw} onChange={(e) => setPw(e.target.value)} type="password" required minLength={8} maxLength={72} autoComplete="new-password" className={fieldCls} /></label><PasswordMeter value={pw} t={t} /></div>
         {error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
-        <button type="submit" disabled={loading} className={btnCls}>{loading ? <Loader2 className="size-5 animate-spin" /> : t({ en: 'Create account', bn: 'অ্যাকাউন্ট খুলুন' })}</button>
+        <button type="submit" disabled={loading} className={btnCls}>{loading ? <Loader2 className="size-5 animate-spin" /> : t({ en: 'Create account', bn: 'অ্যাকাউন্ট খুলুন', ar: 'إنشاء حساب' })}</button>
       </form>
     </AuthCard>
   )

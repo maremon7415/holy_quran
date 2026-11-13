@@ -7,16 +7,21 @@ import { fetchTajweed, fetchWbw, playWordAudio, type WbwMap, type WbwWord } from
 import { tokenizeTajweedHtml } from '@/lib/reader/words'
 import { toArabicDigits } from '@/lib/quran/chapters'
 import { useMounted } from '@/lib/lang'
+import { ayahSlot } from '@/lib/reader/dom'
+import { sanitizeTajweed } from '@/lib/reader/sanitize'
 
-/** Collect the empty layer slots rendered by <VerseBlock>. */
-function useSlots(attr: 'data-slot-tj' | 'data-slot-wbw', enabled: boolean) {
+/** Find / create the layer slot of every ayah on the page (slots are not server-rendered to keep pages light). */
+function useSlots(cls: 'tj-slot' | 'wbw-slot', enabled: boolean) {
   const [slots, setSlots] = useState<Map<string, HTMLElement>>(new Map())
   useEffect(() => {
     if (!enabled) return
     const m = new Map<string, HTMLElement>()
-    document.querySelectorAll<HTMLElement>(`[${attr}]`).forEach((el) => m.set(el.getAttribute(attr)!, el))
+    document.querySelectorAll<HTMLElement>('[data-ayah]').forEach((el) => {
+      const s = ayahSlot(el, cls)
+      if (s) m.set(el.dataset.ayah!, s)
+    })
     setSlots(m)
-  }, [attr, enabled])
+  }, [cls, enabled])
   return slots
 }
 
@@ -25,7 +30,7 @@ function tajweedToHtml(html: string, n: number) {
   const body = tokens
     ? tokens.map((t) => (t.pos ? `<span class="w" data-w="${t.pos}">${t.text}${t.waqf ? `&nbsp;<span class="waqf">${t.waqf}</span>` : ''}</span>` : `<span class="waqf">${t.text}</span>`)).join(' ')
     : html.replace(/<span class=end>[^<]*<\/span>/g, '')
-  return `${body}&nbsp;<span class="ayah-marker${n >= 100 ? ' ayah-marker-3' : ''}">${toArabicDigits(n)}</span>`
+  return sanitizeTajweed(`${body}&nbsp;<span class="ayah-marker${n >= 100 ? ' ayah-marker-3' : ''}">${toArabicDigits(n)}</span>`)
 }
 
 const TajweedLine = memo(function TajweedLine({ html, n }: { html: string; n: number }) {
@@ -68,8 +73,8 @@ export function ArabicLayers({ chapters }: { chapters: number[] }) {
   const wbwAny = wbwAll || Object.keys(wbwKeys).length > 0
   const chKey = chapters.join(',')
 
-  const tjSlots = useSlots('data-slot-tj', mounted && tajweed)
-  const wbwSlots = useSlots('data-slot-wbw', mounted && wbwAny)
+  const tjSlots = useSlots('tj-slot', mounted && tajweed)
+  const wbwSlots = useSlots('wbw-slot', mounted && wbwAny)
 
   const [tj, setTj] = useState<Record<string, string>>({})
   const [wbw, setWbw] = useState<{ lang: string; map: WbwMap }>({ lang: '', map: {} })

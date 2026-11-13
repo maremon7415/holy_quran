@@ -9,6 +9,10 @@ export interface ReaderPrefs {
   showEn: boolean
   showBn: boolean
   showTl: boolean
+  /** Bangla uccharon (auto-generated pronunciation guide). null = automatic: on when the UI language is Bangla */
+  showBt: boolean | null
+  /** extra translations from the Quran.com catalogue (resource ids), shown under each ayah */
+  extraTr: number[]
   /** which English translation: Saheeh International or Abdel Haleem */
   enEdition: 'sahih' | 'haleem'
   arabicFont: ArabicFont
@@ -33,6 +37,8 @@ export const defaultReaderPrefs: ReaderPrefs = {
   showEn: true,
   showBn: true,
   showTl: false,
+  showBt: null,
+  extraTr: [],
   enEdition: 'sahih',
   arabicFont: 'amiri-quran',
   arabicSize: 34,
@@ -68,8 +74,9 @@ export const arabicFontVar: Record<ArabicFont, string> = {
 }
 
 /** Mirror prefs to <html> so CSS (and the pre-paint script) can drive visibility. */
-export function applyReaderPrefsToDocument(p: Pick<ReaderPrefs, 'showEn' | 'showBn' | 'showTl' | 'arabicFont' | 'arabicSize' | 'transSize' | 'tajweed'>) {
+export function applyReaderPrefsToDocument(p: Pick<ReaderPrefs, 'showEn' | 'showBn' | 'showTl' | 'arabicFont' | 'arabicSize' | 'transSize' | 'tajweed'> & Partial<Pick<ReaderPrefs, 'showBt'>>) {
   const el = document.documentElement
+  el.dataset.showBt = btAttr(p.showBt)
   el.dataset.showEn = p.showEn ? '1' : '0'
   el.dataset.showBn = p.showBn ? '1' : '0'
   el.dataset.showTl = p.showTl ? '1' : '0'
@@ -79,5 +86,11 @@ export function applyReaderPrefsToDocument(p: Pick<ReaderPrefs, 'showEn' | 'show
   el.classList.toggle('tajweed-on', p.tajweed)
 }
 
+/** html[data-show-bt]: '1' | '0' | 'auto' (auto = visible when html[data-lang='bn'], see app/reader.css) */
+export const btAttr = (v: boolean | null | undefined) => (v == null ? 'auto' : v ? '1' : '0')
+
+/** Effective uccharon visibility for UI controls. */
+export const isBtOn = (v: boolean | null, lang: string) => (v == null ? lang === 'bn' : v)
+
 /** Inline script (runs before paint) – keeps SSR HTML complete but hides unwanted translations without flashing. */
-export const readerPrefsScript = `(function(){try{var s=JSON.parse(localStorage.getItem('${READER_STORAGE_KEY}')||'{}').state||{};var d=document.documentElement;var f={'amiri-quran':'var(--font-amiri-quran)',scheherazade:'var(--font-scheherazade)','noto-naskh':'var(--font-noto-naskh)',indopak:'var(--font-lateef)'};d.dataset.showEn=s.showEn===false?'0':'1';d.dataset.showBn=s.showBn===false?'0':'1';d.dataset.showTl=s.showTl?'1':'0';d.dataset.readerMode=s.mode||'translation';d.dataset.enEd=s.enEdition||'sahih';if(s.arabicFont)d.style.setProperty('--font-quran',f[s.arabicFont]||'');if(s.arabicSize)d.style.setProperty('--quran-size',s.arabicSize+'px');if(s.transSize)d.style.setProperty('--trans-size',s.transSize+'px');if(s.tajweed)d.classList.add('tajweed-on');var a=JSON.parse(localStorage.getItem('quran-store')||'{}').state||{};if(a.language){d.lang=a.language;d.dataset.lang=a.language}}catch(e){}})();`
+export const readerPrefsScript = `(function(){try{var s=JSON.parse(localStorage.getItem('${READER_STORAGE_KEY}')||'{}').state||{};var d=document.documentElement;var f={'amiri-quran':'var(--font-amiri-quran)',scheherazade:'var(--font-scheherazade)','noto-naskh':'var(--font-noto-naskh)',indopak:'var(--font-lateef)'};d.dataset.showEn=s.showEn===false?'0':'1';d.dataset.showBn=s.showBn===false?'0':'1';d.dataset.showTl=s.showTl?'1':'0';d.dataset.showBt=s.showBt==null?'auto':s.showBt?'1':'0';d.dataset.readerMode=s.mode||'translation';d.dataset.enEd=s.enEdition||'sahih';if(s.arabicFont)d.style.setProperty('--font-quran',f[s.arabicFont]||'');if(s.arabicSize)d.style.setProperty('--quran-size',s.arabicSize+'px');if(s.transSize)d.style.setProperty('--trans-size',s.transSize+'px');if(s.tajweed)d.classList.add('tajweed-on');var a=JSON.parse(localStorage.getItem('quran-store')||'{}').state||{};if(a.language){d.lang=a.language;d.dataset.lang=a.language}}catch(e){}})();`

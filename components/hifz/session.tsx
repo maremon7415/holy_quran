@@ -18,10 +18,10 @@ export interface Chunk { surah: number; ayahs: number[] }
 export interface Plan { mode: 'learn' | 'review'; chunks: Chunk[] }
 
 const STEPS = [
-  { id: 'listen', icon: 'listen', en: 'Listen', bn: 'শুনুন' },
-  { id: 'read', icon: 'read', en: 'Read', bn: 'পড়ুন' },
-  { id: 'fade', icon: 'focus', en: 'Fade', bn: 'ফেড' },
-  { id: 'recall', icon: 'hifz', en: 'Recall', bn: 'রিকল' },
+  { id: 'listen', icon: 'listen', en: 'Listen', bn: 'শুনুন', ar: 'استمع' },
+  { id: 'read', icon: 'read', en: 'Read', bn: 'পড়ুন', ar: 'اقرأ' },
+  { id: 'fade', icon: 'focus', en: 'Fade', bn: 'ফেড', ar: 'إخفاء' },
+  { id: 'recall', icon: 'hifz', en: 'Recall', bn: 'রিকল', ar: 'استذكار' },
 ] as const
 
 const spring = { type: 'spring' as const, stiffness: 380, damping: 30 }
@@ -62,7 +62,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
   const pool = useMemo(() => (verses ? verses.flatMap((v) => v.words).filter((_, i) => i % 3 === 0).slice(0, 40) : []), [verses])
 
   const keys = chunk ? chunk.ayahs.map((a) => cardKey(chunk.surah, a)) : []
-  const name = (s: number) => (lang === 'bn' ? surahNamesBn[s - 1] : chapters[s - 1].nameSimple)
+  const name = (s: number) => (lang === 'bn' ? surahNamesBn[s - 1] : lang === 'ar' ? chapters[s - 1].nameArabic : chapters[s - 1].nameSimple)
 
   const onGrade = (g: Grade) => {
     const store = useHifz.getState()
@@ -75,7 +75,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
     const id = `surah-${chunk.surah}`
     if (g > 0 && have && !after.milestones.includes(id)) {
       after.addMilestone(id)
-      setBanner(t({ en: `Surah ${c.nameSimple} memorised — mā shāʾ Allāh!`, bn: `সূরা ${surahNamesBn[chunk.surah - 1]} মুখস্থ — মাশাআল্লাহ!` }))
+      setBanner(t({ en: `Surah ${c.nameSimple} memorised — mā shāʾ Allāh!`, bn: `সূরা ${surahNamesBn[chunk.surah - 1]} মুখস্থ — মাশাআল্লাহ!`, ar: `أتممت حفظ سورة ${c.nameArabic} — ما شاء الله!` }))
       setBurst(id + Date.now())
     }
     if (idx + 1 >= plan.chunks.length) {
@@ -96,17 +96,17 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
         <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring} className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-gold-soft">
           <UiIcon name="sparkle" size={56} />
         </motion.div>
-        <h2 className="mt-6 font-display text-3xl">{t({ en: 'Session complete', bn: 'সেশন সম্পন্ন' })}</h2>
+        <h2 className="mt-6 font-display text-3xl">{t({ en: 'Session complete', bn: 'সেশন সম্পন্ন', ar: 'اكتملت الجلسة' })}</h2>
         {banner && <p className="mt-2 font-medium text-gold">{banner}</p>}
         <p className="mt-2 text-muted-foreground">
-          {t({ en: `${graded} ayah${graded === 1 ? '' : 's'} practised in about ${mins} min. Your reviews are scheduled — come back when they are due.`, bn: `প্রায় ${mins} মিনিটে ${graded}টি আয়াত অনুশীলন হয়েছে। রিভিউ নির্ধারিত হয়েছে — সময় হলে ফিরে আসুন।` })}
+          {t({ en: `${graded} ayah${graded === 1 ? '' : 's'} practised in about ${mins} min. Your reviews are scheduled — come back when they are due.`, bn: `প্রায় ${mins} মিনিটে ${graded}টি আয়াত অনুশীলন হয়েছে। রিভিউ নির্ধারিত হয়েছে — সময় হলে ফিরে আসুন।`, ar: `تدربت على ${graded} آية في نحو ${mins} دقيقة. جُدولت مراجعاتك — عُد عند حلول موعدها.` })}
         </p>
         <div className="mt-6 flex justify-center gap-3 text-sm">
-          <span className="rounded-full bg-accent px-4 py-2 font-medium text-accent-foreground">🔥 {hifzStreak(st.log)} {t({ en: 'day streak', bn: 'দিনের স্ট্রিক' })}</span>
-          <span className="rounded-full bg-muted px-4 py-2 font-medium">{Object.keys(st.cards).length} {t({ en: 'ayahs in memory', bn: 'আয়াত স্মৃতিতে' })}</span>
+          <span className="rounded-full bg-accent px-4 py-2 font-medium text-accent-foreground">🔥 {hifzStreak(st.log)} {t({ en: 'day streak', bn: 'দিনের স্ট্রিক', ar: 'أيام متتالية' })}</span>
+          <span className="rounded-full bg-muted px-4 py-2 font-medium">{Object.keys(st.cards).length} {t({ en: 'ayahs in memory', bn: 'আয়াত স্মৃতিতে', ar: 'آية محفوظة' })}</span>
         </div>
         <button onClick={onExit} className="mt-8 h-12 rounded-full bg-primary px-8 font-semibold text-primary-foreground transition active:scale-95">
-          {t({ en: 'Done', bn: 'সম্পন্ন' })}
+          {t({ en: 'Done', bn: 'সম্পন্ন', ar: 'تم' })}
         </button>
       </div>
     )
@@ -152,7 +152,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
         <div className="relative min-h-[18rem]">
           {failed && (
             <p className="py-16 text-center text-muted-foreground">
-              {t({ en: 'Could not load this surah. Check your connection and retry.', bn: 'সূরা লোড করা যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।' })}
+              {t({ en: 'Could not load this surah. Check your connection and retry.', bn: 'সূরা লোড করা যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।', ar: 'تعذّر تحميل هذه السورة. تحقق من اتصالك وأعد المحاولة.' })}
               <button onClick={() => setIdx((i) => i)} className="ml-2 underline">Retry</button>
             </p>
           )}
@@ -178,11 +178,11 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
 
       <div className="mt-4 flex items-center justify-between">
         <button disabled={step === 0} onClick={() => setStep((s) => s - 1)} className="inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm font-medium text-muted-foreground transition hover:text-foreground disabled:opacity-30">
-          <ChevronLeft className="h-4 w-4" /> {t({ en: 'Back', bn: 'পেছনে' })}
+          <ChevronLeft className="h-4 w-4" /> {t({ en: 'Back', bn: 'পেছনে', ar: 'رجوع' })}
         </button>
         {step < 3 && (
           <button onClick={() => setStep((s) => s + 1)} className="inline-flex h-11 items-center gap-1 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition active:scale-95">
-            {t({ en: 'Next step', bn: 'পরের ধাপ' })} <ChevronRight className="h-4 w-4" />
+            {t({ en: 'Next step', bn: 'পরের ধাপ', ar: 'الخطوة التالية' })} <ChevronRight className="h-4 w-4" />
           </button>
         )}
       </div>

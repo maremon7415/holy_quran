@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
 import { chapters, readerHref, resolveChapterId, surahHref, surahNamesBn, toArabicDigits, toBanglaDigits } from '@/lib/quran/chapters'
-import { getChapter, getVerses } from '@/lib/quran/data'
+import { getChapter, getUccharon, getVerses } from '@/lib/quran/data'
 import type { Verse } from '@/lib/quran/types'
 import { absoluteUrl, site } from '@/lib/site'
 import { curatedAyahKeys, getFamousAyah } from '@/lib/reader/famous'
@@ -51,10 +51,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!p) return { title: 'Ayah not found' }
   const { c, key, title } = titleFor(p.id, p.n)
   const v = (await getVerses(p.id))[p.n - 1]
-  const description = `${c.nameSimple} ${key}: “${v.en.length > 150 ? v.en.slice(0, 147).replace(/\s+\S*$/, '') + '…' : v.en}” Read the Arabic text, transliteration, Bangla & English translation, word-by-word meaning and tafsir.`
+  const bnRef = `সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} আয়াতের বাংলা উচ্চারণ ও অর্থ`
+  const description = `${c.nameSimple} ${key}: “${v.en.length > 140 ? v.en.slice(0, 137).replace(/\s+\S*$/, '') + '…' : v.en}” Arabic text, Bangla uccharon (pronunciation), transliteration, Bangla & English translation, word-by-word and tafsir. ${bnRef}।`
   const url = surahHref(p.id, p.n)
   return {
-    title: { absolute: `${title} | সূরা ${surahNamesBn[p.id - 1]} আয়াত ${toBanglaDigits(p.n)}` },
+    title: { absolute: `${title} | ${bnRef}` },
     description,
     alternates: { canonical: url },
     openGraph: { type: 'article', title, description, url, siteName: site.name, locale: 'en_US', alternateLocale: ['bn_BD', 'ar_SA'] },
@@ -81,7 +82,7 @@ export default async function AyahPage({ params }: Props) {
   if (!p) notFound()
   if (decodeURIComponent(slug) !== p.canonical || String(p.n) !== ayah) permanentRedirect(surahHref(p.id, p.n))
 
-  const [chapter, verses, words, tafsirs] = await Promise.all([getChapter(p.id), getVerses(p.id), getWordsForAyah(`${p.id}:${p.n}`), getTafsirForAyah(`${p.id}:${p.n}`)])
+  const [chapter, verses, words, tafsirs, uccharon] = await Promise.all([getChapter(p.id), getVerses(p.id), getWordsForAyah(`${p.id}:${p.n}`), getTafsirForAyah(`${p.id}:${p.n}`), getUccharon(p.id)])
   if (!chapter) notFound()
   const v = verses[p.n - 1]
   const prev = verses[p.n - 2]
@@ -90,11 +91,13 @@ export default async function AyahPage({ params }: Props) {
   const bnName = surahNamesBn[p.id - 1]
   const url = absoluteUrl(surahHref(p.id, p.n))
   const tokens = tokenizeArabic(v.ar)
+  const bt = uccharon[p.n - 1] ?? ''
   const makki = c.revelationPlace === 'makkah'
 
   const faqs = [
     { q: `What is the meaning of Surah ${c.nameSimple} ${key}?`, a: `Surah ${c.nameSimple} ayah ${p.n} (${key}) means: “${v.en}” (Saheeh International). Abdel Haleem translates it as: “${v.enH}”` },
     { q: `What does ${key} say in Bangla? (সূরা ${bnName} আয়াত ${toBanglaDigits(p.n)} এর বাংলা অর্থ কী?)`, a: `সূরা ${bnName} ${toBanglaDigits(p.id)}:${toBanglaDigits(p.n)} এর বাংলা অর্থ: “${v.bn}” (তাইসীরুল কুরআন)` },
+    ...(bt ? [{ q: `সূরা ${bnName} ${toBanglaDigits(p.n)} আয়াতের বাংলা উচ্চারণ কী?`, a: `সূরা ${bnName} এর ${toBanglaDigits(p.n)} নম্বর আয়াতের (${toBanglaDigits(p.id)}:${toBanglaDigits(p.n)}) বাংলা উচ্চারণ: “${bt}”। এটি স্বয়ংক্রিয়ভাবে তৈরি উচ্চারণ নির্দেশিকা — সঠিক তিলাওয়াতের জন্য আরবি পাঠ ও অডিও অনুসরণ করুন।` }] : []),
     { q: `How do you pronounce Quran ${key} (transliteration)?`, a: `The transliteration of ${c.nameSimple} ${key} is: “${v.tl}”. The Arabic text is: ${v.ar}` },
     ...(f && !f.en.startsWith('Surah ') ? [{ q: `Which ayah is ${f.en}?`, a: `${f.en}${f.ar ? ` (${f.ar})` : ''} is ayah ${p.n} of Surah ${c.nameSimple} (${key}) in the Quran${f.aka?.length ? `, also known as ${f.aka.join(', ')}` : ''}. In Bangla it is known as ${f.bn}.` }] : []),
     { q: `Where is ${key} in the Quran?`, a: `Ayah ${key} is verse ${p.n} of Surah ${c.nameSimple} (${c.meaning}), surah ${p.id} of the Quran — a ${makki ? 'Meccan' : 'Medinan'} surah with ${c.versesCount} ayahs. It is in Juz (Para) ${v.j}, on page ${v.p} of the Madani mushaf.` },
@@ -177,7 +180,13 @@ export default async function AyahPage({ params }: Props) {
             <div className="wbw-slot" data-slot-wbw={key} />
           </div>
 
-          <p data-tr="tl" className="mt-5 text-center text-[length:var(--trans-size,17px)] italic leading-relaxed text-muted-foreground">{v.tl}</p>
+          {bt && (
+            <div data-tr="bt" lang="bn" className="mt-5 text-center">
+              <p className="tr-bt text-[length:calc(var(--trans-size,17px)*1.12)] leading-[1.9]">{bt}</p>
+              <p className="mt-1 font-bangla text-[11px] text-muted-foreground" title="Auto-generated pronunciation guide">বাংলা উচ্চারণ · স্বয়ংক্রিয়ভাবে তৈরি নির্দেশিকা</p>
+            </div>
+          )}
+          <p data-tr="tl" className="mt-3 text-center text-[length:var(--trans-size,17px)] italic leading-relaxed text-muted-foreground">{v.tl}</p>
         </div>
       </article>
 
@@ -197,6 +206,8 @@ export default async function AyahPage({ params }: Props) {
             <figcaption className="mb-2 font-bangla text-xs font-bold text-primary">বাংলা অনুবাদ · তাইসীরুল কুরআন</figcaption>
             <blockquote className="font-bangla text-[length:calc(var(--trans-size,17px)*1.05)] leading-[1.9]">{v.bn}</blockquote>
           </figure>
+          {/* translations the reader added in settings (verse-enhancer.tsx) */}
+          <div data-xt={key} className="grid gap-3 empty:hidden" />
         </div>
       </section>
 

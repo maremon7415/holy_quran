@@ -16,6 +16,7 @@ export interface PagesProgress {
 
 export const allPagePaths = (withJuz: boolean) => [
   '/quran',
+  '/offline',
   ...chapters.map((c) => surahHref(c.id)),
   ...(withJuz ? Array.from({ length: 30 }, (_, i) => juzHref(i + 1)) : []),
 ]

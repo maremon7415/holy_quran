@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { chapters, resolveChapterId, surahHref, surahNamesBn } from '@/lib/quran/chapters'
-import { getChapter, getChapterInfo, getVerses } from '@/lib/quran/data'
+import { getChapter, getChapterInfo, getUccharon, getVerses } from '@/lib/quran/data'
 import { absoluteUrl, site } from '@/lib/site'
 import { htmlToText } from '@/lib/reader/sanitize'
 import { breadcrumbLd, publisherLd, quranBookLd } from '@/lib/reader/seo'
@@ -39,12 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const bn = surahNamesBn[id - 1]
   const title = `Surah ${c.nameSimple} (${c.nameArabic}) — Read with Bangla & English Translation | সূরা ${bn}`
   const summary = c.summaryEn ? htmlToText(c.summaryEn, 170) : ''
-  const description = `Read Surah ${c.nameSimple} (${c.meaning}), surah ${c.id} of the Quran — ${c.versesCount} ayahs, ${c.revelationPlace === 'makkah' ? 'Meccan' : 'Medinan'}. Arabic text with English (Saheeh International, Abdel Haleem) & Bangla translation, transliteration, word-by-word, tajweed, tafsir and audio. ${summary}`.slice(0, 300)
+  const description = `Read Surah ${c.nameSimple} (${c.meaning}), surah ${c.id} of the Quran — ${c.versesCount} ayahs, ${c.revelationPlace === 'makkah' ? 'Meccan' : 'Medinan'}. Arabic text with English (Saheeh International, Abdel Haleem) & Bangla translation, Bangla uccharon (pronunciation), transliteration, word-by-word, tajweed, tafsir and audio. ${summary}`.slice(0, 300)
   const url = surahHref(id)
   return {
     title: { absolute: title },
     description,
-    keywords: [`Surah ${c.nameSimple}`, `${c.nameSimple} translation`, `${c.nameSimple} Bangla`, `সূরা ${bn}`, c.nameArabic, `Surah ${c.id}`, c.meaning, 'Quran'],
+    keywords: [`Surah ${c.nameSimple}`, `${c.nameSimple} translation`, `${c.nameSimple} Bangla`, `সূরা ${bn}`, `সূরা ${bn} বাংলা উচ্চারণ`, c.nameArabic, `Surah ${c.id}`, c.meaning, 'Quran'],
     alternates: { canonical: url },
     openGraph: {
       type: 'article',
@@ -64,7 +64,7 @@ export default async function SurahPage({ params }: Props) {
   const { id, canonical, isCanonical } = await resolve(slug)
   if (!isCanonical) permanentRedirect(`/surah/${canonical}`)
 
-  const [c, verses, info] = await Promise.all([getChapter(id), getVerses(id), getChapterInfo(id).catch(() => ({ en: null, bn: null }))])
+  const [c, verses, info, bt] = await Promise.all([getChapter(id), getVerses(id), getChapterInfo(id).catch(() => ({ en: null, bn: null })), getUccharon(id)])
   if (!c) notFound()
   const juzFrom = verses[0].j
   const juzTo = verses[verses.length - 1].j
@@ -105,7 +105,7 @@ export default async function SurahPage({ params }: Props) {
             {verses.map((v, i) => (
               <Fragment key={v.n}>
                 {i > 0 && <div className="ayah-divider" aria-hidden />}
-                <VerseBlock verse={v} surah={id} />
+                <VerseBlock verse={v} surah={id} bt={bt[i]} />
               </Fragment>
             ))}
           </div>

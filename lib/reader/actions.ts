@@ -47,6 +47,8 @@ export function composeAyahText(key: string) {
   const x = readAyahText(key)
   const r = ayahRef(key)
   const parts = [x.ar]
+  const btEl = document.querySelector<HTMLElement>(`[data-ayah="${key}"] [data-tr="bt"]`)
+  if (x.bt && btEl && getComputedStyle(btEl).display !== 'none') parts.push(x.bt)
   if (p.showTl && x.tl) parts.push(x.tl)
   if (p.showEn) parts.push(p.enEdition === 'haleem' && x.enH ? x.enH : x.en)
   if (p.showBn && x.bn) parts.push(x.bn)

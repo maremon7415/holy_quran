@@ -42,7 +42,7 @@ function FlipCard({ item, index }: { item: NameItem; index: number }) {
           <span className="font-display text-base font-semibold leading-tight">{item.en}</span>
           <span className="font-bangla mt-1 text-[15px] text-gold">{item.bn}</span>
           <Link tabIndex={flipped ? 0 : -1} href={`/names-of-allah/${item.slug}`} className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition active:scale-95">
-            {t({ en: 'Details', bn: 'বিস্তারিত' })} <ArrowRight className="size-3" />
+            {t({ en: 'Details', bn: 'বিস্তারিত', ar: 'التفاصيل' })} <ArrowRight className="size-3" />
           </Link>
         </div>
       </motion.div>
@@ -72,8 +72,8 @@ function Flashcards({ names }: { names: NameItem[] }) {
     <div className="mx-auto max-w-md">
       <div className="mb-3 flex items-center justify-between text-xs font-semibold text-muted-foreground">
         <span>{i + 1} / {deck.length}</span>
-        <span className="text-primary">{t({ en: 'Known', bn: 'জানা' })}: {known.length}</span>
-        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => { setDeck(shuffled(names)); setI(0); setShow(false) }}><Shuffle className="size-3.5" />{t({ en: 'Shuffle', bn: 'এলোমেলো' })}</button>
+        <span className="text-primary">{t({ en: 'Known', bn: 'জানা', ar: 'محفوظ' })}: {known.length}</span>
+        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => { setDeck(shuffled(names)); setI(0); setShow(false) }}><Shuffle className="size-3.5" />{t({ en: 'Shuffle', bn: 'এলোমেলো', ar: 'خلط' })}</button>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-muted"><motion.div className="h-full rounded-full bg-primary" animate={{ width: `${((i + 1) / deck.length) * 100}%` }} transition={spring} /></div>
       <AnimatePresence mode="wait">
@@ -92,13 +92,13 @@ function Flashcards({ names }: { names: NameItem[] }) {
               <span className="font-bangla mt-1 block text-lg text-gold">{cur.tlBn} · {cur.bn}</span>
             </motion.span>
           ) : (
-            <span className="relative mt-6 rounded-full border border-dashed border-border px-4 py-1.5 text-xs font-semibold text-muted-foreground">{t({ en: 'Tap to reveal the meaning', bn: 'অর্থ দেখতে ট্যাপ করুন' })}</span>
+            <span className="relative mt-6 rounded-full border border-dashed border-border px-4 py-1.5 text-xs font-semibold text-muted-foreground">{t({ en: 'Tap to reveal the meaning', bn: 'অর্থ দেখতে ট্যাপ করুন', ar: 'اضغط لإظهار المعنى' })}</span>
           )}
         </motion.button>
       </AnimatePresence>
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button type="button" onClick={() => next(false)} className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card py-3 text-sm font-semibold transition hover:bg-accent active:scale-95"><RotateCcw className="size-4" />{t({ en: 'Again', bn: 'আবার' })}</button>
-        <button type="button" onClick={() => next(true)} className="inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground transition active:scale-95"><Check className="size-4" />{t({ en: 'I know it', bn: 'জানি' })}</button>
+        <button type="button" onClick={() => next(false)} className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card py-3 text-sm font-semibold transition hover:bg-accent active:scale-95"><RotateCcw className="size-4" />{t({ en: 'Again', bn: 'আবার', ar: 'مرة أخرى' })}</button>
+        <button type="button" onClick={() => next(true)} className="inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground transition active:scale-95"><Check className="size-4" />{t({ en: 'I know it', bn: 'জানি', ar: 'أعرفه' })}</button>
       </div>
     </div>
   )
@@ -122,12 +122,12 @@ function Quiz({ names }: { names: NameItem[] }) {
   return (
     <div className="mx-auto max-w-md">
       <div className="mb-3 flex items-center justify-between text-xs font-semibold text-muted-foreground">
-        <span>{t({ en: 'Score', bn: 'স্কোর' })}: {score.ok}/{score.total}</span>
-        <span className="text-gold">{t({ en: 'Streak', bn: 'ধারা' })}: {score.streak}</span>
+        <span>{t({ en: 'Score', bn: 'স্কোর', ar: 'النتيجة' })}: {score.ok}/{score.total}</span>
+        <span className="text-gold">{t({ en: 'Streak', bn: 'ধারা', ar: 'التتابع' })}: {score.streak}</span>
       </div>
       <div className="card-soft relative overflow-hidden rounded-[2rem] p-6 text-center">
         <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(circle,#000,transparent_75%)]" />
-        <p className="relative text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'What does this Name mean?', bn: 'এই নামের অর্থ কী?' })}</p>
+        <p className="relative text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'What does this Name mean?', bn: 'এই নামের অর্থ কী?', ar: 'ما معنى هذا الاسم؟' })}</p>
         <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative mt-2 py-2 text-6xl leading-[1.9]">{round.target.ar}</p>
         {picked != null && <p className="relative font-display text-lg font-semibold">{round.target.tl}</p>}
       </div>
@@ -148,7 +148,7 @@ function Quiz({ names }: { names: NameItem[] }) {
       </div>
       {picked != null && (
         <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} type="button" onClick={() => { setRound(makeRound()); setPicked(null) }} className="mt-4 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground active:scale-95">
-          {t({ en: 'Next Name', bn: 'পরের নাম' })}
+          {t({ en: 'Next Name', bn: 'পরের নাম', ar: 'الاسم التالي' })}
         </motion.button>
       )}
     </div>
@@ -165,10 +165,10 @@ export function NamesExplorer({ names }: { names: NameItem[] }) {
     if (!s) return names
     return names.filter((n) => String(n.n) === s || n.tl.toLowerCase().includes(s) || n.en.toLowerCase().includes(s) || n.bn.includes(q.trim()) || n.tlBn.includes(q.trim()) || n.ar.includes(q.trim()))
   }, [names, q])
-  const modes: { id: Mode; label: { en: string; bn: string } }[] = [
-    { id: 'browse', label: { en: 'Browse', bn: 'সব নাম' } },
-    { id: 'flash', label: { en: 'Flashcards', bn: 'ফ্ল্যাশকার্ড' } },
-    { id: 'quiz', label: { en: 'Quiz', bn: 'কুইজ' } },
+  const modes: { id: Mode; label: { en: string; bn: string; ar?: string } }[] = [
+    { id: 'browse', label: { en: 'Browse', bn: 'সব নাম', ar: 'تصفّح' } },
+    { id: 'flash', label: { en: 'Flashcards', bn: 'ফ্ল্যাশকার্ড', ar: 'بطاقات' } },
+    { id: 'quiz', label: { en: 'Quiz', bn: 'কুইজ', ar: 'اختبار' } },
   ]
   return (
     <div>
@@ -185,7 +185,7 @@ export function NamesExplorer({ names }: { names: NameItem[] }) {
           <label className="relative block flex-1">
             <span className="sr-only">Search names</span>
             <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search: Rahman, mercy, الرحمن, দয়া, 12…', bn: 'খুঁজুন: রহমান, দয়া, الرحمن, ১২…' })} className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-10 text-[15px] outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search: Rahman, mercy, الرحمن, দয়া, 12…', bn: 'খুঁজুন: রহমান, দয়া, الرحمن, ১২…', ar: 'ابحث: الرحمن، الرحمة، 12…' })} className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-10 text-[15px] outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15" />
             {q && <button type="button" aria-label="Clear" onClick={() => setQ('')} className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>}
           </label>
         )}
@@ -193,11 +193,11 @@ export function NamesExplorer({ names }: { names: NameItem[] }) {
       <div className="mt-5">
         {mode === 'browse' && (
           <>
-            <p className="mb-3 text-xs text-muted-foreground">{t({ en: `${list.length} of 99 · tap a card to see its meaning`, bn: `৯৯টির মধ্যে ${toBanglaDigits(list.length)}টি · অর্থ দেখতে কার্ডে ট্যাপ করুন` })}</p>
+            <p className="mb-3 text-xs text-muted-foreground">{t({ en: `${list.length} of 99 · tap a card to see its meaning`, bn: `৯৯টির মধ্যে ${toBanglaDigits(list.length)}টি · অর্থ দেখতে কার্ডে ট্যাপ করুন`, ar: `${list.length} من ٩٩ · اضغط على البطاقة لترى معناها` })}</p>
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {list.map((n, i) => <FlipCard key={n.n} item={n} index={i} />)}
             </ul>
-            {list.length === 0 && <p className="card-soft rounded-3xl p-10 text-center text-sm text-muted-foreground">{t({ en: 'No Name matches your search.', bn: 'কোনো নাম পাওয়া যায়নি।' })}</p>}
+            {list.length === 0 && <p className="card-soft rounded-3xl p-10 text-center text-sm text-muted-foreground">{t({ en: 'No Name matches your search.', bn: 'কোনো নাম পাওয়া যায়নি।', ar: 'لا يوجد اسم مطابق لبحثك.' })}</p>}
           </>
         )}
         {mode === 'flash' && <Flashcards names={names} />}

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { absoluteUrl, site } from '@/lib/site'
+import { alternatesFor, hasBnTwin, localeHref, type Locale } from '@/lib/i18n/routes'
 
 type Json = Record<string, unknown>
 
@@ -18,15 +19,16 @@ export function breadcrumbLd(items: { name: string; href: string }[]): Json {
   }
 }
 
-export function faqLd(faqs: { q: string; a: string }[]): Json {
+export function faqLd(faqs: { q: string; a: string }[], inLanguage?: string): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    ...(inLanguage ? { inLanguage } : {}),
     mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   }
 }
 
-export function articleLd(a: { headline: string; description: string; path: string; inLanguage?: string[]; about?: string; datePublished?: string; keywords?: string[] }): Json {
+export function articleLd(a: { headline: string; description: string; path: string; inLanguage?: string[] | string; about?: string; datePublished?: string; keywords?: string[]; image?: string }): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -37,7 +39,7 @@ export function articleLd(a: { headline: string; description: string; path: stri
     inLanguage: a.inLanguage ?? ['en', 'bn', 'ar'],
     ...(a.about ? { about: { '@type': 'Thing', name: a.about } } : {}),
     ...(a.keywords ? { keywords: a.keywords.join(', ') } : {}),
-    image: absoluteUrl(`${a.path}/opengraph-image`),
+    image: a.image ? absoluteUrl(a.image) : absoluteUrl(`${a.path}/opengraph-image`),
     author: publisherLd,
     publisher: publisherLd,
     datePublished: a.datePublished ?? '2025-01-01',
@@ -45,10 +47,11 @@ export function articleLd(a: { headline: string; description: string; path: stri
   }
 }
 
-export function howToLd(h: { name: string; description: string; path: string; steps: { name: string; text: string }[] }): Json {
+export function howToLd(h: { name: string; description: string; path: string; steps: { name: string; text: string }[]; inLanguage?: string }): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
+    ...(h.inLanguage ? { inLanguage: h.inLanguage } : {}),
     name: h.name,
     description: h.description,
     url: absoluteUrl(h.path),
@@ -56,10 +59,11 @@ export function howToLd(h: { name: string; description: string; path: string; st
   }
 }
 
-export function collectionLd(c: { name: string; description: string; path: string; items: { name: string; href: string }[] }): Json {
+export function collectionLd(c: { name: string; description: string; path: string; items: { name: string; href: string }[]; inLanguage?: string | string[] }): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    ...(c.inLanguage ? { inLanguage: c.inLanguage } : {}),
     name: c.name,
     description: c.description,
     url: absoluteUrl(c.path),
@@ -78,15 +82,24 @@ export function clip(s: string, max = 158) {
   return t.slice(0, max - 1).replace(/\s+\S*$/, '') + '…'
 }
 
-/** Metadata helper: canonical, OG and Twitter all consistent. */
-export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article' }): Metadata {
+/**
+ * Metadata helper: canonical, hreflang, OG and Twitter all consistent.
+ * `path` is the English path; with `locale: 'bn'` the canonical/OG URL become `/bn/...`.
+ * Pages with a Bangla twin automatically get `alternates.languages` (en / bn / x-default).
+ */
+export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article'; locale?: Locale; ogImage?: string }): Metadata {
+  const locale = m.locale ?? 'en'
+  const alternates = hasBnTwin(m.path) ? alternatesFor(m.path, locale) : { canonical: localeHref(locale, m.path) }
+  const url = absoluteUrl(alternates.canonical)
+  const ogLocale = locale === 'bn' ? 'bn_BD' : site.locale
+  const altLocales = locale === 'bn' ? ['en_US'] : [...site.alternateLocales]
   return {
     title: { absolute: m.title },
     description: m.description,
     keywords: m.keywords,
-    alternates: { canonical: m.path },
-    openGraph: { type: m.type ?? 'website', siteName: site.name, title: m.title, description: m.description, url: absoluteUrl(m.path), locale: site.locale, alternateLocale: [...site.alternateLocales] },
-    twitter: { card: 'summary_large_image', title: m.title, description: m.description },
+    alternates,
+    openGraph: { type: m.type ?? 'website', siteName: locale === 'bn' ? `${site.name} · নূর কুরআন` : site.name, title: m.title, description: m.description, url, locale: ogLocale, alternateLocale: altLocales, ...(m.ogImage ? { images: [{ url: m.ogImage, width: 1200, height: 630 }] } : {}) },
+    twitter: { card: 'summary_large_image', title: m.title, description: m.description, ...(m.ogImage ? { images: [m.ogImage] } : {}) },
     ...(m.noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }

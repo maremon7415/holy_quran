@@ -78,7 +78,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={t({ en: 'Search duas: anxiety, sleep, رب, রিজিক…', bn: 'দোয়া খুঁজুন: দুশ্চিন্তা, ঘুম, رب, রিজিক…' })}
+            placeholder={t({ en: 'Search duas: anxiety, sleep, رب, রিজিক…', bn: 'দোয়া খুঁজুন: দুশ্চিন্তা, ঘুম, رب, রিজিক…', ar: 'ابحث في الأدعية: القلق، النوم، ربّنا…' })}
             className="h-12 w-full rounded-full border border-border bg-card pl-11 pr-11 text-[15px] shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />
           {q && (
@@ -86,13 +86,13 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
           )}
         </label>
         <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Dua categories">
-          {chip('all', t({ en: 'All', bn: 'সব' }), undefined, duas.length)}
-          {mounted && bookmarks.length > 0 && chip('saved', t({ en: 'Saved', bn: 'সংরক্ষিত' }), 'bookmark', bookmarks.length)}
+          {chip('all', t({ en: 'All', bn: 'সব', ar: 'الكل' }), undefined, duas.length)}
+          {mounted && bookmarks.length > 0 && chip('saved', t({ en: 'Saved', bn: 'সংরক্ষিত', ar: 'المحفوظات' }), 'bookmark', bookmarks.length)}
           {cats.map((c) => chip(c.id, t(c.title), c.icon, counts[c.id] ?? 0))}
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">{list.length} {t({ en: 'duas', bn: 'টি দোয়া' })}</p>
+      <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">{list.length} {t({ en: 'duas', bn: 'টি দোয়া', ar: 'دعاء' })}</p>
 
       <motion.ul layout className="mt-3 grid gap-3.5 sm:grid-cols-2">
         <AnimatePresence mode="popLayout" initial={false}>
@@ -124,8 +124,8 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
       {list.length === 0 && (
         <div className="card-soft mt-6 rounded-3xl p-10 text-center">
           <UiIcon name="dua" size={44} className="mx-auto opacity-70" />
-          <p className="mt-3 font-semibold">{t({ en: 'No duas match your search', bn: 'কোনো দোয়া পাওয়া যায়নি' })}</p>
-          <button type="button" className="mt-3 text-sm font-semibold text-primary hover:underline" onClick={() => { setQ(''); setCat('all') }}>{t({ en: 'Clear filters', bn: 'ফিল্টার মুছুন' })}</button>
+          <p className="mt-3 font-semibold">{t({ en: 'No duas match your search', bn: 'কোনো দোয়া পাওয়া যায়নি', ar: 'لا توجد أدعية مطابقة لبحثك' })}</p>
+          <button type="button" className="mt-3 text-sm font-semibold text-primary hover:underline" onClick={() => { setQ(''); setCat('all') }}>{t({ en: 'Clear filters', bn: 'ফিল্টার মুছুন', ar: 'مسح عوامل التصفية' })}</button>
         </div>
       )}
     </div>

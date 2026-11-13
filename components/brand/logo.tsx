@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { cn } from '@/lib/utils'
 import { site } from '@/lib/site'
 

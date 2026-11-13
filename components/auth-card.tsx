@@ -23,14 +23,14 @@ export const btnCls = 'flex h-12 w-full items-center justify-center gap-2 rounde
 export const labelCls = 'mb-1.5 block text-sm font-medium'
 
 /** Shown instead of the forms when the deployment has no account database. */
-export function AccountsOff({ t }: { t: (v: { en: string; bn: string }) => string }) {
+export function AccountsOff({ t }: { t: (v: { en: string; bn: string; ar?: string }) => string }) {
   return (
     <AuthCard
-      title={t({ en: 'Accounts not enabled', bn: 'অ্যাকাউন্ট চালু নেই' })}
-      subtitle={t({ en: 'Everything works without an account. Your data stays on this device.', bn: 'অ্যাকাউন্ট ছাড়াই সবকিছু কাজ করে। আপনার তথ্য এই ডিভাইসে থাকে।' })}
-      footer={<a href="/" className="font-semibold text-primary hover:underline">{t({ en: 'Back to home', bn: 'হোমে ফিরুন' })}</a>}
+      title={t({ en: 'Accounts not enabled', bn: 'অ্যাকাউন্ট চালু নেই', ar: 'الحسابات غير مفعّلة' })}
+      subtitle={t({ en: 'Everything works without an account. Your data stays on this device.', bn: 'অ্যাকাউন্ট ছাড়াই সবকিছু কাজ করে। আপনার তথ্য এই ডিভাইসে থাকে।', ar: 'كل شيء يعمل دون حساب. تبقى بياناتك على هذا الجهاز.' })}
+      footer={<a href="/" className="font-semibold text-primary hover:underline">{t({ en: 'Back to home', bn: 'হোমে ফিরুন', ar: 'العودة إلى الرئيسية' })}</a>}
     >
-      <p className="text-center text-sm text-muted-foreground">{t({ en: 'Sign-in appears here once the site owner connects a database.', bn: 'সাইট মালিক ডাটাবেস যুক্ত করলে এখানে সাইন ইন আসবে।' })}</p>
+      <p className="text-center text-sm text-muted-foreground">{t({ en: 'Sign-in appears here once the site owner connects a database.', bn: 'সাইট মালিক ডাটাবেস যুক্ত করলে এখানে সাইন ইন আসবে।', ar: 'سيظهر تسجيل الدخول هنا بعد أن يربط مالك الموقع قاعدة بيانات.' })}</p>
     </AuthCard>
   )
 }
@@ -57,10 +57,10 @@ export function passwordScore(p: string): number {
   if (/\d/.test(p) && /[^A-Za-z0-9]/.test(p)) s++
   return p.length < 8 ? Math.min(s, 1) : s
 }
-export function PasswordMeter({ value, t }: { value: string; t: (v: { en: string; bn: string }) => string }) {
-  if (!value) return <p className="mt-1.5 text-xs text-muted-foreground">{t({ en: 'At least 8 characters. A longer phrase is stronger.', bn: 'কমপক্ষে ৮ অক্ষর। লম্বা বাক্য আরও নিরাপদ।' })}</p>
+export function PasswordMeter({ value, t }: { value: string; t: (v: { en: string; bn: string; ar?: string }) => string }) {
+  if (!value) return <p className="mt-1.5 text-xs text-muted-foreground">{t({ en: 'At least 8 characters. A longer phrase is stronger.', bn: 'কমপক্ষে ৮ অক্ষর। লম্বা বাক্য আরও নিরাপদ।', ar: '٨ أحرف على الأقل. العبارة الأطول أقوى.' })}</p>
   const s = passwordScore(value)
-  const labels = [t({ en: 'Too short', bn: 'খুব ছোট' }), t({ en: 'Weak', bn: 'দুর্বল' }), t({ en: 'Okay', bn: 'মোটামুটি' }), t({ en: 'Good', bn: 'ভালো' }), t({ en: 'Strong', bn: 'শক্তিশালী' })]
+  const labels = [t({ en: 'Too short', bn: 'খুব ছোট', ar: 'قصيرة جدًا' }), t({ en: 'Weak', bn: 'দুর্বল', ar: 'ضعيفة' }), t({ en: 'Okay', bn: 'মোটামুটি', ar: 'مقبولة' }), t({ en: 'Good', bn: 'ভালো', ar: 'جيدة' }), t({ en: 'Strong', bn: 'শক্তিশালী', ar: 'قوية' })]
   const tone = s <= 1 ? 'bg-destructive' : s === 2 ? 'bg-gold' : 'bg-primary'
   return (
     <div className="mt-2" aria-live="polite">

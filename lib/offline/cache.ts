@@ -2,8 +2,8 @@
 /** Client-side helpers around Cache Storage / storage estimate. Cache names mirror public/sw.js. */
 export const AUDIO_CACHE = 'noor-audio-v1'
 export const CHANNEL = 'noor-offline'
-/** Average size of a stored /surah page + its share of JS/CSS, measured on the production build (see report) — only used for the pre-download estimate. */
-export const EST_PAGES_MB = 40
+/** Average size of a stored /surah page + its share of JS/CSS, measured on a production build: ~67 MB of origin storage after the full download — only used for the pre-download estimate. */
+export const EST_PAGES_MB = 65
 /** Approx. size of the whole Quran as 128 kbps chapter mp3s. */
 export const EST_AUDIO_ALL_MB = 360
 

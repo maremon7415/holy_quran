@@ -1,0 +1,4 @@
+{
+  "_comment": "Known serious/critical axe violations, keyed by route then by axe rule id. The suite fails on any serious/critical violation NOT listed here, and also fails when a listed rule no longer occurs (so the list can only shrink). Fix the app, then delete the entry.",
+  "routes": {}
+}

@@ -27,8 +27,8 @@ export function MoodPicker({ moods }: { moods: Mood[] }) {
   return (
     <section aria-labelledby="mood-h" className="card-soft relative overflow-hidden rounded-3xl p-5 sm:p-8">
       <div aria-hidden className="bg-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_left,#000,transparent_60%)]" />
-      <h2 id="mood-h" className="font-display relative text-2xl font-semibold sm:text-3xl">{t({ en: 'How do you feel right now?', bn: 'এই মুহূর্তে আপনার কেমন লাগছে?' })}</h2>
-      <p className="relative mt-1 text-sm text-muted-foreground">{t({ en: 'Choose a feeling and we will open a verse and a dua for it.', bn: 'একটি অনুভূতি বেছে নিন, আমরা তার জন্য একটি আয়াত ও দোয়া দেখাব।' })}</p>
+      <h2 id="mood-h" className="font-display relative text-2xl font-semibold sm:text-3xl">{t({ en: 'How do you feel right now?', bn: 'এই মুহূর্তে আপনার কেমন লাগছে?', ar: 'كيف تشعر الآن؟' })}</h2>
+      <p className="relative mt-1 text-sm text-muted-foreground">{t({ en: 'Choose a feeling and we will open a verse and a dua for it.', bn: 'একটি অনুভূতি বেছে নিন, আমরা তার জন্য একটি আয়াত ও দোয়া দেখাব।', ar: 'اختر شعورًا وسنعرض لك آية ودعاءً له.' })}</p>
       <div className="relative mt-5 flex flex-wrap gap-2.5" role="tablist" aria-label="Moods">
         {moods.map((m, i) => {
           const on = m.id === active
@@ -70,7 +70,7 @@ export function MoodPicker({ moods }: { moods: Mood[] }) {
               <Link href={mood.ayah.href} className="mt-1 inline-block text-xs font-semibold text-primary hover:underline">{mood.ayah.ref}</Link>
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <Link href={`/topics/${mood.topicSlug}`} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:scale-95">
-                  {t({ en: 'More on', bn: 'আরও দেখুন:' })} {t(mood.topicTitle)} <ArrowRight className="size-4" />
+                  {t({ en: 'More on', bn: 'আরও দেখুন:', ar: 'المزيد عن' })} {t(mood.topicTitle)} <ArrowRight className="size-4" />
                 </Link>
                 {mood.duaSlug && mood.duaTitle && (
                   <Link href={`/dua/${mood.duaSlug}`} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition hover:bg-accent active:scale-95">

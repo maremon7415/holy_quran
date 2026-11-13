@@ -34,7 +34,7 @@ export function PlayAllButton() {
       className="inline-flex h-12 items-center gap-2.5 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_14px_30px_-12px_var(--glow)] transition hover:brightness-110"
     >
       {playing ? <Pause className="size-4 fill-current" /> : <Play className="size-4 fill-current" />}
-      {active ? (playing ? t({ en: 'Pause', bn: 'বিরতি' }) : t({ en: 'Resume', bn: 'চালিয়ে যান' })) : t({ en: 'Play all from Al-Fatihah', bn: 'আল-ফাতিহা থেকে সব শুনুন' })}
+      {active ? (playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Resume', bn: 'চালিয়ে যান', ar: 'استئناف' })) : t({ en: 'Play all from Al-Fatihah', bn: 'আল-ফাতিহা থেকে সব শুনুন', ar: 'تشغيل الكل من الفاتحة' })}
     </motion.button>
   )
 }
@@ -50,8 +50,8 @@ export function ReciterGallery() {
     <section aria-labelledby="reciters-h" className="scroll-mt-24">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="reciters-h" className="font-display text-2xl font-semibold sm:text-3xl">{t({ en: 'Choose a reciter', bn: 'ক্বারী বাছাই করুন' })}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{t({ en: `${reciters.length} voices · currently ${getReciter(reciterId).name}`, bn: `${reciters.length} জন ক্বারী · এখন ${getReciter(reciterId).name}` })}</p>
+          <h2 id="reciters-h" className="font-display text-2xl font-semibold sm:text-3xl">{t({ en: 'Choose a reciter', bn: 'ক্বারী বাছাই করুন', ar: 'اختر قارئًا' })}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t({ en: `${reciters.length} voices · currently ${getReciter(reciterId).name}`, bn: `${reciters.length} জন ক্বারী · এখন ${getReciter(reciterId).name}`, ar: `${reciters.length} قارئًا · الحالي: ${getReciter(reciterId).name}` })}</p>
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto" role="tablist">
           {styles.map((s) => (
@@ -62,7 +62,7 @@ export function ReciterGallery() {
               onClick={() => setStyle(s)}
               className={cn('h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition active:scale-95', style === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-muted')}
             >
-              {s === 'all' ? t({ en: 'All', bn: 'সব' }) : s}
+              {s === 'all' ? t({ en: 'All', bn: 'সব', ar: 'الكل' }) : s}
             </button>
           ))}
         </div>
@@ -111,7 +111,7 @@ function SurahRow({ id }: { id: number }) {
       <div className={cn('group flex items-center gap-3 rounded-2xl border p-2.5 pr-3 transition', isCurrent ? 'border-primary/40 bg-accent' : 'border-transparent hover:border-border hover:bg-card')}>
         <button
           onClick={() => (isCurrent ? usePlayer.getState().toggle() : usePlayer.getState().playSurah(id))}
-          aria-label={`${playing ? t({ en: 'Pause', bn: 'বিরতি' }) : t({ en: 'Play', bn: 'চালান' })} ${c.nameSimple}`}
+          aria-label={`${playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play', bn: 'চালান', ar: 'تشغيل' })} ${c.nameSimple}`}
           className={cn('relative grid size-12 shrink-0 place-items-center rounded-full transition active:scale-90', isCurrent ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground group-hover:bg-primary group-hover:text-primary-foreground')}
         >
           {loading ? <Loader2 className="size-4 animate-spin" /> : playing ? <EqBars size={16} className="text-primary-foreground" /> : <Play className="size-4 translate-x-px fill-current" />}
@@ -120,7 +120,7 @@ function SurahRow({ id }: { id: number }) {
           <span className="w-7 shrink-0 text-center text-xs font-semibold tabular-nums text-muted-foreground">{id}</span>
           <span className="min-w-0 flex-1">
             <span className={cn('block truncate text-[15px] font-semibold', isCurrent && 'text-primary')}>{label(id)}</span>
-            <span className="block truncate text-xs text-muted-foreground">{c.meaning} · {c.versesCount} {t({ en: 'ayahs', bn: 'আয়াত' })}</span>
+            <span className="block truncate text-xs text-muted-foreground">{c.meaning} · {c.versesCount} {t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}</span>
           </span>
           <span className="shrink-0 font-arabic text-xl text-gold">{c.nameArabic}</span>
         </Link>
@@ -144,21 +144,21 @@ export function SurahAudioList() {
     <section aria-labelledby="surahs-h" className="scroll-mt-24">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 id="surahs-h" className="flex items-center gap-2 font-display text-2xl font-semibold sm:text-3xl">
-          <UiIcon name="listen" size={30} /> {t({ en: 'All 114 surahs', bn: 'সকল ১১৪ সূরা' })}
+          <UiIcon name="listen" size={30} /> {t({ en: 'All 114 surahs', bn: 'সকল ১১৪ সূরা', ar: 'جميع السور الـ١١٤' })}
         </h2>
         <div className="relative w-full sm:w-72">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={t({ en: 'Search surah…', bn: 'সূরা খুঁজুন…' })}
-            aria-label={t({ en: 'Search surah', bn: 'সূরা খুঁজুন' })}
+            placeholder={t({ en: 'Search surah…', bn: 'সূরা খুঁজুন…', ar: 'ابحث عن سورة…' })}
+            aria-label={t({ en: 'Search surah', bn: 'সূরা খুঁজুন', ar: 'ابحث عن سورة' })}
             className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-ring/20"
           />
         </div>
       </div>
       {ids.length === 0 ? (
-        <p className="py-12 text-center text-sm text-muted-foreground">{t({ en: 'No surah found', bn: 'কোনো সূরা পাওয়া যায়নি' })}</p>
+        <p className="py-12 text-center text-sm text-muted-foreground">{t({ en: 'No surah found', bn: 'কোনো সূরা পাওয়া যায়নি', ar: 'لم يُعثر على سورة' })}</p>
       ) : (
         <ul className="grid grid-cols-1 gap-x-4 gap-y-1 md:grid-cols-2 xl:grid-cols-3">
           {ids.map((id) => <SurahRow key={id} id={id} />)}

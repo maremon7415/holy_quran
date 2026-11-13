@@ -64,12 +64,52 @@ export function ayahRef(key: string) {
   return { surah: s, ayah: a, name: c?.nameSimple ?? '', url: `${site.url}/surah/${c?.slug}/${a}` }
 }
 
+const OFFSET = 96
+
+/**
+ * Off-screen ayahs use `content-visibility: auto` (estimated heights), so the first jump can land a little off
+ * once nearby ayahs render at their real size. Re-measure for a few frames and nudge until the target sits still.
+ */
+function settle(el: HTMLElement) {
+  const until = performance.now() + 1600
+  let stable = 0
+  let stop = false
+  const abort = () => { stop = true }
+  const opts = { once: true, passive: true } as const
+  window.addEventListener('wheel', abort, opts)
+  window.addEventListener('touchstart', abort, opts)
+  window.addEventListener('keydown', abort, opts)
+  const tick = () => {
+    if (stop || performance.now() > until || stable > 12) {
+      window.removeEventListener('wheel', abort)
+      window.removeEventListener('touchstart', abort)
+      window.removeEventListener('keydown', abort)
+      return
+    }
+    const d = el.getBoundingClientRect().top - OFFSET
+    if (Math.abs(d) < 2) stable++
+    else if (Math.abs(d) < window.innerHeight * 3) {
+      stable = 0
+      window.scrollBy({ top: d, behavior: 'instant' as ScrollBehavior })
+    } else stop = true
+    requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+
 /** Smooth-scroll an ayah to just below the sticky chrome and give it a brief glow. */
 export function scrollToAyah(key: string, opts: { glow?: boolean; behavior?: ScrollBehavior } = {}) {
   const el = ayahEl(key)
   if (!el) return false
-  const top = el.getBoundingClientRect().top + window.scrollY - 96
-  window.scrollTo({ top, behavior: opts.behavior ?? 'smooth' })
+  const top = el.getBoundingClientRect().top + window.scrollY - OFFSET
+  const behavior = opts.behavior ?? 'smooth'
+  window.scrollTo({ top, behavior })
+  if (behavior === 'smooth') {
+    let done = false
+    const finish = () => { if (done) return; done = true; window.removeEventListener('scrollend', finish); settle(el) }
+    window.addEventListener('scrollend', finish, { once: true })
+    window.setTimeout(finish, 1200)
+  } else settle(el)
   if (opts.glow !== false) {
     el.removeAttribute('data-glow')
     void el.offsetWidth

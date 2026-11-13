@@ -1,14 +1,15 @@
 'use client'
-import { useReader, arabicFontVar, type ArabicFont } from '@/lib/stores/reader'
+import { useReader, arabicFontVar, isBtOn, type ArabicFont } from '@/lib/stores/reader'
 import { useUi } from '@/lib/stores/ui'
 import { useReaderUi } from '@/lib/reader/ui-store'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 import { cn } from '@/lib/utils'
 import { UiIcon } from '@/components/ui-icon'
 import { ThemeSwatches } from '@/components/shell/theme-picker'
 import { Panel } from './panel'
 import { RangeRow, SectionTitle, Segmented, SwitchRow } from './controls'
 import { TajweedLegend } from './tajweed-legend'
+import { TranslationPicker } from './translation-picker'
 
 const FONTS: { id: ArabicFont; name: string }[] = [
   { id: 'amiri-quran', name: 'Amiri Quran' },
@@ -19,6 +20,7 @@ const FONTS: { id: ArabicFont; name: string }[] = [
 
 export function SettingsPanel() {
   const t = useTx()
+  const lang = useLang()
   const open = useReaderUi((s) => s.settingsOpen)
   const setOpen = useReaderUi((s) => s.setSettingsOpen)
   const p = useReader()
@@ -50,6 +52,7 @@ export function SettingsPanel() {
         <p className="quran-text relative text-center text-[length:var(--quran-size,34px)] leading-[2]" lang="ar">
           بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
         </p>
+        <p data-tr="bt" lang="bn" className="tr-bt relative mt-1 text-center">বিসমিল্লা-হির রাহমা-নির রাহীম</p>
         <p data-tr="tl" className="relative mt-1 text-center text-[length:calc(var(--trans-size,17px)*0.9)] italic text-muted-foreground">Bismillāhir-raḥmānir-raḥīm</p>
         <p data-tr="en" className="relative mt-1 text-center text-[length:var(--trans-size,17px)] text-foreground/85">In the name of Allah, the Entirely Merciful, the Especially Merciful.</p>
         <p data-tr="bn" className="relative mt-1 text-center font-bangla text-[length:var(--trans-size,17px)] text-foreground/85">পরম করুণাময় অসীম দয়ালু আল্লাহর নামে</p>
@@ -69,8 +72,15 @@ export function SettingsPanel() {
       <div className="divide-y rounded-3xl border bg-card px-3">
         <SwitchRow title="English" hint={p.enEdition === 'haleem' ? 'Abdel Haleem' : 'Saheeh International'} checked={p.showEn} onChange={(showEn) => set({ showEn })} />
         <SwitchRow title="বাংলা" hint="তাইসীরুল কুরআন" checked={p.showBn} onChange={(showBn) => set({ showBn })} />
+        <SwitchRow
+          title={t({ en: 'Bangla pronunciation', bn: 'বাংলা উচ্চারণ' })}
+          hint={t({ en: 'Auto-generated pronunciation guide · বাংলা উচ্চারণ', bn: 'স্বয়ংক্রিয়ভাবে তৈরি উচ্চারণ নির্দেশিকা — তিলাওয়াত শিখতে অডিও শুনুন' })}
+          checked={isBtOn(p.showBt, lang)}
+          onChange={(v) => set({ showBt: v })}
+        />
         <SwitchRow title={t({ en: 'Transliteration', bn: 'উচ্চারণ (ইংরেজি)' })} checked={p.showTl} onChange={(showTl) => set({ showTl })} />
       </div>
+      <TranslationPicker />
       <div className={cn('mt-3 transition-opacity', !p.showEn && 'pointer-events-none opacity-40')}>
         <Segmented
           value={p.enEdition}

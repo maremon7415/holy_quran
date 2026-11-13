@@ -27,7 +27,7 @@ export function AchievementGrid({ items }: { items: Achievement[] }) {
             <p className="mt-3 text-sm font-semibold leading-tight">{t({ en: a.en, bn: a.bn })}</p>
             <p className="mt-1 min-h-8 text-[11px] leading-snug text-muted-foreground">{t({ en: a.descEn, bn: a.descBn })}</p>
             {done ? (
-              <p className="mt-2 text-[11px] font-semibold text-gold">{t({ en: 'Unlocked', bn: 'অর্জিত' })} ✦</p>
+              <p className="mt-2 text-[11px] font-semibold text-gold">{t({ en: 'Unlocked', bn: 'অর্জিত', ar: 'مفتوح' })} ✦</p>
             ) : (
               <div className="mt-2">
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary/60" style={{ width: `${(a.value / a.target) * 100}%` }} /></div>

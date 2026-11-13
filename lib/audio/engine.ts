@@ -196,6 +196,14 @@ export class AudioEngine {
         return true
       } catch {
         if (token !== this.token) return false
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+          // offline and nothing downloaded for this surah/reciter
+          toast.info(bn() ? 'আপনি অফলাইনে আছেন। এই তিলাওয়াত ডাউনলোড করা নেই — সেটিংস → অফলাইন ও ডাউনলোড থেকে ডাউনলোড করুন।' : 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.')
+          this.loading = false
+          clock.set({ buffering: false })
+          usePlayer.getState()._set({ status: 'paused' })
+          return false
+        }
         this.ayahOnly.add(`${rid}:${surah}`)
         toast.info(bn() ? 'ধারাবাহিক অডিও পাওয়া যায়নি — আয়াত অনুযায়ী অডিওতে যাচ্ছি' : 'Switching to per-ayah audio for a steadier stream')
       }

@@ -24,7 +24,7 @@ export function BackupPanel() {
     a.download = `noor-quran-backup-${new Date().toLocaleDateString('en-CA')}.json`
     a.click()
     setTimeout(() => URL.revokeObjectURL(a.href), 2000)
-    setMsg({ ok: true, text: t({ en: 'Backup downloaded.', bn: 'ব্যাকআপ ডাউনলোড হয়েছে।' }) })
+    setMsg({ ok: true, text: t({ en: 'Backup downloaded.', bn: 'ব্যাকআপ ডাউনলোড হয়েছে।', ar: 'تم تنزيل النسخة الاحتياطية.' }) })
   }
 
   const importData = async (f: File) => {
@@ -33,10 +33,10 @@ export function BackupPanel() {
       if (json?.app !== 'noor-quran' || typeof json.data !== 'object') throw new Error('bad')
       let n = 0
       for (const k of KEYS) if (json.data[k]) { localStorage.setItem(k, JSON.stringify(json.data[k])); n++ }
-      setMsg({ ok: true, text: t({ en: `Restored ${n} data set${n === 1 ? '' : 's'}. Reloading…`, bn: `${n}টি ডেটা পুনরুদ্ধার হয়েছে। রিলোড হচ্ছে…` }) })
+      setMsg({ ok: true, text: t({ en: `Restored ${n} data set${n === 1 ? '' : 's'}. Reloading…`, bn: `${n}টি ডেটা পুনরুদ্ধার হয়েছে। রিলোড হচ্ছে…`, ar: `تمت استعادة ${n} من مجموعات البيانات. جارٍ إعادة التحميل…` }) })
       setTimeout(() => location.reload(), 900)
     } catch {
-      setMsg({ ok: false, text: t({ en: 'That file is not a valid Noor Quran backup.', bn: 'এটি বৈধ নূর কুরআন ব্যাকআপ ফাইল নয়।' }) })
+      setMsg({ ok: false, text: t({ en: 'That file is not a valid Noor Quran backup.', bn: 'এটি বৈধ নূর কুরআন ব্যাকআপ ফাইল নয়।', ar: 'هذا الملف ليس نسخة احتياطية صالحة لنور القرآن.' }) })
     }
   }
 
@@ -45,15 +45,15 @@ export function BackupPanel() {
       <div className="flex items-start gap-3">
         <UiIcon name="settings" size={36} />
         <div>
-          <h3 className="font-display text-xl">{t({ en: 'Backup & restore', bn: 'ব্যাকআপ ও পুনরুদ্ধার' })}</h3>
+          <h3 className="font-display text-xl">{t({ en: 'Backup & restore', bn: 'ব্যাকআপ ও পুনরুদ্ধার', ar: 'النسخ الاحتياطي والاستعادة' })}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t({ en: 'Your progress, bookmarks, hifz and khatam plans live only on this device — nothing is sent to a server. Export a backup to keep it safe or move it to another device.', bn: 'আপনার অগ্রগতি, বুকমার্ক, হিফজ ও খতম পরিকল্পনা শুধু এই ডিভাইসে থাকে — কোনো সার্ভারে পাঠানো হয় না। নিরাপদ রাখতে বা অন্য ডিভাইসে নিতে ব্যাকআপ নিন।' })}
+            {t({ en: 'Your progress, bookmarks, hifz and khatam plans live only on this device — nothing is sent to a server. Export a backup to keep it safe or move it to another device.', bn: 'আপনার অগ্রগতি, বুকমার্ক, হিফজ ও খতম পরিকল্পনা শুধু এই ডিভাইসে থাকে — কোনো সার্ভারে পাঠানো হয় না। নিরাপদ রাখতে বা অন্য ডিভাইসে নিতে ব্যাকআপ নিন।', ar: 'تقدّمك وعلاماتك وحفظك وخطط الختمة محفوظة على هذا الجهاز فقط — لا يُرسل شيء إلى أي خادم. صدّر نسخة احتياطية للحفاظ عليها أو لنقلها إلى جهاز آخر.' })}
           </p>
         </div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <button onClick={exportData} className="h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition active:scale-95">{t({ en: 'Export JSON', bn: 'JSON এক্সপোর্ট' })}</button>
-        <button onClick={() => file.current?.click()} className="h-11 rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted active:scale-95">{t({ en: 'Import backup', bn: 'ব্যাকআপ ইমপোর্ট' })}</button>
+        <button onClick={exportData} className="h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition active:scale-95">{t({ en: 'Export JSON', bn: 'JSON এক্সপোর্ট', ar: 'تصدير JSON' })}</button>
+        <button onClick={() => file.current?.click()} className="h-11 rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted active:scale-95">{t({ en: 'Import backup', bn: 'ব্যাকআপ ইমপোর্ট', ar: 'استيراد نسخة احتياطية' })}</button>
         <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) importData(f); e.target.value = '' }} />
       </div>
       {msg && <p className={`mt-3 text-sm ${msg.ok ? 'text-primary' : 'text-destructive'}`}>{msg.text}</p>}

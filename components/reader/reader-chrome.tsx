@@ -11,6 +11,7 @@ import { useLang, useTx } from '@/lib/lang'
 import { cn } from '@/lib/utils'
 import { ReaderController } from './reader-controller'
 import { ArabicLayers } from './arabic-layers'
+import { VerseEnhancer } from './verse-enhancer'
 import { SettingsPanel } from './settings-panel'
 import { TafsirPanel } from './tafsir-panel'
 import { ShareImagePanel } from './share-image-panel'
@@ -99,6 +100,7 @@ function MinimalChrome({ surah, chapterIds }: ReaderChromeProps) {
     <>
       <ReaderController surah={surah} />
       <ArabicLayers chapters={chapterIds} />
+      <VerseEnhancer chapters={chapterIds} />
       <SettingsPanel />
       <TafsirPanel />
       <ShareImagePanel />
@@ -156,6 +158,7 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
     <>
       <ReaderController surah={surah} />
       <ArabicLayers chapters={chapterIds} />
+      <VerseEnhancer chapters={chapterIds} />
 
       {/* sticky mini header */}
       <motion.div

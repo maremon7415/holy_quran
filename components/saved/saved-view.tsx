@@ -65,14 +65,14 @@ export function SavedView() {
 
   const notes = importantAyahs.filter((a) => a.note?.trim())
   const savedDuas = allDuas.filter((d) => bookmarkedDuas.includes(d.slug))
-  const tabs: { id: Tab; en: string; bn: string; n: number; icon: string }[] = [
-    { id: 'ayahs', en: 'Ayahs', bn: 'আয়াত', n: importantAyahs.length, icon: 'quran' },
-    { id: 'surahs', en: 'Surahs', bn: 'সূরা', n: favoriteSurahs.length, icon: 'heart' },
-    { id: 'duas', en: 'Duas', bn: 'দোয়া', n: savedDuas.length, icon: 'dua' },
-    { id: 'notes', en: 'Notes', bn: 'নোট', n: notes.length, icon: 'note' },
+  const tabs: { id: Tab; en: string; bn: string; ar?: string; n: number; icon: string }[] = [
+    { id: 'ayahs', en: 'Ayahs', bn: 'আয়াত', ar: 'الآيات', n: importantAyahs.length, icon: 'quran' },
+    { id: 'surahs', en: 'Surahs', bn: 'সূরা', ar: 'السور', n: favoriteSurahs.length, icon: 'heart' },
+    { id: 'duas', en: 'Duas', bn: 'দোয়া', ar: 'الأدعية', n: savedDuas.length, icon: 'dua' },
+    { id: 'notes', en: 'Notes', bn: 'নোট', ar: 'الملاحظات', n: notes.length, icon: 'note' },
   ]
   const nf = (n: number) => (lang === 'bn' ? String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[+d]) : String(n))
-  const sName = (id: number) => (lang === 'bn' ? surahNamesBn[id - 1] : chapters[id - 1].nameSimple)
+  const sName = (id: number) => (lang === 'bn' ? surahNamesBn[id - 1] : lang === 'ar' ? chapters[id - 1].nameArabic : chapters[id - 1].nameSimple)
   const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, scale: 0.97 }, transition: { type: 'spring' as const, stiffness: 380, damping: 30 } }
 
   const renderAyah = (a: (typeof importantAyahs)[number], withNote?: boolean) => {
@@ -84,8 +84,8 @@ export function SavedView() {
         <div className="flex items-center justify-between gap-3">
           <Link href={readerHref(a.surahNumber, a.ayahNumber)} className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold transition hover:opacity-80">{sName(a.surahNumber)} · {nf(a.surahNumber)}:{nf(a.ayahNumber)}</Link>
           <div className="flex items-center gap-1">
-            <Link href={surahHref(a.surahNumber, a.ayahNumber)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-primary hover:bg-accent">{t({ en: 'Tafsir', bn: 'তাফসীর' })}</Link>
-            <button aria-label={t({ en: 'Remove', bn: 'মুছুন' })} onClick={() => removeImportantAyah(a.surahNumber, a.ayahNumber)} className="grid size-8 place-items-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
+            <Link href={surahHref(a.surahNumber, a.ayahNumber)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-primary hover:bg-accent">{t({ en: 'Tafsir', bn: 'তাফসীর', ar: 'التفسير' })}</Link>
+            <button aria-label={t({ en: 'Remove', bn: 'মুছুন', ar: 'إزالة' })} onClick={() => removeImportantAyah(a.surahNumber, a.ayahNumber)} className="grid size-8 place-items-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
           </div>
         </div>
         {v ? (
@@ -97,16 +97,16 @@ export function SavedView() {
         {a.tags?.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{a.tags.map((x) => <span key={x} className="rounded-full bg-surface-2 px-2.5 py-0.5 text-xs text-muted-foreground">#{x}</span>)}</div>}
         {isEdit ? (
           <div className="mt-3">
-            <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} rows={3} placeholder={t({ en: 'Write a note…', bn: 'নোট লিখুন…' })} className="w-full rounded-2xl border bg-background p-3 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
+            <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} rows={3} placeholder={t({ en: 'Write a note…', bn: 'নোট লিখুন…', ar: 'اكتب ملاحظة…' })} className="w-full rounded-2xl border bg-background p-3 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
             <div className="mt-2 flex justify-end gap-2">
-              <button onClick={() => setEditing(null)} className="rounded-full px-4 py-2 text-sm text-muted-foreground hover:bg-accent">{t({ en: 'Cancel', bn: 'বাতিল' })}</button>
-              <button onClick={() => { updateImportantAyah(a.surahNumber, a.ayahNumber, { note: draft.trim() }); setEditing(null) }} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">{t({ en: 'Save', bn: 'সংরক্ষণ' })}</button>
+              <button onClick={() => setEditing(null)} className="rounded-full px-4 py-2 text-sm text-muted-foreground hover:bg-accent">{t({ en: 'Cancel', bn: 'বাতিল', ar: 'إلغاء' })}</button>
+              <button onClick={() => { updateImportantAyah(a.surahNumber, a.ayahNumber, { note: draft.trim() }); setEditing(null) }} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">{t({ en: 'Save', bn: 'সংরক্ষণ', ar: 'حفظ' })}</button>
             </div>
           </div>
         ) : (
           <button onClick={() => { setEditing(k); setDraft(a.note ?? '') }} className={cn('mt-3 flex w-full items-start gap-2 rounded-2xl p-3 text-left text-sm transition', a.note ? 'bg-gold-soft/60' : withNote ? 'hidden' : 'border border-dashed text-muted-foreground hover:border-primary/40')}>
             <UiIcon name="note" size={20} />
-            <span>{a.note || t({ en: 'Add a note', bn: 'নোট যোগ করুন' })}</span>
+            <span>{a.note || t({ en: 'Add a note', bn: 'নোট যোগ করুন', ar: 'أضف ملاحظة' })}</span>
           </button>
         )}
       </motion.article>
@@ -118,8 +118,8 @@ export function SavedView() {
       <div className="mb-5 flex items-center gap-4">
         <UiIcon name="bookmark" size={56} />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Your library', bn: 'আপনার সংগ্রহ' })}</p>
-          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Saved', bn: 'সংরক্ষিত' })}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Your library', bn: 'আপনার সংগ্রহ', ar: 'مكتبتك' })}</p>
+          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Saved', bn: 'সংরক্ষিত', ar: 'المحفوظات' })}</h1>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export function SavedView() {
         <AnimatePresence mode="popLayout" initial={false}>
           {tab === 'ayahs' && (importantAyahs.length
             ? importantAyahs.map((a) => renderAyah(a))
-            : <Empty key="e1" icon="bookmark" title={t({ en: 'No saved ayahs yet', bn: 'এখনো কোনো আয়াত সংরক্ষিত নেই' })} body={t({ en: 'Tap the bookmark on any ayah while reading to keep it here with a note.', bn: 'পড়ার সময় যেকোনো আয়াতে বুকমার্ক ট্যাপ করুন; নোটসহ এখানে থাকবে।' })} href="/quran" cta={t({ en: 'Start reading', bn: 'পড়া শুরু করুন' })} />)}
+            : <Empty key="e1" icon="bookmark" title={t({ en: 'No saved ayahs yet', bn: 'এখনো কোনো আয়াত সংরক্ষিত নেই', ar: 'لا توجد آيات محفوظة بعد' })} body={t({ en: 'Tap the bookmark on any ayah while reading to keep it here with a note.', bn: 'পড়ার সময় যেকোনো আয়াতে বুকমার্ক ট্যাপ করুন; নোটসহ এখানে থাকবে।', ar: 'اضغط على علامة الحفظ عند أي آية أثناء القراءة لتحتفظ بها هنا مع ملاحظة.' })} href="/quran" cta={t({ en: 'Start reading', bn: 'পড়া শুরু করুন', ar: 'ابدأ القراءة' })} />)}
 
           {tab === 'surahs' && (favoriteSurahs.length ? (
             <div key="s" className="grid gap-3 sm:grid-cols-2">
@@ -146,21 +146,21 @@ export function SavedView() {
                     <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-surface-2 font-display text-lg font-semibold text-gold">{nf(id)}</span>
                     <span className="min-w-0">
                       <span className="block truncate font-semibold">{sName(id)}</span>
-                      <span className="block truncate text-xs text-muted-foreground">{chapters[id - 1].meaning} · {nf(chapters[id - 1].versesCount)} {t({ en: 'ayahs', bn: 'আয়াত' })}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{chapters[id - 1].meaning} · {nf(chapters[id - 1].versesCount)} {t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}</span>
                     </span>
                     <span lang="ar" className="font-arabic ml-auto text-2xl text-gold">{chapters[id - 1].nameArabic}</span>
                   </Link>
-                  <button aria-label={t({ en: 'Remove', bn: 'মুছুন' })} onClick={() => toggleFavoriteSurah(id)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
+                  <button aria-label={t({ en: 'Remove', bn: 'মুছুন', ar: 'إزالة' })} onClick={() => toggleFavoriteSurah(id)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
                 </motion.div>
               ))}
             </div>
-          ) : <Empty key="e2" icon="heart" title={t({ en: 'No favourite surahs', bn: 'কোনো প্রিয় সূরা নেই' })} body={t({ en: 'Favourite a surah from the surah list for one-tap access.', bn: 'সূরা তালিকা থেকে প্রিয় সূরা বেছে নিন।' })} href="/quran" cta={t({ en: 'Browse surahs', bn: 'সূরা দেখুন' })} />)}
+          ) : <Empty key="e2" icon="heart" title={t({ en: 'No favourite surahs', bn: 'কোনো প্রিয় সূরা নেই', ar: 'لا توجد سور مفضلة' })} body={t({ en: 'Favourite a surah from the surah list for one-tap access.', bn: 'সূরা তালিকা থেকে প্রিয় সূরা বেছে নিন।', ar: 'أضف سورة إلى المفضلة من قائمة السور للوصول إليها بلمسة واحدة.' })} href="/quran" cta={t({ en: 'Browse surahs', bn: 'সূরা দেখুন', ar: 'تصفّح السور' })} />)}
 
           {tab === 'duas' && (savedDuas.length ? savedDuas.map((d) => (
             <motion.article layout key={d.slug} {...fade} className="card-soft lift p-5">
               <div className="flex items-center justify-between gap-3">
                 <span className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold">{t(duaCategories.find((c) => c.id === d.cat)?.title ?? { en: d.cat, bn: d.cat })}</span>
-                <button aria-label={t({ en: 'Remove', bn: 'মুছুন' })} onClick={() => toggleDuaBookmark(d.slug)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
+                <button aria-label={t({ en: 'Remove', bn: 'মুছুন', ar: 'إزالة' })} onClick={() => toggleDuaBookmark(d.slug)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
               </div>
               <Link href={`/dua/${d.slug}`} className="mt-3 block font-display text-lg font-semibold hover:text-primary">{t(d.title)}</Link>
               {d.ar && <p dir="rtl" lang="ar" className="quran-text mt-3 text-right text-[1.5rem]">{d.ar}</p>}
@@ -168,11 +168,11 @@ export function SavedView() {
               {d.meaning && <p className="mt-1 text-sm">{t(d.meaning)}</p>}
               <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-gold">{d.source}</p>
             </motion.article>
-          )) : <Empty key="e3" icon="dua" title={t({ en: 'No saved duas', bn: 'কোনো দোয়া সংরক্ষিত নেই' })} body={t({ en: 'Bookmark duas to find them quickly when you need them.', bn: 'দোয়া বুকমার্ক করুন, প্রয়োজনে দ্রুত খুঁজে পাবেন।' })} href="/dua" cta={t({ en: 'Explore duas', bn: 'দোয়া দেখুন' })} />)}
+          )) : <Empty key="e3" icon="dua" title={t({ en: 'No saved duas', bn: 'কোনো দোয়া সংরক্ষিত নেই', ar: 'لا توجد أدعية محفوظة' })} body={t({ en: 'Bookmark duas to find them quickly when you need them.', bn: 'দোয়া বুকমার্ক করুন, প্রয়োজনে দ্রুত খুঁজে পাবেন।', ar: 'احفظ الأدعية لتجدها بسرعة عند الحاجة.' })} href="/dua" cta={t({ en: 'Explore duas', bn: 'দোয়া দেখুন', ar: 'استكشف الأدعية' })} />)}
 
           {tab === 'notes' && (notes.length
             ? notes.map((a) => renderAyah(a, true))
-            : <Empty key="e4" icon="note" title={t({ en: 'No notes yet', bn: 'এখনো কোনো নোট নেই' })} body={t({ en: 'Add a reflection to a saved ayah and it will appear here.', bn: 'সংরক্ষিত আয়াতে নোট যোগ করলে এখানে দেখা যাবে।' })} href="/quran" cta={t({ en: 'Open the Quran', bn: 'কুরআন খুলুন' })} />)}
+            : <Empty key="e4" icon="note" title={t({ en: 'No notes yet', bn: 'এখনো কোনো নোট নেই', ar: 'لا توجد ملاحظات بعد' })} body={t({ en: 'Add a reflection to a saved ayah and it will appear here.', bn: 'সংরক্ষিত আয়াতে নোট যোগ করলে এখানে দেখা যাবে।', ar: 'أضف تأملًا إلى آية محفوظة وسيظهر هنا.' })} href="/quran" cta={t({ en: 'Open the Quran', bn: 'কুরআন খুলুন', ar: 'افتح المصحف' })} />)}
         </AnimatePresence>
       </div>
     </div>
