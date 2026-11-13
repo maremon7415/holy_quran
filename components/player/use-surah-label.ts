@@ -7,7 +7,7 @@ export function useSurahLabel() {
   const lang = useLang()
   return (id: number) => {
     const c = chapters[id - 1]
-    return lang === 'bn' ? surahNamesBn[id - 1] || c.nameSimple : c.nameSimple
+    return lang === 'bn' ? surahNamesBn[id - 1] || c.nameSimple : lang === 'ar' ? c.nameArabic : c.nameSimple
   }
 }
 

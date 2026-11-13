@@ -3,10 +3,10 @@
 
 export type CardTheme = 'emerald' | 'parchment' | 'midnight'
 
-export const CARD_THEMES: Record<CardTheme, { name: { en: string; bn: string }; bg: [string, string]; pattern: string; arabic: string; text: string; muted: string; accent: string; swatch: string }> = {
-  emerald: { name: { en: 'Emerald', bn: 'পান্না' }, bg: ['#0f4a37', '#06261c'], pattern: 'rgba(230,194,122,0.11)', arabic: '#fbf5e4', text: '#dcebe2', muted: 'rgba(220,235,226,0.62)', accent: '#e6c27a', swatch: '#0f4a37' },
-  parchment: { name: { en: 'Parchment', bn: 'পার্চমেন্ট' }, bg: ['#f8efd9', '#e9d6ab'], pattern: 'rgba(148,102,27,0.12)', arabic: '#2b1f12', text: '#4a3b26', muted: 'rgba(74,59,38,0.62)', accent: '#94661b', swatch: '#efe0bb' },
-  midnight: { name: { en: 'Midnight', bn: 'মধ্যরাত' }, bg: ['#111a33', '#04060d'], pattern: 'rgba(160,180,255,0.08)', arabic: '#f4f6ff', text: '#cdd3e8', muted: 'rgba(205,211,232,0.6)', accent: '#d9b56a', swatch: '#111a33' },
+export const CARD_THEMES: Record<CardTheme, { name: { en: string; bn: string; ar?: string }; bg: [string, string]; pattern: string; arabic: string; text: string; muted: string; accent: string; swatch: string }> = {
+  emerald: { name: { en: 'Emerald', bn: 'পান্না', ar: 'زمردي' }, bg: ['#0f4a37', '#06261c'], pattern: 'rgba(230,194,122,0.11)', arabic: '#fbf5e4', text: '#dcebe2', muted: 'rgba(220,235,226,0.62)', accent: '#e6c27a', swatch: '#0f4a37' },
+  parchment: { name: { en: 'Parchment', bn: 'পার্চমেন্ট', ar: 'رَقّ' }, bg: ['#f8efd9', '#e9d6ab'], pattern: 'rgba(148,102,27,0.12)', arabic: '#2b1f12', text: '#4a3b26', muted: 'rgba(74,59,38,0.62)', accent: '#94661b', swatch: '#efe0bb' },
+  midnight: { name: { en: 'Midnight', bn: 'মধ্যরাত', ar: 'منتصف الليل' }, bg: ['#111a33', '#04060d'], pattern: 'rgba(160,180,255,0.08)', arabic: '#f4f6ff', text: '#cdd3e8', muted: 'rgba(205,211,232,0.6)', accent: '#d9b56a', swatch: '#111a33' },
 }
 
 export interface CardInput {

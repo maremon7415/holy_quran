@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 
 const levelFill = (n: number) =>
   n <= 0 ? 'color-mix(in oklab, var(--foreground) 9%, var(--card))' : `color-mix(in oklab, var(--primary) ${n < 5 ? 30 : n < 10 ? 52 : n < 20 ? 75 : 100}%, var(--muted))`
@@ -11,6 +11,7 @@ const ds = (d: Date) => d.toLocaleDateString('en-CA')
 /** GitHub-style 53-week activity grid. `data` maps YYYY-MM-DD → count. */
 export function Heatmap({ data }: { data: Record<string, number> }) {
   const t = useTx()
+  const lang = useLang()
   const scroller = useRef<HTMLDivElement>(null)
   const { cells, months, total, activeDays } = useMemo(() => {
     const end = new Date()
@@ -26,10 +27,10 @@ export function Heatmap({ data }: { data: Record<string, number> }) {
       const future = d > end
       if (!future) { total += n; if (n) activeDays++ }
       cells.push({ date: key, n, future })
-      if (d.getDate() <= 7 && d.getDay() === 0) months.push({ col: Math.floor(i / 7), label: d.toLocaleDateString(undefined, { month: 'short' }) })
+      if (d.getDate() <= 7 && d.getDay() === 0) months.push({ col: Math.floor(i / 7), label: d.toLocaleDateString(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { month: 'short' }) })
     }
     return { cells, months, total, activeDays }
-  }, [data])
+  }, [data, lang])
   useEffect(() => { if (scroller.current) scroller.current.scrollLeft = scroller.current.scrollWidth }, [])
   return (
     <div>
@@ -54,11 +55,11 @@ export function Heatmap({ data }: { data: Record<string, number> }) {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>{t({ en: `${total} verses & ayahs across ${activeDays} active days`, bn: `${activeDays} সক্রিয় দিনে ${total}টি আয়াত` })}</span>
+        <span>{t({ en: `${total} verses & ayahs across ${activeDays} active days`, bn: `${activeDays} সক্রিয় দিনে ${total}টি আয়াত`, ar: `${total} آية خلال ${activeDays} يومًا من النشاط` })}</span>
         <span className="flex items-center gap-1">
-          {t({ en: 'Less', bn: 'কম' })}
+          {t({ en: 'Less', bn: 'কম', ar: 'أقل' })}
           {[0, 1, 5, 10, 20].map((n) => <span key={n} className="h-[11px] w-[11px] rounded-[3px]" style={{ background: levelFill(n) }} />)}
-          {t({ en: 'More', bn: 'বেশি' })}
+          {t({ en: 'More', bn: 'বেশি', ar: 'أكثر' })}
         </span>
       </div>
     </div>

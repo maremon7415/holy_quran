@@ -16,3 +16,11 @@ node_modules
 .DS_Store
 tsconfig.tsbuildinfo
 scripts/.cache/
+
+# test output
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+coverage/
+next-env.d.ts

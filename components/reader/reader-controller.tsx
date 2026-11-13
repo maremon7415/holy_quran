@@ -6,13 +6,18 @@ import { useUi } from '@/lib/stores/ui'
 import { useAppStore } from '@/lib/store'
 import { chapters } from '@/lib/quran/chapters'
 import { useReaderUi } from '@/lib/reader/ui-store'
-import { ayahEl, scrollToAyah } from '@/lib/reader/dom'
+import { ayahEl, scrollToAyah, wrapWords } from '@/lib/reader/dom'
 import { toggleBookmark } from '@/lib/reader/actions'
 
 const isTyping = (t: EventTarget | null) => {
   const el = t as HTMLElement | null
   return !!el && (/^(input|textarea|select)$/i.test(el.tagName) || el.isContentEditable)
 }
+
+/** Focus is on something Space/Enter would activate (button, link, summary, any tabindex'd widget) → leave the key alone. */
+const isInteractive = (t: EventTarget | null) =>
+  t instanceof Element &&
+  !!t.closest('button, a[href], [role="button"], [role="link"], [role="tab"], [role="switch"], [role="checkbox"], [role="menuitem"], [role="option"], [role="slider"], summary, select, input, textarea, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([tabindex="-1"])')
 
 /**
  * One controller per reader page. Everything that reacts to audio ticks, scrolling or
@@ -52,6 +57,7 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
         curEl?.removeAttribute('data-current')
         curEl = key ? ayahEl(key) : null
         curEl?.setAttribute('data-current', '1')
+        wrapWords(curEl) // word spans are created lazily, only for the recited ayah
         lastKey = key
         lastWord = null
         if (curEl && key && useReader.getState().autoScroll && (s.status === 'playing' || s.status === 'loading') && Date.now() - userScrollAt > 2500) {
@@ -210,6 +216,7 @@ export function ReaderController({ surah }: { /** set on surah pages (null on ju
           scrollToAyah(keys[Math.max(0, i - 1)], { glow: false })
           break
         case ' ': {
+          if (isInteractive(e.target)) return
           e.preventDefault()
           const p = usePlayer.getState()
           if (p.status !== 'idle' && p.queue) p.toggle()

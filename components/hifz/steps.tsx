@@ -26,7 +26,7 @@ function Translation({ verses }: { verses: HifzVerse[] }) {
     <div className="mt-5 space-y-1.5 text-center text-[15px] leading-relaxed text-muted-foreground">
       {verses.map((v) => (
         <p key={v.n} className={lang === 'bn' ? 'font-bangla' : ''}>
-          <span className="mr-1 text-gold">{v.n}.</span>
+          <span className="me-1 text-gold">{v.n}.</span>
           {lang === 'bn' ? v.bn : v.en}
         </p>
       ))}
@@ -104,10 +104,10 @@ export function ListenStep({ ctx, defaultLoops }: { ctx: ChunkCtx; defaultLoops:
           aria-label={playing ? 'Pause' : 'Play'}
         >
           {playing && <span className="pulse-ring absolute inset-0 rounded-full" />}
-          {playing && running ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ml-0.5 h-6 w-6 fill-current" />}
+          {playing && running ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ms-0.5 h-6 w-6 fill-current" />}
         </motion.button>
         <p className="text-sm text-muted-foreground">
-          {t({ en: 'Listen', bn: 'শুনুন' })} {Math.min(done + (running ? 1 : 0), loops)} / {loops}
+          {t({ en: 'Listen', bn: 'শুনুন', ar: 'استمع' })} {Math.min(done + (running ? 1 : 0), loops)} / {loops}
         </p>
       </div>
     </div>
@@ -133,7 +133,7 @@ export function ReadStep({ ctx }: { ctx: ChunkCtx }) {
   useEffect(() => () => audio.current?.pause(), [])
   return (
     <div>
-      <p className="mb-3 text-center text-xs text-muted-foreground">{t({ en: 'Tap any word to hear it.', bn: 'যেকোনো শব্দে ট্যাপ করে শুনুন।' })}</p>
+      <p className="mb-3 text-center text-xs text-muted-foreground">{t({ en: 'Tap any word to hear it.', bn: 'যেকোনো শব্দে ট্যাপ করে শুনুন।', ar: 'اضغط على أي كلمة لسماعها.' })}</p>
       <ArabicBlock
         verses={ctx.verses}
         renderWord={(v, i, w) => (
@@ -150,7 +150,7 @@ export function ReadStep({ ctx }: { ctx: ChunkCtx }) {
       {showTr && <Translation verses={ctx.verses} />}
       <div className="mt-4 flex justify-center">
         <button onClick={() => setShowTr((s) => !s)} className="text-xs text-muted-foreground underline-offset-4 hover:underline">
-          {showTr ? t({ en: 'Hide translation', bn: 'অনুবাদ লুকান' }) : t({ en: 'Show translation', bn: 'অনুবাদ দেখান' })}
+          {showTr ? t({ en: 'Hide translation', bn: 'অনুবাদ লুকান', ar: 'إخفاء الترجمة' }) : t({ en: 'Show translation', bn: 'অনুবাদ দেখান', ar: 'إظهار الترجمة' })}
         </button>
       </div>
     </div>
@@ -194,7 +194,7 @@ export function FadeStep({ ctx, hints: hintsDefault }: { ctx: ChunkCtx; hints: b
               onClick={() => setPeek((s) => new Set(s).add(`${v.n}-${i}`))}
               className="mx-0.5 inline-block rounded-lg bg-muted px-2 align-baseline text-muted-foreground"
               style={{ minWidth: `${Math.max(1.6, w.length * 0.38)}em` }}
-              aria-label="Hidden word — tap to reveal"
+              aria-label={t({ en: 'Hidden word — tap to reveal', bn: 'লুকানো শব্দ — দেখতে ট্যাপ করুন', ar: 'كلمة مخفية — انقر لإظهارها' })}
             >
               {hints ? <span className="opacity-80">{firstLetter(w)}<span className="opacity-40">…</span></span> : <span className="opacity-0">·</span>}
             </motion.button>
@@ -203,17 +203,17 @@ export function FadeStep({ ctx, hints: hintsDefault }: { ctx: ChunkCtx; hints: b
       />
       <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
         <button onClick={() => setHints((h) => !h)} className={cn('rounded-full border px-3 py-1.5 transition', hints ? 'border-gold bg-gold-soft text-foreground' : 'border-border text-muted-foreground')}>
-          {t({ en: 'First-letter hints', bn: 'প্রথম অক্ষরের ইঙ্গিত' })}
+          {t({ en: 'First-letter hints', bn: 'প্রথম অক্ষরের ইঙ্গিত', ar: 'تلميح الحرف الأول' })}
         </button>
         <button onClick={() => setSeed((s) => s + 1)} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-muted-foreground hover:text-foreground">
-          <Shuffle className="h-3.5 w-3.5" /> {t({ en: 'Shuffle', bn: 'বদলান' })}
+          <Shuffle className="h-3.5 w-3.5" /> {t({ en: 'Shuffle', bn: 'বদলান', ar: 'خلط' })}
         </button>
         <button onClick={() => setPeek(new Set(ctx.verses.flatMap((v) => v.words.map((_, i) => `${v.n}-${i}`))))} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-muted-foreground hover:text-foreground">
-          <Eye className="h-3.5 w-3.5" /> {t({ en: 'Reveal all', bn: 'সব দেখান' })}
+          <Eye className="h-3.5 w-3.5" /> {t({ en: 'Reveal all', bn: 'সব দেখান', ar: 'إظهار الكل' })}
         </button>
       </div>
       <p className="mt-4 text-center text-xs text-muted-foreground">
-        {level < 3 ? t({ en: 'Recite aloud, tapping hidden words only if stuck. Then raise the level.', bn: 'জোরে পড়ুন, আটকে গেলে লুকানো শব্দে ট্যাপ করুন। তারপর স্তর বাড়ান।' }) : t({ en: 'Everything is hidden — recite it all from memory, then move on to the recall test.', bn: 'সবকিছু লুকানো — পুরোটা মুখস্থ বলুন, তারপর রিকল টেস্টে যান।' })}
+        {level < 3 ? t({ en: 'Recite aloud, tapping hidden words only if stuck. Then raise the level.', bn: 'জোরে পড়ুন, আটকে গেলে লুকানো শব্দে ট্যাপ করুন। তারপর স্তর বাড়ান।', ar: 'اتلُ بصوت مسموع، واضغط على الكلمات المخفية عند التوقف فقط. ثم ارفع المستوى.' }) : t({ en: 'Everything is hidden — recite it all from memory, then move on to the recall test.', bn: 'সবকিছু লুকানো — পুরোটা মুখস্থ বলুন, তারপর রিকল টেস্টে যান।', ar: 'كل شيء مخفي — اتلُ الآيات كاملة من حفظك، ثم انتقل إلى اختبار الاستذكار.' })}
       </p>
     </div>
   )
@@ -237,8 +237,8 @@ export function GradeBar({ card, onGrade, suggested }: { card?: Card; onGrade: (
             suggested === g.g && 'ring-2 ring-ring ring-offset-2 ring-offset-background'
           )}
         >
-          {t({ en: g.en, bn: g.bn })}
-          <span className="mt-0.5 text-[11px] font-normal opacity-70">{formatInterval(previewInterval(card, g.g), lang === 'bn' ? 'bn' : 'en')}</span>
+          {t({ en: g.en, bn: g.bn, ar: g.ar })}
+          <span className="mt-0.5 text-[11px] font-normal opacity-70">{formatInterval(previewInterval(card, g.g), lang)}</span>
         </motion.button>
       ))}
     </div>
@@ -302,7 +302,7 @@ export function RecallStep({ ctx, poolWords, card, onGrade }: { ctx: ChunkCtx; p
         {!done ? (
           <motion.div key="choices" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-6">
             <p className="mb-3 text-center text-xs text-muted-foreground">
-              {t({ en: 'Which word comes next?', bn: 'পরের শব্দ কোনটি?' })} <span className="tabular-nums">({pos + 1}/{flat.length})</span>
+              {t({ en: 'Which word comes next?', bn: 'পরের শব্দ কোনটি?', ar: 'ما الكلمة التالية؟' })} <span className="tabular-nums">({pos + 1}/{flat.length})</span>
             </p>
             <motion.div key={shake} animate={shake ? { x: [0, -8, 8, -5, 5, 0] } : {}} transition={{ duration: 0.35 }} className="grid grid-cols-3 gap-2">
               {choices.map((c) => (
@@ -323,7 +323,7 @@ export function RecallStep({ ctx, poolWords, card, onGrade }: { ctx: ChunkCtx; p
             </motion.div>
             <div className="mt-3 flex justify-center">
               <button onClick={reveal} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground">
-                <Eye className="h-4 w-4" /> {t({ en: 'Reveal next word', bn: 'পরের শব্দ দেখান' })}
+                <Eye className="h-4 w-4" /> {t({ en: 'Reveal next word', bn: 'পরের শব্দ দেখান', ar: 'إظهار الكلمة التالية' })}
               </button>
             </div>
           </motion.div>
@@ -331,10 +331,10 @@ export function RecallStep({ ctx, poolWords, card, onGrade }: { ctx: ChunkCtx; p
           <motion.div key="grade" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={spring} className="mt-6">
             <div className="mb-4 flex items-center justify-center gap-2 text-sm font-medium text-primary">
               <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="h-3.5 w-3.5" /></span>
-              {errors === 0 ? t({ en: 'Flawless!', bn: 'নির্ভুল!' }) : t({ en: `${mistakes} slip${mistakes === 1 ? '' : 's'} · ${hintsUsed} reveal${hintsUsed === 1 ? '' : 's'}`, bn: `${mistakes} ভুল · ${hintsUsed} বার দেখেছেন` })}
+              {errors === 0 ? t({ en: 'Flawless!', bn: 'নির্ভুল!', ar: 'بلا أخطاء!' }) : t({ en: `${mistakes} slip${mistakes === 1 ? '' : 's'} · ${hintsUsed} reveal${hintsUsed === 1 ? '' : 's'}`, bn: `${mistakes} ভুল · ${hintsUsed} বার দেখেছেন`, ar: `أخطاء: ${mistakes} · تلميحات: ${hintsUsed}` })}
             </div>
             <Translation verses={ctx.verses} />
-            <p className="mb-3 mt-5 text-center text-xs text-muted-foreground">{t({ en: 'How well did you remember it?', bn: 'কতটা মনে ছিল?' })}</p>
+            <p className="mb-3 mt-5 text-center text-xs text-muted-foreground">{t({ en: 'How well did you remember it?', bn: 'কতটা মনে ছিল?', ar: 'ما مدى تذكّرك لها؟' })}</p>
             <GradeBar card={card} onGrade={onGrade} suggested={suggested} />
           </motion.div>
         )}

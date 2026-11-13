@@ -2,19 +2,18 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useRef, useSyncExternalStore, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
+const DESKTOP_QUERY = '(min-width: 768px)'
+function subscribeDesktop(cb: () => void) {
+  const m = window.matchMedia(DESKTOP_QUERY)
+  m.addEventListener('change', cb)
+  return () => m.removeEventListener('change', cb)
+}
+/** Synchronous (no first-render mismatch): the sheet only mounts client-side after a user action. */
 function useIsDesktop() {
-  const [d, setD] = useState(false)
-  useEffect(() => {
-    const m = window.matchMedia('(min-width: 768px)')
-    const on = () => setD(m.matches)
-    on()
-    m.addEventListener('change', on)
-    return () => m.removeEventListener('change', on)
-  }, [])
-  return d
+  return useSyncExternalStore(subscribeDesktop, () => window.matchMedia(DESKTOP_QUERY).matches, () => false)
 }
 
 const spring = { type: 'spring', stiffness: 380, damping: 36, mass: 0.9 } as const
@@ -44,6 +43,8 @@ export function Panel({
 }) {
   const desktop = useIsDesktop()
   const drag = useDragControls()
+  const contentRef = useRef<HTMLDivElement>(null)
+  const returnTo = useRef<HTMLElement | null>(null)
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -58,18 +59,21 @@ export function Panel({
                 transition={{ duration: 0.25 }}
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount onOpenAutoFocus={(e) => e.preventDefault()}>
+            <Dialog.Content asChild forceMount aria-modal="true" onOpenAutoFocus={(e) => { e.preventDefault(); returnTo.current = document.activeElement as HTMLElement | null; contentRef.current?.focus({ preventScroll: true }) }} onCloseAutoFocus={(e) => { e.preventDefault(); const t = returnTo.current; returnTo.current = null; if (t?.isConnected) t.focus({ preventScroll: true }) }}>
               <motion.div
+                key={desktop ? 'side' : 'sheet'}
+                ref={contentRef}
+                tabIndex={-1}
                 className={cn(
                   'reader-chrome fixed z-[81] flex flex-col overflow-hidden border bg-popover text-popover-foreground shadow-[0_30px_80px_-20px_rgb(var(--shadow-color)/0.45)] outline-none',
                   desktop
-                    ? cn('inset-y-3 right-3 rounded-[1.75rem]', wide ? 'w-[min(560px,calc(100vw-1.5rem))]' : 'w-[min(420px,calc(100vw-1.5rem))]')
+                    ? cn('inset-y-3 end-3 rounded-[1.75rem]', wide ? 'w-[min(560px,calc(100vw-1.5rem))]' : 'w-[min(420px,calc(100vw-1.5rem))]')
                     : 'inset-x-0 bottom-0 max-h-[90dvh] rounded-t-[2rem] pb-[env(safe-area-inset-bottom)]',
                   className
                 )}
-                initial={desktop ? { x: '105%', opacity: 0.6 } : { y: '100%' }}
+                initial={desktop ? { x: slideX(), opacity: 0.6 } : { y: '100%' }}
                 animate={desktop ? { x: 0, opacity: 1 } : { y: 0 }}
-                exit={desktop ? { x: '105%', opacity: 0.6 } : { y: '100%' }}
+                exit={desktop ? { x: slideX(), opacity: 0.6 } : { y: '100%' }}
                 transition={spring}
                 drag={desktop ? false : 'y'}
                 dragControls={drag}
@@ -108,3 +112,6 @@ export function Panel({
     </Dialog.Root>
   )
 }
+
+/** Side panel slides in from the inline-end edge (left in the RTL Arabic UI). */
+const slideX = () => (typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ? '-105%' : '105%')

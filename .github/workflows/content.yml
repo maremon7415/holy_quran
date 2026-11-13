@@ -1,0 +1,29 @@
+name: Content sources
+
+# Weekly check that the hand-written hadith duas still match their published sources (downloads from jsDelivr),
+# plus the offline content validation. Also runnable by hand.
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-hadith:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm validate:content
+      - name: Verify hadith duas against source collections
+        run: pnpm verify:hadith

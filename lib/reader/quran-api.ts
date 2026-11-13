@@ -72,3 +72,73 @@ export function playWordAudio(path: string) {
     void wordAudio.play().catch(() => {})
   } catch {}
 }
+
+// ---------------------------------------------------------------- extra translations (Quran.com catalogue)
+
+export interface TranslationMeta { id: number; name: string; author: string; lang: string; langName: string; rtl: boolean }
+
+/** language_name (Quran.com) → BCP-47 code */
+const LANG_CODES: Record<string, string> = {
+  english: 'en', bengali: 'bn', urdu: 'ur', hindi: 'hi', indonesian: 'id', turkish: 'tr', persian: 'fa', french: 'fr', spanish: 'es',
+  german: 'de', russian: 'ru', malay: 'ms', chinese: 'zh', japanese: 'ja', korean: 'ko', italian: 'it', portuguese: 'pt', dutch: 'nl',
+  swahili: 'sw', somali: 'so', hausa: 'ha', tamil: 'ta', telugu: 'te', malayalam: 'ml', kannada: 'kn', gujarati: 'gu', marathi: 'mr',
+  punjabi: 'pa', sindhi: 'sd', pashto: 'ps', kurdish: 'ku', uzbek: 'uz', kazakh: 'kk', azeri: 'az', albanian: 'sq', bosnian: 'bs',
+  thai: 'th', vietnamese: 'vi', tagalog: 'tl', amharic: 'am', yoruba: 'yo', swedish: 'sv', norwegian: 'no', polish: 'pl', czech: 'cs',
+  romanian: 'ro', bulgarian: 'bg', ukrainian: 'uk', hebrew: 'he', tajik: 'tg', uighur: 'ug', dhivehi: 'dv', divehi: 'dv', dari: 'prs', 'central khmer': 'km', chechen: 'ce', amazigh: 'ber', ganda: 'lg', kinyarwanda: 'rw', bambara: 'bm', maranao: 'mrw', sinhala: 'si', nepali: 'ne',
+  assamese: 'as', oromo: 'om', finnish: 'fi', greek: 'el', hungarian: 'hu', khmer: 'km', lithuanian: 'lt', macedonian: 'mk', tatar: 'tt',
+}
+const RTL = new Set(['ur', 'fa', 'prs', 'ar', 'he', 'ps', 'sd', 'ug', 'dv', 'ku'])
+
+/** Commonly wanted editions, shown first in the picker. */
+export const FEATURED_TRANSLATIONS = [163, 162, 213, 22, 19, 203, 84, 95, 97, 54, 234, 122, 33, 77]
+
+export const fetchTranslationCatalogue = () =>
+  cached('tr:catalogue', async () => {
+    const d = await getJson<{ translations: { id: number; name: string; author_name: string; language_name: string; translated_name?: { name: string } }[] }>(`${API}/resources/translations`)
+    return d.translations
+      .map((t): TranslationMeta => {
+        const langName = t.language_name.split(',')[0].trim().toLowerCase()
+        const lang = LANG_CODES[langName] ?? 'und'
+        return { id: t.id, name: t.translated_name?.name || t.name, author: t.author_name, lang, langName, rtl: RTL.has(lang) }
+      })
+      .sort((a, b) => a.langName.localeCompare(b.langName) || a.name.localeCompare(b.name))
+  })
+
+/** Translation HTML → plain text without footnote markers. */
+function cleanTranslation(html: string) {
+  return html
+    .replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&#039;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/** verse key → resource id → text */
+export type ExtraTrMap = Record<string, Record<number, string>>
+
+interface ApiTrVerse { verse_key: string; translations?: { resource_id: number; text: string }[] }
+function toMap(verses: ApiTrVerse[]): ExtraTrMap {
+  const map: ExtraTrMap = {}
+  for (const v of verses) {
+    const row: Record<number, string> = {}
+    for (const t of v.translations ?? []) row[t.resource_id] = cleanTranslation(t.text)
+    map[v.verse_key] = row
+  }
+  return map
+}
+
+/** One translation for a whole chapter (cached per chapter + edition, so adding an edition only fetches that one). */
+export const fetchChapterTranslation = (chapter: number, id: number) =>
+  cached(`tr:${chapter}:${id}`, async () => {
+    const d = await getJson<{ verses: ApiTrVerse[] }>(`${API}/verses/by_chapter/${chapter}?translations=${id}&per_page=300&fields=verse_key`)
+    const m = toMap(d.verses)
+    const out: Record<string, string> = {}
+    for (const k in m) out[k] = m[k][id] ?? ''
+    return out
+  })

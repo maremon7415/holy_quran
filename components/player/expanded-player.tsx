@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { BookOpen, ChevronDown, Loader2, Minus, Pause, Play, Plus, Repeat, Repeat1, SkipBack, SkipForward, X } from 'lucide-react'
 import { usePlayer, ayahCount } from '@/lib/stores/player'
@@ -9,7 +9,7 @@ import { useClock } from '@/lib/audio/clock'
 import { useSleep, type SleepMode } from '@/lib/audio/sleep'
 import { usePlayerPrefs } from '@/lib/audio/prefs'
 import { fetchVerseText, type VerseText } from '@/lib/audio/api'
-import { getReciter } from '@/lib/audio/reciters'
+import { getReciter, reciterName, reciterStyle } from '@/lib/audio/reciters'
 import { chapters, readerHref, toArabicDigits } from '@/lib/quran/chapters'
 import { useTx, useLang } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
@@ -25,13 +25,13 @@ function Ambient() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute -left-1/4 -top-1/3 size-[80vmax] rounded-full"
+        className="absolute -start-1/4 -top-1/3 size-[80vmax] rounded-full"
         style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--primary) 26%, transparent), transparent)' }}
         animate={{ x: [0, 80, -30, 0], y: [0, 50, 110, 0], scale: [1, 1.12, 0.95, 1] }}
         transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute -bottom-1/3 -right-1/4 size-[70vmax] rounded-full"
+        className="absolute -bottom-1/3 -end-1/4 size-[70vmax] rounded-full"
         style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--gold) 24%, transparent), transparent)' }}
         animate={{ x: [0, -70, 20, 0], y: [0, -60, -20, 0], scale: [1, 0.92, 1.1, 1] }}
         transition={{ duration: 38, repeat: Infinity, ease: 'easeInOut' }}
@@ -101,10 +101,10 @@ function VerseCard({ currentKey }: { currentKey: string }) {
             {loading && (
               <div className="space-y-3 py-4" aria-busy>
                 <div className="shimmer h-9 w-full rounded-xl bg-muted" />
-                <div className="shimmer ml-auto h-9 w-2/3 rounded-xl bg-muted" />
+                <div className="shimmer ms-auto h-9 w-2/3 rounded-xl bg-muted" />
               </div>
             )}
-            {err && <p className="py-6 text-center text-sm text-muted-foreground">{t({ en: 'Could not load the ayah text (offline?). Audio keeps playing.', bn: 'আয়াতের লেখা লোড হয়নি। অডিও চলছে।' })}</p>}
+            {err && <p className="py-6 text-center text-sm text-muted-foreground">{t({ en: 'Could not load the ayah text (offline?). Audio keeps playing.', bn: 'আয়াতের লেখা লোড হয়নি। অডিও চলছে।', ar: 'تعذّر تحميل نص الآية (غير متصل؟). يستمر تشغيل الصوت.' })}</p>}
             {verse && (
               <>
                 <p className="quran-text text-center text-[length:clamp(26px,calc(var(--quran-size,34px)*1.12),54px)] leading-[2.2]" lang="ar" dir="rtl">
@@ -188,14 +188,14 @@ function SleepPanel() {
   }, [endsAt])
   const left = endsAt ? Math.max(0, Math.round((endsAt - Date.now()) / 1000)) : 0
   const opts: { m: SleepMode; l: string }[] = [
-    { m: null, l: t({ en: 'Off', bn: 'বন্ধ' }) },
+    { m: null, l: t({ en: 'Off', bn: 'বন্ধ', ar: 'إيقاف' }) },
     { m: 15, l: '15m' },
     { m: 30, l: '30m' },
     { m: 60, l: '60m' },
-    { m: 'end', l: t({ en: 'End of surah', bn: 'সূরার শেষে' }) },
+    { m: 'end', l: t({ en: 'End of surah', bn: 'সূরার শেষে', ar: 'نهاية السورة' }) },
   ]
   return (
-    <Panel icon="moon" title={t({ en: 'Sleep timer', bn: 'স্লিপ টাইমার' })} aside={endsAt ? <span className="text-xs font-medium tabular-nums text-primary">{Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}</span> : null}>
+    <Panel icon="moon" title={t({ en: 'Sleep timer', bn: 'স্লিপ টাইমার', ar: 'مؤقت النوم' })} aside={endsAt ? <span className="text-xs font-medium tabular-nums text-primary">{Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}</span> : null}>
       <div className="flex flex-wrap gap-2">
         {opts.map((o) => (
           <Chip key={String(o.m)} active={mode === o.m} onClick={() => set(o.m)}>{o.l}</Chip>
@@ -207,6 +207,7 @@ function SleepPanel() {
 
 function Controls({ onPickReciter }: { onPickReciter: () => void }) {
   const t = useTx()
+  const lang = useLang()
   const queue = usePlayer((s) => s.queue)!
   const currentKey = usePlayer((s) => s.currentKey)
   const loop = usePlayer((s) => s.loop)
@@ -221,17 +222,17 @@ function Controls({ onPickReciter }: { onPickReciter: () => void }) {
 
   return (
     <div className="space-y-3">
-      <button onClick={onPickReciter} className="card-soft lift flex w-full items-center gap-3 bg-card/80 p-3 text-left backdrop-blur-sm">
+      <button onClick={onPickReciter} className="card-soft lift flex w-full items-center gap-3 bg-card/80 p-3 text-start backdrop-blur-sm">
         <ReciterMonogram name={r.name} size={48} active />
         <span className="min-w-0 flex-1">
-          <span className="block text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{t({ en: 'Reciter', bn: 'ক্বারী' })}</span>
-          <span className="block truncate text-sm font-semibold">{r.name}</span>
-          <span className="block truncate font-arabic text-sm text-muted-foreground">{r.ar} · {r.style}</span>
+          <span className="block text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{t({ en: 'Reciter', bn: 'ক্বারী', ar: 'القارئ' })}</span>
+          <span className="block truncate text-sm font-semibold">{reciterName(lang, r)}</span>
+          <span className="block truncate font-arabic text-sm text-muted-foreground">{lang === 'ar' ? reciterStyle(lang, r.style) : `${r.ar} · ${r.style}`}</span>
         </span>
-        <span className="rounded-full border border-border px-3 py-1.5 text-xs font-medium">{t({ en: 'Change', bn: 'পরিবর্তন' })}</span>
+        <span className="rounded-full border border-border px-3 py-1.5 text-xs font-medium">{t({ en: 'Change', bn: 'পরিবর্তন', ar: 'تغيير' })}</span>
       </button>
 
-      <Panel icon="listen" title={t({ en: 'Speed', bn: 'গতি' })} aside={<span className="text-xs tabular-nums text-muted-foreground">{playbackRate}×</span>}>
+      <Panel icon="listen" title={t({ en: 'Speed', bn: 'গতি', ar: 'السرعة' })} aside={<span className="text-xs tabular-nums text-muted-foreground">{playbackRate}×</span>}>
         <div className="grid grid-cols-5 gap-1.5">
           {[0.75, 0.9, 1, 1.25, 1.5].map((v) => (
             <Chip key={v} active={playbackRate === v} onClick={() => set({ playbackRate: v })} className="!px-0">{v}×</Chip>
@@ -239,44 +240,44 @@ function Controls({ onPickReciter }: { onPickReciter: () => void }) {
         </div>
       </Panel>
 
-      <Panel icon="repeat" title={t({ en: 'Repeat each ayah', bn: 'প্রতিটি আয়াত পুনরাবৃত্তি' })}>
+      <Panel icon="repeat" title={t({ en: 'Repeat each ayah', bn: 'প্রতিটি আয়াত পুনরাবৃত্তি', ar: 'تكرار كل آية' })}>
         <div className="grid grid-cols-5 gap-1.5">
           {[1, 2, 3, 5, 10].map((v) => (
-            <Chip key={v} active={repeatAyah === v} onClick={() => set({ repeatAyah: v })} className="!px-0">{v === 1 ? t({ en: 'Off', bn: 'বন্ধ' }) : `${v}×`}</Chip>
+            <Chip key={v} active={repeatAyah === v} onClick={() => set({ repeatAyah: v })} className="!px-0">{v === 1 ? t({ en: 'Off', bn: 'বন্ধ', ar: 'إيقاف' }) : `${v}×`}</Chip>
           ))}
         </div>
       </Panel>
 
       <Panel
         icon="hifz"
-        title={t({ en: 'Range & loop', bn: 'রেঞ্জ ও লুপ' })}
+        title={t({ en: 'Range & loop', bn: 'রেঞ্জ ও লুপ', ar: 'النطاق والتكرار' })}
         aside={
-          <Chip active={loop} onClick={() => p().setLoop(!loop)} className="h-8 !px-3 text-xs" label={t({ en: 'Loop range', bn: 'রেঞ্জ লুপ' })}>
-            <span className="inline-flex items-center gap-1.5"><Repeat className="size-3.5" />{t({ en: 'Loop', bn: 'লুপ' })}</span>
+          <Chip active={loop} onClick={() => p().setLoop(!loop)} className="h-8 !px-3 text-xs" label={t({ en: 'Loop range', bn: 'রেঞ্জ লুপ', ar: 'تكرار النطاق' })}>
+            <span className="inline-flex items-center gap-1.5"><Repeat className="size-3.5" />{t({ en: 'Loop', bn: 'লুপ', ar: 'تكرار' })}</span>
           </Chip>
         }
       >
         <div className="flex items-center justify-between gap-3">
           <div>
-            <div className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">{t({ en: 'From ayah', bn: 'শুরু' })}</div>
-            <Stepper label={t({ en: 'From ayah', bn: 'শুরু' })} value={queue.from} min={1} max={to} onChange={(v) => p().setRange(v, queue.to)} />
+            <div className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">{t({ en: 'From ayah', bn: 'শুরু', ar: 'من الآية' })}</div>
+            <Stepper label={t({ en: 'From ayah', bn: 'শুরু', ar: 'من الآية' })} value={queue.from} min={1} max={to} onChange={(v) => p().setRange(v, queue.to)} />
           </div>
           <div>
-            <div className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">{t({ en: 'To ayah', bn: 'শেষ' })}</div>
-            <Stepper label={t({ en: 'To ayah', bn: 'শেষ' })} value={to} min={queue.from} max={count} onChange={(v) => p().setRange(queue.from, v)} />
+            <div className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">{t({ en: 'To ayah', bn: 'শেষ', ar: 'إلى الآية' })}</div>
+            <Stepper label={t({ en: 'To ayah', bn: 'শেষ', ar: 'إلى الآية' })} value={to} min={queue.from} max={count} onChange={(v) => p().setRange(queue.from, v)} />
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Chip active={queue.from === ayah && to === ayah && loop} onClick={() => { p().setRange(ayah, ayah); p().setLoop(true) }} className="h-8 text-xs">{t({ en: 'Loop this ayah', bn: 'এই আয়াত লুপ' })}</Chip>
-          <Chip active={whole} onClick={() => { p().setRange(1, Number.MAX_SAFE_INTEGER); p().setLoop(false) }} className="h-8 text-xs">{t({ en: 'Whole surah', bn: 'পুরো সূরা' })}</Chip>
+          <Chip active={queue.from === ayah && to === ayah && loop} onClick={() => { p().setRange(ayah, ayah); p().setLoop(true) }} className="h-8 text-xs">{t({ en: 'Loop this ayah', bn: 'এই আয়াত লুপ', ar: 'تكرار هذه الآية' })}</Chip>
+          <Chip active={whole} onClick={() => { p().setRange(1, Number.MAX_SAFE_INTEGER); p().setLoop(false) }} className="h-8 text-xs">{t({ en: 'Whole surah', bn: 'পুরো সূরা', ar: 'السورة كاملة' })}</Chip>
         </div>
       </Panel>
 
       <SleepPanel />
 
       <section className="card-soft divide-y divide-border bg-card/80 backdrop-blur-sm">
-        <Toggle label={t({ en: 'Continue to next surah', bn: 'পরের সূরায় চলুন' })} on={autoNext} onChange={(v) => usePlayerPrefs.getState().set({ autoNext: v })} />
-        <Toggle label={t({ en: 'Auto-scroll reader', bn: 'রিডার অটো-স্ক্রল' })} on={autoScroll} onChange={(v) => set({ autoScroll: v })} />
+        <Toggle label={t({ en: 'Continue to next surah', bn: 'পরের সূরায় চলুন', ar: 'المتابعة إلى السورة التالية' })} on={autoNext} onChange={(v) => usePlayerPrefs.getState().set({ autoNext: v })} />
+        <Toggle label={t({ en: 'Auto-scroll reader', bn: 'রিডার অটো-স্ক্রল', ar: 'تمرير تلقائي في القارئ' })} on={autoScroll} onChange={(v) => set({ autoScroll: v })} />
       </section>
     </div>
   )
@@ -308,21 +309,21 @@ function Transport() {
       <button
         onClick={() => p().setLoop(!loop)}
         aria-pressed={loop}
-        aria-label={t({ en: 'Loop', bn: 'লুপ' })}
+        aria-label={t({ en: 'Loop', bn: 'লুপ', ar: 'تكرار' })}
         className={cn('grid size-11 place-items-center rounded-full transition active:scale-90', loop ? 'bg-accent text-primary' : 'text-muted-foreground hover:bg-muted')}
       >
         {repeatAyah > 1 ? <Repeat1 className="size-5" /> : <Repeat className="size-5" />}
       </button>
-      <button onClick={() => p().prev()} aria-label={t({ en: 'Previous ayah', bn: 'আগের আয়াত' })} className="grid size-12 place-items-center rounded-full transition hover:bg-muted active:scale-90"><SkipBack className="size-6 fill-current" /></button>
+      <button onClick={() => p().prev()} aria-label={t({ en: 'Previous ayah', bn: 'আগের আয়াত', ar: 'الآية السابقة' })} className="grid size-12 place-items-center rounded-full transition hover:bg-muted active:scale-90"><SkipBack className="size-6 fill-current" /></button>
       <motion.button
         whileTap={{ scale: 0.92 }}
         onClick={() => (status === 'error' ? p().resume() : p().toggle())}
-        aria-label={playing ? t({ en: 'Pause', bn: 'বিরতি' }) : t({ en: 'Play', bn: 'চালান' })}
+        aria-label={playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play', bn: 'চালান', ar: 'تشغيل' })}
         className={cn('grid size-[4.5rem] place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_14px_34px_-10px_var(--glow)]', playing && 'pulse-ring')}
       >
         {loading ? <Loader2 className="size-7 animate-spin" /> : playing ? <Pause className="size-8 fill-current" /> : <Play className="size-8 translate-x-0.5 fill-current" />}
       </motion.button>
-      <button onClick={() => p().next()} aria-label={t({ en: 'Next ayah', bn: 'পরের আয়াত' })} className="grid size-12 place-items-center rounded-full transition hover:bg-muted active:scale-90"><SkipForward className="size-6 fill-current" /></button>
+      <button onClick={() => p().next()} aria-label={t({ en: 'Next ayah', bn: 'পরের আয়াত', ar: 'الآية التالية' })} className="grid size-12 place-items-center rounded-full transition hover:bg-muted active:scale-90"><SkipForward className="size-6 fill-current" /></button>
       <span className="grid size-11 place-items-center" aria-hidden>
         <EqBars playing={playing} size={20} />
       </span>
@@ -363,7 +364,7 @@ export function ExpandedPlayer() {
           key="sheet"
           role="dialog"
           aria-modal="true"
-          aria-label={t({ en: 'Now playing', bn: 'এখন চলছে' })}
+          aria-label={t({ en: 'Now playing', bn: 'এখন চলছে', ar: 'قيد التشغيل' })}
           className="fixed inset-0 z-[80] flex flex-col overflow-hidden bg-background"
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
@@ -383,9 +384,9 @@ export function ExpandedPlayer() {
             onPointerDown={(e) => { if (!(e.target as HTMLElement).closest('a,button')) controls.start(e) }}
             className="relative z-10 mx-auto flex w-full max-w-6xl touch-none items-center gap-2 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-6"
           >
-            <button onClick={close} aria-label={t({ en: 'Minimise player', bn: 'প্লেয়ার ছোট করুন' })} className="grid size-11 place-items-center rounded-full bg-card/70 ring-1 ring-border backdrop-blur transition active:scale-90"><ChevronDown className="size-5" /></button>
+            <button onClick={close} aria-label={t({ en: 'Minimise player', bn: 'প্লেয়ার ছোট করুন', ar: 'تصغير المشغّل' })} className="grid size-11 place-items-center rounded-full bg-card/70 ring-1 ring-border backdrop-blur transition active:scale-90"><ChevronDown className="size-5" /></button>
             <div className="min-w-0 flex-1 text-center">
-              <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{t({ en: 'Now playing', bn: 'এখন চলছে' })}</div>
+              <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{t({ en: 'Now playing', bn: 'এখন চলছে', ar: 'قيد التشغيل' })}</div>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="truncate font-display text-lg font-semibold">{label(surah)}</span>
                 <span className="font-arabic text-lg text-gold">{c.nameArabic}</span>
@@ -395,20 +396,20 @@ export function ExpandedPlayer() {
               href={readerHref(surah, ayah)}
               onClick={close}
               className="flex h-11 items-center gap-2 rounded-full bg-card/70 px-3.5 text-sm font-medium ring-1 ring-border backdrop-blur transition active:scale-95 sm:px-4"
-              aria-label={t({ en: 'Follow along in the reader', bn: 'রিডারে অনুসরণ করুন' })}
+              aria-label={t({ en: 'Follow along in the reader', bn: 'রিডারে অনুসরণ করুন', ar: 'تابع التلاوة في القارئ' })}
             >
               <BookOpen className="size-4" />
-              <span className="hidden sm:inline">{t({ en: 'Follow along', bn: 'অনুসরণ করুন' })}</span>
+              <span className="hidden sm:inline">{t({ en: 'Follow along', bn: 'অনুসরণ করুন', ar: 'تابع في القارئ' })}</span>
             </Link>
-            <button onClick={() => usePlayer.getState().stop()} aria-label={t({ en: 'Close player', bn: 'প্লেয়ার বন্ধ করুন' })} className="grid size-11 place-items-center rounded-full bg-card/70 ring-1 ring-border backdrop-blur transition active:scale-90"><X className="size-5" /></button>
+            <button onClick={() => usePlayer.getState().stop()} aria-label={t({ en: 'Close player', bn: 'প্লেয়ার বন্ধ করুন', ar: 'إغلاق المشغّل' })} className="grid size-11 place-items-center rounded-full bg-card/70 ring-1 ring-border backdrop-blur transition active:scale-90"><X className="size-5" /></button>
           </header>
 
           <div className="relative z-10 flex-1 overflow-y-auto overscroll-contain pb-[max(2rem,env(safe-area-inset-bottom))]">
             <div className="mx-auto grid w-full max-w-6xl gap-5 px-4 pt-2 sm:px-6 lg:grid-cols-[1.35fr_1fr] lg:gap-8 lg:pt-6">
               <div className="space-y-5 lg:sticky lg:top-2 lg:self-start">
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="rounded-full bg-card/70 px-3 py-1 ring-1 ring-border backdrop-blur">{c.meaning} · {c.revelationPlace === 'makkah' ? t({ en: 'Makki', bn: 'মাক্কী' }) : t({ en: 'Madani', bn: 'মাদানী' })}</span>
-                  <span className="rounded-full bg-card/70 px-3 py-1 font-medium tabular-nums text-foreground ring-1 ring-border backdrop-blur">{t({ en: 'Ayah', bn: 'আয়াত' })} {ayah} / {c.versesCount}</span>
+                  <span className="rounded-full bg-card/70 px-3 py-1 ring-1 ring-border backdrop-blur">{c.meaning} · {c.revelationPlace === 'makkah' ? t({ en: 'Makki', bn: 'মাক্কী', ar: 'مكية' }) : t({ en: 'Madani', bn: 'মাদানী', ar: 'مدنية' })}</span>
+                  <span className="rounded-full bg-card/70 px-3 py-1 font-medium tabular-nums text-foreground ring-1 ring-border backdrop-blur">{t({ en: 'Ayah', bn: 'আয়াত', ar: 'آية' })} {ayah} / {c.versesCount}</span>
                 </div>
                 <VerseCard currentKey={currentKey} />
                 <SeekBar />

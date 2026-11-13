@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { Search } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { PageHero, pageShell } from '@/components/content/page-hero'
 import { Marked } from '@/components/content/marked'
@@ -10,6 +9,10 @@ import { chapters, readerHref, surahHref, toArabicDigits } from '@/lib/quran/cha
 import { parseRef } from '@/lib/quran/data'
 import { buildMeta } from '@/lib/content/seo'
 import { topics } from '@/data/content/topics'
+import { lt } from '@/lib/i18n/lt'
+import { T } from '@/lib/i18n/text'
+import { SurahName } from '@/lib/i18n/surah-name'
+import { SearchBox } from '@/components/content/search-box'
 
 type SP = Promise<{ q?: string | string[]; limit?: string | string[]; surah?: string | string[] }>
 const one = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v) ?? ''
@@ -24,6 +27,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SP }): 
 }
 
 const suggestions = ['patience', 'mercy', 'forgive', 'paradise', 'prayer', 'light', 'সবর', 'দয়া', 'رحمة', 'صبر']
+/** Suggestions are search queries, so they stay in their own script. */
 
 export default async function SearchPage({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams
@@ -55,18 +59,14 @@ export default async function SearchPage({ searchParams }: { searchParams: SP })
 
   return (
     <div className={pageShell}>
-      <Breadcrumbs items={[{ name: 'Search', href: '/search' }]} className="mb-4" />
-      <PageHero eyebrow="Search · অনুসন্ধান" icon="search" title={q ? <>Results for “{q}”</> : 'Search the Quran'} subtitle="Search by word or phrase in Arabic, English or Bangla. Try “patience”, “رحمة” or “সবর”.">
-        <form action="/search" role="search" className="relative mt-6 max-w-xl">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input name="q" defaultValue={q} autoComplete="off" placeholder="Search the Quran…" className="h-12 w-full rounded-full border border-border bg-card pl-11 pr-28 text-[15px] shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15" />
-          <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition active:scale-95">Search</button>
-        </form>
+      <Breadcrumbs items={[{ name: 'Search', ar: 'بحث', href: '/search' }]} className="mb-4" />
+      <PageHero eyebrow={<>{lt(undefined, { en: 'Search', bn: 'অনুসন্ধান', ar: 'بحث' })}</>} icon="search" title={q ? <>{lt(undefined, { en: 'Results for', bn: 'ফলাফল:', ar: 'نتائج' })} “{q}”</> : lt(undefined, { en: 'Search the Quran', bn: 'কুরআনে অনুসন্ধান', ar: 'ابحث في القرآن' })} subtitle={<>{lt(undefined, { en: 'Search by word or phrase in Arabic, English or Bangla. Try “patience”, “رحمة” or “সবর”.', bn: 'আরবি, ইংরেজি বা বাংলায় শব্দ বা বাক্যাংশ দিয়ে খুঁজুন। চেষ্টা করুন “patience”, “رحمة” বা “সবর”।', ar: 'ابحث بكلمة أو عبارة بالعربية أو الإنجليزية أو البنغالية. جرّب «رحمة» أو «patience» أو «সবর».' })}</>}>
+        <SearchBox q={q} />
       </PageHero>
 
       {ref && (
         <Link href={readerHref(ref.surah, ref.from)} className="card-soft lift mt-6 flex items-center justify-between rounded-3xl p-4">
-          <span><span className="text-xs text-muted-foreground">Go to verse</span><span className="block font-semibold">{chapters[ref.surah - 1].nameSimple} {ref.surah}:{ref.from}{ref.to > ref.from ? `–${ref.to}` : ''}</span></span>
+          <span><span className="text-xs text-muted-foreground">{lt(undefined, { en: 'Go to verse', bn: 'আয়াতে যান', ar: 'انتقل إلى الآية' })}</span><span className="block font-semibold"><SurahName id={ref.surah} /> {ref.surah}:{ref.from}{ref.to > ref.from ? `–${ref.to}` : ''}</span></span>
           <span lang="ar" className="font-arabic text-2xl">{chapters[ref.surah - 1].nameArabic}</span>
         </Link>
       )}
@@ -74,14 +74,14 @@ export default async function SearchPage({ searchParams }: { searchParams: SP })
       {q.length >= 2 && (
         <>
           <p className="mt-6 text-sm text-muted-foreground" aria-live="polite">
-            <strong className="text-foreground">{total.toLocaleString()}</strong> verse{total === 1 ? '' : 's'} found{surah ? <> · in <strong className="text-foreground">{chapters[surah - 1].nameSimple}</strong> ({hits.length})</> : null}
+            <strong className="text-foreground">{total.toLocaleString()}</strong> {lt(undefined, { en: total === 1 ? 'verse found' : 'verses found', bn: 'টি আয়াত পাওয়া গেছে', ar: total === 1 ? 'آية مطابقة' : 'آيات مطابقة' })}{surah ? <> · {lt(undefined, { en: 'in', bn: 'সূরা', ar: 'في' })} <strong className="text-foreground"><SurahName id={surah} /></strong> ({hits.length})</> : null}
           </p>
           {facets.length > 1 && (
             <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-              <Link href={qs({ surah: undefined, limit: undefined })} className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold ${!surah ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-accent'}`}>All surahs</Link>
+              <Link href={qs({ surah: undefined, limit: undefined })} className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold ${!surah ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-accent'}`}>{lt(undefined, { en: 'All surahs', bn: 'সব সূরা', ar: 'كل السور' })}</Link>
               {facets.map((f) => (
                 <Link key={f.id} href={qs({ surah: f.id, limit: undefined })} className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold ${surah === f.id ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-accent'}`}>
-                  {chapters[f.id - 1].nameSimple} <span className="opacity-60">{f.n}</span>
+                  <SurahName id={f.id} /> <span className="text-muted-foreground">{f.n}</span>
                 </Link>
               ))}
             </div>
@@ -94,9 +94,9 @@ export default async function SearchPage({ searchParams }: { searchParams: SP })
                   <article className="card-soft rounded-3xl p-5">
                     <header className="mb-3 flex items-center justify-between gap-2">
                       <Link href={surahHref(h.surah, h.ayah)} className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground hover:bg-primary hover:text-primary-foreground">
-                        <span lang="ar" className="font-arabic text-sm">{chapters[h.surah - 1].nameArabic}</span> {h.surahName} {h.surah}:{h.ayah}
+                        <span lang="ar" className="font-arabic text-sm">{chapters[h.surah - 1].nameArabic}</span> <SurahName id={h.surah} /> {h.surah}:{h.ayah}
                       </Link>
-                      <Link href={readerHref(h.surah, h.ayah)} className="text-xs font-medium text-muted-foreground hover:text-primary">Read in context →</Link>
+                      <Link href={readerHref(h.surah, h.ayah)} className="text-xs font-medium text-muted-foreground hover:text-primary">{lt(undefined, { en: 'Read in context', bn: 'প্রসঙ্গসহ পড়ুন', ar: 'اقرأ في سياقها' })} <span aria-hidden className="inline-block rtl:rotate-180">→</span></Link>
                     </header>
                     <p lang="ar" dir="rtl" className="quran-text text-right text-[26px] leading-[2.1]"><Marked text={h.ar} query={q} /> <span className="ayah-marker">{toArabicDigits(h.ayah)}</span></p>
                     <p data-tr="en" lang="en" className="mt-3 text-[15px] leading-relaxed text-foreground/90"><Marked text={h.en} query={q} /></p>
@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: { searchParams: SP })
 
           {hits.length > shown.length && (
             <div className="mt-6 text-center">
-              <Link href={qs({ limit: limit + STEP })} scroll={false} className="inline-block rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition active:scale-95">Show {Math.min(STEP, hits.length - shown.length)} more of {hits.length - shown.length}</Link>
+              <Link href={qs({ limit: limit + STEP })} scroll={false} className="inline-block rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition active:scale-95">{lt(undefined, { en: `Show ${Math.min(STEP, hits.length - shown.length)} more of ${hits.length - shown.length}`, bn: `আরও ${Math.min(STEP, hits.length - shown.length)}টি দেখান (বাকি ${hits.length - shown.length}টির মধ্যে)`, ar: `عرض ${Math.min(STEP, hits.length - shown.length)} أخرى من ${hits.length - shown.length}` })}</Link>
             </div>
           )}
         </>
@@ -117,15 +117,15 @@ export default async function SearchPage({ searchParams }: { searchParams: SP })
 
       {(q.length < 2 || total === 0) && (
         <section className="mt-8">
-          {q.length >= 2 && total === 0 && <p className="card-soft rounded-3xl p-6 text-sm">No verses matched “{q}”. Try a shorter or different word, or browse the suggestions below.</p>}
-          <h2 className="font-display mb-3 mt-6 text-xl font-semibold">Try searching for</h2>
+          {q.length >= 2 && total === 0 && <p className="card-soft rounded-3xl p-6 text-sm">{lt(undefined, { en: `No verses matched “${q}”. Try a shorter or different word, or browse the suggestions below.`, bn: `“${q}” এর সঙ্গে মিলে এমন কোনো আয়াত পাওয়া যায়নি। ছোট বা অন্য শব্দ দিয়ে চেষ্টা করুন, বা নিচের পরামর্শ দেখুন।`, ar: `لم نجد آيات تطابق «${q}». جرّب كلمة أقصر أو مختلفة، أو تصفّح الاقتراحات أدناه.` })}</p>}
+          <h2 className="font-display mb-3 mt-6 text-xl font-semibold">{lt(undefined, { en: 'Try searching for', bn: 'এগুলো খুঁজে দেখুন', ar: 'جرّب البحث عن' })}</h2>
           <div className="flex flex-wrap gap-2">
             {suggestions.map((s) => <Link key={s} href={`/search?q=${encodeURIComponent(s)}`} className="lift rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold hover:bg-accent">{s}</Link>)}
           </div>
-          <h2 className="font-display mb-3 mt-8 text-xl font-semibold">Or explore by topic</h2>
+          <h2 className="font-display mb-3 mt-8 text-xl font-semibold">{lt(undefined, { en: 'Or explore by topic', bn: 'অথবা বিষয় অনুযায়ী দেখুন', ar: 'أو تصفّح حسب الموضوع' })}</h2>
           <div className="flex flex-wrap gap-2">
-            {topics.slice(0, 14).map((t) => <Link key={t.slug} href={`/topics/${t.slug}`} className="lift rounded-full border border-border bg-card px-4 py-2 text-sm hover:bg-accent"><span className="capitalize">{t.en}</span></Link>)}
-            <Link href="/topics" className="rounded-full px-4 py-2 text-sm font-semibold text-primary hover:underline">All topics →</Link>
+            {topics.slice(0, 14).map((t) => <Link key={t.slug} href={`/topics/${t.slug}`} className="lift rounded-full border border-border bg-card px-4 py-2 text-sm hover:bg-accent"><span className="capitalize"><T en={t.en} bn={t.bn} ar={t.ar} /></span></Link>)}
+            <Link href="/topics" className="rounded-full px-4 py-2 text-sm font-semibold text-primary hover:underline">{lt(undefined, { en: 'All topics', bn: 'সব বিষয়', ar: 'كل المواضيع' })} <span aria-hidden className="inline-block rtl:rotate-180">→</span></Link>
           </div>
         </section>
       )}

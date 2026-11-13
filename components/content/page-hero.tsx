@@ -2,12 +2,12 @@ import type { ReactNode } from 'react'
 import { UiIcon } from '@/components/ui-icon'
 
 /** Calm hero block used at the top of every content page. */
-export function PageHero({ eyebrow, icon, title, subtitle, children, arabic }: { eyebrow?: string; icon?: string; title: ReactNode; subtitle?: ReactNode; children?: ReactNode; arabic?: string }) {
+export function PageHero({ eyebrow, icon, title, subtitle, children, arabic }: { eyebrow?: ReactNode; icon?: string; title: ReactNode; subtitle?: ReactNode; children?: ReactNode; arabic?: string }) {
   return (
     <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-accent via-card to-gold-soft/40 px-5 py-8 sm:px-10 sm:py-12">
       <div aria-hidden className="bg-pattern absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_top_right,#000,transparent_70%)]" />
-      <div aria-hidden className="absolute -left-16 -top-16 -z-10 size-56 rounded-full bg-primary/10 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-20 right-0 -z-10 size-64 rounded-full bg-gold/10 blur-3xl" />
+      <div aria-hidden className="absolute -start-16 -top-16 -z-10 size-56 rounded-full bg-primary/10 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-20 end-0 -z-10 size-64 rounded-full bg-gold/10 blur-3xl" />
       {eyebrow && (
         <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-card/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           {icon && <UiIcon name={icon} size={16} />} {eyebrow}

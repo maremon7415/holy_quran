@@ -17,8 +17,27 @@ export interface Achievement {
   bn: string
   descEn: string
   descBn: string
+  ar: string
+  descAr: string
   value: number
   target: number
+}
+
+const AR: Record<string, [string, string]> = {
+  'first-surah': ['أولى السور', 'أتمّ قراءة أي سورة.'],
+  'streak-3': ['شرارة', 'اقرأ ٣ أيام متتالية.'],
+  'streak-7': ['أسبوع النور', 'حافظ على مواظبة ٧ أيام.'],
+  'streak-30': ['البدر', 'حافظ على مواظبة ٣٠ يومًا.'],
+  'verses-100': ['١٠٠ آية', 'اقرأ ١٠٠ آية.'],
+  'verses-1000': ['١٠٠٠ آية', 'اقرأ ١٠٠٠ آية.'],
+  'juz-amma': ['قارئ جزء عمّ', 'أتمّ جميع سور جزء عمّ السبع والثلاثين.'],
+  'surahs-10': ['١٠ سور', 'أتمّ قراءة ١٠ سور.'],
+  'bookmarks-10': ['الجامع', 'احفظ ١٠ آيات في المفضلة.'],
+  'hifz-first': ['أولى خطوات الحفظ', 'احفظ أول آية في استوديو الحفظ.'],
+  'hifz-surah': ['سورة محفوظة', 'احفظ سورة كاملة.'],
+  'hifz-100': ['في طريق الحفظ', 'ثبّت ١٠٠ آية في ذاكرتك.'],
+  'hifz-streak': ['قلب ثابت', 'راجع حفظك ٧ أيام متتالية.'],
+  'khatam': ['الختمة', 'أتمّ ختمة كاملة بالمخطِّط.'],
 }
 
 const juzAmma = Array.from({ length: 37 }, (_, i) => 78 + i)
@@ -27,7 +46,7 @@ export function achievements(i: AchievementInput): Achievement[] {
   const amma = juzAmma.filter((s) => i.completedSurahs.includes(s)).length
   const streak = Math.max(i.longestStreak, i.currentStreak)
   const a = (id: string, icon: string, en: string, bn: string, descEn: string, descBn: string, value: number, target: number): Achievement => ({
-    id, icon, en, bn, descEn, descBn, value: Math.min(value, target), target,
+    id, icon, en, bn, descEn, descBn, ar: AR[id][0], descAr: AR[id][1], value: Math.min(value, target), target,
   })
   return [
     a('first-surah', 'quran', 'First Surah', 'প্রথম সূরা', 'Finish reading any surah.', 'যেকোনো একটি সূরা পড়া শেষ করুন।', i.completedSurahs.length, 1),

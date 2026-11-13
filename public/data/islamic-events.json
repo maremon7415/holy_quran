@@ -7,8 +7,10 @@
     "hijriDay": 1,
     "description": {
       "en": "The month of fasting and revelation of the Quran.",
-      "bn": "রোজা এবং কোরআন নাজিলের মাস।"
-    }
+      "bn": "রোজা এবং কোরআন নাজিলের মাস।",
+      "ar": "شهر الصيام ونزول القرآن."
+    },
+    "nameAr": "بداية رمضان"
   },
   {
     "id": "2",
@@ -18,8 +20,10 @@
     "hijriDay": 1,
     "description": {
       "en": "Festival of breaking the fast marking the end of Ramadan.",
-      "bn": "রমজানের সমাপ্তি উপলক্ষে রোজার উৎসব।"
-    }
+      "bn": "রমজানের সমাপ্তি উপলক্ষে রোজার উৎসব।",
+      "ar": "عيد الفطر المبارك بعد انتهاء شهر رمضان."
+    },
+    "nameAr": "عيد الفطر"
   },
   {
     "id": "3",
@@ -29,8 +33,10 @@
     "hijriDay": 9,
     "description": {
       "en": "The Day of Arafah, the core part of Hajj.",
-      "bn": "আরাফাহ দিবস, হজ্জের মূল অংশ।"
-    }
+      "bn": "আরাফাহ দিবস, হজ্জের মূল অংশ।",
+      "ar": "يوم عرفة، الركن الأعظم من الحج."
+    },
+    "nameAr": "يوم عرفة"
   },
   {
     "id": "4",
@@ -40,8 +46,10 @@
     "hijriDay": 10,
     "description": {
       "en": "Festival of Sacrifice.",
-      "bn": "কুরবানির উৎসব।"
-    }
+      "bn": "কুরবানির উৎসব।",
+      "ar": "عيد النحر والأضحية."
+    },
+    "nameAr": "عيد الأضحى"
   },
   {
     "id": "5",
@@ -51,8 +59,10 @@
     "hijriDay": 1,
     "description": {
       "en": "Beginning of the new Hijri year.",
-      "bn": "নতুন হিজরি বছরের শুরু।"
-    }
+      "bn": "নতুন হিজরি বছরের শুরু।",
+      "ar": "بداية العام الهجري الجديد."
+    },
+    "nameAr": "رأس السنة الهجرية"
   },
   {
     "id": "6",
@@ -62,7 +72,9 @@
     "hijriDay": 10,
     "description": {
       "en": "10th of Muharram, a day of fasting.",
-      "bn": "মুহাররমের ১০ম দিন, রোজার দিন।"
-    }
+      "bn": "মুহাররমের ১০ম দিন, রোজার দিন।",
+      "ar": "العاشر من محرم، يوم يُستحب صيامه."
+    },
+    "nameAr": "عاشوراء"
   }
 ]

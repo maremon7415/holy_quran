@@ -9,7 +9,7 @@ import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
 
 interface Step { ar: string; tr: string; en: string; bn: string; target: number }
-interface Preset { id: string; en: string; bn: string; steps: Step[] }
+interface Preset { id: string; en: string; bn: string; ar?: string; steps: Step[] }
 
 const S = {
   sub: { ar: 'سُبْحَانَ ٱللَّٰهِ', tr: 'SubhanAllah', en: 'Glory be to Allah', bn: 'আল্লাহ পবিত্র ও মহান' },
@@ -17,13 +17,13 @@ const S = {
   akb: { ar: 'ٱللَّٰهُ أَكْبَرُ', tr: 'Allahu Akbar', en: 'Allah is the Greatest', bn: 'আল্লাহ সর্বমহান' },
 }
 const PRESETS: Preset[] = [
-  { id: 'fatima', en: 'Tasbih Fatima', bn: 'তাসবিহে ফাতিমা', steps: [{ ...S.sub, target: 33 }, { ...S.ham, target: 33 }, { ...S.akb, target: 34 }] },
-  { id: 'subhanallah', en: 'SubhanAllah', bn: 'সুবহানাল্লাহ', steps: [{ ...S.sub, target: 33 }] },
-  { id: 'alhamdulillah', en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ', steps: [{ ...S.ham, target: 33 }] },
-  { id: 'allahuakbar', en: 'Allahu Akbar', bn: 'আল্লাহু আকবার', steps: [{ ...S.akb, target: 34 }] },
-  { id: 'astaghfirullah', en: 'Astaghfirullah', bn: 'আস্তাগফিরুল্লাহ', steps: [{ ar: 'أَسْتَغْفِرُ ٱللَّٰهَ', tr: 'Astaghfirullah', en: 'I seek forgiveness from Allah', bn: 'আমি আল্লাহর কাছে ক্ষমা চাই', target: 100 }] },
-  { id: 'salawat', en: 'Salawat', bn: 'দরুদ', steps: [{ ar: 'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', tr: 'Allahumma salli ala Muhammad', en: 'O Allah, send blessings upon Muhammad ﷺ', bn: 'হে আল্লাহ, মুহাম্মদ ﷺ-এর উপর রহমত বর্ষণ করুন', target: 100 }] },
-  { id: 'tahlil', en: 'La ilaha illallah', bn: 'লা ইলাহা ইল্লাল্লাহ', steps: [{ ar: 'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ', tr: 'La ilaha illallah', en: 'There is no god but Allah', bn: 'আল্লাহ ছাড়া কোনো ইলাহ নেই', target: 100 }] },
+  { id: 'fatima', en: 'Tasbih Fatima', bn: 'তাসবিহে ফাতিমা', ar: 'تسبيح فاطمة', steps: [{ ...S.sub, target: 33 }, { ...S.ham, target: 33 }, { ...S.akb, target: 34 }] },
+  { id: 'subhanallah', en: 'SubhanAllah', bn: 'সুবহানাল্লাহ', ar: 'سبحان الله', steps: [{ ...S.sub, target: 33 }] },
+  { id: 'alhamdulillah', en: 'Alhamdulillah', bn: 'আলহামদুলিল্লাহ', ar: 'الحمد لله', steps: [{ ...S.ham, target: 33 }] },
+  { id: 'allahuakbar', en: 'Allahu Akbar', bn: 'আল্লাহু আকবার', ar: 'الله أكبر', steps: [{ ...S.akb, target: 34 }] },
+  { id: 'astaghfirullah', en: 'Astaghfirullah', bn: 'আস্তাগফিরুল্লাহ', ar: 'أستغفر الله', steps: [{ ar: 'أَسْتَغْفِرُ ٱللَّٰهَ', tr: 'Astaghfirullah', en: 'I seek forgiveness from Allah', bn: 'আমি আল্লাহর কাছে ক্ষমা চাই', target: 100 }] },
+  { id: 'salawat', en: 'Salawat', bn: 'দরুদ', ar: 'الصلاة على النبي', steps: [{ ar: 'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', tr: 'Allahumma salli ala Muhammad', en: 'O Allah, send blessings upon Muhammad ﷺ', bn: 'হে আল্লাহ, মুহাম্মদ ﷺ-এর উপর রহমত বর্ষণ করুন', target: 100 }] },
+  { id: 'tahlil', en: 'La ilaha illallah', bn: 'লা ইলাহা ইল্লাল্লাহ', ar: 'لا إله إلا الله', steps: [{ ar: 'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ', tr: 'La ilaha illallah', en: 'There is no god but Allah', bn: 'আল্লাহ ছাড়া কোনো ইলাহ নেই', target: 100 }] },
 ]
 const TARGETS = [33, 99, 100, 0]
 
@@ -77,7 +77,7 @@ export function DhikrView() {
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(); d.setDate(d.getDate() - (6 - i))
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-      return { key, wd: d.toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'short' }), total: Math.max(0, sessions.find((s) => s.date === key)?.total ?? 0) }
+      return { key, wd: d.toLocaleDateString(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { weekday: 'short' }), total: Math.max(0, sessions.find((s) => s.date === key)?.total ?? 0) }
     })
     const max = Math.max(1, ...days.map((d) => d.total))
     return { days, max, today: days[6].total, week: days.reduce((a, d) => a + d.total, 0), all: sessions.reduce((a, s) => a + Math.max(0, s.total), 0) }
@@ -90,15 +90,15 @@ export function DhikrView() {
       <div className="mb-5 flex items-center gap-4">
         <UiIcon name="tasbih" size={56} />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Digital tasbih', bn: 'ডিজিটাল তাসবিহ' })}</p>
-          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Dhikr Counter', bn: 'জিকির কাউন্টার' })}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Digital tasbih', bn: 'ডিজিটাল তাসবিহ', ar: 'مسبحة رقمية' })}</p>
+          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Dhikr Counter', bn: 'জিকির কাউন্টার', ar: 'عدّاد الأذكار' })}</h1>
         </div>
       </div>
 
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
         {PRESETS.map((x) => (
           <button key={x.id} onClick={() => setPreset(x.id)} className={cn('h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition active:scale-95', x.id === preset.id ? 'border-primary bg-primary text-primary-foreground' : 'bg-card hover:border-primary/40')}>
-            {t({ en: x.en, bn: x.bn })}
+            {t({ en: x.en, bn: x.bn, ar: x.ar })}
           </button>
         ))}
       </div>
@@ -113,10 +113,10 @@ export function DhikrView() {
           {/* meaning */}
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={preset.id + p.step} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="relative text-center">
-              {multi && <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{t({ en: `Step ${p.step + 1} of ${preset.steps.length}`, bn: `ধাপ ${nf(p.step + 1)}/${nf(preset.steps.length)}` })}</p>}
+              {multi && <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{t({ en: `Step ${p.step + 1} of ${preset.steps.length}`, bn: `ধাপ ${nf(p.step + 1)}/${nf(preset.steps.length)}`, ar: `الخطوة ${p.step + 1} من ${preset.steps.length}` })}</p>}
               <p lang="ar" dir="rtl" className="font-arabic text-4xl leading-[1.6] text-gold sm:text-5xl">{step.ar}</p>
               <p className="font-display text-lg italic">{step.tr}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{lang === 'bn' ? step.bn : step.en}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{lang === 'bn' ? step.bn : lang === 'ar' ? step.tr : step.en}</p>
             </motion.div>
           </AnimatePresence>
 
@@ -135,7 +135,6 @@ export function DhikrView() {
               onClick={tap}
               whileTap={{ scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              aria-label={t({ en: 'Count', bn: 'গণনা' })}
               className={cn('absolute inset-[17%] grid select-none place-items-center rounded-full border-2 outline-none transition-shadow focus-visible:ring-4 focus-visible:ring-primary/30',
                 'bg-gradient-to-b from-card to-surface-2 shadow-[0_24px_40px_-18px_var(--glow),inset_0_-6px_14px_rgba(0,0,0,0.06)] active:shadow-[0_8px_16px_-10px_var(--glow)]',
                 done ? 'border-primary' : 'border-gold/40')}
@@ -143,22 +142,23 @@ export function DhikrView() {
             >
               <span key={pulse} className="pulse-ring absolute inset-0 rounded-full" aria-hidden />
               <span className="relative text-center">
+                <span className="sr-only">{t({ en: 'Count', bn: 'গণনা', ar: 'العدد' })}: </span>
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span key={p.count} initial={{ y: 14, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 30 }} className="block font-display text-6xl font-semibold tabular-nums leading-none sm:text-7xl">{nf(p.count)}</motion.span>
                 </AnimatePresence>
-                <span className="mt-2 block text-sm text-muted-foreground">{done ? <span className="font-semibold text-primary">{lastStep ? t({ en: 'Complete — tap to restart', bn: 'সম্পন্ন — আবার শুরু করুন' }) : ''}</span> : target > 0 ? t({ en: `of ${target}`, bn: `/ ${nf(target)}` }) : t({ en: 'unlimited', bn: 'সীমাহীন' })}</span>
+                <span className="mt-2 block text-sm text-muted-foreground">{done ? <span className="font-semibold text-primary">{lastStep ? t({ en: 'Complete — tap to restart', bn: 'সম্পন্ন — আবার শুরু করুন', ar: 'اكتمل — اضغط لإعادة البدء' }) : ''}</span> : target > 0 ? t({ en: `of ${target}`, bn: `/ ${nf(target)}`, ar: `من ${target}` }) : t({ en: 'unlimited', bn: 'সীমাহীন', ar: 'بلا حد' })}</span>
               </span>
             </motion.button>
           </div>
 
           <div className="relative mt-4 flex items-center justify-center gap-3">
-            <button onClick={undo} className="inline-flex h-11 items-center gap-2 rounded-full border bg-card px-5 text-sm font-medium transition hover:border-primary/40 active:scale-95"><Undo2 className="size-4" /> {t({ en: 'Undo', bn: 'ফিরুন' })}</button>
-            <button onClick={reset} className="inline-flex h-11 items-center gap-2 rounded-full border bg-card px-5 text-sm font-medium transition hover:border-primary/40 active:scale-95"><RotateCcw className="size-4" /> {t({ en: 'Reset', bn: 'রিসেট' })}</button>
+            <button onClick={undo} className="inline-flex h-11 items-center gap-2 rounded-full border bg-card px-5 text-sm font-medium transition hover:border-primary/40 active:scale-95"><Undo2 className="size-4" /> {t({ en: 'Undo', bn: 'ফিরুন', ar: 'تراجع' })}</button>
+            <button onClick={reset} className="inline-flex h-11 items-center gap-2 rounded-full border bg-card px-5 text-sm font-medium transition hover:border-primary/40 active:scale-95"><RotateCcw className="size-4" /> {t({ en: 'Reset', bn: 'রিসেট', ar: 'إعادة ضبط' })}</button>
           </div>
 
           {!multi && (
             <div className="relative mt-5 flex items-center justify-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'Target', bn: 'লক্ষ্য' })}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'Target', bn: 'লক্ষ্য', ar: 'الهدف' })}</span>
               {TARGETS.map((n) => (
                 <button key={n} onClick={() => setTarget(preset.id, n)} className={cn('h-9 min-w-11 rounded-full border px-3 text-sm font-semibold transition active:scale-95', target === n ? 'border-gold bg-gold-soft' : 'bg-card hover:border-primary/40')}>{n === 0 ? '∞' : nf(n)}</button>
               ))}
@@ -168,20 +168,20 @@ export function DhikrView() {
 
         <aside className="space-y-4">
           <div className="card-soft p-5">
-            <h2 className="font-display text-lg font-semibold">{t({ en: 'Your dhikr', bn: 'আপনার জিকির' })}</h2>
+            <h2 className="font-display text-lg font-semibold">{t({ en: 'Your dhikr', bn: 'আপনার জিকির', ar: 'أذكارك' })}</h2>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
               {[
-                { k: t({ en: 'Today', bn: 'আজ' }), v: hist.today },
-                { k: t({ en: '7 days', bn: '৭ দিন' }), v: hist.week },
-                { k: t({ en: 'All time', bn: 'মোট' }), v: hist.all },
+                { k: t({ en: 'Today', bn: 'আজ', ar: 'اليوم' }), v: hist.today },
+                { k: t({ en: '7 days', bn: '৭ দিন', ar: '٧ أيام' }), v: hist.week },
+                { k: t({ en: 'All time', bn: 'মোট', ar: 'كل الأوقات' }), v: hist.all },
               ].map((x) => (
                 <div key={x.k} className="rounded-2xl bg-surface-2 py-3">
-                  <p className="font-display text-xl font-semibold tabular-nums">{nf(x.v.toLocaleString())}</p>
+                  <p className="font-display text-xl font-semibold tabular-nums">{nf(x.v.toLocaleString('en-US'))}</p>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{x.k}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex h-28 items-end gap-2" role="img" aria-label="Last 7 days">
+            <div className="mt-5 flex h-28 items-end gap-2" role="img" aria-label={t({ en: 'Last 7 days', bn: 'গত ৭ দিন', ar: 'آخر 7 أيام' })}>
               {hist.days.map((d, i) => (
                 <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
                   <motion.div initial={{ height: 0 }} animate={{ height: `${Math.max(4, (d.total / hist.max) * 80)}px` }} transition={{ type: 'spring', stiffness: 380, damping: 30, delay: i * 0.03 }} className={cn('w-full rounded-t-lg', i === 6 ? 'bg-gradient-to-t from-gold to-primary' : 'bg-gold/40')} title={String(d.total)} />
@@ -192,7 +192,7 @@ export function DhikrView() {
           </div>
           <div className="card-soft p-5 text-sm text-muted-foreground">
             <p className="flex items-start gap-3"><UiIcon name="info" size={26} />
-              <span>{t({ en: 'The Prophet ﷺ taught saying SubhanAllah 33, Alhamdulillah 33 and Allahu Akbar 34 times after every prayer (Sahih Muslim 596).', bn: 'নবী ﷺ প্রতি নামাজের পর ৩৩ বার সুবহানাল্লাহ, ৩৩ বার আলহামদুলিল্লাহ এবং ৩৪ বার আল্লাহু আকবার পড়তে শিখিয়েছেন (সহিহ মুসলিম ৫৯৬)।' })}</span>
+              <span>{t({ en: 'The Prophet ﷺ taught saying SubhanAllah 33, Alhamdulillah 33 and Allahu Akbar 34 times after every prayer (Sahih Muslim 596).', bn: 'নবী ﷺ প্রতি নামাজের পর ৩৩ বার সুবহানাল্লাহ, ৩৩ বার আলহামদুলিল্লাহ এবং ৩৪ বার আল্লাহু আকবার পড়তে শিখিয়েছেন (সহিহ মুসলিম ৫৯৬)।', ar: 'علّم النبي ﷺ قول: سبحان الله ٣٣، والحمد لله ٣٣، والله أكبر ٣٤ مرة دبر كل صلاة (صحيح مسلم ٥٩٦).' })}</span>
             </p>
           </div>
         </aside>

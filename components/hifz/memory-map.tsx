@@ -29,8 +29,8 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
   return (
     <div>
       <div className="mb-3 flex items-end justify-between">
-        <h3 className="font-display text-xl">{t({ en: 'Juz Amma', bn: 'জুয আম্মা' })}</h3>
-        <p className="text-xs text-muted-foreground">{t({ en: 'Surahs 78–114 · tap to start', bn: 'সূরা ৭৮–১১৪ · ট্যাপ করে শুরু করুন' })}</p>
+        <h3 className="font-display text-xl">{t({ en: 'Juz Amma', bn: 'জুয আম্মা', ar: 'جزء عمّ' })}</h3>
+        <p className="text-xs text-muted-foreground">{t({ en: 'Surahs 78–114 · tap to start', bn: 'সূরা ৭৮–১১৪ · ট্যাপ করে শুরু করুন', ar: 'السور ٧٨–١١٤ · اضغط للبدء' })}</p>
       </div>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
         {juzAmma.map((c, i) => {
@@ -47,7 +47,7 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => onPick(c.id)}
-              className={cn('relative overflow-hidden rounded-2xl border bg-card p-3 text-left', selected === c.id ? 'border-primary ring-1 ring-primary' : 'border-border')}
+              className={cn('relative overflow-hidden rounded-2xl border bg-card p-3 text-start', selected === c.id ? 'border-primary ring-1 ring-primary' : 'border-border')}
             >
               <div className="absolute inset-x-0 bottom-0 bg-primary/15" style={{ height: `${pct}%` }} />
               <div className="relative flex items-baseline justify-between">
@@ -55,14 +55,14 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
                 {full && <span className="text-xs text-gold">✦</span>}
               </div>
               <p className="relative mb-1 mt-1 font-arabic text-xl leading-[1.9]" dir="rtl">{c.nameArabic}</p>
-              <p className="relative truncate text-xs font-medium">{lang === 'bn' ? surahNamesBn[c.id - 1] : c.nameSimple}</p>
+              <p className="relative truncate text-xs font-medium">{lang === 'bn' ? surahNamesBn[c.id - 1] : lang === 'ar' ? c.nameArabic : c.nameSimple}</p>
               <p className="relative text-[11px] tabular-nums text-muted-foreground">{m.known}/{m.total}</p>
             </motion.button>
           )
         })}
       </div>
 
-      <h3 className="mb-3 mt-8 font-display text-xl">{t({ en: 'All 114 surahs', bn: 'সকল ১১৪ সূরা' })}</h3>
+      <h3 className="mb-3 mt-8 font-display text-xl">{t({ en: 'All 114 surahs', bn: 'সকল ১১৪ সূরা', ar: 'جميع السور الـ١١٤' })}</h3>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(2.1rem,1fr))] gap-1.5">
         {[...rest, ...juzAmma].map((c) => {
           const m = memory[c.id - 1]
@@ -70,7 +70,7 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
             <button
               key={c.id}
               onClick={() => onPick(c.id)}
-              title={`${c.id}. ${c.nameSimple} — ${m.known}/${m.total}`}
+              title={`${c.id}. ${lang === 'bn' ? surahNamesBn[c.id - 1] : lang === 'ar' ? c.nameArabic : c.nameSimple} — ${m.known}/${m.total}`}
               className={cn('grid aspect-square place-items-center rounded-lg text-[11px] font-medium tabular-nums transition hover:scale-110', m.known === 0 ? 'text-muted-foreground' : 'text-primary-foreground', selected === c.id && 'ring-2 ring-ring ring-offset-1 ring-offset-background')}
               style={{ background: fill(m) }}
             >
@@ -80,11 +80,11 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
         })}
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
-        <span>{t({ en: 'Less', bn: 'কম' })}</span>
+        <span>{t({ en: 'Less', bn: 'কম', ar: 'أقل' })}</span>
         {[0, 0.3, 0.6, 1].map((f) => (
           <span key={f} className="h-3 w-5 rounded" style={{ background: fill({ total: 10, known: Math.round(f * 10), strong: 0 }) }} />
         ))}
-        <span>{t({ en: 'More memorised', bn: 'বেশি মুখস্থ' })}</span>
+        <span>{t({ en: 'More memorised', bn: 'বেশি মুখস্থ', ar: 'محفوظ أكثر' })}</span>
       </div>
     </div>
   )

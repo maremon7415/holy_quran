@@ -13,6 +13,10 @@ A fast, beautiful, SEO-first Quran web app: read, listen, understand and memoris
 - **Search** – ⌘K command palette: surah names (EN/BN/AR), `2:255` references and full-text search across Arabic, English and Bangla.
 - **Share as image** – beautiful 1080×1350 ayah cards.
 - **SEO / AI visibility** – every surah, juz, topic, dua and name is pre-rendered; 6,236 single-ayah landing pages; JSON-LD (Book/Chapter, Quotation, FAQPage, BreadcrumbList, Article); sitemaps; `robots.txt` welcoming AI crawlers; `/llms.txt` and `/llms-full.txt`; dynamic OG images.
+- **Languages** – full UI in English, **Bangla** (`/bn/…` server-rendered twins of every content page, hreflang, Bangla uccharon = Arabic pronunciation in Bangla script shown by default, Bangla OG images where the glyphs shape correctly) and **Arabic** (RTL, mirrored layout, Arabic names for topics, duas, the 99 Names, reciters and famous ayahs).
+- **Prayer reminders** – per-prayer (incl. Jumu'ah / Tahajjud) notifications with lead time, plus a 30-day `.ics` calendar export with alarms (en / bn / ar).
+- **Offline** – `/downloads`: save all surah pages and recitations for offline use; offline pill; pre-rendered `/offline` fallback.
+- **Translations** – add any Quran.com translation edition as an extra block under every ayah.
 - **PWA** – installable, offline reading via service worker, custom illustrated PNG icon set.
 
 ## Develop
@@ -30,3 +34,70 @@ Set `NEXT_PUBLIC_SITE_URL` to your production URL (used for canonical URLs, site
 - Icons: `node scripts/icons/render.mjs` re-renders the PNG icon set from SVG sources.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for conventions.
+
+## Accounts & sync (optional)
+
+Noor Quran works fully without an account: bookmarks, notes, progress, hifz and preferences live in the browser. If you deploy with a MongoDB database, visitors can create an account and sync that data across devices (`/account`, Settings → Account & sync).
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `MONGODB_URI` | for accounts | MongoDB connection string |
+| `AUTH_SECRET` (or legacy `NEXTAUTH_SECRET`) | for accounts | Signs session JWTs — `npx auth secret` |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | optional | Enables Google sign-in (callback `/api/auth/callback/google`) |
+
+Accounts are enabled only when both `MONGODB_URI` and a secret are present (`GET /api/auth/status` reports it); otherwise the sign-in UI is hidden and nothing errors. See `.env.example`.
+
+How sync works: on sign-in the device pulls the cloud copy, merges it with local data (bookmarks/favourites/duas unioned, reading history per day max, progress furthest, hifz cards latest review, khatam plans by id, preferences last-write-wins), then pushes. After that changes are pushed after a short debounce and on focus/online. `GET/PUT/DELETE /api/sync` (≤ 2 MB — chunked bodies are read with a byte cap — optimistic `version`, 409 on conflict). Tests: `npx vitest run tests/unit/sync-*.test.ts` (the integration test uses `mongodb-memory-server`, and skips itself if no mongod binary can be downloaded).
+
+- **Deletions (tombstones).** When only one device changed a store since the last sync, its copy is taken as is. When both changed, the copies are unioned — so deletions of bookmarks, favourite surahs, bookmarked duas, hifz cards and khatam plans are recorded as per-item tombstones (`_clock` inside the synced payload, `lib/sync/tombstones.ts`). The engine creates them by diffing the item ids it saw last time, so every way of removing an item counts. A deleted item stays deleted unless it is re-added (or, for a hifz card, reviewed) after the delete. Tombstones survive sign-out → sign-in of the same account and are pruned after 90 days. Restoring a backup is treated as an edit, not as deletions.
+- **Delete my cloud data** clears the stored copy but keeps a reset marker (`epoch`, `resetAt`) instead of removing the document. Other devices that last synced before the reset don't upload their data again. They pause and say "Your cloud data was deleted on another device — turn sync back on to upload this device's data". A PUT with an old epoch gets 409 `epoch_mismatch`.
+- **Device-specific fields** are never synced: the location (`quran-store.location`) and the prayer timezone derived from it (`noor-prayer-prefs.tz`). Syncing the timezone without the coordinates would show wrong prayer times.
+- **Google sign-in and existing accounts.** Password registrations don't verify the email (`User.emailVerified = false`; Google-created users are `true`). A Google login is attached to an existing account with the same email only if Google reports the email as verified **and** that account has no password or a verified email. Otherwise it is refused with "An account with this email already exists — sign in with your password, then link Google in Account settings". That stops someone from pre-registering your address with a password and later sharing your account. Signed-in users can link Google from `/account` (a short-lived signed cookie plus the current session must agree; the Google id is stored as `User.googleId`). Logic: `lib/auth-google.ts`.
+- **Throttling** (`lib/auth-ratelimit.ts`): sign-in is limited to 20 attempts per IP per 10 minutes (first `x-forwarded-for` hop, else `x-real-ip`). Wrong passwords for an email add a delay before the next check (1 s, 2 s, 4 s … capped at 30 s) and never lock the account, so the owner can always sign in with the right password. Registration is limited to 5 per IP per hour. Registering an email that already exists gets the same response as a new registration, and nothing is changed. The form then tries to sign in and, if that fails, says "Could not create the account — if you already have one, sign in instead". The limiter keeps its counters in memory on each instance. That is fine for a single-region deployment (Vercel's default); with more instances, back it with a shared store such as Upstash Redis (`@upstash/ratelimit`).
+
+## Testing
+
+```bash
+pnpm check              # typecheck + unit tests + content validation (run before every PR; ~10 s)
+pnpm test               # vitest unit + API-route tests (tests/unit/**), ~3 s
+pnpm test:e2e           # Playwright, chromium (tests/e2e/**)
+pnpm validate:content   # every Quran ref in topics / duas / names resolves against data/quran
+pnpm verify:hadith      # checks hadith duas against the open hadith corpus (needs internet; weekly in CI)
+```
+
+**Unit tests** (`tests/unit`, vitest, node env) cover the pure logic: chapter/slug resolution, ref parsing, search ranking,
+SM-2 review math, khatam/page math, hifz streaks across DST (`TZ=America/New_York`), the HTML sanitizer against XSS
+payloads, reciter catalogue, SEO/JSON-LD builders, sync merge, **data integrity** (114 chapters, 6,236 verses, juz map covers
+each verse exactly once, all content refs and slugs valid), **i18n** (`/bn` route helpers and hreflang, Arabic names for all
+content, Bangla uccharon integrity — 6,236 Bangla-script strings, fixture similarity ≥ 0.95), **prayer times / reminders / .ics**
+(Dhaka golden values, Jumu'ah/Tahajjud, DST, RFC 5545 folding + CRLF), offline helpers and the API route handlers called directly with a `Request`.
+`server-only` is stubbed in `vitest.config.ts` so server modules can be imported.
+
+**E2E tests** (`tests/e2e`, Playwright) drive a real browser: home, command palette, reader (settings, themes, deep links,
+keyboard), single-ayah SEO (JSON-LD, canonical, real 404s), topics/duas/names (+ quiz), search, `/saved`, hifz session,
+khatam planner, prayer times with geolocation (Dhaka) and the reminders / `.ics` export, `/bn` pages, language toggle and Arabic RTL (no overflow at 390 px), translation picker, uccharon toggle, offline pill and `/downloads`, accounts-disabled pages, mobile tab bar, sitemap index + `/bn` sitemaps with hreflang / robots / llms.txt, a console-error sweep over the
+main routes, axe accessibility audits and loose performance budgets. Requests to third-party hosts (quran.com API, audio
+CDNs) are stubbed by `tests/e2e/fixtures.ts`, so the suite is hermetic.
+
+```bash
+# against a running server (default http://localhost:3100; override with E2E_BASE_URL)
+E2E_BASE_URL=http://localhost:3000 pnpm test:e2e
+pnpm test:e2e tests/e2e/quran-reader.spec.ts       # one file
+pnpm test:e2e -g "command palette"                  # by title
+PW_CHROMIUM_PATH=/path/to/chrome pnpm test:e2e      # use a preinstalled chromium
+npx playwright install chromium                     # first run on a fresh machine
+```
+
+Prefer a **production build** for e2e (`pnpm build && pnpm start -p 3000`, then `E2E_BASE_URL=http://localhost:3000`):
+the dev server compiles routes lazily, which is slow and can flake under parallel workers (use `PW_WORKERS=2`).
+
+**Accessibility allow-list.** `tests/e2e/a11y.spec.ts` fails on any *serious/critical* axe violation that is not listed in
+`tests/e2e/a11y-known-issues.json` (route → rule id). The list is a tracked backlog, not a place to hide things: fix the
+app, then delete the entry. To regenerate after a large change: `A11Y_COLLECT=/tmp/a11y.ndjson pnpm test:e2e a11y`.
+
+**Known bugs** found by the tests are kept as `test.skip` / `test.fixme` with a `// BUG:` comment — grep for `BUG:`.
+
+**CI** (`.github/workflows/ci.yml`) runs on every PR and push to `master`: typecheck → unit tests → content validation
+(job `verify`), and `pnpm build` → Playwright e2e against `pnpm start` (job `e2e`; Playwright's `webServer` starts the app on
+port 3000). The HTML report and traces are uploaded as an artifact when e2e fails. `next build` needs no secrets;
+`NEXT_PUBLIC_SITE_URL` is a placeholder. `.github/workflows/content.yml` runs `verify:hadith` weekly.

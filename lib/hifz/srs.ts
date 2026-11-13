@@ -4,10 +4,10 @@
  */
 export type Grade = 0 | 1 | 2 | 3 // Again · Hard · Good · Easy
 export const GRADES = [
-  { g: 0 as Grade, en: 'Again', bn: 'আবার' },
-  { g: 1 as Grade, en: 'Hard', bn: 'কঠিন' },
-  { g: 2 as Grade, en: 'Good', bn: 'ভালো' },
-  { g: 3 as Grade, en: 'Easy', bn: 'সহজ' },
+  { g: 0 as Grade, en: 'Again', bn: 'আবার', ar: 'مرة أخرى' },
+  { g: 1 as Grade, en: 'Hard', bn: 'কঠিন', ar: 'صعب' },
+  { g: 2 as Grade, en: 'Good', bn: 'ভালো', ar: 'جيد' },
+  { g: 3 as Grade, en: 'Easy', bn: 'সহজ', ar: 'سهل' },
 ]
 
 export interface Card {
@@ -73,9 +73,16 @@ export function previewInterval(card: Card | undefined, grade: Grade): number {
   return grade === 0 ? LEARN_STEP / DAY : c.interval
 }
 
-export function formatInterval(days: number, lang: 'en' | 'bn' = 'en'): string {
+export function formatInterval(days: number, lang: 'en' | 'bn' | 'ar' = 'en'): string {
   const mins = Math.round(days * 24 * 60)
   const bn = lang === 'bn'
+  if (lang === 'ar') {
+    if (mins < 60) return `${mins} د`
+    if (days < 1) return `${Math.round(mins / 60)} س`
+    if (days < 30) return `${Math.round(days)} يوم`
+    if (days < 365) return `${round1(days / 30)} شهر`
+    return `${round1(days / 365)} سنة`
+  }
   if (mins < 60) return bn ? `${mins} মি.` : `${mins}m`
   if (days < 1) return bn ? `${Math.round(mins / 60)} ঘ.` : `${Math.round(mins / 60)}h`
   if (days < 30) return bn ? `${Math.round(days)} দিন` : `${Math.round(days)}d`

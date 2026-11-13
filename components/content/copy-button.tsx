@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 const btn = 'inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground/80 transition hover:border-primary/40 hover:bg-accent hover:text-foreground active:scale-95'
 
-export function CopyButton({ text, label, className }: { text: string; label?: { en: string; bn: string }; className?: string }) {
+export function CopyButton({ text, label, className }: { text: string; label?: { en: string; bn: string; ar?: string }; className?: string }) {
   const t = useTx()
   const [done, setDone] = useState(false)
   return (
@@ -18,7 +18,7 @@ export function CopyButton({ text, label, className }: { text: string; label?: {
       }}
     >
       {done ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}
-      {done ? t({ en: 'Copied', bn: 'কপি হয়েছে' }) : t(label ?? { en: 'Copy', bn: 'কপি' })}
+      {done ? t({ en: 'Copied', bn: 'কপি হয়েছে', ar: 'تم النسخ' }) : t(label ?? { en: 'Copy', bn: 'কপি', ar: 'نسخ' })}
     </button>
   )
 }
@@ -39,7 +39,7 @@ export function ShareButton({ title, text, path, className }: { title: string; t
       }}
     >
       {done ? <Check className="size-3.5 text-primary" /> : <Share2 className="size-3.5" />}
-      {done ? t({ en: 'Link copied', bn: 'লিংক কপি হয়েছে' }) : t({ en: 'Share', bn: 'শেয়ার' })}
+      {done ? t({ en: 'Link copied', bn: 'লিংক কপি হয়েছে', ar: 'تم نسخ الرابط' }) : t({ en: 'Share', bn: 'শেয়ার', ar: 'مشاركة' })}
     </button>
   )
 }

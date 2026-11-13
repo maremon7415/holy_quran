@@ -17,10 +17,10 @@ export function toggleBookmark(key: string) {
   const st = useAppStore.getState()
   if (isBookmarked(key)) {
     st.removeImportantAyah(s, a)
-    toast(tx(lang(), { en: `Removed bookmark ${key}`, bn: `বুকমার্ক সরানো হয়েছে ${key}` }))
+    toast(tx(lang(), { en: `Removed bookmark ${key}`, bn: `বুকমার্ক সরানো হয়েছে ${key}`, ar: `أُزيلت علامة ${key}` }))
   } else {
     st.addImportantAyah({ surahNumber: s, ayahNumber: a, tags: [] })
-    toast.success(tx(lang(), { en: `Bookmarked ${key}`, bn: `বুকমার্ক করা হয়েছে ${key}` }))
+    toast.success(tx(lang(), { en: `Bookmarked ${key}`, bn: `বুকমার্ক করা হয়েছে ${key}`, ar: `حُفظت الآية ${key}` }))
   }
 }
 
@@ -47,6 +47,8 @@ export function composeAyahText(key: string) {
   const x = readAyahText(key)
   const r = ayahRef(key)
   const parts = [x.ar]
+  const btEl = document.querySelector<HTMLElement>(`[data-ayah="${key}"] [data-tr="bt"]`)
+  if (x.bt && btEl && getComputedStyle(btEl).display !== 'none') parts.push(x.bt)
   if (p.showTl && x.tl) parts.push(x.tl)
   if (p.showEn) parts.push(p.enEdition === 'haleem' && x.enH ? x.enH : x.en)
   if (p.showBn && x.bn) parts.push(x.bn)
@@ -56,13 +58,13 @@ export function composeAyahText(key: string) {
 
 export async function copyAyah(key: string) {
   const ok = await writeClipboard(composeAyahText(key))
-  if (ok) toast.success(tx(lang(), { en: `Copied ${key}`, bn: `কপি হয়েছে ${key}` }))
-  else toast.error('Copy failed')
+  if (ok) toast.success(tx(lang(), { en: `Copied ${key}`, bn: `কপি হয়েছে ${key}`, ar: `نُسخت الآية ${key}` }))
+  else toast.error(tx(lang(), { en: 'Copy failed', bn: 'কপি করা যায়নি', ar: 'تعذّر النسخ' }))
 }
 
 export async function copyText(text: string, label?: string) {
   const ok = await writeClipboard(text)
-  if (ok) toast.success(label ?? tx(lang(), { en: 'Copied', bn: 'কপি হয়েছে' }))
+  if (ok) toast.success(label ?? tx(lang(), { en: 'Copied', bn: 'কপি হয়েছে', ar: 'تم النسخ' }))
 }
 
 export async function shareAyahLink(key: string) {
@@ -77,5 +79,5 @@ export async function shareAyahLink(key: string) {
     }
   }
   const ok = await writeClipboard(r.url)
-  if (ok) toast.success(tx(lang(), { en: 'Link copied', bn: 'লিংক কপি হয়েছে' }), { description: r.url })
+  if (ok) toast.success(tx(lang(), { en: 'Link copied', bn: 'লিংক কপি হয়েছে', ar: 'تم نسخ الرابط' }), { description: r.url })
 }

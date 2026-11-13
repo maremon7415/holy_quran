@@ -65,7 +65,7 @@ export function ShareImagePanel() {
       try { await navigator.share({ files: [file], title: `Quran ${key}` }) } catch {}
     } else {
       await download()
-      toast(t({ en: 'Image downloaded — sharing files is not supported on this browser', bn: 'ছবি ডাউনলোড হয়েছে' }))
+      toast(t({ en: 'Image downloaded — sharing files is not supported on this browser', bn: 'ছবি ডাউনলোড হয়েছে', ar: 'تم تنزيل الصورة — مشاركة الملفات غير مدعومة في هذا المتصفح' }))
     }
   }
 
@@ -73,15 +73,15 @@ export function ShareImagePanel() {
     <Panel
       open={!!key}
       onOpenChange={(o) => !o && close()}
-      title={t({ en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার' })}
+      title={t({ en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার', ar: 'مشاركة كصورة' })}
       description={key ? `${chapters[+key.split(':')[0] - 1].nameSimple} ${key}` : undefined}
       footer={
         <div className="flex gap-2">
           <button type="button" onClick={download} disabled={busy} className="flex flex-1 items-center justify-center gap-2 rounded-full border bg-card px-4 py-3 text-sm font-semibold transition active:scale-95 disabled:opacity-50">
-            <Download className="size-4" /> {t({ en: 'Download PNG', bn: 'ডাউনলোড' })}
+            <Download className="size-4" /> {t({ en: 'Download PNG', bn: 'ডাউনলোড', ar: 'تنزيل PNG' })}
           </button>
           <button type="button" onClick={share} disabled={busy} className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition active:scale-95 disabled:opacity-50">
-            <Share2 className="size-4" /> {t({ en: 'Share', bn: 'শেয়ার' })}
+            <Share2 className="size-4" /> {t({ en: 'Share', bn: 'শেয়ার', ar: 'مشاركة' })}
           </button>
         </div>
       }
@@ -90,7 +90,7 @@ export function ShareImagePanel() {
         <canvas ref={canvasRef} width={1080} height={1350} className={cn('size-full transition-opacity duration-500', busy ? 'opacity-40' : 'opacity-100')} />
         {busy && <Loader2 className="absolute left-1/2 top-1/2 size-7 -translate-x-1/2 -translate-y-1/2 animate-spin text-muted-foreground" />}
       </div>
-      <p className="mb-2 mt-5 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Card style', bn: 'কার্ডের ধরন' })}</p>
+      <p className="mb-2 mt-5 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Card style', bn: 'কার্ডের ধরন', ar: 'نمط البطاقة' })}</p>
       <div className="grid grid-cols-3 gap-2">
         {(Object.keys(CARD_THEMES) as CardTheme[]).map((id) => {
           const th = CARD_THEMES[id]
@@ -107,8 +107,8 @@ export function ShareImagePanel() {
           )
         })}
       </div>
-      <p className="mb-2 mt-5 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Translation', bn: 'অনুবাদ' })}</p>
-      <Segmented value={lang} onChange={setLang} options={[{ value: 'en', label: 'English' }, { value: 'bn', label: 'বাংলা' }, { value: 'ar', label: t({ en: 'Arabic only', bn: 'শুধু আরবি' }) }]} />
+      <p className="mb-2 mt-5 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Translation', bn: 'অনুবাদ', ar: 'الترجمة' })}</p>
+      <Segmented value={lang} onChange={setLang} options={[{ value: 'en', label: 'English' }, { value: 'bn', label: 'বাংলা' }, { value: 'ar', label: t({ en: 'Arabic only', bn: 'শুধু আরবি', ar: 'العربية فقط' }) }]} />
     </Panel>
   )
 }

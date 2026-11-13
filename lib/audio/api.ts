@@ -21,9 +21,18 @@ export function fetchChapterAudio(reciterId: number, surah: number): Promise<Cha
   const hit = chapterCache.get(ck)
   if (hit) return hit
   const p = (async () => {
-    const res = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/${reciterId}/audio_files?chapter=${surah}&segments=true`)
-    if (!res.ok) throw new Error(`audio ${res.status}`)
-    const json = await res.json()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let json: { audio_files?: { audio_url?: string; verse_timings?: any[]; duration?: number }[] } | null = null
+    try {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) throw new Error('offline')
+      const res = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/${reciterId}/audio_files?chapter=${surah}&segments=true`)
+      if (!res.ok) throw new Error(`audio ${res.status}`)
+      json = await res.json()
+    } catch (err) {
+      // network unavailable: use the timings saved with the offline download
+      json = (await (await import('@/lib/offline/audio-cache')).getOfflineChapterJson(reciterId, surah)) as typeof json
+      if (!json) throw err
+    }
     const f = json?.audio_files?.[0]
     if (!f?.audio_url || !Array.isArray(f.verse_timings) || !f.verse_timings.length) throw new Error('no audio')
     const timings: AyahTiming[] = f.verse_timings.map((v: { verse_key: string; timestamp_from: number; timestamp_to: number; segments?: unknown[] }) => {

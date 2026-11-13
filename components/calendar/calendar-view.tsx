@@ -6,7 +6,7 @@ import { useLang, useMounted, useTx } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
 
-export interface IslamicEvent { id: string; name: string; nameBn: string; hijriMonth: number; hijriDay: number; description: { en: string; bn: string } }
+export interface IslamicEvent { id: string; name: string; nameBn: string; nameAr?: string; hijriMonth: number; hijriDay: number; description: { en: string; bn: string; ar?: string } }
 
 const DAY_MS = 86_400_000
 const hijriFmt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'numeric', year: 'numeric' })
@@ -35,6 +35,7 @@ function monthDays(first: Date) {
 
 const WEEK = {
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  ar: ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'],
   bn: ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্র', 'শনি'],
 }
 
@@ -51,13 +52,13 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
   const days = useMemo(() => monthDays(start), [start])
   const h0 = hijri(start)
 
-  const loc = lang === 'bn' ? 'bn' : 'en'
+  const loc = lang === 'bn' ? 'bn' : lang === 'ar' ? 'ar' : 'en'
   const nf = lang === 'bn' ? (n: number | string) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[+d]) : (n: number | string) => String(n)
   const monthName = new Intl.DateTimeFormat(`${loc}-u-ca-islamic-umalqura`, { month: 'long' }).format(start)
   const monthNameAr = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { month: 'long' }).format(start)
   const gregRange = (() => {
     const a = days[0], b = days[days.length - 1]
-    const f = new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : 'en-US', { month: 'short', year: 'numeric' })
+    const f = new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { month: 'short', year: 'numeric' })
     return a.getMonth() === b.getMonth() ? f.format(a) : `${f.format(a)} – ${f.format(b)}`
   })()
 
@@ -93,8 +94,8 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
       <div className="mb-5 flex items-center gap-4">
         <UiIcon name="calendar" size={56} />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Hijri calendar', bn: 'হিজরি ক্যালেন্ডার' })}</p>
-          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Islamic Calendar', bn: 'ইসলামি ক্যালেন্ডার' })}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Hijri calendar', bn: 'হিজরি ক্যালেন্ডার', ar: 'التقويم الهجري' })}</p>
+          <h1 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Islamic Calendar', bn: 'ইসলামি ক্যালেন্ডার', ar: 'التقويم الإسلامي' })}</h1>
         </div>
       </div>
 
@@ -102,16 +103,16 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
         <section className="card-soft relative overflow-hidden rounded-[2rem] p-4 sm:p-6">
           <div aria-hidden className="bg-pattern pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_bottom,black,transparent_35%)]" />
           <div className="relative flex items-center justify-between gap-2">
-            <button onClick={() => go(-1)} aria-label={t({ en: 'Previous month', bn: 'আগের মাস' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronLeft className="size-5" /></button>
+            <button onClick={() => go(-1)} aria-label={t({ en: 'Previous month', bn: 'আগের মাস', ar: 'الشهر السابق' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronLeft className="size-5 rtl:rotate-180" /></button>
             <div className="text-center">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={`${h0.y}-${h0.m}`} initial={{ opacity: 0, x: dir * 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -dir * 24 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
-                  <h2 className="font-display text-2xl font-semibold sm:text-3xl">{monthName} {nf(h0.y)} <span className="text-base font-normal text-muted-foreground">{t({ en: 'AH', bn: 'হি.' })}</span></h2>
+                  <h2 className="font-display text-2xl font-semibold sm:text-3xl">{monthName} {nf(h0.y)} <span className="text-base font-normal text-muted-foreground">{t({ en: 'AH', bn: 'হি.', ar: 'هـ' })}</span></h2>
                   <p className="text-sm text-muted-foreground"><span lang="ar" className="font-arabic text-gold">{monthNameAr}</span> · {gregRange}</p>
                 </motion.div>
               </AnimatePresence>
             </div>
-            <button onClick={() => go(1)} aria-label={t({ en: 'Next month', bn: 'পরের মাস' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronRight className="size-5" /></button>
+            <button onClick={() => go(1)} aria-label={t({ en: 'Next month', bn: 'পরের মাস', ar: 'الشهر التالي' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronRight className="size-5 rtl:rotate-180" /></button>
           </div>
 
           <div className="relative mt-5 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2">
@@ -128,57 +129,57 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
                   <button
                     key={d.getTime()}
                     onClick={() => setPicked(d)}
-                    aria-label={`${d.toDateString()}`}
                     aria-pressed={s}
                     className={cn('lift relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-center transition sm:rounded-3xl',
                       t0 ? 'border-primary bg-primary text-primary-foreground shadow-[0_10px_24px_-12px_var(--glow)]' : s ? 'border-primary/60 bg-accent' : 'border-transparent bg-surface-2/60 hover:border-primary/30',
                       !t0 && d.getDay() === 5 && 'text-primary')}
                   >
+                    <span className="sr-only">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { dateStyle: 'full' }).format(d)}, </span>
                     <span className="font-display text-lg font-semibold leading-none sm:text-2xl">{nf(h.d)}</span>
                     <span className={cn('mt-1 text-[10px] leading-none sm:text-xs', t0 ? 'text-primary-foreground/80' : 'text-muted-foreground')}>{nf(d.getDate())}</span>
                     {ev && <span className={cn('absolute bottom-1.5 size-1.5 rounded-full', t0 ? 'bg-primary-foreground' : 'bg-gold')} />}
-                    {[13, 14, 15].includes(h.d) && !t0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-1 rounded-full bg-primary/50" />}
+                    {[13, 14, 15].includes(h.d) && !t0 && <span aria-hidden className="absolute end-1.5 top-1.5 size-1 rounded-full bg-primary/50" />}
                   </button>
                 )
               })}
             </motion.div>
           </AnimatePresence>
           <div className="relative mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-gold" /> {t({ en: 'Islamic event', bn: 'ইসলামি দিবস' })}</span>
-            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-primary/50" /> {t({ en: 'White days (13–15)', bn: 'আইয়্যামে বীজ (১৩–১৫)' })}</span>
-            <span>{t({ en: 'Large: Hijri · small: Gregorian', bn: 'বড়: হিজরি · ছোট: ইংরেজি' })}</span>
+            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-gold" /> {t({ en: 'Islamic event', bn: 'ইসলামি দিবস', ar: 'مناسبة إسلامية' })}</span>
+            <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-primary/50" /> {t({ en: 'White days (13–15)', bn: 'আইয়্যামে বীজ (১৩–১৫)', ar: 'الأيام البيض (١٣–١٥)' })}</span>
+            <span>{t({ en: 'Large: Hijri · small: Gregorian', bn: 'বড়: হিজরি · ছোট: ইংরেজি', ar: 'الكبير: هجري · الصغير: ميلادي' })}</span>
           </div>
           {(first && monthStart(today).getTime() !== first.getTime()) && (
             <div className="relative mt-4 text-center">
-              <button onClick={() => { setFirst(null); setPicked(null); setDir(0) }} className="rounded-full border bg-card px-4 py-2 text-sm font-medium transition hover:border-primary/40">{t({ en: 'Back to today', bn: 'আজকে ফিরুন' })}</button>
+              <button onClick={() => { setFirst(null); setPicked(null); setDir(0) }} className="rounded-full border bg-card px-4 py-2 text-sm font-medium transition hover:border-primary/40">{t({ en: 'Back to today', bn: 'আজকে ফিরুন', ar: 'العودة إلى اليوم' })}</button>
             </div>
           )}
         </section>
 
         <aside className="space-y-4">
           <div className="card-soft p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{isToday(sel) ? t({ en: 'Today', bn: 'আজ' }) : t({ en: 'Selected', bn: 'নির্বাচিত' })}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{isToday(sel) ? t({ en: 'Today', bn: 'আজ', ar: 'اليوم' }) : t({ en: 'Selected', bn: 'নির্বাচিত', ar: 'المحدد' })}</p>
             <p className="mt-1 font-display text-2xl font-semibold">{nf(selH.d)} {new Intl.DateTimeFormat(`${loc}-u-ca-islamic-umalqura`, { month: 'long' }).format(sel)} {nf(selH.y)}</p>
-            <p className="text-sm text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(sel)}</p>
+            <p className="text-sm text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(sel)}</p>
             {selEvents.length > 0 ? selEvents.map((e) => (
               <div key={e.id} className="mt-4 rounded-2xl bg-gold-soft p-4">
-                <p className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="crescent" size={24} /> {t({ en: e.name, bn: e.nameBn })}</p>
-                <p className="mt-1 text-sm text-foreground/80">{t({ en: e.description.en, bn: e.description.bn })}</p>
+                <p className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="crescent" size={24} /> {t({ en: e.name, bn: e.nameBn, ar: e.nameAr })}</p>
+                <p className="mt-1 text-sm text-foreground/80">{t({ en: e.description.en, bn: e.description.bn, ar: e.description.ar })}</p>
               </div>
-            )) : <p className="mt-3 text-sm text-muted-foreground">{t({ en: 'No special occasion on this day.', bn: 'এই দিনে বিশেষ কোনো দিবস নেই।' })}</p>}
+            )) : <p className="mt-3 text-sm text-muted-foreground">{t({ en: 'No special occasion on this day.', bn: 'এই দিনে বিশেষ কোনো দিবস নেই।', ar: 'لا مناسبة خاصة في هذا اليوم.' })}</p>}
           </div>
           <div className="card-soft p-5">
-            <h3 className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="lantern" size={26} /> {t({ en: 'Coming up', bn: 'আসছে' })}</h3>
+            <h3 className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="lantern" size={26} /> {t({ en: 'Coming up', bn: 'আসছে', ar: 'قريبًا' })}</h3>
             <ul className="mt-3 space-y-3">
               {upcoming.map(({ e, date }) => {
                 const n = Math.round((date.getTime() - today.getTime()) / DAY_MS)
                 return (
                   <li key={e.id} className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{t({ en: e.name, bn: e.nameBn })}</p>
-                      <p className="text-xs text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)}</p>
+                      <p className="truncate text-sm font-semibold">{t({ en: e.name, bn: e.nameBn, ar: e.nameAr })}</p>
+                      <p className="text-xs text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)}</p>
                     </div>
-                    <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold">{n === 0 ? t({ en: 'Today', bn: 'আজ' }) : t({ en: `in ${n} d`, bn: `${nf(n)} দিন পর` })}</span>
+                    <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold">{n === 0 ? t({ en: 'Today', bn: 'আজ', ar: 'اليوم' }) : t({ en: `in ${n} d`, bn: `${nf(n)} দিন পর`, ar: `بعد ${n} يوم` })}</span>
                   </li>
                 )
               })}
@@ -186,7 +187,7 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
           </div>
         </aside>
       </div>
-      <p className="mt-5 text-center text-xs text-muted-foreground">{t({ en: 'Dates follow the Umm al-Qura calendar and may differ by a day from local moon sighting.', bn: 'তারিখ উম্মুল কুরা ক্যালেন্ডার অনুযায়ী; স্থানীয় চাঁদ দেখার সাথে একদিনের পার্থক্য হতে পারে।' })}</p>
+      <p className="mt-5 text-center text-xs text-muted-foreground">{t({ en: 'Dates follow the Umm al-Qura calendar and may differ by a day from local moon sighting.', bn: 'তারিখ উম্মুল কুরা ক্যালেন্ডার অনুযায়ী; স্থানীয় চাঁদ দেখার সাথে একদিনের পার্থক্য হতে পারে।', ar: 'التواريخ وفق تقويم أم القرى وقد تختلف بيوم عن رؤية الهلال المحلية.' })}</p>
     </div>
   )
 }

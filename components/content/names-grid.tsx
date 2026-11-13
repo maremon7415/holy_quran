@@ -1,17 +1,18 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, Check, RotateCcw, Search, Shuffle, X } from 'lucide-react'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 import { toBanglaDigits } from '@/lib/quran/chapters'
 import { cn } from '@/lib/utils'
 
-export interface NameItem { n: number; slug: string; ar: string; tl: string; tlBn: string; en: string; bn: string; expEn: string; expBn: string }
+export interface NameItem { n: number; slug: string; ar: string; tl: string; tlBn: string; en: string; bn: string; meaningAr?: string; expEn: string; expBn: string }
 const spring = { type: 'spring', stiffness: 380, damping: 30 } as const
 
 function FlipCard({ item, index }: { item: NameItem; index: number }) {
   const t = useTx()
+  const lang = useLang()
   const [flipped, setFlipped] = useState(false)
   const canHover = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
   return (
@@ -27,22 +28,22 @@ function FlipCard({ item, index }: { item: NameItem; index: number }) {
       <motion.div className="relative h-[13.5rem] [transform-style:preserve-3d]" animate={{ rotateY: flipped ? 180 : 0 }} transition={{ type: 'spring', stiffness: 220, damping: 26 }}>
         <button
           type="button"
-          aria-label={`${item.tl}: ${item.en}. Flip card`}
           aria-pressed={flipped}
           onClick={(e) => { if (!canHover() || e.detail === 0) setFlipped((f) => !f) }}
           className="card-soft absolute inset-0 flex flex-col items-center justify-center rounded-3xl p-4 text-center [backface-visibility:hidden]"
         >
-          <span className="absolute left-3.5 top-3 grid size-7 place-items-center rounded-full bg-accent text-[11px] font-bold text-accent-foreground">{item.n}</span>
+          <span className="absolute start-3.5 top-3 grid size-7 place-items-center rounded-full bg-accent text-[11px] font-bold text-accent-foreground">{item.n}</span>
           <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 rounded-3xl [mask-image:radial-gradient(circle_at_50%_40%,#000,transparent_70%)]" />
           <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative py-2 text-[2.6rem] leading-[1.9]">{item.ar}</span>
-          <span className="relative mt-1 font-display text-[15px] font-semibold">{item.tl}</span>
-          <span className="font-bangla relative text-xs text-muted-foreground">{item.tlBn}</span>
+          {lang === 'en' && <span className="relative mt-1 font-display text-[15px] font-semibold">{item.tl}</span>}
+          {lang !== 'ar' && <span className={cn('font-bangla relative text-muted-foreground', lang === 'bn' ? 'mt-1 text-[15px] font-semibold text-foreground' : 'text-xs')}>{item.tlBn}</span>}
+          <span className="sr-only">{t({ en: `: ${item.en}. Flip card`, bn: `: ${item.bn}। কার্ড উল্টান`, ar: `: ${item.meaningAr}. اقلب البطاقة` })}</span>
         </button>
         <div className="card-soft absolute inset-0 flex flex-col items-center justify-center rounded-3xl bg-accent p-4 text-center [backface-visibility:hidden] [transform:rotateY(180deg)]" aria-hidden={!flipped}>
-          <span className="font-display text-base font-semibold leading-tight">{item.en}</span>
-          <span className="font-bangla mt-1 text-[15px] text-gold">{item.bn}</span>
+          <span className="font-display text-base font-semibold leading-tight">{t({ en: item.en, bn: item.bn, ar: item.meaningAr })}</span>
+          {lang === 'en' && <span className="font-bangla mt-1 text-[15px] text-gold">{item.bn}</span>}
           <Link tabIndex={flipped ? 0 : -1} href={`/names-of-allah/${item.slug}`} className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition active:scale-95">
-            {t({ en: 'Details', bn: 'বিস্তারিত' })} <ArrowRight className="size-3" />
+            {t({ en: 'Details', bn: 'বিস্তারিত', ar: 'التفاصيل' })} <ArrowRight className="size-3 rtl:rotate-180" />
           </Link>
         </div>
       </motion.div>
@@ -58,6 +59,7 @@ function shuffled<T>(a: T[]) {
 
 function Flashcards({ names }: { names: NameItem[] }) {
   const t = useTx()
+  const lang = useLang()
   const [deck, setDeck] = useState(names)
   const [i, setI] = useState(0)
   const [show, setShow] = useState(false)
@@ -72,8 +74,8 @@ function Flashcards({ names }: { names: NameItem[] }) {
     <div className="mx-auto max-w-md">
       <div className="mb-3 flex items-center justify-between text-xs font-semibold text-muted-foreground">
         <span>{i + 1} / {deck.length}</span>
-        <span className="text-primary">{t({ en: 'Known', bn: 'জানা' })}: {known.length}</span>
-        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => { setDeck(shuffled(names)); setI(0); setShow(false) }}><Shuffle className="size-3.5" />{t({ en: 'Shuffle', bn: 'এলোমেলো' })}</button>
+        <span className="text-primary">{t({ en: 'Known', bn: 'জানা', ar: 'محفوظ' })}: {known.length}</span>
+        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => { setDeck(shuffled(names)); setI(0); setShow(false) }}><Shuffle className="size-3.5" />{t({ en: 'Shuffle', bn: 'এলোমেলো', ar: 'خلط' })}</button>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-muted"><motion.div className="h-full rounded-full bg-primary" animate={{ width: `${((i + 1) / deck.length) * 100}%` }} transition={spring} /></div>
       <AnimatePresence mode="wait">
@@ -88,17 +90,17 @@ function Flashcards({ names }: { names: NameItem[] }) {
           <span lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative py-2 text-6xl leading-[1.9] sm:text-7xl">{cur.ar}</span>
           {show ? (
             <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="relative mt-4 block">
-              <span className="font-display block text-xl font-semibold">{cur.tl} · {cur.en}</span>
-              <span className="font-bangla mt-1 block text-lg text-gold">{cur.tlBn} · {cur.bn}</span>
+              <span className="font-display block text-xl font-semibold">{t({ en: `${cur.tl} · ${cur.en}`, bn: `${cur.tlBn} · ${cur.bn}`, ar: cur.meaningAr })}</span>
+              {lang === 'en' && <span className="font-bangla mt-1 block text-lg text-gold">{cur.tlBn} · {cur.bn}</span>}
             </motion.span>
           ) : (
-            <span className="relative mt-6 rounded-full border border-dashed border-border px-4 py-1.5 text-xs font-semibold text-muted-foreground">{t({ en: 'Tap to reveal the meaning', bn: 'অর্থ দেখতে ট্যাপ করুন' })}</span>
+            <span className="relative mt-6 rounded-full border border-dashed border-border px-4 py-1.5 text-xs font-semibold text-muted-foreground">{t({ en: 'Tap to reveal the meaning', bn: 'অর্থ দেখতে ট্যাপ করুন', ar: 'اضغط لإظهار المعنى' })}</span>
           )}
         </motion.button>
       </AnimatePresence>
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button type="button" onClick={() => next(false)} className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card py-3 text-sm font-semibold transition hover:bg-accent active:scale-95"><RotateCcw className="size-4" />{t({ en: 'Again', bn: 'আবার' })}</button>
-        <button type="button" onClick={() => next(true)} className="inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground transition active:scale-95"><Check className="size-4" />{t({ en: 'I know it', bn: 'জানি' })}</button>
+        <button type="button" onClick={() => next(false)} className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card py-3 text-sm font-semibold transition hover:bg-accent active:scale-95"><RotateCcw className="size-4" />{t({ en: 'Again', bn: 'আবার', ar: 'مرة أخرى' })}</button>
+        <button type="button" onClick={() => next(true)} className="inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground transition active:scale-95"><Check className="size-4" />{t({ en: 'I know it', bn: 'জানি', ar: 'أعرفه' })}</button>
       </div>
     </div>
   )
@@ -122,14 +124,14 @@ function Quiz({ names }: { names: NameItem[] }) {
   return (
     <div className="mx-auto max-w-md">
       <div className="mb-3 flex items-center justify-between text-xs font-semibold text-muted-foreground">
-        <span>{t({ en: 'Score', bn: 'স্কোর' })}: {score.ok}/{score.total}</span>
-        <span className="text-gold">{t({ en: 'Streak', bn: 'ধারা' })}: {score.streak}</span>
+        <span>{t({ en: 'Score', bn: 'স্কোর', ar: 'النتيجة' })}: {score.ok}/{score.total}</span>
+        <span className="text-gold">{t({ en: 'Streak', bn: 'ধারা', ar: 'التتابع' })}: {score.streak}</span>
       </div>
       <div className="card-soft relative overflow-hidden rounded-[2rem] p-6 text-center">
         <span aria-hidden className="bg-pattern pointer-events-none absolute inset-0 [mask-image:radial-gradient(circle,#000,transparent_75%)]" />
-        <p className="relative text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'What does this Name mean?', bn: 'এই নামের অর্থ কী?' })}</p>
+        <p className="relative text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t({ en: 'What does this Name mean?', bn: 'এই নামের অর্থ কী?', ar: 'ما معنى هذا الاسم؟' })}</p>
         <p lang="ar" dir="rtl" className="font-arabic text-gradient-gold relative mt-2 py-2 text-6xl leading-[1.9]">{round.target.ar}</p>
-        {picked != null && <p className="relative font-display text-lg font-semibold">{round.target.tl}</p>}
+        {picked != null && <p className="relative font-display text-lg font-semibold">{t({ en: round.target.tl, bn: round.target.tlBn, ar: round.target.meaningAr })}</p>}
       </div>
       <div className="mt-4 grid gap-2.5">
         {round.opts.map((o) => {
@@ -139,16 +141,16 @@ function Quiz({ names }: { names: NameItem[] }) {
             <motion.button
               key={o.n} type="button" whileTap={{ scale: 0.98 }} onClick={() => answer(o.n)} disabled={picked != null}
               animate={wrong ? { x: [0, -6, 6, -4, 4, 0] } : {}}
-              className={cn('rounded-2xl border px-4 py-3.5 text-left text-[15px] font-semibold transition-colors', right ? 'border-primary bg-primary text-primary-foreground' : wrong ? 'border-destructive bg-destructive/10 text-destructive' : 'border-border bg-card hover:bg-accent')}
+              className={cn('rounded-2xl border px-4 py-3.5 text-start text-[15px] font-semibold transition-colors', right ? 'border-primary bg-primary text-primary-foreground' : wrong ? 'border-destructive bg-destructive/10 text-destructive' : 'border-border bg-card hover:bg-accent')}
             >
-              {t({ en: o.en, bn: o.bn })}
+              {t({ en: o.en, bn: o.bn, ar: o.meaningAr })}
             </motion.button>
           )
         })}
       </div>
       {picked != null && (
         <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} type="button" onClick={() => { setRound(makeRound()); setPicked(null) }} className="mt-4 w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground active:scale-95">
-          {t({ en: 'Next Name', bn: 'পরের নাম' })}
+          {t({ en: 'Next Name', bn: 'পরের নাম', ar: 'الاسم التالي' })}
         </motion.button>
       )}
     </div>
@@ -165,10 +167,10 @@ export function NamesExplorer({ names }: { names: NameItem[] }) {
     if (!s) return names
     return names.filter((n) => String(n.n) === s || n.tl.toLowerCase().includes(s) || n.en.toLowerCase().includes(s) || n.bn.includes(q.trim()) || n.tlBn.includes(q.trim()) || n.ar.includes(q.trim()))
   }, [names, q])
-  const modes: { id: Mode; label: { en: string; bn: string } }[] = [
-    { id: 'browse', label: { en: 'Browse', bn: 'সব নাম' } },
-    { id: 'flash', label: { en: 'Flashcards', bn: 'ফ্ল্যাশকার্ড' } },
-    { id: 'quiz', label: { en: 'Quiz', bn: 'কুইজ' } },
+  const modes: { id: Mode; label: { en: string; bn: string; ar?: string } }[] = [
+    { id: 'browse', label: { en: 'Browse', bn: 'সব নাম', ar: 'تصفّح' } },
+    { id: 'flash', label: { en: 'Flashcards', bn: 'ফ্ল্যাশকার্ড', ar: 'بطاقات' } },
+    { id: 'quiz', label: { en: 'Quiz', bn: 'কুইজ', ar: 'اختبار' } },
   ]
   return (
     <div>
@@ -183,21 +185,21 @@ export function NamesExplorer({ names }: { names: NameItem[] }) {
         </div>
         {mode === 'browse' && (
           <label className="relative block flex-1">
-            <span className="sr-only">Search names</span>
-            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search: Rahman, mercy, الرحمن, দয়া, 12…', bn: 'খুঁজুন: রহমান, দয়া, الرحمن, ১২…' })} className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-10 text-[15px] outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15" />
-            {q && <button type="button" aria-label="Clear" onClick={() => setQ('')} className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>}
+            <span className="sr-only">{t({ en: 'Search names', bn: 'নাম খুঁজুন', ar: 'ابحث في الأسماء' })}</span>
+            <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search: Rahman, mercy, الرحمن, দয়া, 12…', bn: 'খুঁজুন: রহমান, দয়া, الرحمن, ১২…', ar: 'ابحث: الرحمن، الرحمة، 12…' })} className="h-11 w-full rounded-full border border-border bg-card ps-11 pe-10 text-[15px] outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15" />
+            {q && <button type="button" aria-label={t({ en: 'Clear', bn: 'মুছুন', ar: 'مسح' })} onClick={() => setQ('')} className="absolute end-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>}
           </label>
         )}
       </div>
       <div className="mt-5">
         {mode === 'browse' && (
           <>
-            <p className="mb-3 text-xs text-muted-foreground">{t({ en: `${list.length} of 99 · tap a card to see its meaning`, bn: `৯৯টির মধ্যে ${toBanglaDigits(list.length)}টি · অর্থ দেখতে কার্ডে ট্যাপ করুন` })}</p>
+            <p className="mb-3 text-xs text-muted-foreground">{t({ en: `${list.length} of 99 · tap a card to see its meaning`, bn: `৯৯টির মধ্যে ${toBanglaDigits(list.length)}টি · অর্থ দেখতে কার্ডে ট্যাপ করুন`, ar: `${list.length} من ٩٩ · اضغط على البطاقة لترى معناها` })}</p>
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {list.map((n, i) => <FlipCard key={n.n} item={n} index={i} />)}
             </ul>
-            {list.length === 0 && <p className="card-soft rounded-3xl p-10 text-center text-sm text-muted-foreground">{t({ en: 'No Name matches your search.', bn: 'কোনো নাম পাওয়া যায়নি।' })}</p>}
+            {list.length === 0 && <p className="card-soft rounded-3xl p-10 text-center text-sm text-muted-foreground">{t({ en: 'No Name matches your search.', bn: 'কোনো নাম পাওয়া যায়নি।', ar: 'لا يوجد اسم مطابق لبحثك.' })}</p>}
           </>
         )}
         {mode === 'flash' && <Flashcards names={names} />}

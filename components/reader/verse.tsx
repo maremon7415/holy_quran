@@ -1,78 +1,96 @@
-import Link from 'next/link'
+import type { ReactNode } from 'react'
 import type { Verse } from '@/lib/quran/types'
 import { surahHref, toArabicDigits } from '@/lib/quran/chapters'
 import { tokenizeArabic } from '@/lib/reader/words'
-import { AyahActions } from './ayah-actions'
+import { localeHref } from '@/lib/i18n/routes'
 
 /**
- * One ayah — server component. Markup stays deliberately light: all interactivity
- * (word sync, current-ayah highlight, tajweed / word-by-word layers) is applied by
- * single page-level client controllers via data attributes and portals.
+ * Arabic text as plain text runs (+ gold waqf marks). Word spans (`.w[data-w]`) for the
+ * recited-word highlight are created on demand, only for the ayah being recited
+ * (lib/reader/dom.ts → wrapWords), which keeps 286-ayah pages light.
  */
-export function VerseBlock({ verse, surah, scoped = false }: { verse: Verse; surah: number; /** juz pages hold several surahs → ids like ayah-2-255 */ scoped?: boolean }) {
-  const v = verse
-  const tokens = tokenizeArabic(v.ar)
-  return (
-    <article
-      id={scoped ? `ayah-${surah}-${v.n}` : `ayah-${v.n}`}
-      data-ayah={v.k}
-      data-j={v.j}
-      data-p={v.p}
-      className="ayah group/ayah"
-      aria-label={`Ayah ${v.k}`}
-    >
-      <div className="ayah-head">
-        <Link
-          href={surahHref(surah, v.n)}
-          className="ayah-num"
-          title={`Open ayah ${v.k}`}
-        >
-          {v.k}
-          {v.s === 1 && <span className="text-gold" title="Sajdah">۩</span>}
-        </Link>
-        <AyahActions k={v.k} surah={surah} ayah={v.n} />
-      </div>
+export function arabicRuns(ar: string): ReactNode[] {
+  const tokens = tokenizeArabic(ar)
+  const out: ReactNode[] = []
+  let buf = ''
+  tokens.forEach((t, i) => {
+    const last = i === tokens.length - 1
+    if (t.pos) {
+      buf += t.text
+      if (t.waqf) {
+        out.push(buf + ' ')
+        out.push(<span key={i} className="waqf">{t.waqf}</span>)
+        buf = ''
+      }
+      buf += last ? ' ' : ' '
+    } else {
+      if (buf) out.push(buf)
+      out.push(<span key={i} className="waqf">{t.text}</span>)
+      buf = last ? ' ' : ' '
+    }
+  })
+  if (buf) out.push(buf)
+  return out
+}
 
+export const AyahMarker = ({ n, locale = 'en' }: { n: number; locale?: 'en' | 'bn' }) => (
+  <span className={n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'} aria-label={locale === 'bn' ? `আয়াত ${n}` : `Ayah ${n}`} data-ar-aria={`آية ${n}`}>{toArabicDigits(n)}</span>
+)
+
+/**
+ * One ayah — server component. Markup stays deliberately minimal: the per-ayah toolbar,
+ * word spans, tajweed / word-by-word / extra-translation layers are all added on the
+ * client by page-level controllers (reader-controller.tsx, verse-enhancer.tsx).
+ *
+ * `full` (single-ayah pages) also renders Abdel Haleem + Latin transliteration; on surah / juz
+ * pages those are fetched on demand when the reader turns them on.
+ */
+export function VerseBlock({ verse, surah, scoped = false, bt, full = false, locale = 'en' }: {
+  verse: Verse
+  surah: number
+  /** juz pages hold several surahs → ids like ayah-2-255 */
+  scoped?: boolean
+  /** Bangla uccharon (pronunciation) */
+  bt?: string
+  full?: boolean
+  /** 'bn' on /bn pages: ayah links stay under /bn */
+  locale?: 'en' | 'bn'
+}) {
+  const v = verse
+  return (
+    <article id={scoped ? `ayah-${surah}-${v.n}` : `ayah-${v.n}`} data-ayah={v.k} data-j={v.j} data-p={v.p} className="ayah group/ayah">
+      <div className="ayah-head">
+        <a href={localeHref(locale, surahHref(surah, v.n))} className="ayah-num" title={locale === 'bn' ? `আয়াত ${v.k} খুলুন` : `Open ayah ${v.k}`} data-ar-title={`افتح الآية ${v.k}`}>
+          {v.k}
+          {v.s === 1 && <span className="text-gold" title={locale === 'bn' ? 'সিজদা' : 'Sajdah'} data-ar-title="سجدة">۩</span>}
+        </a>
+      </div>
       <div className="ayah-ar">
         <p className="quran-text ar-plain" lang="ar" dir="rtl">
-          {tokens.map((t, i) =>
-            t.pos ? (
-              <span key={i} className="w" data-w={t.pos}>{t.text}{t.waqf && <>{'\u00a0'}<span className="waqf">{t.waqf}</span></>}{i === tokens.length - 1 ? '\u00a0' : ' '}</span>
-            ) : (
-              <span key={i} className="waqf">{t.text}{i === tokens.length - 1 ? '\u00a0' : ' '}</span>
-            )
-          )}
-          <span className={v.n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'} aria-label={`Ayah ${v.n}`}>{toArabicDigits(v.n)}</span>
+          {arabicRuns(v.ar)}
+          <AyahMarker n={v.n} locale={locale} />
         </p>
-        <div className="tj-slot" data-slot-tj={v.k} />
-        <div className="wbw-slot" data-slot-wbw={v.k} />
       </div>
-
       <div className="ayah-tr">
-        <p data-tr="tl" className="tr-tl">{v.tl}</p>
-        <div data-tr="en" data-ed="sahih">
-          <p className="tr-en">{v.en}</p>
-        </div>
-        <div data-tr="en" data-ed="haleem">
-          <p className="tr-en">{v.enH}</p>
-        </div>
-        <div data-tr="bn" lang="bn">
-          <p className="tr-bn">{v.bn}</p>
-        </div>
+        {bt && <p data-tr="bt" lang="bn" className="tr-bt">{bt}</p>}
+        {full && <p data-tr="tl" className="tr-tl">{v.tl}</p>}
+        <p data-tr="en" data-ed="sahih" className="tr-en">{v.en}</p>
+        {full && <p data-tr="en" data-ed="haleem" className="tr-en">{v.enH}</p>}
+        <p data-tr="bn" lang="bn" className="tr-bn">{v.bn}</p>
       </div>
     </article>
   )
 }
 
 /** Bismillah header shown before every surah except 1 (where it is ayah 1) and 9 (none). */
-export function Bismillah({ className = '' }: { className?: string }) {
+export function Bismillah({ className = '', locale }: { className?: string; locale?: 'en' | 'bn' }) {
   return (
     <div className={`relative mx-auto flex max-w-xl flex-col items-center py-6 ${className}`}>
       <p className="quran-text text-center text-[length:calc(var(--quran-size,34px)*1.05)] leading-[1.9]" lang="ar" dir="rtl">
         بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
       </p>
       <p className="mt-1 text-center text-xs tracking-wide text-muted-foreground hide-in-mushaf">
-        In the name of Allah, the Entirely Merciful, the Especially Merciful
+        {locale === 'bn' ? 'পরম করুণাময় অতি দয়ালু আল্লাহর নামে' : 'In the name of Allah, the Entirely Merciful, the Especially Merciful'}
       </p>
     </div>
   )

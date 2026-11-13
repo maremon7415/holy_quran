@@ -39,12 +39,12 @@ export function LocationPicker({ className, compact }: { className?: string; com
 
   const locate = () => {
     setMsg(null)
-    if (!navigator.geolocation) { setMsg(t({ en: 'Location is not supported here — search a city instead.', bn: 'লোকেশন সাপোর্ট নেই — শহর খুঁজুন।' })); return }
+    if (!navigator.geolocation) { setMsg(t({ en: 'Location is not supported here — search a city instead.', bn: 'লোকেশন সাপোর্ট নেই — শহর খুঁজুন।', ar: 'تحديد الموقع غير مدعوم هنا — ابحث عن مدينة بدلًا من ذلك.' })); return }
     setGeoBusy(true)
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         const { latitude, longitude } = coords
-        let city = t({ en: 'My location', bn: 'আমার অবস্থান' })
+        let city = t({ en: 'My location', bn: 'আমার অবস্থান', ar: 'موقعي' })
         try {
           const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
           const j = await r.json()
@@ -57,8 +57,8 @@ export function LocationPicker({ className, compact }: { className?: string; com
       (e) => {
         setGeoBusy(false)
         setMsg(e.code === 1
-          ? t({ en: 'Location permission denied — search your city below.', bn: 'অনুমতি দেওয়া হয়নি — নিচে শহর খুঁজুন।' })
-          : t({ en: 'Could not get your position — search your city below.', bn: 'অবস্থান পাওয়া যায়নি — নিচে শহর খুঁজুন।' }))
+          ? t({ en: 'Location permission denied — search your city below.', bn: 'অনুমতি দেওয়া হয়নি — নিচে শহর খুঁজুন।', ar: 'تم رفض إذن الموقع — ابحث عن مدينتك أدناه.' })
+          : t({ en: 'Could not get your position — search your city below.', bn: 'অবস্থান পাওয়া যায়নি — নিচে শহর খুঁজুন।', ar: 'تعذّر تحديد موقعك — ابحث عن مدينتك أدناه.' }))
       },
       { timeout: 10000, maximumAge: 60000 },
     )
@@ -68,19 +68,19 @@ export function LocationPicker({ className, compact }: { className?: string; com
     <div className={cn('space-y-3', className)}>
       <button onClick={locate} disabled={geoBusy} className={cn('inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground shadow-[0_14px_30px_-14px_var(--glow)] transition active:scale-[0.98] disabled:opacity-60', compact ? 'h-10 text-sm' : 'h-12')}>
         {geoBusy ? <Loader2 className="size-4 animate-spin" /> : <UiIcon name="qibla" size={20} />}
-        {t({ en: 'Use my location', bn: 'আমার অবস্থান ব্যবহার করুন' })}
+        {t({ en: 'Use my location', bn: 'আমার অবস্থান ব্যবহার করুন', ar: 'استخدم موقعي' })}
       </button>
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={t({ en: 'Or search a city…', bn: 'অথবা শহর খুঁজুন…' })}
-          aria-label={t({ en: 'Search city', bn: 'শহর খুঁজুন' })}
-          className="h-11 w-full rounded-full border bg-background pl-11 pr-10 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+          placeholder={t({ en: 'Or search a city…', bn: 'অথবা শহর খুঁজুন…', ar: 'أو ابحث عن مدينة…' })}
+          aria-label={t({ en: 'Search city', bn: 'শহর খুঁজুন', ar: 'ابحث عن مدينة' })}
+          className="h-11 w-full rounded-full border bg-background ps-11 pe-10 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
         />
-        {busy ? <Loader2 className="absolute right-4 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
-          : q && <button aria-label="Clear" onClick={() => setQ('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"><X className="size-4" /></button>}
+        {busy ? <Loader2 className="absolute end-4 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          : q && <button aria-label="Clear" onClick={() => setQ('')} className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"><X className="size-4" /></button>}
       </div>
       {msg && <p className="text-sm text-muted-foreground">{msg}</p>}
       {results.length > 0 && (
@@ -89,7 +89,7 @@ export function LocationPicker({ className, compact }: { className?: string; com
             <li key={p.id}>
               <button
                 onClick={() => { setTz(p.timezone ?? null); setLocation({ latitude: p.latitude, longitude: p.longitude, city: p.name }); setQ(''); setResults([]) }}
-                className="flex w-full items-center gap-3 border-b px-4 py-3 text-left text-sm transition last:border-0 hover:bg-accent"
+                className="flex w-full items-center gap-3 border-b px-4 py-3 text-start text-sm transition last:border-0 hover:bg-accent"
               >
                 <UiIcon name="mosque" size={22} />
                 <span className="font-medium">{p.name}</span>

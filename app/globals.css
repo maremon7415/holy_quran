@@ -16,31 +16,31 @@
   --card-foreground: #15211d;
   --popover: #ffffff;
   --popover-foreground: #15211d;
-  --primary: #0e6b51;
+  --primary: #0c6149;
   --primary-foreground: #ffffff;
   --secondary: #eef0eb;
   --secondary-foreground: #15211d;
   --muted: #efeee9;
-  --muted-foreground: #5e6b66;
+  --muted-foreground: #56635e;
   --accent: #e7f2ec;
   --accent-foreground: #0b4a38;
   --destructive: #c2410c;
   --destructive-foreground: #ffffff;
   --border: #e3e2db;
   --input: #e3e2db;
-  --ring: #0e6b51;
-  --gold: #a87a26;
-  --gold-soft: #f3e7cc;
+  --ring: #0c6149;
+  --gold: #7a5712;
+  --gold-soft: #f6ecd3;
   --surface-2: #f1f0ea;
   --arabic: #10201a;
-  --highlight: rgba(14, 107, 81, 0.1);
-  --word-active: #0e6b51;
-  --glow: rgba(14, 107, 81, 0.18);
+  --highlight: rgba(12, 97, 73, 0.1);
+  --word-active: #0c6149;
+  --glow: rgba(12, 97, 73, 0.18);
   --pattern-opacity: 0.05;
   --shadow-color: 30 40 35;
-  --chart-1: #0e6b51; --chart-2: #a87a26; --chart-3: #3d7ea6; --chart-4: #b4536a; --chart-5: #6b6fb5;
-  --sidebar: #ffffff; --sidebar-foreground: #15211d; --sidebar-primary: #0e6b51; --sidebar-primary-foreground: #fff;
-  --sidebar-accent: #eef0eb; --sidebar-accent-foreground: #15211d; --sidebar-border: #e3e2db; --sidebar-ring: #0e6b51;
+  --chart-1: #0c6149; --chart-2: #a87a26; --chart-3: #3d7ea6; --chart-4: #b4536a; --chart-5: #6b6fb5;
+  --sidebar: #ffffff; --sidebar-foreground: #15211d; --sidebar-primary: #0c6149; --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #eef0eb; --sidebar-accent-foreground: #15211d; --sidebar-border: #e3e2db; --sidebar-ring: #0c6149;
   --radius: 1rem;
   color-scheme: light;
 }
@@ -52,23 +52,23 @@
   --card-foreground: #3a2e1f;
   --popover: #fbf6e9;
   --popover-foreground: #3a2e1f;
-  --primary: #2f6b4f;
+  --primary: #285c43;
   --primary-foreground: #fffaf0;
   --secondary: #ebe0c6;
   --secondary-foreground: #3a2e1f;
   --muted: #ece2ca;
-  --muted-foreground: #74654c;
+  --muted-foreground: #5f523b;
   --accent: #e6dcc0;
   --accent-foreground: #2f4f3c;
   --border: #dccfb0;
   --input: #dccfb0;
   --ring: #2f6b4f;
-  --gold: #94661b;
-  --gold-soft: #ead7ab;
+  --gold: #6f4c0f;
+  --gold-soft: #efdfb9;
   --surface-2: #efe5cd;
   --arabic: #2b1f12;
   --highlight: rgba(148, 102, 27, 0.12);
-  --word-active: #94661b;
+  --word-active: #6f4c0f;
   --glow: rgba(148, 102, 27, 0.2);
   --pattern-opacity: 0.07;
   --shadow-color: 80 60 30;
@@ -83,7 +83,7 @@
   --card-foreground: #e7ecee;
   --popover: #2e3a40;
   --popover-foreground: #e7ecee;
-  --primary: #7fd1b0;
+  --primary: #8ad8b8;
   --primary-foreground: #10241d;
   --secondary: #33414a;
   --secondary-foreground: #e7ecee;
@@ -242,6 +242,16 @@
   }
   ::selection { background: color-mix(in oklab, var(--primary) 28%, transparent); }
   html[lang='bn'] body, .lang-bn { font-family: var(--font-bangla); }
+  /* Arabic UI (i18n): Naskh for Arabic glyphs, Manrope for Latin; cursive script must never be letter-spaced. */
+  html[lang='ar'] body, .lang-ar body { font-family: var(--font-noto-naskh), var(--font-ui), ui-sans-serif, sans-serif; }
+  html.lang-ar .font-display { font-family: var(--font-noto-naskh), var(--font-display-serif), serif; }
+  /* Bangla conjuncts and Arabic cursive break with letter-spacing (uppercase/tracking kickers). */
+  html.lang-ar body *, html[lang='bn'] body * { letter-spacing: normal !important; }
+  /* /bn reader pages: Bangla uccharon, then Bangla meaning, then English. */
+  .bn-first .ayah-tr > [data-tr='bt'] { order: -2; }
+  .bn-first .ayah-tr > [data-tr='bn'] { order: -1; }
+  /* In the RTL interface, English/Bangla content blocks keep their own direction. */
+  html[dir='rtl'] :is([lang='en'], [lang='bn'], [data-tr='en'], [data-tr='bn'], [data-tr='tl']) { direction: ltr; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 18%, transparent); border-radius: 99px; border: 3px solid var(--background); }
@@ -265,7 +275,7 @@
   &:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -18px rgb(var(--shadow-color) / 0.28); border-color: color-mix(in oklab, var(--primary) 35%, var(--border)); }
 }
 @utility text-gradient-gold {
-  background: linear-gradient(120deg, var(--gold), color-mix(in oklab, var(--gold) 55%, #fff) 50%, var(--gold));
+  background: linear-gradient(120deg, var(--gold), color-mix(in oklab, var(--gold) 80%, #fff) 50%, var(--gold));
   background-size: 200% auto;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -336,4 +346,11 @@ html[data-show-tl='0'] [data-tr='tl'] { display: none; }
   @media (prefers-reduced-motion: no-preference) {
     .reveal { animation: fade-up linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
   }
+}
+
+/* A11y: guaranteed visible keyboard focus. Un-layered on purpose, so it beats the per-component `outline-none` utilities
+   (which otherwise left some fields/sliders with only a faint border tint). The command-palette input sits inside its own bordered row. */
+:is(input:not([type='checkbox'], [type='radio'], [type='range'], [cmdk-input]), textarea, select, [role='slider']):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

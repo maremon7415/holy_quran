@@ -1,14 +1,15 @@
 'use client'
-import { useReader, arabicFontVar, type ArabicFont } from '@/lib/stores/reader'
+import { useReader, arabicFontVar, isBtOn, type ArabicFont } from '@/lib/stores/reader'
 import { useUi } from '@/lib/stores/ui'
 import { useReaderUi } from '@/lib/reader/ui-store'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 import { cn } from '@/lib/utils'
 import { UiIcon } from '@/components/ui-icon'
 import { ThemeSwatches } from '@/components/shell/theme-picker'
 import { Panel } from './panel'
 import { RangeRow, SectionTitle, Segmented, SwitchRow } from './controls'
 import { TajweedLegend } from './tajweed-legend'
+import { TranslationPicker } from './translation-picker'
 
 const FONTS: { id: ArabicFont; name: string }[] = [
   { id: 'amiri-quran', name: 'Amiri Quran' },
@@ -19,6 +20,7 @@ const FONTS: { id: ArabicFont; name: string }[] = [
 
 export function SettingsPanel() {
   const t = useTx()
+  const lang = useLang()
   const open = useReaderUi((s) => s.settingsOpen)
   const setOpen = useReaderUi((s) => s.setSettingsOpen)
   const p = useReader()
@@ -28,18 +30,18 @@ export function SettingsPanel() {
     <Panel
       open={open}
       onOpenChange={setOpen}
-      title={t({ en: 'Reading settings', bn: 'পড়ার সেটিংস' })}
+      title={t({ en: 'Reading settings', bn: 'পড়ার সেটিংস', ar: 'إعدادات القراءة' })}
       footer={
         <div className="flex items-center justify-between gap-3">
           <button type="button" onClick={() => p.reset()} className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground">
-            {t({ en: 'Reset', bn: 'রিসেট' })}
+            {t({ en: 'Reset', bn: 'রিসেট', ar: 'إعادة ضبط' })}
           </button>
           <button
             type="button"
             onClick={() => { setOpen(false); useUi.getState().setImmersive(true) }}
             className="flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition active:scale-95"
           >
-            <UiIcon name="focus" size={20} /> {t({ en: 'Focus mode', bn: 'ফোকাস মোড' })}
+            <UiIcon name="focus" size={20} /> {t({ en: 'Focus mode', bn: 'ফোকাস মোড', ar: 'وضع التركيز' })}
           </button>
         </div>
       }
@@ -50,27 +52,35 @@ export function SettingsPanel() {
         <p className="quran-text relative text-center text-[length:var(--quran-size,34px)] leading-[2]" lang="ar">
           بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
         </p>
+        <p data-tr="bt" lang="bn" className="tr-bt relative mt-1 text-center">বিসমিল্লা-হির রাহমা-নির রাহীম</p>
         <p data-tr="tl" className="relative mt-1 text-center text-[length:calc(var(--trans-size,17px)*0.9)] italic text-muted-foreground">Bismillāhir-raḥmānir-raḥīm</p>
         <p data-tr="en" className="relative mt-1 text-center text-[length:var(--trans-size,17px)] text-foreground/85">In the name of Allah, the Entirely Merciful, the Especially Merciful.</p>
         <p data-tr="bn" className="relative mt-1 text-center font-bangla text-[length:var(--trans-size,17px)] text-foreground/85">পরম করুণাময় অসীম দয়ালু আল্লাহর নামে</p>
       </div>
 
-      <SectionTitle>{t({ en: 'Layout', bn: 'বিন্যাস' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Layout', bn: 'বিন্যাস', ar: 'التخطيط' })}</SectionTitle>
       <Segmented
         value={p.mode}
         onChange={(mode) => set({ mode })}
         options={[
-          { value: 'translation', label: t({ en: 'Translation', bn: 'অনুবাদসহ' }) },
-          { value: 'reading', label: t({ en: 'Mushaf flow', bn: 'মুসহাফ' }) },
+          { value: 'translation', label: t({ en: 'Translation', bn: 'অনুবাদসহ', ar: 'الترجمة' }) },
+          { value: 'reading', label: t({ en: 'Mushaf flow', bn: 'মুসহাফ', ar: 'عرض المصحف' }) },
         ]}
       />
 
-      <SectionTitle>{t({ en: 'Translations', bn: 'অনুবাদ' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Translations', bn: 'অনুবাদ', ar: 'الترجمات' })}</SectionTitle>
       <div className="divide-y rounded-3xl border bg-card px-3">
         <SwitchRow title="English" hint={p.enEdition === 'haleem' ? 'Abdel Haleem' : 'Saheeh International'} checked={p.showEn} onChange={(showEn) => set({ showEn })} />
         <SwitchRow title="বাংলা" hint="তাইসীরুল কুরআন" checked={p.showBn} onChange={(showBn) => set({ showBn })} />
-        <SwitchRow title={t({ en: 'Transliteration', bn: 'উচ্চারণ (ইংরেজি)' })} checked={p.showTl} onChange={(showTl) => set({ showTl })} />
+        <SwitchRow
+          title={t({ en: 'Bangla pronunciation', bn: 'বাংলা উচ্চারণ', ar: 'النطق البنغالي' })}
+          hint={t({ en: 'Auto-generated pronunciation guide · বাংলা উচ্চারণ', bn: 'স্বয়ংক্রিয়ভাবে তৈরি উচ্চারণ নির্দেশিকা — তিলাওয়াত শিখতে অডিও শুনুন', ar: 'دليل نطق مُولَّد آليًا · বাংলা উচ্চারণ' })}
+          checked={isBtOn(p.showBt, lang)}
+          onChange={(v) => set({ showBt: v })}
+        />
+        <SwitchRow title={t({ en: 'Transliteration', bn: 'উচ্চারণ (ইংরেজি)', ar: 'النقحرة اللاتينية' })} checked={p.showTl} onChange={(showTl) => set({ showTl })} />
       </div>
+      <TranslationPicker />
       <div className={cn('mt-3 transition-opacity', !p.showEn && 'pointer-events-none opacity-40')}>
         <Segmented
           value={p.enEdition}
@@ -82,7 +92,7 @@ export function SettingsPanel() {
         />
       </div>
 
-      <SectionTitle>{t({ en: 'Arabic script', bn: 'আরবি লিপি' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Arabic script', bn: 'আরবি লিপি', ar: 'الخط العربي' })}</SectionTitle>
       <div className="grid grid-cols-2 gap-2">
         {FONTS.map((f) => (
           <button
@@ -100,34 +110,34 @@ export function SettingsPanel() {
         ))}
       </div>
       <div className="mt-3 rounded-3xl border bg-card px-4 py-2">
-        <RangeRow label={t({ en: 'Arabic size', bn: 'আরবি আকার' })} value={p.arabicSize} min={22} max={64} onChange={(arabicSize) => set({ arabicSize })} />
-        <RangeRow label={t({ en: 'Translation size', bn: 'অনুবাদের আকার' })} value={p.transSize} min={13} max={28} onChange={(transSize) => set({ transSize })} />
+        <RangeRow label={t({ en: 'Arabic size', bn: 'আরবি আকার', ar: 'حجم الخط العربي' })} value={p.arabicSize} min={22} max={64} onChange={(arabicSize) => set({ arabicSize })} />
+        <RangeRow label={t({ en: 'Translation size', bn: 'অনুবাদের আকার', ar: 'حجم الترجمة' })} value={p.transSize} min={13} max={28} onChange={(transSize) => set({ transSize })} />
       </div>
 
-      <SectionTitle>{t({ en: 'Study tools', bn: 'অধ্যয়ন' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Study tools', bn: 'অধ্যয়ন', ar: 'أدوات الدراسة' })}</SectionTitle>
       <div className="divide-y rounded-3xl border bg-card px-3">
-        <SwitchRow icon={<UiIcon name="tajweed" size={24} />} title={t({ en: 'Tajweed colours', bn: 'তাজবীদ রং' })} hint={t({ en: 'Colour-coded recitation rules', bn: 'তিলাওয়াতের নিয়ম রঙে' })} checked={p.tajweed} onChange={(tajweed) => set({ tajweed })} />
-        <SwitchRow icon={<UiIcon name="word" size={24} />} title={t({ en: 'Word by word', bn: 'শব্দে শব্দে' })} hint={t({ en: 'Tap a word to hear it', bn: 'শব্দে ট্যাপ করে শুনুন' })} checked={p.wordByWord} onChange={(wordByWord) => set({ wordByWord })} />
-        <SwitchRow icon={<UiIcon name="listen" size={24} />} title={t({ en: 'Follow recitation', bn: 'তিলাওয়াতের সাথে স্ক্রল' })} hint={t({ en: 'Auto-scroll to the ayah being recited', bn: 'চলমান আয়াতে স্বয়ংক্রিয় স্ক্রল' })} checked={p.autoScroll} onChange={(autoScroll) => set({ autoScroll })} />
+        <SwitchRow icon={<UiIcon name="tajweed" size={24} />} title={t({ en: 'Tajweed colours', bn: 'তাজবীদ রং', ar: 'ألوان التجويد' })} hint={t({ en: 'Colour-coded recitation rules', bn: 'তিলাওয়াতের নিয়ম রঙে', ar: 'أحكام التلاوة بالألوان' })} checked={p.tajweed} onChange={(tajweed) => set({ tajweed })} />
+        <SwitchRow icon={<UiIcon name="word" size={24} />} title={t({ en: 'Word by word', bn: 'শব্দে শব্দে', ar: 'كلمة بكلمة' })} hint={t({ en: 'Tap a word to hear it', bn: 'শব্দে ট্যাপ করে শুনুন', ar: 'اضغط على الكلمة لسماعها' })} checked={p.wordByWord} onChange={(wordByWord) => set({ wordByWord })} />
+        <SwitchRow icon={<UiIcon name="listen" size={24} />} title={t({ en: 'Follow recitation', bn: 'তিলাওয়াতের সাথে স্ক্রল', ar: 'متابعة التلاوة' })} hint={t({ en: 'Auto-scroll to the ayah being recited', bn: 'চলমান আয়াতে স্বয়ংক্রিয় স্ক্রল', ar: 'تمرير تلقائي إلى الآية المتلوّة' })} checked={p.autoScroll} onChange={(autoScroll) => set({ autoScroll })} />
       </div>
       {p.tajweed && <TajweedLegend className="mt-3" />}
       <div className="mt-3 flex items-center justify-between gap-3 px-1">
-        <span className="text-sm font-semibold">{t({ en: 'Word meanings in', bn: 'শব্দার্থের ভাষা' })}</span>
+        <span className="text-sm font-semibold">{t({ en: 'Word meanings in', bn: 'শব্দার্থের ভাষা', ar: 'معاني الكلمات بـ' })}</span>
         <Segmented className="w-40" value={p.wbwLang} onChange={(wbwLang) => set({ wbwLang })} options={[{ value: 'en', label: 'EN' }, { value: 'bn', label: 'বাং' }]} />
       </div>
 
-      <SectionTitle>{t({ en: 'Theme', bn: 'থিম' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Theme', bn: 'থিম', ar: 'السمة' })}</SectionTitle>
       <ThemeSwatches />
 
-      <SectionTitle>{t({ en: 'Keyboard', bn: 'কীবোর্ড' })}</SectionTitle>
+      <SectionTitle>{t({ en: 'Keyboard', bn: 'কীবোর্ড', ar: 'لوحة المفاتيح' })}</SectionTitle>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 px-1 text-xs text-muted-foreground">
         {[
-          ['J / K', t({ en: 'Next / previous ayah', bn: 'পরের / আগের আয়াত' })],
-          ['Space', t({ en: 'Play / pause', bn: 'চালু / বিরতি' })],
-          ['B', t({ en: 'Bookmark', bn: 'বুকমার্ক' })],
-          ['T', t({ en: 'Tafsir', bn: 'তাফসীর' })],
-          ['F', t({ en: 'Focus mode', bn: 'ফোকাস মোড' })],
-          ['/', t({ en: 'Search', bn: 'খুঁজুন' })],
+          ['J / K', t({ en: 'Next / previous ayah', bn: 'পরের / আগের আয়াত', ar: 'الآية التالية / السابقة' })],
+          ['Space', t({ en: 'Play / pause', bn: 'চালু / বিরতি', ar: 'تشغيل / إيقاف مؤقت' })],
+          ['B', t({ en: 'Bookmark', bn: 'বুকমার্ক', ar: 'علامة حفظ' })],
+          ['T', t({ en: 'Tafsir', bn: 'তাফসীর', ar: 'التفسير' })],
+          ['F', t({ en: 'Focus mode', bn: 'ফোকাস মোড', ar: 'وضع التركيز' })],
+          ['/', t({ en: 'Search', bn: 'খুঁজুন', ar: 'بحث' })],
         ].map(([k, d]) => (
           <span key={k} className="flex items-center gap-2"><kbd className="min-w-10 rounded-md border bg-muted px-1.5 py-0.5 text-center font-sans text-[10px] font-bold text-foreground">{k}</kbd>{d}</span>
         ))}

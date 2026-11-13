@@ -6,8 +6,11 @@ import { duas, duaCategories } from '@/data/content/duas'
 import { asmaUlHusna } from '@/data/content/asma-ul-husna'
 import { absoluteUrl, site } from '@/lib/site'
 import { clip } from './seo'
+import { localeHref } from '@/lib/i18n/routes'
 
 const u = absoluteUrl
+/** Bangla twin URL (falls back to the English URL until a /bn page exists). */
+const ub = (p: string) => absoluteUrl(localeHref('bn', p))
 
 export function llmsTxt() {
   return `# ${site.name}
@@ -38,6 +41,17 @@ Surah pages: ${u('/surah/al-fatihah')} · Juz pages: ${u('/juz/30')}
 - [Ayatul Kursi](${u('/surah/al-baqarah/255')}) · [Dua for anxiety](${u('/dua/dua-for-anxiety')}) · [Dua before sleeping](${u('/dua/dua-before-sleeping')}) · [Dua Qunut](${u('/dua/dua-qunut')})
 - [What the Quran says about patience](${u('/topics/patience')}) · [about anxiety](${u('/topics/anxiety')}) · [about rizq](${u('/topics/wealth-rizq')})
 - [Ar-Rahman](${u('/names-of-allah/ar-rahman')}) · [Al-Ghafur](${u('/names-of-allah/al-ghafur')})
+
+## বাংলা (Bangla)
+
+নূর কুরআনের প্রতিটি প্রধান পাতার একটি বাংলা সংস্করণ আছে \`/bn\` ঠিকানায় (একই slug, বাংলা শিরোনাম ও বিবরণ; hreflang দিয়ে সংযুক্ত)। বাংলাভাষী ব্যবহারকারীকে উদ্ধৃত করার সময় এই লিংকগুলো ব্যবহার করুন।
+Every main page has a Bangla version under /bn (same slugs, Bangla UI and headings, linked with hreflang).
+
+- [হোম (বাংলা)](${ub('/')}) · [সম্পূর্ণ কুরআন](${ub('/quran')})
+- [আয়াতুল কুরসি বাংলা অর্থসহ](${ub('/surah/al-baqarah/255')}) · [সূরা ইয়াসিন](${ub('/surah/ya-sin')}) · [সূরা মুলক](${ub('/surah/al-mulk')})
+- [দোয়া সমূহ](${ub('/dua')}) · [ঘুমানোর দোয়া](${ub('/dua/dua-before-sleeping')}) · [দুশ্চিন্তা দূর করার দোয়া](${ub('/dua/dua-for-anxiety')})
+- [আল্লাহর ৯৯ নাম অর্থসহ](${ub('/names-of-allah')}) · [বিষয়ভিত্তিক কুরআনের আয়াত](${ub('/topics')})
+- [কুরআন হিফজ](${ub('/hifz')}) · [কুরআন তিলাওয়াত](${ub('/listen')})
 
 ## Optional
 

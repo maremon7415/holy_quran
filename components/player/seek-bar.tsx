@@ -38,16 +38,16 @@ export function SeekBar() {
   const dragAyah = drag != null ? Math.max(1, Math.min(count, (ticks.filter((x) => x <= drag + 1e-6).length || 1))) : ayah
 
   return (
-    <div className="select-none">
+    <div className="select-none" dir="ltr">
       <div
         ref={ref}
         role="slider"
         tabIndex={0}
-        aria-label={t({ en: 'Seek through surah', bn: 'সূরার মধ্যে অনুসন্ধান' })}
+        aria-label={t({ en: 'Seek through surah', bn: 'সূরার মধ্যে অনুসন্ধান', ar: 'التنقل في السورة' })}
         aria-valuemin={1}
         aria-valuemax={count}
         aria-valuenow={ayah}
-        aria-valuetext={`${t({ en: 'Ayah', bn: 'আয়াত' })} ${ayah}`}
+        aria-valuetext={`${t({ en: 'Ayah', bn: 'আয়াত', ar: 'آية' })} ${ayah}`}
         className="group relative flex h-9 cursor-pointer touch-none items-center outline-none"
         onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setDrag(frac(e)) }}
         onPointerMove={(e) => { if (drag != null) setDrag(frac(e)) }}
@@ -71,8 +71,8 @@ export function SeekBar() {
         </div>
       </div>
       <div className="mt-0.5 flex justify-between text-xs tabular-nums text-muted-foreground">
-        <span>{mode === 'chapter' && duration ? fmtTime(drag != null ? drag * duration : time) : `${t({ en: 'Ayah', bn: 'আয়াত' })} ${dragAyah}`}</span>
-        <span>{mode === 'chapter' && duration ? fmtTime(duration) : `${count} ${t({ en: 'ayahs', bn: 'আয়াত' })}`}</span>
+        <span>{mode === 'chapter' && duration ? fmtTime(drag != null ? drag * duration : time) : `${t({ en: 'Ayah', bn: 'আয়াত', ar: 'آية' })} ${dragAyah}`}</span>
+        <span>{mode === 'chapter' && duration ? fmtTime(duration) : `${count} ${t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}`}</span>
       </div>
     </div>
   )
