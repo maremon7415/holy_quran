@@ -53,28 +53,28 @@
      "examples": [
       {
        "ref": "78:26",
-       "html": "جَزَآ<tajweed class=\"idgham_ghunnah\">ءً و</tajweed>ِفَاقًا ",
+       "html": "جَزَآ<tajweed class=\"idgham_ghunnah\">ءً وِ</tajweed>فَاقًا ",
        "classes": [
         "idgham_ghunnah"
        ]
       },
       {
        "ref": "83:9",
-       "html": "كِتَـٰ<tajweed class=\"idgham_ghunnah\">بٌ م</tajweed>َّرْقُومٌ ",
+       "html": "كِتَـٰ<tajweed class=\"idgham_ghunnah\">بٌ مَّ</tajweed>رْقُومٌ ",
        "classes": [
         "idgham_ghunnah"
        ]
       },
       {
        "ref": "80:13",
-       "html": "فِى صُحُ<tajweed class=\"idgham_ghunnah\">فٍ م</tajweed>ُّكَرَّمَةٍ ",
+       "html": "فِى صُحُ<tajweed class=\"idgham_ghunnah\">فٍ مُّ</tajweed>كَرَّمَةٍ ",
        "classes": [
         "idgham_ghunnah"
        ]
       },
       {
        "ref": "85:22",
-       "html": "فِى لَوْ<tajweed class=\"idgham_ghunnah\">حٍ م</tajweed>َّحْفُوظِۭ ",
+       "html": "فِى لَوْ<tajweed class=\"idgham_ghunnah\">حٍ مَّ</tajweed>حْفُوظِۭ ",
        "classes": [
         "idgham_ghunnah"
        ]
@@ -90,28 +90,28 @@
      "examples": [
       {
        "ref": "83:1",
-       "html": "وَيْ<tajweed class=\"idgham_wo_ghunnah\">لٌ ل</tajweed>ِّلْمُطَفِّفِينَ ",
+       "html": "وَيْ<tajweed class=\"idgham_wo_ghunnah\">لٌ لِّ</tajweed>لْمُطَفِّفِينَ ",
        "classes": [
         "idgham_wo_ghunnah"
        ]
       },
       {
        "ref": "85:16",
-       "html": "فَعَّا<tajweed class=\"idgham_wo_ghunnah\">لٌ ل</tajweed>ِّمَا يُرِيدُ ",
+       "html": "فَعَّا<tajweed class=\"idgham_wo_ghunnah\">لٌ لِّ</tajweed>مَا يُرِيدُ ",
        "classes": [
         "idgham_wo_ghunnah"
        ]
       },
       {
        "ref": "107:4",
-       "html": "فَوَيْ<tajweed class=\"idgham_wo_ghunnah\">لٌ ل</tajweed>ِّلْمُصَلِّينَ ",
+       "html": "فَوَيْ<tajweed class=\"idgham_wo_ghunnah\">لٌ لِّ</tajweed>لْمُصَلِّينَ ",
        "classes": [
         "idgham_wo_ghunnah"
        ]
       },
       {
        "ref": "96:7",
-       "html": "أ<tajweed class=\"idgham_wo_ghunnah\">َن ر</tajweed>َّءَاهُ ٱسْتَغْنَىٰٓ ",
+       "html": "أ<tajweed class=\"idgham_wo_ghunnah\">َن رَّ</tajweed>ءَاهُ ٱسْتَغْنَىٰٓ ",
        "classes": [
         "idgham_wo_ghunnah"
        ]
@@ -127,7 +127,7 @@
      "examples": [
       {
        "ref": "80:16",
-       "html": "كِرَا<tajweed class=\"iqlab\">مِۭ ب</tajweed>َرَرَةٍ ",
+       "html": "كِرَا<tajweed class=\"iqlab\">مِۭ بَ</tajweed>رَرَةٍ ",
        "classes": [
         "iqlab"
        ]
@@ -141,14 +141,14 @@
       },
       {
        "ref": "90:2",
-       "html": "وَأَنتَ حِل<tajweed class=\"iqlab\">ُّۢ ب</tajweed>ِهَـٰذَا ٱلْبَلَدِ ",
+       "html": "وَأَنتَ حِل<tajweed class=\"iqlab\">ُّۢ بِ</tajweed>هَـٰذَا ٱلْبَلَدِ ",
        "classes": [
         "iqlab"
        ]
       },
       {
        "ref": "92:8",
-       "html": "وَأَمَّا م<tajweed class=\"iqlab\">َنۢ ب</tajweed>َخِلَ وَٱسْتَغْنَىٰ ",
+       "html": "وَأَمَّا م<tajweed class=\"iqlab\">َنۢ بَ</tajweed>خِلَ وَٱسْتَغْنَىٰ ",
        "classes": [
         "iqlab"
        ]
@@ -164,35 +164,35 @@
      "examples": [
       {
        "ref": "79:37",
-       "html": "فَأَمَّا مَ<tajweed class=\"ikhafa\">ن ط</tajweed>َغَىٰ ",
+       "html": "فَأَمَّا مَ<tajweed class=\"ikhafa\">ن طَ</tajweed>غَىٰ ",
        "classes": [
         "ikhafa"
        ]
       },
       {
        "ref": "113:2",
-       "html": "مِ<tajweed class=\"ikhafa\">ن ش</tajweed>َرِّ مَا خَلَقَ ",
+       "html": "مِ<tajweed class=\"ikhafa\">ن شَ</tajweed>رِّ مَا خَلَقَ ",
        "classes": [
         "ikhafa"
        ]
       },
       {
        "ref": "78:34",
-       "html": "وَكَأْ<tajweed class=\"ikhafa\">سًا د</tajweed>ِهَاقًا ",
+       "html": "وَكَأْ<tajweed class=\"ikhafa\">سًا دِ</tajweed>هَاقًا ",
        "classes": [
         "ikhafa"
        ]
       },
       {
        "ref": "80:6",
-       "html": "فَأَ<tajweed class=\"ikhafa\">نت</tajweed>َ لَهُۥ تَصَدَّىٰ ",
+       "html": "فَأَ<tajweed class=\"ikhafa\">نتَ</tajweed> لَهُۥ تَصَدَّىٰ ",
        "classes": [
         "ikhafa"
        ]
       },
       {
        "ref": "81:21",
-       "html": "مُّطَا<tajweed class=\"ikhafa\">عٍ ث</tajweed>َمَّ أَمِينٍ ",
+       "html": "مُّطَا<tajweed class=\"ikhafa\">عٍ ثَ</tajweed>مَّ أَمِينٍ ",
        "classes": [
         "ikhafa"
        ]
@@ -208,21 +208,21 @@
      "examples": [
       {
        "ref": "79:14",
-       "html": "فَإِذَا ه<tajweed class=\"ikhafa_shafawi\">ُم ب</tajweed>ِٱلسَّاهِرَةِ ",
+       "html": "فَإِذَا ه<tajweed class=\"ikhafa_shafawi\">ُم بِ</tajweed>ٱلسَّاهِرَةِ ",
        "classes": [
         "ikhafa_shafawi"
        ]
       },
       {
        "ref": "88:22",
-       "html": "لَّسْتَ عَلَيْه<tajweed class=\"ikhafa_shafawi\">ِم ب</tajweed>ِمُصَيْطِرٍ ",
+       "html": "لَّسْتَ عَلَيْه<tajweed class=\"ikhafa_shafawi\">ِم بِ</tajweed>مُصَيْطِرٍ ",
        "classes": [
         "ikhafa_shafawi"
        ]
       },
       {
        "ref": "81:22",
-       "html": "وَمَا صَاحِبُك<tajweed class=\"ikhafa_shafawi\">ُم ب</tajweed>ِمَجْنُونٍ ",
+       "html": "وَمَا صَاحِبُك<tajweed class=\"ikhafa_shafawi\">ُم بِ</tajweed>مَجْنُونٍ ",
        "classes": [
         "ikhafa_shafawi"
        ]
@@ -234,21 +234,21 @@
      "examples": [
       {
        "ref": "104:8",
-       "html": "إِنَّهَا عَلَيْه<tajweed class=\"idgham_shafawi\">ِم م</tajweed>ُّؤْصَدَةٌ ",
+       "html": "إِنَّهَا عَلَيْه<tajweed class=\"idgham_shafawi\">ِم مُّ</tajweed>ؤْصَدَةٌ ",
        "classes": [
         "idgham_shafawi"
        ]
       },
       {
        "ref": "85:20",
-       "html": "وَٱللَّهُ مِن وَرَآئِه<tajweed class=\"idgham_shafawi\">ِم م</tajweed>ُّحِيطُۢ ",
+       "html": "وَٱللَّهُ مِن وَرَآئِه<tajweed class=\"idgham_shafawi\">ِم مُّ</tajweed>حِيطُۢ ",
        "classes": [
         "idgham_shafawi"
        ]
       },
       {
        "ref": "37:42",
-       "html": "فَوَٲكِهُ‌ۖ وَه<tajweed class=\"idgham_shafawi\">ُم م</tajweed>ُّكْرَمُونَ ",
+       "html": "فَوَٲكِهُ‌ۖ وَه<tajweed class=\"idgham_shafawi\">ُم مُّ</tajweed>كْرَمُونَ ",
        "classes": [
         "idgham_shafawi"
        ]
@@ -290,7 +290,7 @@
      "examples": [
       {
        "ref": "112:2",
-       "html": "ٱللَّهُ ٱلصَّمَ<tajweed class=\"qalaqah\">د</tajweed>ُ ",
+       "html": "ٱللَّهُ ٱلصَّمَ<tajweed class=\"qalaqah\">دُ</tajweed> ",
        "classes": [
         "qalaqah"
        ]
@@ -304,7 +304,7 @@
       },
       {
        "ref": "85:18",
-       "html": "فِرْعَوْنَ وَثَمُو<tajweed class=\"qalaqah\">د</tajweed>َ ",
+       "html": "فِرْعَوْنَ وَثَمُو<tajweed class=\"qalaqah\">دَ</tajweed> ",
        "classes": [
         "qalaqah"
        ]
@@ -341,28 +341,28 @@
       },
       {
        "ref": "80:35",
-       "html": "وَأُ<tajweed class=\"ghunnah\">مّ</tajweed>ِهِۦ وَأَبِيهِ ",
+       "html": "وَأُ<tajweed class=\"ghunnah\">مِّ</tajweed>هِۦ وَأَبِيهِ ",
        "classes": [
         "ghunnah"
        ]
       },
       {
        "ref": "101:9",
-       "html": "فَأُ<tajweed class=\"ghunnah\">مّ</tajweed>ُهُۥ هَاوِيَةٌ ",
+       "html": "فَأُ<tajweed class=\"ghunnah\">مُّ</tajweed>هُۥ هَاوِيَةٌ ",
        "classes": [
         "ghunnah"
        ]
       },
       {
        "ref": "78:1",
-       "html": "عَ<tajweed class=\"ghunnah\">مّ</tajweed>َ يَتَسَآءَلُونَ ",
+       "html": "عَ<tajweed class=\"ghunnah\">مَّ</tajweed> يَتَسَآءَلُونَ ",
        "classes": [
         "ghunnah"
        ]
       },
       {
        "ref": "86:13",
-       "html": "إِ<tajweed class=\"ghunnah\">نّ</tajweed>َهُۥ لَقَوْلٌ فَصْلٌ ",
+       "html": "إِ<tajweed class=\"ghunnah\">نَّ</tajweed>هُۥ لَقَوْلٌ فَصْلٌ ",
        "classes": [
         "ghunnah"
        ]
@@ -422,28 +422,28 @@
      "examples": [
       {
        "ref": "80:12",
-       "html": "فَمَن ش<tajweed class=\"madda_obligatory\">َا</tajweed>ٓءَ ذَكَرَهُۥ ",
+       "html": "فَمَن ش<tajweed class=\"madda_obligatory\">َآ</tajweed>ءَ ذَكَرَهُۥ ",
        "classes": [
         "madda_obligatory"
        ]
       },
       {
        "ref": "78:32",
-       "html": "حَد<tajweed class=\"madda_obligatory\">َا</tajweed>ٓئِقَ وَأَعْنَـٰبًا ",
+       "html": "حَد<tajweed class=\"madda_obligatory\">َآ</tajweed>ئِقَ وَأَعْنَـٰبًا ",
        "classes": [
         "madda_obligatory"
        ]
       },
       {
        "ref": "86:6",
-       "html": "خُلِقَ مِن مّ<tajweed class=\"madda_obligatory\">َا</tajweed>ٓءٍ دَافِقٍ ",
+       "html": "خُلِقَ مِن مّ<tajweed class=\"madda_obligatory\">َآ</tajweed>ءٍ دَافِقٍ ",
        "classes": [
         "madda_obligatory"
        ]
       },
       {
        "ref": "87:5",
-       "html": "فَجَعَلَهُۥ غُث<tajweed class=\"madda_obligatory\">َا</tajweed>ٓءً أَحْوَىٰ ",
+       "html": "فَجَعَلَهُۥ غُث<tajweed class=\"madda_obligatory\">َآ</tajweed>ءً أَحْوَىٰ ",
        "classes": [
         "madda_obligatory"
        ]
@@ -496,28 +496,28 @@
      "examples": [
       {
        "ref": "80:33",
-       "html": "فَإِذَا جَآءَتِ ٱلصّ<tajweed class=\"madda_necessary\">َا</tajweed>ٓخَّةُ ",
+       "html": "فَإِذَا جَآءَتِ ٱلصّ<tajweed class=\"madda_necessary\">َآ</tajweed>خَّةُ ",
        "classes": [
         "madda_necessary"
        ]
       },
       {
        "ref": "55:64",
-       "html": "مُدْه<tajweed class=\"madda_necessary\">َا</tajweed>ٓمَّتَانِ ",
+       "html": "مُدْه<tajweed class=\"madda_necessary\">َآ</tajweed>مَّتَانِ ",
        "classes": [
         "madda_necessary"
        ]
       },
       {
        "ref": "69:2",
-       "html": "مَا ٱلْح<tajweed class=\"madda_necessary\">َا</tajweed>ٓقَّةُ ",
+       "html": "مَا ٱلْح<tajweed class=\"madda_necessary\">َآ</tajweed>قَّةُ ",
        "classes": [
         "madda_necessary"
        ]
       },
       {
        "ref": "79:34",
-       "html": "فَإِذَا جَآءَتِ ٱلطّ<tajweed class=\"madda_necessary\">َا</tajweed>ٓمَّةُ ٱلْكُبْرَىٰ ",
+       "html": "فَإِذَا جَآءَتِ ٱلطّ<tajweed class=\"madda_necessary\">َآ</tajweed>مَّةُ ٱلْكُبْرَىٰ ",
        "classes": [
         "madda_necessary"
        ]

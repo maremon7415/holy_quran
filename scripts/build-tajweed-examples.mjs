@@ -287,7 +287,7 @@ for (const [slug, groups] of Object.entries(RULES)) {
       if (tag && letterTag.has(tag) && cands.length > 40 && picked.length < g.n - 1) continue // vary the following letter
       surahs.add(c.p.s); if (tag) letterTag.add(tag)
       const spans = c.hits.flatMap((h) => h.spans)
-      const marked = focus(c.p.ch, g.keep, spans.filter((s) => SYNTH.has(s.cls)))
+      const marked = focus(c.p.ch, g.keep, spans)
       const html = render(marked)
       const classes = [...new Set(marked.map((x) => x.k).filter(Boolean))]
       if (!classes.length || classes.some((k) => !ALLOWED.has(k))) continue
