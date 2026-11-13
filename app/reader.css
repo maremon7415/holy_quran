@@ -7,6 +7,9 @@
 .bn-only { display: none; }
 html[data-lang='bn'] .bn-only { display: revert; }
 html[data-lang='bn'] .en-only { display: none; }
+.ar-only { display: none; }
+html[data-lang='ar'] .ar-only { display: revert; }
+html[data-lang='ar'] .en-only { display: none; }
 
 /* ---------- English edition switch ---------- */
 [data-ed='haleem'] { display: none; }

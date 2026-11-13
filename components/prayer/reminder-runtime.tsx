@@ -24,7 +24,7 @@ export function PrayerReminderRuntime() {
   const madhab = usePrayerPrefs((s) => s.madhab)
   const tz = usePrayerPrefs((s) => s.tz)
   const reminders = usePrayerPrefs((s) => s.reminders)
-  const lang = useLang() === 'bn' ? 'bn' : 'en'
+  const lang = useLang()
   const set = useReminderStatus((s) => s.set)
 
   // environment + permission

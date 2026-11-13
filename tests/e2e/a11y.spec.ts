@@ -14,21 +14,38 @@ const ROUTES = [
 
 const serious = (impact?: string | null) => impact === 'serious' || impact === 'critical'
 
-async function audit(page: import('@playwright/test').Page, theme: string) {
+async function audit(page: import('@playwright/test').Page, theme: string, lang: string) {
   await page.goto('/')
-  await page.evaluate((t) => localStorage.setItem('theme', t), theme)
+  await page.evaluate(([t, l]) => {
+    localStorage.setItem('theme', t)
+    if (l === 'ar') localStorage.setItem('quran-store', JSON.stringify({ state: { language: 'ar' }, version: 0 }))
+  }, [theme, lang])
 }
 
-for (const theme of ['light', 'dark']) {
-  for (const route of theme === 'light' ? ROUTES : ['/', '/surah/al-mulk', '/dua', '/hifz']) {
-    test(`a11y (${theme}): ${route}`, async ({ page }) => {
-      await audit(page, theme)
+interface Case { theme: string; lang: 'en' | 'ar'; route: string; include?: string[] }
+const BN_ROUTES = ['/bn', '/bn/quran', '/bn/surah/al-mulk', '/bn/dua', '/bn/names-of-allah', '/bn/hifz', '/bn/prayer-times']
+const cases: Case[] = [
+  ...ROUTES.map((route) => ({ theme: 'light', lang: 'en' as const, route })),
+  // /juz/30 renders ~560 ayahs (axe takes ~40s on the whole page): audit the shell + the first ayahs only
+  { theme: 'light', lang: 'en', route: '/juz/30', include: ['header', 'main > :first-child', 'article[data-ayah]:nth-of-type(-n+8)'] },
+  // every theme is audited on the pages that use the most token pairs
+  ...['sand', 'dusk', 'dark', 'black'].flatMap((theme) => ['/', '/surah/al-mulk', '/dua', '/hifz', '/quran'].map((route) => ({ theme, lang: 'en' as const, route }))),
+  ...BN_ROUTES.map((route) => ({ theme: 'light', lang: 'en' as const, route })),
+  ...['/', '/surah/al-mulk', '/dua', '/settings', '/hifz'].map((route) => ({ theme: 'light', lang: 'ar' as const, route })),
+]
+
+for (const { theme, lang, route, include } of cases) {
+  {
+    test(`a11y (${theme}${lang === 'ar' ? ', ar' : ''}): ${route}`, async ({ page }) => {
+      await audit(page, theme, lang)
       await page.goto(route)
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(700) // entrance animations (opacity transitions skew contrast results)
-      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+      let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      for (const sel of include ?? []) builder = builder.include(sel)
+      const results = await builder.analyze()
       const found = results.violations.filter((v) => serious(v.impact))
-      const key = theme === 'light' ? route : `${route} [${theme}]`
+      const key = [route, theme !== 'light' ? `[${theme}]` : '', lang !== 'en' ? `[${lang}]` : ''].filter(Boolean).join(' ')
       if (process.env.A11Y_COLLECT) {
         // maintenance mode: `A11Y_COLLECT=/tmp/x.ndjson pnpm test:e2e a11y` → rebuild the allow-list (see README)
         fs.appendFileSync(process.env.A11Y_COLLECT, found.map((v) => JSON.stringify({ key, id: v.id, help: `${v.help} (${v.nodes.length} nodes)` })).join('\n') + (found.length ? '\n' : ''))
@@ -46,3 +63,29 @@ for (const theme of ['light', 'dark']) {
     })
   }
 }
+
+test.describe('a11y: overlays', () => {
+  const run = async (page: import('@playwright/test').Page) => {
+    const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
+    return r.violations.filter((v) => serious(v.impact)).map((v) => `${v.id}: ${v.nodes[0]?.target?.join(' ')}`)
+  }
+  test('command palette (open)', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    await page.keyboard.press('Control+k')
+    await expect(page.getByRole('dialog', { name: /search the quran/i })).toBeVisible()
+    await page.waitForTimeout(700)
+    expect(await run(page)).toEqual([])
+  })
+  for (const [name, vp] of [['desktop', { width: 1280, height: 800 }], ['mobile', { width: 390, height: 800 }]] as const) {
+    test(`reader settings sheet (${name})`, async ({ page }) => {
+      await page.setViewportSize(vp)
+      await page.goto('/surah/al-fatihah')
+      await page.waitForLoadState('networkidle')
+      await page.getByRole('button', { name: /reading settings/i }).locator('visible=true').first().click()
+      await expect(page.getByRole('dialog')).toBeVisible()
+      await page.waitForTimeout(800)
+      expect(await run(page)).toEqual([])
+    })
+  }
+})

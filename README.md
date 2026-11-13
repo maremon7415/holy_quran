@@ -13,6 +13,10 @@ A fast, beautiful, SEO-first Quran web app: read, listen, understand and memoris
 - **Search** – ⌘K command palette: surah names (EN/BN/AR), `2:255` references and full-text search across Arabic, English and Bangla.
 - **Share as image** – beautiful 1080×1350 ayah cards.
 - **SEO / AI visibility** – every surah, juz, topic, dua and name is pre-rendered; 6,236 single-ayah landing pages; JSON-LD (Book/Chapter, Quotation, FAQPage, BreadcrumbList, Article); sitemaps; `robots.txt` welcoming AI crawlers; `/llms.txt` and `/llms-full.txt`; dynamic OG images.
+- **Languages** – full UI in English, **Bangla** (`/bn/…` server-rendered twins of every content page, hreflang, Bangla uccharon = Arabic pronunciation in Bangla script shown by default, Bangla OG images where the glyphs shape correctly) and **Arabic** (RTL, mirrored layout, Arabic names for topics, duas, the 99 Names, reciters and famous ayahs).
+- **Prayer reminders** – per-prayer (incl. Jumu'ah / Tahajjud) notifications with lead time, plus a 30-day `.ics` calendar export with alarms (en / bn / ar).
+- **Offline** – `/downloads`: save all surah pages and recitations for offline use; offline pill; pre-rendered `/offline` fallback.
+- **Translations** – add any Quran.com translation edition as an extra block under every ayah.
 - **PWA** – installable, offline reading via service worker, custom illustrated PNG icon set.
 
 ## Develop
@@ -58,12 +62,14 @@ pnpm verify:hadith      # checks hadith duas against the open hadith corpus (nee
 **Unit tests** (`tests/unit`, vitest, node env) cover the pure logic: chapter/slug resolution, ref parsing, search ranking,
 SM-2 review math, khatam/page math, hifz streaks across DST (`TZ=America/New_York`), the HTML sanitizer against XSS
 payloads, reciter catalogue, SEO/JSON-LD builders, sync merge, **data integrity** (114 chapters, 6,236 verses, juz map covers
-each verse exactly once, all content refs and slugs valid) and the API route handlers called directly with a `Request`.
+each verse exactly once, all content refs and slugs valid), **i18n** (`/bn` route helpers and hreflang, Arabic names for all
+content, Bangla uccharon integrity — 6,236 Bangla-script strings, fixture similarity ≥ 0.95), **prayer times / reminders / .ics**
+(Dhaka golden values, Jumu'ah/Tahajjud, DST, RFC 5545 folding + CRLF), offline helpers and the API route handlers called directly with a `Request`.
 `server-only` is stubbed in `vitest.config.ts` so server modules can be imported.
 
 **E2E tests** (`tests/e2e`, Playwright) drive a real browser: home, command palette, reader (settings, themes, deep links,
 keyboard), single-ayah SEO (JSON-LD, canonical, real 404s), topics/duas/names (+ quiz), search, `/saved`, hifz session,
-khatam planner, prayer times with geolocation (Dhaka), mobile tab bar, sitemap/robots/llms.txt, a console-error sweep over the
+khatam planner, prayer times with geolocation (Dhaka) and the reminders / `.ics` export, `/bn` pages, language toggle and Arabic RTL (no overflow at 390 px), translation picker, uccharon toggle, offline pill and `/downloads`, accounts-disabled pages, mobile tab bar, sitemap index + `/bn` sitemaps with hreflang / robots / llms.txt, a console-error sweep over the
 main routes, axe accessibility audits and loose performance budgets. Requests to third-party hosts (quran.com API, audio
 CDNs) are stubbed by `tests/e2e/fixtures.ts`, so the suite is hermetic.
 

@@ -5,9 +5,9 @@ import { motion } from 'framer-motion'
 import { Check, Loader2, Pause, Play, Search } from 'lucide-react'
 import { usePlayer } from '@/lib/stores/player'
 import { useReader } from '@/lib/stores/reader'
-import { reciters, getReciter, type ReciterStyle } from '@/lib/audio/reciters'
+import { reciters, getReciter, reciterName, reciterNote, reciterStyle, type ReciterStyle } from '@/lib/audio/reciters'
 import { chapters, surahHref, resolveChapterId } from '@/lib/quran/chapters'
-import { useMounted, useTx } from '@/lib/lang'
+import { useLang, useMounted, useTx } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
 import { ReciterMonogram } from './reciter-monogram'
@@ -41,6 +41,7 @@ export function PlayAllButton() {
 
 export function ReciterGallery() {
   const t = useTx()
+  const lang = useLang()
   const reciterId = useReciterId()
   const [style, setStyle] = useState<ReciterStyle | 'all'>('all')
   const list = useMemo(() => (style === 'all' ? reciters : reciters.filter((r) => r.style === style)), [style])
@@ -62,7 +63,7 @@ export function ReciterGallery() {
               onClick={() => setStyle(s)}
               className={cn('h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition active:scale-95', style === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-muted')}
             >
-              {s === 'all' ? t({ en: 'All', bn: 'সব', ar: 'الكل' }) : s}
+              {s === 'all' ? t({ en: 'All', bn: 'সব', ar: 'الكل' }) : reciterStyle(lang, s)}
             </button>
           ))}
         </div>
@@ -82,11 +83,11 @@ export function ReciterGallery() {
             >
               <ReciterMonogram name={r.name} size={56} active={active} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold">{r.name}</span>
-                <span className="block truncate font-arabic text-[15px] text-muted-foreground">{r.ar}</span>
+                <span className="block truncate text-sm font-semibold">{reciterName(lang, r)}</span>
+                {lang !== 'ar' && <span className="block truncate font-arabic text-[15px] text-muted-foreground">{r.ar}</span>}
                 <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[11px] font-medium text-gold">{r.style}</span>
-                  {r.note && <span className="truncate text-[11px] text-muted-foreground">{r.note}</span>}
+                  <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[11px] font-medium text-gold">{reciterStyle(lang, r.style)}</span>
+                  {r.note && <span className="truncate text-[11px] text-muted-foreground">{reciterNote(lang, r.note)}</span>}
                 </span>
               </span>
               {active && <span className="absolute end-3 top-3 grid size-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3" /></span>}
@@ -111,7 +112,7 @@ function SurahRow({ id }: { id: number }) {
       <div className={cn('group flex items-center gap-3 rounded-2xl border p-2.5 pe-3 transition', isCurrent ? 'border-primary/40 bg-accent' : 'border-transparent hover:border-border hover:bg-card')}>
         <button
           onClick={() => (isCurrent ? usePlayer.getState().toggle() : usePlayer.getState().playSurah(id))}
-          aria-label={`${playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play', bn: 'চালান', ar: 'تشغيل' })} ${c.nameSimple}`}
+          aria-label={`${playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play', bn: 'চালান', ar: 'تشغيل' })} ${label(id)}`}
           className={cn('relative grid size-12 shrink-0 place-items-center rounded-full transition active:scale-90', isCurrent ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground group-hover:bg-primary group-hover:text-primary-foreground')}
         >
           {loading ? <Loader2 className="size-4 animate-spin" /> : playing ? <EqBars size={16} className="text-primary-foreground" /> : <Play className="size-4 translate-x-px fill-current" />}
@@ -120,7 +121,7 @@ function SurahRow({ id }: { id: number }) {
           <span className="w-7 shrink-0 text-center text-xs font-semibold tabular-nums text-muted-foreground">{id}</span>
           <span className="min-w-0 flex-1">
             <span className={cn('block truncate text-[15px] font-semibold', isCurrent && 'text-primary')}>{label(id)}</span>
-            <span className="block truncate text-xs text-muted-foreground">{c.meaning} · {c.versesCount} {t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}</span>
+            <span className="block truncate text-xs text-muted-foreground">{t({ en: `${c.meaning} · `, ar: '' })}{c.versesCount} {t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}</span>
           </span>
           <span className="shrink-0 font-arabic text-xl text-gold">{c.nameArabic}</span>
         </Link>

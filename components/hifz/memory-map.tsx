@@ -70,7 +70,7 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
             <button
               key={c.id}
               onClick={() => onPick(c.id)}
-              title={`${c.id}. ${c.nameSimple} — ${m.known}/${m.total}`}
+              title={`${c.id}. ${lang === 'bn' ? surahNamesBn[c.id - 1] : lang === 'ar' ? c.nameArabic : c.nameSimple} — ${m.known}/${m.total}`}
               className={cn('grid aspect-square place-items-center rounded-lg text-[11px] font-medium tabular-nums transition hover:scale-110', m.known === 0 ? 'text-muted-foreground' : 'text-primary-foreground', selected === c.id && 'ring-2 ring-ring ring-offset-1 ring-offset-background')}
               style={{ background: fill(m) }}
             >

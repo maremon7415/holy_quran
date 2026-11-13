@@ -18,7 +18,7 @@ export function DuaBookmark({ slug, variant = 'icon', className }: { slug: strin
       type="button"
       whileTap={{ scale: 0.85 }}
       aria-pressed={on}
-      aria-label={on ? 'Remove bookmark' : 'Bookmark this dua'}
+      aria-label={variant === 'pill' ? undefined : on ? t({ en: 'Remove bookmark', bn: 'বুকমার্ক সরান', ar: 'إزالة العلامة' }) : t({ en: 'Bookmark this dua', bn: 'দোয়াটি বুকমার্ক করুন', ar: 'حفظ هذا الدعاء' })}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(slug) }}
       className={cn(
         variant === 'icon'

@@ -57,15 +57,20 @@ test.describe('command palette', () => {
     await expect(page.locator('[cmdk-empty]')).toBeVisible({ timeout: 10_000 })
   })
 
-  // BUG: components/shell/command-palette.tsx:24-45,88 — the palette is a plain <div> overlay: it has no Escape key
-  // handler and no role="dialog"/aria-modal, so Escape does nothing (keyboard users are trapped until they click the backdrop).
-  test.fixme('Escape closes the palette', async ({ page }) => {
+  test('Escape closes the palette; it is a modal dialog and focus returns', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await page.keyboard.press('Control+k')
     const input = page.getByPlaceholder(/Search surah/i)
     await expect(input).toBeVisible()
+    const dlg = page.getByRole('dialog', { name: /search the quran/i })
+    await expect(dlg).toHaveAttribute('aria-modal', 'true')
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press('Tab')
+      expect(await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'))).toBe(true)
+    }
     await page.keyboard.press('Escape')
     await expect(input).toBeHidden()
+    await expect(dlg).toBeHidden()
   })
 })

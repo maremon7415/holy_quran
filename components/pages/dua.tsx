@@ -18,6 +18,9 @@ import { chapters, readerHref } from '@/lib/quran/chapters'
 import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { bnNum } from '@/lib/i18n/t'
 import { refLabelL } from '@/lib/i18n/quran'
+import { T, NotAr } from '@/lib/i18n/text'
+import { RefLabel } from '@/lib/i18n/surah-name'
+import { Source } from '@/lib/i18n/source'
 
 /* ───────────────────────────── /dua ───────────────────────────── */
 
@@ -34,7 +37,7 @@ const indexCopy = {
   },
 }
 
-export const duaIndexMeta = (locale: Locale): Metadata => buildMeta({ ...indexCopy[locale], path: '/dua', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
+export const duaIndexMeta = (locale: Locale): Metadata => buildMeta({ ...indexCopy[locale], path: '/dua', locale, ogImage: locale === 'bn' ? '/bn/opengraph-image' : undefined })
 
 export async function DuaIndexPage({ locale }: { locale: Locale }) {
   const bn = locale === 'bn'
@@ -51,7 +54,7 @@ export async function DuaIndexPage({ locale }: { locale: Locale }) {
       <Breadcrumbs locale={locale} items={[{ name: bn ? 'দোয়া' : 'Duas', href: '/dua' }]} className="mb-4" />
       {bn ? (
         <PageHero
-          eyebrow="দোয়া · Duas"
+          eyebrow="দোয়া"
           icon="dua"
           arabic="ٱدْعُونِىٓ أَسْتَجِبْ لَكُمْ"
           title="কুরআন ও সুন্নাহর দোয়া"
@@ -59,11 +62,11 @@ export async function DuaIndexPage({ locale }: { locale: Locale }) {
         />
       ) : (
         <PageHero
-          eyebrow="Duas · দোয়া"
+          eyebrow={<><T en="Duas" ar="الأدعية" /><NotAr> · দোয়া</NotAr></>}
           icon="dua"
           arabic="ٱدْعُونِىٓ أَسْتَجِبْ لَكُمْ"
-          title="Duas from the Quran & Sunnah"
-          subtitle={`${all.length} authentic supplications with Arabic, transliteration and meaning in English and Bangla. Every dua cites its source; Quranic duas are shown straight from the Quran text. প্রতিটি দোয়ার উৎস উল্লেখ করা আছে।`}
+          title={<T en="Duas from the Quran & Sunnah" ar="أدعية من القرآن والسنة" />}
+          subtitle={<T en={`${all.length} authentic supplications with Arabic, transliteration and meaning in English and Bangla. Every dua cites its source; Quranic duas are shown straight from the Quran text.`} ar={`${all.length} دعاءً صحيحًا بالنص العربي ومعناه ومصدره. يُذكر مصدر كل دعاء، وتُعرض أدعية القرآن مباشرة من نص القرآن.`} />}
         />
       )}
       <div className="mt-6">
@@ -77,14 +80,14 @@ export async function DuaIndexPage({ locale }: { locale: Locale }) {
           </>
         ) : (
           <>
-            <h2 className="font-display mb-2 text-lg font-semibold text-foreground">About these duas</h2>
-            <p>Duas are listed with the Quran verse or hadith collection they come from, such as Sahih al-Bukhari or Sahih Muslim. Where a hadith number is shown it points to the standard numbering of that collection. For rulings on how and when to recite, please consult a qualified scholar.</p>
-            <p lang="bn" className="font-bangla mt-2">প্রতিটি দোয়ার সঙ্গে কুরআনের আয়াত বা হাদিসের গ্রন্থের উৎস দেওয়া আছে। পাঠের নিয়ম ও বিধান জানতে যোগ্য আলেমের পরামর্শ নিন।</p>
+            <h2 className="font-display mb-2 text-lg font-semibold text-foreground"><T en="About these duas" ar="عن هذه الأدعية" /></h2>
+            <p><T en="Duas are listed with the Quran verse or hadith collection they come from, such as Sahih al-Bukhari or Sahih Muslim. Where a hadith number is shown it points to the standard numbering of that collection. For rulings on how and when to recite, please consult a qualified scholar." ar="تُذكر مع كل دعاء الآية أو كتاب الحديث الذي أُخذ منه، مثل صحيح البخاري أو صحيح مسلم. ورقم الحديث، حيث يُذكر، يوافق الترقيم المعتمد لذلك الكتاب. وللاستفسار عن كيفية القراءة ووقتها يُرجى الرجوع إلى أهل العلم." /></p>
+            <NotAr><p lang="bn" className="font-bangla mt-2">প্রতিটি দোয়ার সঙ্গে কুরআনের আয়াত বা হাদিসের গ্রন্থের উৎস দেওয়া আছে। পাঠের নিয়ম ও বিধান জানতে যোগ্য আলেমের পরামর্শ নিন।</p></NotAr>
           </>
         )}
         <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
-          <span className="font-semibold text-foreground">{bn ? 'জনপ্রিয়:' : 'Popular:'}</span>
-          {popular.map((s) => { const d = all.find((x) => x.slug === s)!; return <Link key={s} href={h(`/dua/${s}`)} className="text-primary hover:underline">{shortTitle(bn ? d.title.bn : d.title.en)}</Link> })}
+          <span className="font-semibold text-foreground">{bn ? 'জনপ্রিয়:' : <T en="Popular:" ar="الأكثر قراءة:" />}</span>
+          {popular.map((s) => { const d = all.find((x) => x.slug === s)!; return <Link key={s} href={h(`/dua/${s}`)} className="text-primary hover:underline">{bn ? shortTitle(d.title.bn) : <T en={shortTitle(d.title.en)} ar={d.title.ar} />}</Link> })}
         </p>
       </section>
     </div>
@@ -106,7 +109,7 @@ export async function duaMeta(locale: Locale, { params }: SlugProps): Promise<Me
     return buildMeta({
       title: `${d.title.bn} | আরবি, বাংলা উচ্চারণ ও অর্থ`,
       description: clip(`${r.meaning.bn} — ${d.source}। আরবি দোয়া, বাংলা উচ্চারণ, অর্থ ও কখন পড়বেন।`, 165),
-      path, locale, type: 'article', ogImage: `${path}/opengraph-image`,
+      path, locale, type: 'article', ogImage: `${localeHref(locale, path)}/opengraph-image`,
       keywords: [d.title.bn, `${shortTitle(d.title.bn)} বাংলা অর্থসহ`, `${shortTitle(d.title.bn)} উচ্চারণ`, ...(d.keywords ?? []).filter((k) => /[ঀ-৿]/.test(k)), 'দোয়া', 'দোয়া বাংলা'],
     })
   }
@@ -138,7 +141,6 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
         { q: `${shortTitle(d.title.bn)} এর অর্থ কী?`, a: d.meaning.bn },
         { q: 'এই দোয়াটি কখন পড়তে হয়?', a: d.when.bn + (d.count ? ` পড়ার সংখ্যা: ${d.count}।` : '') },
         { q: 'এই দোয়ার উৎস কী?', a: `${d.source}।` },
-        { q: `What is the meaning of ${shortTitle(d.title.en)}?`, a: d.meaning.en },
       ]
     : [
         { q: `What is the meaning of ${shortTitle(d.title.en)}?`, a: d.meaning.en },
@@ -160,13 +162,13 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
 
   const meaningEn = (
     <div key="en" data-tr="en">
-      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'ইংরেজি অর্থ' : 'Meaning'}</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'ইংরেজি অর্থ' : <T en="Meaning" ar="المعنى (بالإنجليزية)" />}</h2>
       <p lang="en" className={bn ? 'mt-1 text-base leading-relaxed text-muted-foreground' : 'mt-1 text-lg leading-relaxed'}>{d.meaning.en}</p>
     </div>
   )
   const meaningBn = (
     <div key="bn" data-tr="bn">
-      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'বাংলা অর্থ' : 'অর্থ'}</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'বাংলা অর্থ' : <NotAr>অর্থ</NotAr>}</h2>
       <p lang="bn" className="font-bangla mt-1 text-lg leading-relaxed">{d.meaning.bn}</p>
     </div>
   )
@@ -174,18 +176,16 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
   return (
     <div className={pageShell}>
       <JsonLd data={[
-        articleLd({ headline: bn ? d.title.bn : d.title.en, description: bn ? d.meaning.bn : d.meaning.en, path: h(path), image: `${path}/opengraph-image`, about: bn ? 'দোয়া' : 'Dua', inLanguage: bn ? 'bn' : undefined, keywords: [...(d.keywords ?? [])] }),
+        articleLd({ headline: bn ? d.title.bn : d.title.en, description: bn ? d.meaning.bn : d.meaning.en, path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? 'দোয়া' : 'Dua', inLanguage: bn ? 'bn' : undefined, keywords: [...(d.keywords ?? [])] }),
         howToLd({ name: bn ? `যেভাবে পড়বেন: ${d.title.bn}` : `How to recite: ${d.title.en}`, description: bn ? `কখন ও কীভাবে এই দোয়া পড়বেন। ${d.source}।` : `When and how to make this dua. ${d.source}.`, path: h(path), steps, inLanguage: bn ? 'bn' : undefined }),
       ]} />
-      <Breadcrumbs locale={locale} items={[{ name: bn ? 'দোয়া' : 'Duas', href: '/dua' }, { name: bn ? cat.title.bn : cat.title.en, href: `/dua#${cat.id}` }, { name: shortTitle(bn ? d.title.bn : d.title.en), href: path }]} className="mb-4" />
+      <Breadcrumbs locale={locale} items={[{ name: bn ? 'দোয়া' : 'Duas', ar: 'الأدعية', href: '/dua' }, { name: bn ? cat.title.bn : cat.title.en, ar: cat.title.ar, href: `/dua#${cat.id}` }, { name: shortTitle(bn ? d.title.bn : d.title.en), ar: d.title.ar, href: path }]} className="mb-4" />
 
       {bn ? (
-        <PageHero eyebrow={`${cat.title.bn} · ${cat.title.en}`} icon={cat.icon} title={d.title.bn} subtitle={undefined}>
-          <p lang="en" className="mt-2 text-lg font-medium text-gold sm:text-xl">{d.title.en}</p>
-        </PageHero>
+        <PageHero eyebrow={cat.title.bn} icon={cat.icon} title={d.title.bn} subtitle={undefined} />
       ) : (
-        <PageHero eyebrow={`${cat.title.en} · ${cat.title.bn}`} icon={cat.icon} title={d.title.en} subtitle={undefined}>
-          <p lang="bn" className="font-bangla mt-2 text-xl font-medium text-gold sm:text-2xl">{d.title.bn}</p>
+        <PageHero eyebrow={<><T en={cat.title.en} ar={cat.title.ar} /><NotAr> · {cat.title.bn}</NotAr></>} icon={cat.icon} title={<T en={d.title.en} ar={d.title.ar} />} subtitle={undefined}>
+          <NotAr><p lang="bn" className="font-bangla mt-2 text-xl font-medium text-gold sm:text-2xl">{d.title.bn}</p></NotAr>
         </PageHero>
       )}
 
@@ -195,8 +195,8 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
           <p lang="ar" dir="rtl" className="quran-text relative text-center text-[clamp(1.75rem,5.5vw,3rem)] leading-[2.2]">{d.ar}</p>
           <div className="relative mx-auto mt-6 max-w-2xl space-y-5 text-center">
             <div>
-              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'উচ্চারণ (ইংরেজি হরফে)' : 'Transliteration'}</h2>
-              <p lang="en" className="mt-1 text-[15px] italic leading-relaxed text-muted-foreground">{d.tl}</p>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gold">{bn ? 'উচ্চারণ (ইংরেজি হরফে)' : <T en="Transliteration" ar="" />}</h2>
+              <p lang="en" className="mt-1 text-[15px] italic leading-relaxed text-muted-foreground"><NotAr>{d.tl}</NotAr></p>
             </div>
             {bn ? [meaningBn, meaningEn] : [meaningEn, meaningBn]}
           </div>
@@ -210,19 +210,19 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Reveal><section className="card-soft h-full rounded-3xl p-5">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="info" size={18} /> {bn ? 'উৎস' : 'Source · উৎস'}</h2>
-          <p className="mt-2 text-[15px] font-medium">{d.source}</p>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="info" size={18} /> {bn ? 'উৎস' : <><T en="Source" ar="المصدر" /><NotAr> · উৎস</NotAr></>}</h2>
+          <p className="mt-2 text-[15px] font-medium"><Source s={d.source} bn={bn} /></p>
           {d.verses && (
             <p className="mt-2 flex flex-wrap gap-2 text-xs">
               {d.refs!.map((r) => { const [s, a] = r.split(':'); const first = +a.split('-')[0]; return (
                 <Link key={r} href={h(readerHref(+s, first))} className="rounded-full bg-accent px-3 py-1.5 font-semibold text-accent-foreground hover:bg-primary hover:text-primary-foreground">
-                  <span className="font-arabic">{chapters[+s - 1].nameArabic}</span> {refLabelL(locale, r)} · {bn ? 'প্রসঙ্গসহ পড়ুন' : 'Read in context'}
+                  <span className="font-arabic">{chapters[+s - 1].nameArabic}</span> {bn ? refLabelL(locale, r) : <RefLabel r={r} />} · {bn ? 'প্রসঙ্গসহ পড়ুন' : <T en="Read in context" ar="اقرأ في سياقها" />}
                 </Link>) })}
             </p>
           )}
         </section></Reveal>
         <Reveal delay={0.05}><section className="card-soft h-full rounded-3xl p-5">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="clock" size={18} /> {bn ? 'কখন পড়বেন' : 'When to recite · কখন পড়বেন'}</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="clock" size={18} /> {bn ? 'কখন পড়বেন' : <><T en="When to recite" ar="متى يُقرأ" /><NotAr> · কখন পড়বেন</NotAr></>}</h2>
           {bn ? (
             <>
               <p lang="bn" className="mt-2 text-[15px] leading-relaxed">{d.when.bn}</p>
@@ -232,8 +232,8 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
           ) : (
             <>
               <p className="mt-2 text-[15px] leading-relaxed">{d.when.en}</p>
-              <p lang="bn" className="font-bangla mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{d.when.bn}</p>
-              {d.count && <p className="mt-2 text-xs font-semibold text-gold">Repeat: {d.count}</p>}
+              <NotAr><p lang="bn" className="font-bangla mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{d.when.bn}</p></NotAr>
+              {d.count && <p className="mt-2 text-xs font-semibold text-gold"><T en="Repeat:" ar="التكرار:" /> {d.count}</p>}
             </>
           )}
         </section></Reveal>
@@ -241,7 +241,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
 
       {d.virtue && (
         <Reveal className="mt-4"><section className="rounded-3xl border border-gold/30 bg-gold-soft/40 p-5">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="sparkle" size={18} /> {bn ? 'ফজিলত' : 'Virtue · ফজিলত'}</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="sparkle" size={18} /> {bn ? 'ফজিলত' : <><T en="Virtue" ar="الفضل" /><NotAr> · ফজিলত</NotAr></>}</h2>
           {bn ? (
             <>
               <p lang="bn" className="mt-2 text-[15px] leading-relaxed">{d.virtue.bn}</p>
@@ -250,7 +250,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
           ) : (
             <>
               <p className="mt-2 text-[15px] leading-relaxed">{d.virtue.en}</p>
-              <p lang="bn" className="font-bangla mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{d.virtue.bn}</p>
+              <NotAr><p lang="bn" className="font-bangla mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{d.virtue.bn}</p></NotAr>
             </>
           )}
         </section></Reveal>
@@ -258,14 +258,14 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
 
       {related.length > 0 && (
         <section aria-labelledby="rel-h" className="mt-12">
-          <h2 id="rel-h" className="font-display mb-4 text-2xl font-semibold">{bn ? 'সম্পর্কিত দোয়া' : <>Related duas <span className="font-bangla text-lg font-medium text-muted-foreground">· সম্পর্কিত দোয়া</span></>}</h2>
+          <h2 id="rel-h" className="font-display mb-4 text-2xl font-semibold">{bn ? 'সম্পর্কিত দোয়া' : <><T en="Related duas" ar="أدعية ذات صلة" /> <NotAr><span className="font-bangla text-lg font-medium text-muted-foreground">· সম্পর্কিত দোয়া</span></NotAr></>}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {related.map((r, i) => (
               <li key={r!.slug}><Reveal delay={i * 0.05} className="h-full">
                 <Link href={h(`/dua/${r!.slug}`)} className="card-soft lift block h-full rounded-3xl p-4">
-                  <span className="block text-[15px] font-semibold leading-snug">{bn ? r!.title.bn : r!.title.en}</span>
-                  <span className={`block text-sm text-gold ${bn ? '' : 'font-bangla'}`}>{bn ? r!.title.en : r!.title.bn}</span>
-                  <span className="mt-1 block text-xs text-muted-foreground">{r!.source}</span>
+                  <span className="block text-[15px] font-semibold leading-snug">{bn ? r!.title.bn : <T en={r!.title.en} ar={r!.title.ar} />}</span>
+                  {bn ? null : <NotAr><span className="block text-sm text-gold font-bangla">{r!.title.bn}</span></NotAr>}
+                  <span className="mt-1 block text-xs text-muted-foreground"><Source s={r!.source} bn={bn} /></span>
                 </Link>
               </Reveal></li>
             ))}
@@ -275,11 +275,11 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
 
       {relTopics.length > 0 && (
         <section className="mt-10" aria-labelledby="topics-h">
-          <h2 id="topics-h" className="font-display mb-3 text-xl font-semibold">{bn ? 'এ বিষয়ে কুরআন কী বলে…' : 'What the Quran says about…'}</h2>
+          <h2 id="topics-h" className="font-display mb-3 text-xl font-semibold">{bn ? 'এ বিষয়ে কুরআন কী বলে…' : <T en="What the Quran says about…" ar="ماذا يقول القرآن عن…" />}</h2>
           <div className="flex flex-wrap gap-2.5">
             {relTopics.map((t) => (
               <Link key={t.slug} href={h(`/topics/${t.slug}`)} className="lift rounded-full border border-border bg-card px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-                {bn ? <>{t.bn} <span className="capitalize text-gold">· {t.en}</span></> : <><span className="capitalize">{t.en}</span> <span className="font-bangla text-gold">· {t.bn}</span></>}
+                {bn ? <>{t.bn}</> : <><span className="capitalize"><T en={t.en} ar={t.ar} /></span> <NotAr><span className="font-bangla text-gold">· {t.bn}</span></NotAr></>}
               </Link>
             ))}
           </div>
@@ -287,7 +287,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
       )}
 
       <Faq faqs={faqs} locale={bn ? 'bn' : undefined} />
-      <p className="mt-8 text-center text-xs text-muted-foreground"><Link href={h('/dua')} className="font-semibold text-primary hover:underline"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'সব দোয়া' : 'All duas · সব দোয়া'}</Link></p>
+      <p className="mt-8 text-center text-xs text-muted-foreground"><Link href={h('/dua')} className="font-semibold text-primary hover:underline"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'সব দোয়া' : <><T en="All duas" ar="كل الأدعية" /><NotAr> · সব দোয়া</NotAr></>}</Link></p>
     </div>
   )
 }

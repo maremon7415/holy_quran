@@ -7,6 +7,7 @@ import { UiIcon } from '@/components/ui-icon'
 import { DuaBookmark } from './dua-bookmark'
 import { useAppStore } from '@/lib/store'
 import { useMounted, useTx } from '@/lib/lang'
+import { Source } from '@/lib/i18n/source'
 import { cn } from '@/lib/utils'
 
 export interface DuaItem {
@@ -56,6 +57,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
     <button
       key={id}
       type="button"
+      aria-pressed={cat === id}
       onClick={() => setCat(id)}
       className={cn(
         'relative inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-semibold transition-colors',
@@ -64,7 +66,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
     >
       {cat === id && <motion.span layoutId="dua-chip" transition={spring} className="absolute inset-0 -z-0 rounded-full bg-primary" />}
       <span className="relative z-10 inline-flex items-center gap-1.5">
-        {icon && <UiIcon name={icon} size={16} />}{label}{count != null && <span className="text-[11px] opacity-70">{count}</span>}
+        {icon && <UiIcon name={icon} size={16} />}{label}{count != null && <span className="text-[11px] opacity-90">{count}</span>}
       </span>
     </button>
   )
@@ -73,7 +75,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
     <div>
       <div className="sticky top-14 z-20 -mx-4 bg-background/85 px-4 pb-3 pt-2 backdrop-blur-md sm:top-16 sm:-mx-6 sm:px-6">
         <label className="relative block">
-          <span className="sr-only">Search duas</span>
+          <span className="sr-only">{t({ en: 'Search duas', bn: 'দোয়া খুঁজুন', ar: 'ابحث في الأدعية' })}</span>
           <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
@@ -82,10 +84,10 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
             className="h-12 w-full rounded-full border border-border bg-card ps-11 pe-11 text-[15px] shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />
           {q && (
-            <button type="button" aria-label="Clear" onClick={() => setQ('')} className="absolute end-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>
+            <button type="button" aria-label={t({ en: 'Clear', bn: 'মুছুন', ar: 'مسح' })} onClick={() => setQ('')} className="absolute end-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>
           )}
         </label>
-        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Dua categories">
+        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label={t({ en: 'Dua categories', bn: 'দোয়ার বিভাগ', ar: 'تصنيفات الأدعية' })}>
           {chip('all', t({ en: 'All', bn: 'সব', ar: 'الكل' }), undefined, duas.length)}
           {mounted && bookmarks.length > 0 && chip('saved', t({ en: 'Saved', bn: 'সংরক্ষিত', ar: 'المحفوظات' }), 'bookmark', bookmarks.length)}
           {cats.map((c) => chip(c.id, t(c.title), c.icon, counts[c.id] ?? 0))}
@@ -114,7 +116,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
                 </div>
                 <p lang="ar" dir="rtl" className="font-arabic mt-3 line-clamp-2 text-right text-[22px] leading-[2] text-arabic">{d.ar}</p>
                 <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{t(d.meaning)}</p>
-                <p className="mt-auto pt-3 text-[11px] font-semibold uppercase tracking-wide text-gold">{d.source.split(';')[0]}</p>
+                <p className="mt-auto pt-3 text-[11px] font-semibold uppercase tracking-wide text-gold"><Source s={d.source.split(';')[0]} /></p>
               </div>
             </motion.li>
           ))}

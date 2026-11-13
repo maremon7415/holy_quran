@@ -16,7 +16,9 @@ import { ReaderIconSprite } from '@/components/reader/icon-sprite'
 import { readerPrefsScript } from '@/lib/stores/reader'
 import { localeScript } from '@/lib/i18n/script'
 import { HtmlLangSync } from '@/components/shell/html-lang-sync'
+import { AttrLocalizer } from '@/components/shell/attr-localizer'
 import { site, absoluteUrl } from '@/lib/site'
+import { T } from '@/lib/i18n/text'
 import { JsonLd } from '@/components/seo/json-ld'
 
 const ui = Manrope({ subsets: ['latin'], variable: '--font-ui', display: 'swap' })
@@ -97,9 +99,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ReaderIconSprite />
         <Providers>
           <HtmlLangSync />
-          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">Skip to content</a>
+          <AttrLocalizer />
+          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"><T en="Skip to content" bn="মূল অংশে যান" ar="انتقل إلى المحتوى" /></a>
           <SiteHeader />
-          <main id="main" className="relative">{children}</main>
+          <main id="main" tabIndex={-1} className="relative outline-none">{children}</main>
           <SiteFooter />
           <MobileTabBar />
           <CommandPalette />

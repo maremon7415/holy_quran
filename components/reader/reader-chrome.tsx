@@ -167,13 +167,13 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
         className="reader-chrome fixed inset-x-0 top-0 z-40 border-b bg-background/90 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-22px_rgb(var(--shadow-color)/0.5)]"
         style={{ pointerEvents: showBar ? 'auto' : 'none' }}
-        aria-hidden={!showBar}
+        inert={!showBar}
       >
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-3 px-4 sm:px-6">
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="group flex min-w-0 items-center gap-2.5 text-start" aria-label="Back to top">
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="group flex min-w-0 items-center gap-2.5 text-start" aria-label={t({ en: 'Back to top', bn: 'উপরে যান', ar: 'العودة إلى الأعلى' })}>
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-primary transition-transform group-hover:-translate-y-0.5"><ArrowUp className="size-4" /></span>
             <span className="min-w-0">
-              <span className="block truncate font-display text-[15px] font-semibold leading-tight">{title}</span>
+              <span className="block truncate font-display text-[15px] font-semibold leading-tight">{t({ en: title, ar: titleAr })}</span>
               <span className="block truncate text-[11px] font-medium text-muted-foreground">
                 {inView ? (
                   <>
@@ -228,7 +228,7 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
           <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-11 place-items-center rounded-full text-foreground/80 transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস', ar: 'إعدادات القراءة' })}>
             <SlidersHorizontal className="size-[19px]" />
           </motion.button>
-          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'grid text-primary' : 'hidden text-foreground/80 sm:grid')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ', ar: 'الخروج من وضع التركيز' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড', ar: 'وضع التركيز' })} title="Focus (f)">
+          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'grid text-primary' : 'hidden text-foreground/80 sm:grid')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ', ar: 'الخروج من وضع التركيز' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড', ar: 'وضع التركيز' })} title={t({ en: 'Focus (f)', bn: 'ফোকাস (f)', ar: 'تركيز (f)' })}>
             {immersive ? <Minimize2 className="size-[18px]" /> : <Maximize2 className="size-[18px]" />}
           </motion.button>
         </div>

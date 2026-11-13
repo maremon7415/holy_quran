@@ -2,19 +2,18 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useRef, useSyncExternalStore, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
+const DESKTOP_QUERY = '(min-width: 768px)'
+function subscribeDesktop(cb: () => void) {
+  const m = window.matchMedia(DESKTOP_QUERY)
+  m.addEventListener('change', cb)
+  return () => m.removeEventListener('change', cb)
+}
+/** Synchronous (no first-render mismatch): the sheet only mounts client-side after a user action. */
 function useIsDesktop() {
-  const [d, setD] = useState(false)
-  useEffect(() => {
-    const m = window.matchMedia('(min-width: 768px)')
-    const on = () => setD(m.matches)
-    on()
-    m.addEventListener('change', on)
-    return () => m.removeEventListener('change', on)
-  }, [])
-  return d
+  return useSyncExternalStore(subscribeDesktop, () => window.matchMedia(DESKTOP_QUERY).matches, () => false)
 }
 
 const spring = { type: 'spring', stiffness: 380, damping: 36, mass: 0.9 } as const
@@ -44,6 +43,7 @@ export function Panel({
 }) {
   const desktop = useIsDesktop()
   const drag = useDragControls()
+  const contentRef = useRef<HTMLDivElement>(null)
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -58,8 +58,11 @@ export function Panel({
                 transition={{ duration: 0.25 }}
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount onOpenAutoFocus={(e) => e.preventDefault()}>
+            <Dialog.Content asChild forceMount aria-modal="true" onOpenAutoFocus={(e) => { e.preventDefault(); contentRef.current?.focus({ preventScroll: true }) }}>
               <motion.div
+                key={desktop ? 'side' : 'sheet'}
+                ref={contentRef}
+                tabIndex={-1}
                 className={cn(
                   'reader-chrome fixed z-[81] flex flex-col overflow-hidden border bg-popover text-popover-foreground shadow-[0_30px_80px_-20px_rgb(var(--shadow-color)/0.45)] outline-none',
                   desktop

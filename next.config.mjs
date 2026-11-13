@@ -7,6 +7,9 @@ const nextConfig = {
   // Quran corpus is read from disk at request time for on-demand ayah pages & search
   outputFileTracingIncludes: {
     '/surah/[slug]/[ayah]': ['./data/quran/**/*'],
+    '/bn/surah/[slug]/[ayah]': ['./data/quran/**/*'],
+    '/surah/[slug]/[ayah]/opengraph-image': ['./data/quran/**/*'],
+    '/bn/surah/[slug]/[ayah]/opengraph-image': ['./data/quran/**/*'],
     '/api/search': ['./data/quran/**/*'],
     '/api/hifz/verses/[surah]': ['./data/quran/**/*'],
     '/search': ['./data/quran/**/*'],

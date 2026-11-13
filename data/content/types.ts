@@ -9,6 +9,8 @@ export interface Topic {
   /** English title, e.g. "anxiety" (used as: What does the Quran say about {en}?) */
   en: string
   bn: string
+  /** Arabic name (MSA) */
+  ar?: string
   /** Extra search phrases people use (en/bn) */
   keywords: string[]
   introEn: string
@@ -53,6 +55,8 @@ export interface AsmaName {
   tlBn: string
   en: string
   bn: string
+  /** short Arabic gloss */
+  meaningAr?: string
   /** one-sentence explanation */
   expEn: string
   expBn: string

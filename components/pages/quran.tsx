@@ -27,7 +27,7 @@ export const quranMeta = (locale: Locale): Metadata =>
         description: bnDesc,
         keywords: ['আল কুরআন', 'কুরআন শরীফ বাংলা অর্থসহ', 'বাংলা কুরআন', 'কুরআন বাংলা উচ্চারণ', '১১৪ সূরা', '৩০ পারা', 'আমপারা'],
         alternates: alternatesFor('/quran', 'bn'),
-        openGraph: { type: 'website', title: bnTitle, description: bnDesc, url: localeHref('bn', '/quran'), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
+        openGraph: { type: 'website', title: bnTitle, description: bnDesc, url: localeHref('bn', '/quran'), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', images: [{ url: '/bn/opengraph-image', width: 1200, height: 630 }] },
       }
     : metaEn
 

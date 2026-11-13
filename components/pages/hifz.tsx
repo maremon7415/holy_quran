@@ -4,6 +4,7 @@ import { UiIcon } from '@/components/ui-icon'
 import { JsonLd } from '@/components/seo/json-ld'
 import { buildMeta, howToLd } from '@/lib/content/seo'
 import { localeHref, type Locale } from '@/lib/i18n/routes'
+import { T, NotAr } from '@/lib/i18n/text'
 
 const copy = {
   en: {
@@ -18,13 +19,13 @@ const copy = {
   },
 }
 
-export const hifzMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/hifz', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
+export const hifzMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/hifz', locale, ogImage: locale === 'bn' ? '/bn/opengraph-image' : undefined })
 
 const steps = [
-  { icon: 'listen', t: { en: '1 · Listen', bn: '১ · শুনুন' }, d: { en: 'Hear the ayah recited on loop with every word lighting up as it is spoken.', bn: 'লুপে আয়াতের তিলাওয়াত শুনুন — উচ্চারণের সঙ্গে সঙ্গে প্রতিটি শব্দ হাইলাইট হবে।' }, b: 'শুনুন — প্রতিটি শব্দ হাইলাইট হয়ে লুপে তিলাওয়াত।' },
-  { icon: 'read', t: { en: '2 · Read along', bn: '২ · সঙ্গে পড়ুন' }, d: { en: 'Read the full text with translation. Tap any word to hear it alone.', bn: 'অনুবাদসহ পুরো আয়াত পড়ুন। যেকোনো শব্দে ট্যাপ করে আলাদাভাবে উচ্চারণ শুনুন।' }, b: 'পড়ুন — অনুবাদসহ পূর্ণ পাঠ; শব্দে ট্যাপ করলে উচ্চারণ শুনুন।' },
-  { icon: 'focus', t: { en: '3 · Fade', bn: '৩ · ফেড' }, d: { en: 'Words disappear 30%, 60%, then 100% — with optional first-letter hints.', bn: 'ধাপে ধাপে ৩০%, ৬০%, তারপর ১০০% শব্দ লুকিয়ে যায় — চাইলে প্রথম অক্ষরের ইঙ্গিত দেখুন।' }, b: 'ফেড — ৩০%, ৬০%, তারপর ১০০% শব্দ লুকানো; প্রথম অক্ষরের ইঙ্গিত সহ।' },
-  { icon: 'hifz', t: { en: '4 · Recall', bn: '৪ · স্মরণ' }, d: { en: 'Rebuild the ayah word by word from memory, then grade yourself honestly.', bn: 'স্মৃতি থেকে শব্দে শব্দে আয়াতটি সাজান, তারপর সততার সঙ্গে নিজেকে মূল্যায়ন করুন।' }, b: 'রিকল — স্মৃতি থেকে শব্দে শব্দে সাজান, তারপর নিজেকে মূল্যায়ন করুন।' },
+  { icon: 'listen', t: { en: '1 · Listen', ar: '١ · استمع', bn: '১ · শুনুন' }, d: { en: 'Hear the ayah recited on loop with every word lighting up as it is spoken.', ar: 'استمع إلى الآية مكررة مع إضاءة كل كلمة عند نطقها.', bn: 'লুপে আয়াতের তিলাওয়াত শুনুন — উচ্চারণের সঙ্গে সঙ্গে প্রতিটি শব্দ হাইলাইট হবে।' }, b: 'শুনুন — প্রতিটি শব্দ হাইলাইট হয়ে লুপে তিলাওয়াত।' },
+  { icon: 'read', t: { en: '2 · Read along', ar: '٢ · اقرأ معها', bn: '২ · সঙ্গে পড়ুন' }, d: { en: 'Read the full text with translation. Tap any word to hear it alone.', ar: 'اقرأ النص كاملًا مع الترجمة. انقر على أي كلمة لتسمعها منفردة.', bn: 'অনুবাদসহ পুরো আয়াত পড়ুন। যেকোনো শব্দে ট্যাপ করে আলাদাভাবে উচ্চারণ শুনুন।' }, b: 'পড়ুন — অনুবাদসহ পূর্ণ পাঠ; শব্দে ট্যাপ করলে উচ্চারণ শুনুন।' },
+  { icon: 'focus', t: { en: '3 · Fade', ar: '٣ · التلاشي', bn: '৩ · ফেড' }, d: { en: 'Words disappear 30%, 60%, then 100% — with optional first-letter hints.', ar: 'تختفي الكلمات 30% ثم 60% ثم 100% — مع تلميحات اختيارية بالحرف الأول.', bn: 'ধাপে ধাপে ৩০%, ৬০%, তারপর ১০০% শব্দ লুকিয়ে যায় — চাইলে প্রথম অক্ষরের ইঙ্গিত দেখুন।' }, b: 'ফেড — ৩০%, ৬০%, তারপর ১০০% শব্দ লুকানো; প্রথম অক্ষরের ইঙ্গিত সহ।' },
+  { icon: 'hifz', t: { en: '4 · Recall', ar: '٤ · الاسترجاع', bn: '৪ · স্মরণ' }, d: { en: 'Rebuild the ayah word by word from memory, then grade yourself honestly.', ar: 'أعِد بناء الآية كلمة بكلمة من ذاكرتك، ثم قيّم نفسك بصدق.', bn: 'স্মৃতি থেকে শব্দে শব্দে আয়াতটি সাজান, তারপর সততার সঙ্গে নিজেকে মূল্যায়ন করুন।' }, b: 'রিকল — স্মৃতি থেকে শব্দে শব্দে সাজান, তারপর নিজেকে মূল্যায়ন করুন।' },
 ]
 
 export function HifzPage({ locale }: { locale: Locale }) {
@@ -42,7 +43,7 @@ export function HifzPage({ locale }: { locale: Locale }) {
           <UiIcon name="hifz" size={72} className="hidden sm:block" />
           {bn ? (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">হিফজ স্টুডিও · Hifz Studio</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">হিফজ স্টুডিও</p>
               <h1 className="mt-2 font-display text-3xl leading-tight sm:text-5xl">কুরআন মুখস্থ করুন, <span className="text-gradient-gold">স্থায়ীভাবে</span></h1>
               <p className="mt-3 max-w-2xl text-muted-foreground">
                 স্পেসড রিপিটেশনসহ নির্দেশিত হিফজ পদ্ধতি — ভুলে যাওয়ার ঠিক আগে প্রতিটি আয়াত রিভিশনের জন্য সামনে আনে। শান্ত, ব্যক্তিগত এবং সম্পূর্ণ আপনার ডিভাইসে।
@@ -50,12 +51,12 @@ export function HifzPage({ locale }: { locale: Locale }) {
             </div>
           ) : (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Hifz Studio · হিফজ স্টুডিও</p>
-              <h1 className="mt-2 font-display text-3xl leading-tight sm:text-5xl">Memorise the Quran, <span className="text-gradient-gold">for good</span></h1>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold"><T en="Hifz Studio" ar="استوديو الحفظ" /><NotAr> · হিফজ স্টুডিও</NotAr></p>
+              <h1 className="mt-2 font-display text-3xl leading-tight sm:text-5xl"><T en="Memorise the Quran," ar="احفظ القرآن" /> <span className="text-gradient-gold"><T en="for good" ar="حفظًا راسخًا" /></span></h1>
               <p className="mt-3 max-w-2xl text-muted-foreground">
-                A guided memorisation method with spaced repetition that schedules every ayah right before you would forget it. Calm, private, and entirely on your device.
+                <T en="A guided memorisation method with spaced repetition that schedules every ayah right before you would forget it. Calm, private, and entirely on your device." ar="طريقة حفظ مرشدة بالتكرار المتباعد تجدول كل آية قبل أن تنساها مباشرة. هادئة وخاصة وعلى جهازك بالكامل." />
               </p>
-              <p className="mt-1 font-bangla text-sm text-muted-foreground">বিজ্ঞানসম্মত স্পেসড রিপিটেশনের মাধ্যমে কুরআন মুখস্থ করুন — সম্পূর্ণ আপনার ডিভাইসে।</p>
+              <NotAr><p className="mt-1 font-bangla text-sm text-muted-foreground">বিজ্ঞানসম্মত স্পেসড রিপিটেশনের মাধ্যমে কুরআন মুখস্থ করুন — সম্পূর্ণ আপনার ডিভাইসে।</p></NotAr>
             </div>
           )}
         </div>
@@ -63,15 +64,15 @@ export function HifzPage({ locale }: { locale: Locale }) {
 
       <HifzHome>
         <section aria-labelledby="method">
-          <h2 id="method" className="mb-1 font-display text-2xl">{bn ? 'পদ্ধতি' : 'The method'}</h2>
-          <p className="mb-5 text-sm text-muted-foreground">{bn ? 'প্রতিটি আয়াত-গুচ্ছের জন্য চারটি ছোট ধাপ — প্রচলিত হাফেজদের সেই একই পদ্ধতি, এখন পরিমাপযোগ্য।' : 'Four short steps per chunk of ayahs — the same loop traditional huffaz use, made measurable.'}</p>
+          <h2 id="method" className="mb-1 font-display text-2xl">{bn ? 'পদ্ধতি' : <T en="The method" ar="الطريقة" />}</h2>
+          <p className="mb-5 text-sm text-muted-foreground">{bn ? 'প্রতিটি আয়াত-গুচ্ছের জন্য চারটি ছোট ধাপ — প্রচলিত হাফেজদের সেই একই পদ্ধতি, এখন পরিমাপযোগ্য।' : <T en="Four short steps per chunk of ayahs — the same loop traditional huffaz use, made measurable." ar="أربع خطوات قصيرة لكل مجموعة آيات — الحلقة نفسها التي يتبعها الحفّاظ، لكنها قابلة للقياس." />}</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((s) => (
               <div key={s.t.en} className="card-soft lift rounded-3xl border border-border bg-card p-5">
                 <UiIcon name={s.icon} size={40} />
-                <h3 className="mt-3 font-semibold">{L(s.t)}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{L(s.d)}</p>
-                {!bn && <p className="mt-2 font-bangla text-xs text-muted-foreground">{s.b}</p>}
+                <h3 className="mt-3 font-semibold">{bn ? L(s.t) : <T en={s.t.en} ar={s.t.ar} />}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{bn ? L(s.d) : <T en={s.d.en} ar={s.d.ar} />}</p>
+                {!bn && <NotAr><p className="mt-2 font-bangla text-xs text-muted-foreground">{s.b}</p></NotAr>}
               </div>
             ))}
           </div>
@@ -83,9 +84,9 @@ export function HifzPage({ locale }: { locale: Locale }) {
             </div>
           ) : (
             <div className="mt-6 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-              <p><strong className="text-foreground">Spaced repetition.</strong> Grade Again, Hard, Good or Easy — intervals grow from minutes to days to months (SM-2).</p>
-              <p><strong className="text-foreground">Voice check.</strong> On supported browsers, recite aloud and see a word-by-word match in green and red.</p>
-              <p><strong className="text-foreground">Private by design.</strong> Progress is stored on this device. Back it up anytime from <a className="underline underline-offset-4" href="/journey#backup">My Journey</a>.</p>
+              <p><T en="Spaced repetition. Grade Again, Hard, Good or Easy — intervals grow from minutes to days to months (SM-2)." ar="التكرار المتباعد. قيّم بـ «مرة أخرى» أو «صعب» أو «جيد» أو «سهل» — فتتسع الفترات من دقائق إلى أيام إلى شهور (SM-2)." /></p>
+              <p><T en="Voice check. On supported browsers, recite aloud and see a word-by-word match in green and red." ar="التحقق الصوتي. في المتصفحات المدعومة، اقرأ بصوت مسموع وشاهد مطابقة كلمة بكلمة بالأخضر والأحمر." /></p>
+              <p><T en="Private by design. Progress is stored on this device. Back it up anytime from" ar="خاص بطبيعته. يُحفظ التقدّم على هذا الجهاز. يمكنك نسخه احتياطيًا في أي وقت من" /> <a className="underline underline-offset-4" href="/journey#backup"><T en="My Journey" ar="رحلتي" /></a>.</p>
             </div>
           )}
         </section>

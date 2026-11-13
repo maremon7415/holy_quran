@@ -19,6 +19,9 @@ import { SettingsButton } from '@/components/reader/client-bits'
 import { TajweedNotice } from '@/components/reader/side-rails'
 import { alternatesFor, localeHref, type Locale } from '@/lib/i18n/routes'
 import { lt } from '@/lib/i18n/lt'
+import { NotAr } from '@/lib/i18n/text'
+import { SurahName } from '@/lib/i18n/surah-name'
+import { Labelled } from '@/lib/i18n/labelled'
 import { bnNum } from '@/lib/i18n/t'
 
 export type JuzProps = { params: Promise<{ n: string }> }
@@ -107,10 +110,12 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
             </>
           ) : (
             <>
-              <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-tight">{lt(locale, { en: `Juz ${n}`, bn: `পারা ${toBanglaDigits(n)}`, ar: `الجزء ${n}` })} <span className="text-muted-foreground">· {name.tl}</span></h1>
-              <p className="mt-1.5 text-muted-foreground">
-                Para {n} <span className="mx-2 text-muted-foreground/40">•</span> <span className="font-bangla" lang="bn">পারা {toBanglaDigits(n)} · {name.bn}</span>
-              </p>
+              <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-tight">{lt(locale, { en: `Juz ${n}`, bn: `পারা ${toBanglaDigits(n)}`, ar: `الجزء ${n}` })} <NotAr><span className="text-muted-foreground">· {name.tl}</span></NotAr></h1>
+              <NotAr>
+                <p className="mt-1.5 text-muted-foreground">
+                  Para {n} <span className="mx-2 text-muted-foreground/40">•</span> <span className="font-bangla" lang="bn">পারা {toBanglaDigits(n)} · {name.bn}</span>
+                </p>
+              </NotAr>
             </>
           )}
           <div className="mt-5 flex flex-wrap justify-center gap-2">
@@ -121,7 +126,7 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
           <div className="no-scrollbar -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0">
             {chapterIds.map((s) => (
               <Link key={s} href={h(surahHref(s))} className="shrink-0 rounded-full border bg-background/60 px-3 py-1.5 text-xs font-semibold transition hover:border-primary/40 hover:text-primary">
-                {N(s)}. {isBn ? surahNamesBn[s - 1] : chapters[s - 1].nameSimple} <span className="text-muted-foreground">{isBn ? bnNum(j.map[String(s)]) : j.map[String(s)]}</span>
+                {N(s)}. {isBn ? surahNamesBn[s - 1] : <SurahName id={s} />} <span className="text-muted-foreground">{isBn ? bnNum(j.map[String(s)]) : j.map[String(s)]}</span>
               </Link>
             ))}
           </div>
@@ -150,7 +155,7 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
                       ) : (
                         <>
                           <span className="block font-display text-lg font-semibold">{lt(locale, { en: `Surah ${c.nameSimple}`, bn: `সূরা ${surahNamesBn[v.surah - 1]}`, ar: `سورة ${c.nameArabic}` })}</span>
-                          <span className="surah-sep-trans block text-xs text-muted-foreground">{c.meaning} · <span className="font-bangla">{surahNamesBn[v.surah - 1]}</span> · {v.n > 1 ? `from ayah ${v.n}` : `${c.versesCount} ayahs`}</span>
+                          <span className="surah-sep-trans block text-xs text-muted-foreground"><NotAr>{c.meaning} · <span className="font-bangla">{surahNamesBn[v.surah - 1]}</span> · </NotAr>{lt(locale, { en: v.n > 1 ? `from ayah ${v.n}` : `${c.versesCount} ayahs`, bn: '', ar: v.n > 1 ? `من الآية ${v.n}` : `${c.versesCount} آية` })}</span>
                         </>
                       )}
                     </span>
@@ -166,7 +171,7 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
         })}
       </div>
 
-      <nav aria-label={isBn ? 'পারা নেভিগেশন' : 'Juz navigation'} className="reader-chrome mt-12 grid grid-cols-2 gap-3">
+      <Labelled as="nav" label={{ en: 'Juz navigation', bn: 'পারা নেভিগেশন', ar: 'التنقل بين الأجزاء' }} className="reader-chrome mt-12 grid grid-cols-2 gap-3">
         {n > 1 ? (
           <Link href={h(juzHref(n - 1))} className="card-soft lift flex items-center gap-3 p-4">
             <ChevronLeft className="size-5 text-primary rtl:rotate-180" />
@@ -179,10 +184,10 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
             <ChevronRight className="size-5 text-primary rtl:rotate-180" />
           </Link>
         ) : <span />}
-      </nav>
-      <p className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground"><UiIcon name="juz" size={16} /> {isBn ? `${toBanglaDigits(verses.length)}টি আয়াত · ${toBanglaDigits(chapterIds.length)}টি সূরা` : `${verses.length} ayahs · ${chapterIds.length} ${chapterIds.length > 1 ? 'surahs' : 'surah'}`}</p>
+      </Labelled>
+      <p className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground"><UiIcon name="juz" size={16} /> {isBn ? `${toBanglaDigits(verses.length)}টি আয়াত · ${toBanglaDigits(chapterIds.length)}টি সূরা` : lt(locale, { en: `${verses.length} ayahs · ${chapterIds.length} ${chapterIds.length > 1 ? 'surahs' : 'surah'}`, bn: '', ar: `${verses.length} آية · ${chapterIds.length} ${chapterIds.length > 1 ? 'سور' : 'سورة'}` })}</p>
 
-      <ReaderChrome chapterIds={chapterIds} title={isBn ? `পারা ${toBanglaDigits(n)} · ${name.bn}` : `Juz ${n} · ${name.tl}`} titleAr={name.ar} />
+      <ReaderChrome chapterIds={chapterIds} title={isBn ? `পারা ${toBanglaDigits(n)} · ${name.bn}` : `Juz ${n} · ${name.tl}`} titleAr={`الجزء ${n} · ${name.ar}`} />
     </div>
   )
 }

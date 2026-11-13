@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 
 const levelFill = (n: number) =>
   n <= 0 ? 'color-mix(in oklab, var(--foreground) 9%, var(--card))' : `color-mix(in oklab, var(--primary) ${n < 5 ? 30 : n < 10 ? 52 : n < 20 ? 75 : 100}%, var(--muted))`
@@ -11,6 +11,7 @@ const ds = (d: Date) => d.toLocaleDateString('en-CA')
 /** GitHub-style 53-week activity grid. `data` maps YYYY-MM-DD → count. */
 export function Heatmap({ data }: { data: Record<string, number> }) {
   const t = useTx()
+  const lang = useLang()
   const scroller = useRef<HTMLDivElement>(null)
   const { cells, months, total, activeDays } = useMemo(() => {
     const end = new Date()
@@ -26,10 +27,10 @@ export function Heatmap({ data }: { data: Record<string, number> }) {
       const future = d > end
       if (!future) { total += n; if (n) activeDays++ }
       cells.push({ date: key, n, future })
-      if (d.getDate() <= 7 && d.getDay() === 0) months.push({ col: Math.floor(i / 7), label: d.toLocaleDateString(undefined, { month: 'short' }) })
+      if (d.getDate() <= 7 && d.getDay() === 0) months.push({ col: Math.floor(i / 7), label: d.toLocaleDateString(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { month: 'short' }) })
     }
     return { cells, months, total, activeDays }
-  }, [data])
+  }, [data, lang])
   useEffect(() => { if (scroller.current) scroller.current.scrollLeft = scroller.current.scrollWidth }, [])
   return (
     <div>

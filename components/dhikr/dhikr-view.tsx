@@ -98,7 +98,7 @@ export function DhikrView() {
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
         {PRESETS.map((x) => (
           <button key={x.id} onClick={() => setPreset(x.id)} className={cn('h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition active:scale-95', x.id === preset.id ? 'border-primary bg-primary text-primary-foreground' : 'bg-card hover:border-primary/40')}>
-            {t({ en: x.en, bn: x.bn })}
+            {t({ en: x.en, bn: x.bn, ar: x.ar })}
           </button>
         ))}
       </div>
@@ -135,7 +135,6 @@ export function DhikrView() {
               onClick={tap}
               whileTap={{ scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              aria-label={t({ en: 'Count', bn: 'গণনা', ar: 'العدد' })}
               className={cn('absolute inset-[17%] grid select-none place-items-center rounded-full border-2 outline-none transition-shadow focus-visible:ring-4 focus-visible:ring-primary/30',
                 'bg-gradient-to-b from-card to-surface-2 shadow-[0_24px_40px_-18px_var(--glow),inset_0_-6px_14px_rgba(0,0,0,0.06)] active:shadow-[0_8px_16px_-10px_var(--glow)]',
                 done ? 'border-primary' : 'border-gold/40')}
@@ -143,6 +142,7 @@ export function DhikrView() {
             >
               <span key={pulse} className="pulse-ring absolute inset-0 rounded-full" aria-hidden />
               <span className="relative text-center">
+                <span className="sr-only">{t({ en: 'Count', bn: 'গণনা', ar: 'العدد' })}: </span>
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span key={p.count} initial={{ y: 14, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 30 }} className="block font-display text-6xl font-semibold tabular-nums leading-none sm:text-7xl">{nf(p.count)}</motion.span>
                 </AnimatePresence>
@@ -176,12 +176,12 @@ export function DhikrView() {
                 { k: t({ en: 'All time', bn: 'মোট', ar: 'كل الأوقات' }), v: hist.all },
               ].map((x) => (
                 <div key={x.k} className="rounded-2xl bg-surface-2 py-3">
-                  <p className="font-display text-xl font-semibold tabular-nums">{nf(x.v.toLocaleString())}</p>
+                  <p className="font-display text-xl font-semibold tabular-nums">{nf(x.v.toLocaleString('en-US'))}</p>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{x.k}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex h-28 items-end gap-2" role="img" aria-label="Last 7 days">
+            <div className="mt-5 flex h-28 items-end gap-2" role="img" aria-label={t({ en: 'Last 7 days', bn: 'গত ৭ দিন', ar: 'آخر 7 أيام' })}>
               {hist.days.map((d, i) => (
                 <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
                   <motion.div initial={{ height: 0 }} animate={{ height: `${Math.max(4, (d.total / hist.max) * 80)}px` }} transition={{ type: 'spring', stiffness: 380, damping: 30, delay: i * 0.03 }} className={cn('w-full rounded-t-lg', i === 6 ? 'bg-gradient-to-t from-gold to-primary' : 'bg-gold/40')} title={String(d.total)} />

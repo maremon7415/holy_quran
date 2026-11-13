@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react'
 import { JsonLd } from '@/components/seo/json-ld'
 import { faqLd } from '@/lib/content/seo'
 import type { Locale } from '@/lib/i18n/routes'
+import { T } from '@/lib/i18n/text'
 
 const TITLE = { en: 'Frequently asked questions', bn: 'সচরাচর জিজ্ঞাসা', ar: 'أسئلة شائعة' } as const
 
@@ -10,7 +11,7 @@ export function Faq({ faqs, title, locale }: { faqs: { q: string; a: string }[];
   return (
     <section aria-labelledby="faq-h" className="mt-12">
       <JsonLd data={faqLd(faqs, locale)} />
-      <h2 id="faq-h" className="font-display mb-4 text-2xl font-semibold">{title ?? TITLE[locale ?? 'en']}</h2>
+      <h2 id="faq-h" className="font-display mb-4 text-2xl font-semibold">{title ?? (locale === 'bn' ? TITLE.bn : <T {...TITLE} />)}</h2>
       <div className="divide-y divide-border overflow-hidden rounded-3xl border border-border bg-card">
         {faqs.map((f) => (
           <details key={f.q} className="group px-5 py-4 open:bg-accent/40">

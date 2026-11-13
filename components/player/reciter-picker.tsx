@@ -2,15 +2,16 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check, ChevronLeft, Search } from 'lucide-react'
-import { reciters } from '@/lib/audio/reciters'
+import { reciters, reciterName, reciterStyle } from '@/lib/audio/reciters'
 import { useReader } from '@/lib/stores/reader'
-import { useTx } from '@/lib/lang'
+import { useLang, useTx } from '@/lib/lang'
 import { ReciterMonogram } from './reciter-monogram'
 import { cn } from '@/lib/utils'
 
 /** Searchable reciter list, slides over the expanded player. */
 export function ReciterPicker({ onClose }: { onClose: () => void }) {
   const t = useTx()
+  const lang = useLang()
   const [q, setQ] = useState('')
   const reciterId = useReader((s) => s.reciterId)
   const list = useMemo(() => {
@@ -52,11 +53,11 @@ export function ReciterPicker({ onClose }: { onClose: () => void }) {
                 >
                   <ReciterMonogram name={r.name} active={active} size={46} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold">{r.name}</span>
-                    <span className="block truncate font-arabic text-base text-muted-foreground">{r.ar}</span>
+                    <span className="block truncate text-sm font-semibold">{reciterName(lang, r)}</span>
+                    {lang !== 'ar' && <span className="block truncate font-arabic text-base text-muted-foreground">{r.ar}</span>}
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[11px] font-medium text-gold">{r.style}</span>
+                    <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[11px] font-medium text-gold">{reciterStyle(lang, r.style)}</span>
                     {r.chapter && <span className="text-[10px] text-muted-foreground">{t({ en: 'word-synced', bn: 'শব্দ-সিঙ্ক', ar: 'متزامن بالكلمات' })}</span>}
                   </span>
                   {active && <Check className="size-4 shrink-0 text-primary" />}

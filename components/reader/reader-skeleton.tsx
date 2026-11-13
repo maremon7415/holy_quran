@@ -2,7 +2,7 @@
 export function ReaderSkeleton() {
   const bar = 'shimmer rounded-full bg-muted'
   return (
-    <div className="mx-auto max-w-[860px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6" aria-busy="true" aria-label="Loading">
+    <div className="mx-auto max-w-[860px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6" aria-busy="true">
       <div className="relative overflow-hidden rounded-[2rem] border bg-card px-5 pb-8 pt-6 sm:rounded-[2.5rem] sm:px-10">
         <div className="bg-pattern pointer-events-none absolute inset-0" />
         <div className={`${bar} h-3 w-40`} />

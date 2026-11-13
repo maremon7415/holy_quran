@@ -21,7 +21,7 @@ export function ThemeSwatches({ className }: { className?: string }) {
   const mounted = useMounted()
   const t = useTx()
   return (
-    <div className={cn('grid grid-cols-5 gap-2', className)} role="radiogroup" aria-label="Theme">
+    <div className={cn('grid grid-cols-5 gap-2', className)} role="radiogroup" aria-label={t({ en: 'Theme', bn: 'থিম', ar: 'السمة' })}>
       {THEMES.map((th) => {
         const active = mounted && theme === th.id
         return (

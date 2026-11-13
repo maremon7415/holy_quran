@@ -18,8 +18,8 @@ const sel = 'h-9 rounded-xl border bg-background px-2 text-sm outline-none focus
 export function RemindersCard() {
   const t = useTx()
   const lang = useLang()
-  /** notification text / .ics are generated in English or Bangla */
-  const nLang = lang === 'bn' ? 'bn' : 'en'
+  /** notification text / .ics are generated in the UI language */
+  const nLang = lang
   const reminders = usePrayerPrefs((s) => s.reminders)
   const setReminder = usePrayerPrefs((s) => s.setReminder)
   const setAll = usePrayerPrefs((s) => s.setAllReminders)
@@ -116,7 +116,7 @@ export function RemindersCard() {
           const n = REMINDER_NAMES[k]
           return (
             <div key={k} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
-              <Switch checked={c.on} onCheckedChange={(v) => void toggle(k, v)} aria-label={`${n.en} reminder`} />
+              <Switch checked={c.on} onCheckedChange={(v) => void toggle(k, v)} aria-label={t({ en: `${n.en} reminder`, bn: `${n.bn} রিমাইন্ডার`, ar: `تذكير ${n.ar}` })} />
               <span className="min-w-[6.5rem] flex-1 text-sm font-semibold">{n[lang]}{k === 'tahajjud' && <span className="block text-xs font-normal text-muted-foreground">{t({ en: 'last third of night', bn: 'রাতের শেষ তৃতীয়াংশ', ar: 'الثلث الأخير من الليل' })}</span>}{k === 'jumuah' && <span className="block text-xs font-normal text-muted-foreground">{t({ en: 'replaces Dhuhr on Friday', bn: 'শুক্রবার যোহরের বদলে', ar: 'بدل الظهر يوم الجمعة' })}</span>}</span>
               <select aria-label={t({ en: 'Minutes before', bn: 'কত মিনিট আগে', ar: 'قبل بدقائق' })} disabled={!c.on} value={c.before} onChange={(e) => setReminder(k, { before: +e.target.value })} className={sel}>
                 {BEFORE_OPTIONS.map((b) => <option key={b} value={b}>{b === 0 ? t({ en: 'At time', bn: 'ঠিক সময়ে', ar: 'عند الوقت' }) : t({ en: `${b} min before`, bn: `${fmtNum(String(b))} মিনিট আগে`, ar: `قبل ${b} دقيقة` })}</option>)}

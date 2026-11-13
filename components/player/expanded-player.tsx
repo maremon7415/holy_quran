@@ -9,7 +9,7 @@ import { useClock } from '@/lib/audio/clock'
 import { useSleep, type SleepMode } from '@/lib/audio/sleep'
 import { usePlayerPrefs } from '@/lib/audio/prefs'
 import { fetchVerseText, type VerseText } from '@/lib/audio/api'
-import { getReciter } from '@/lib/audio/reciters'
+import { getReciter, reciterName, reciterStyle } from '@/lib/audio/reciters'
 import { chapters, readerHref, toArabicDigits } from '@/lib/quran/chapters'
 import { useTx, useLang } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
@@ -207,6 +207,7 @@ function SleepPanel() {
 
 function Controls({ onPickReciter }: { onPickReciter: () => void }) {
   const t = useTx()
+  const lang = useLang()
   const queue = usePlayer((s) => s.queue)!
   const currentKey = usePlayer((s) => s.currentKey)
   const loop = usePlayer((s) => s.loop)
@@ -225,8 +226,8 @@ function Controls({ onPickReciter }: { onPickReciter: () => void }) {
         <ReciterMonogram name={r.name} size={48} active />
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{t({ en: 'Reciter', bn: 'ক্বারী', ar: 'القارئ' })}</span>
-          <span className="block truncate text-sm font-semibold">{r.name}</span>
-          <span className="block truncate font-arabic text-sm text-muted-foreground">{r.ar} · {r.style}</span>
+          <span className="block truncate text-sm font-semibold">{reciterName(lang, r)}</span>
+          <span className="block truncate font-arabic text-sm text-muted-foreground">{lang === 'ar' ? reciterStyle(lang, r.style) : `${r.ar} · ${r.style}`}</span>
         </span>
         <span className="rounded-full border border-border px-3 py-1.5 text-xs font-medium">{t({ en: 'Change', bn: 'পরিবর্তন', ar: 'تغيير' })}</span>
       </button>

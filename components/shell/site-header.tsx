@@ -49,7 +49,7 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
         <Logo />
-        <nav className="ms-6 hidden items-center gap-1 lg:flex" aria-label="Main">
+        <nav className="ms-6 hidden items-center gap-1 lg:flex" aria-label={t({ en: 'Main', bn: 'প্রধান', ar: 'الرئيسية' })}>
           {primaryNav.map((n) => (
             <Link key={n.href} href={n.href} className={cn('relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors', isActive(n.href) ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
               {isActive(n.href) && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-full bg-accent" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}

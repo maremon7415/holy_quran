@@ -194,7 +194,7 @@ export function FadeStep({ ctx, hints: hintsDefault }: { ctx: ChunkCtx; hints: b
               onClick={() => setPeek((s) => new Set(s).add(`${v.n}-${i}`))}
               className="mx-0.5 inline-block rounded-lg bg-muted px-2 align-baseline text-muted-foreground"
               style={{ minWidth: `${Math.max(1.6, w.length * 0.38)}em` }}
-              aria-label="Hidden word — tap to reveal"
+              aria-label={t({ en: 'Hidden word — tap to reveal', bn: 'লুকানো শব্দ — দেখতে ট্যাপ করুন', ar: 'كلمة مخفية — انقر لإظهارها' })}
             >
               {hints ? <span className="opacity-80">{firstLetter(w)}<span className="opacity-40">…</span></span> : <span className="opacity-0">·</span>}
             </motion.button>
@@ -237,7 +237,7 @@ export function GradeBar({ card, onGrade, suggested }: { card?: Card; onGrade: (
             suggested === g.g && 'ring-2 ring-ring ring-offset-2 ring-offset-background'
           )}
         >
-          {t({ en: g.en, bn: g.bn })}
+          {t({ en: g.en, bn: g.bn, ar: g.ar })}
           <span className="mt-0.5 text-[11px] font-normal opacity-70">{formatInterval(previewInterval(card, g.g), lang)}</span>
         </motion.button>
       ))}

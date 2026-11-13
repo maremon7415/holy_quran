@@ -333,7 +333,7 @@ async function checkPrayers(force) {
     if (wins.some((c) => c.visibilityState === 'visible')) return 0
   }
   const now = Date.now()
-  const lang = sched.lang === 'bn' ? 'bn' : 'en'
+  const lang = sched.lang === 'bn' || sched.lang === 'ar' ? sched.lang : 'en'
   let n = 0
   for (const it of sched.items) {
     if (it.fireAt > now || it.fireAt < now - 20 * 60 * 1000) continue
@@ -351,8 +351,8 @@ async function checkPrayers(force) {
       silent: it.sound === 'silent',
       data: { url: '/prayer-times', quranUrl: '/quran' },
       actions: [
-        { action: 'open', title: lang === 'bn' ? 'কুরআন খুলুন' : 'Open Quran' },
-        { action: 'dismiss', title: lang === 'bn' ? 'বন্ধ করুন' : 'Dismiss' },
+        { action: 'open', title: lang === 'bn' ? 'কুরআন খুলুন' : lang === 'ar' ? 'افتح القرآن' : 'Open Quran' },
+        { action: 'dismiss', title: lang === 'bn' ? 'বন্ধ করুন' : lang === 'ar' ? 'إغلاق' : 'Dismiss' },
       ],
     })
     n++

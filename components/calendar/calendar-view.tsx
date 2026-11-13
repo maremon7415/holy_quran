@@ -6,7 +6,7 @@ import { useLang, useMounted, useTx } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
 
-export interface IslamicEvent { id: string; name: string; nameBn: string; hijriMonth: number; hijriDay: number; description: { en: string; bn: string } }
+export interface IslamicEvent { id: string; name: string; nameBn: string; nameAr?: string; hijriMonth: number; hijriDay: number; description: { en: string; bn: string; ar?: string } }
 
 const DAY_MS = 86_400_000
 const hijriFmt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'numeric', year: 'numeric' })
@@ -129,12 +129,12 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
                   <button
                     key={d.getTime()}
                     onClick={() => setPicked(d)}
-                    aria-label={`${d.toDateString()}`}
                     aria-pressed={s}
                     className={cn('lift relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-center transition sm:rounded-3xl',
                       t0 ? 'border-primary bg-primary text-primary-foreground shadow-[0_10px_24px_-12px_var(--glow)]' : s ? 'border-primary/60 bg-accent' : 'border-transparent bg-surface-2/60 hover:border-primary/30',
                       !t0 && d.getDay() === 5 && 'text-primary')}
                   >
+                    <span className="sr-only">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { dateStyle: 'full' }).format(d)}, </span>
                     <span className="font-display text-lg font-semibold leading-none sm:text-2xl">{nf(h.d)}</span>
                     <span className={cn('mt-1 text-[10px] leading-none sm:text-xs', t0 ? 'text-primary-foreground/80' : 'text-muted-foreground')}>{nf(d.getDate())}</span>
                     {ev && <span className={cn('absolute bottom-1.5 size-1.5 rounded-full', t0 ? 'bg-primary-foreground' : 'bg-gold')} />}
@@ -163,8 +163,8 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
             <p className="text-sm text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(sel)}</p>
             {selEvents.length > 0 ? selEvents.map((e) => (
               <div key={e.id} className="mt-4 rounded-2xl bg-gold-soft p-4">
-                <p className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="crescent" size={24} /> {t({ en: e.name, bn: e.nameBn })}</p>
-                <p className="mt-1 text-sm text-foreground/80">{t({ en: e.description.en, bn: e.description.bn })}</p>
+                <p className="flex items-center gap-2 font-display text-lg font-semibold"><UiIcon name="crescent" size={24} /> {t({ en: e.name, bn: e.nameBn, ar: e.nameAr })}</p>
+                <p className="mt-1 text-sm text-foreground/80">{t({ en: e.description.en, bn: e.description.bn, ar: e.description.ar })}</p>
               </div>
             )) : <p className="mt-3 text-sm text-muted-foreground">{t({ en: 'No special occasion on this day.', bn: 'এই দিনে বিশেষ কোনো দিবস নেই।', ar: 'لا مناسبة خاصة في هذا اليوم.' })}</p>}
           </div>
@@ -176,7 +176,7 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
                 return (
                   <li key={e.id} className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{t({ en: e.name, bn: e.nameBn })}</p>
+                      <p className="truncate text-sm font-semibold">{t({ en: e.name, bn: e.nameBn, ar: e.nameAr })}</p>
                       <p className="text-xs text-muted-foreground">{new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)}</p>
                     </div>
                     <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold">{n === 0 ? t({ en: 'Today', bn: 'আজ', ar: 'اليوم' }) : t({ en: `in ${n} d`, bn: `${nf(n)} দিন পর`, ar: `بعد ${n} يوم` })}</span>

@@ -11,11 +11,11 @@ export interface ReminderItem {
   before: number
   sound: ReminderSound
   /** localized [title, body] */
-  text: { en: [string, string]; bn: [string, string] }
+  text: { en: [string, string]; bn: [string, string]; ar: [string, string] }
 }
 export interface StoredSchedule {
   generatedAt: number
-  lang: 'en' | 'bn'
+  lang: 'en' | 'bn' | 'ar'
   city: string | null
   items: ReminderItem[]
 }
@@ -50,6 +50,8 @@ export function buildReminders(opts: {
       const en = fmt('en-US', at)
       const bn = bnDigits(fmt('bn-BD', at))
       const nm = key === 'tahajjud'
+      const ar = fmt('ar-EG-u-nu-latn', at)
+      const where = opts.city ? ` · ${opts.city}` : ''
       items.push({
         id: `${day.date}-${key}-${cfg.before}`,
         key,
@@ -65,6 +67,10 @@ export function buildReminders(opts: {
           bn: [
             cfg.before ? `${bnDigits(String(cfg.before))} মিনিট পর ${n.bn}` : nm ? 'তাহাজ্জুদ — রাতের শেষ তৃতীয়াংশ' : key === 'sunrise' ? 'সূর্যোদয়' : `${n.bn} নামাজের সময় হয়েছে`,
             cfg.before ? `${n.bn} ${bn}${opts.city ? ` · ${opts.city}` : ''}` : `${nm ? 'রাতের বরকতময় শেষ প্রহর শুরু' : n.bn} · ${bn}${opts.city ? ` · ${opts.city}` : ''}`,
+          ],
+          ar: [
+            cfg.before ? `${n.ar} بعد ${cfg.before} د` : nm ? 'التهجد — الثلث الأخير من الليل' : key === 'sunrise' ? 'الشروق' : `حان وقت ${n.ar}`,
+            cfg.before ? `${n.ar} الساعة ${ar}${where}` : `${nm ? 'بدأ الثلث الأخير المبارك من الليل' : n.ar} · ${ar}${where}`,
           ],
         },
       })

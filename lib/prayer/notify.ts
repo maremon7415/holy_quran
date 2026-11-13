@@ -6,7 +6,7 @@ export interface NotifyInput {
   body: string
   tag: string
   silent?: boolean
-  lang: 'en' | 'bn'
+  lang: 'en' | 'bn' | 'ar'
   test?: boolean
 }
 
@@ -15,18 +15,17 @@ export const isNotificationSupported = () => typeof window !== 'undefined' && 'N
 export async function showPrayerNotification(n: NotifyInput): Promise<'sw' | 'page' | 'denied' | 'unsupported'> {
   if (!isNotificationSupported()) return 'unsupported'
   if (Notification.permission !== 'granted') return 'denied'
-  const bn = n.lang === 'bn'
   const opts: NotificationOptions & { actions?: { action: string; title: string }[]; renotify?: boolean } = {
     body: n.body,
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
     tag: n.tag,
-    lang: bn ? 'bn' : 'en',
+    lang: n.lang,
     silent: n.silent,
     data: { url: '/prayer-times', quranUrl: '/quran', test: !!n.test },
     actions: [
-      { action: 'open', title: bn ? 'কুরআন খুলুন' : 'Open Quran' },
-      { action: 'dismiss', title: bn ? 'বন্ধ করুন' : 'Dismiss' },
+      { action: 'open', title: n.lang === 'bn' ? 'কুরআন খুলুন' : n.lang === 'ar' ? 'افتح القرآن' : 'Open Quran' },
+      { action: 'dismiss', title: n.lang === 'bn' ? 'বন্ধ করুন' : n.lang === 'ar' ? 'إغلاق' : 'Dismiss' },
     ],
   }
   try {

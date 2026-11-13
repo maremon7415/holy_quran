@@ -24,8 +24,8 @@ export function AchievementGrid({ items }: { items: Achievement[] }) {
             <div className={cn('mx-auto grid h-16 w-16 place-items-center rounded-full', done ? 'bg-card shadow-sm' : 'bg-muted')}>
               <UiIcon name={a.icon} size={38} className={done ? '' : 'opacity-35 grayscale'} />
             </div>
-            <p className="mt-3 text-sm font-semibold leading-tight">{t({ en: a.en, bn: a.bn })}</p>
-            <p className="mt-1 min-h-8 text-[11px] leading-snug text-muted-foreground">{t({ en: a.descEn, bn: a.descBn })}</p>
+            <p className="mt-3 text-sm font-semibold leading-tight">{t({ en: a.en, bn: a.bn, ar: a.ar })}</p>
+            <p className="mt-1 min-h-8 text-[11px] leading-snug text-muted-foreground">{t({ en: a.descEn, bn: a.descBn, ar: a.descAr })}</p>
             {done ? (
               <p className="mt-2 text-[11px] font-semibold text-gold">{t({ en: 'Unlocked', bn: 'অর্জিত', ar: 'مفتوح' })} ✦</p>
             ) : (

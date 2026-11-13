@@ -59,7 +59,7 @@ export function composeAyahText(key: string) {
 export async function copyAyah(key: string) {
   const ok = await writeClipboard(composeAyahText(key))
   if (ok) toast.success(tx(lang(), { en: `Copied ${key}`, bn: `কপি হয়েছে ${key}`, ar: `نُسخت الآية ${key}` }))
-  else toast.error('Copy failed')
+  else toast.error(tx(lang(), { en: 'Copy failed', bn: 'কপি করা যায়নি', ar: 'تعذّر النسخ' }))
 }
 
 export async function copyText(text: string, label?: string) {

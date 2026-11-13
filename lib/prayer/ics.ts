@@ -2,7 +2,7 @@ import { computeSchedule, REMINDER_NAMES, type ReminderKey } from './times'
 import type { ReminderCfg } from '@/lib/stores/prayer'
 
 const z = (ms: number) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
 /** RFC 5545 line folding at 75 octets (UTF-8 aware). */
 function fold(line: string) {
   const enc = new TextEncoder()
@@ -30,13 +30,13 @@ export function buildPrayerIcs(opts: {
   city?: string | null
   reminders: Record<ReminderKey, ReminderCfg>
   days?: number
-  lang?: 'en' | 'bn'
+  lang?: 'en' | 'bn' | 'ar'
 }) {
   const days = computeSchedule({ ...opts, days: opts.days ?? 30 })
   const stamp = z(Date.now())
-  const bn = opts.lang === 'bn'
+  const lang = opts.lang ?? 'en'
   const where = opts.city ?? `${opts.lat.toFixed(3)}, ${opts.lon.toFixed(3)}`
-  const L: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Noor Quran//Prayer times//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${esc(bn ? 'নামাজের সময় — ' : 'Prayer times — ')}${esc(where)}`]
+  const L: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Noor Quran//Prayer times//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${esc(lang === 'bn' ? 'নামাজের সময় — ' : lang === 'ar' ? 'مواقيت الصلاة — ' : 'Prayer times — ')}${esc(where)}`]
   if (opts.tz) L.push(`X-WR-TIMEZONE:${opts.tz}`)
   const extra: ReminderKey[] = ['sunrise', 'tahajjud']
   const keys: ReminderKey[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha', 'tahajjud']
@@ -48,7 +48,7 @@ export function buildPrayerIcs(opts: {
       const start = day.times[key]
       const dur = key === 'sunrise' || key === 'tahajjud' ? 5 : 15
       const nm = REMINDER_NAMES[k]
-      const name = bn ? nm.bn : nm.en
+      const name = nm[lang]
       const before = opts.reminders[k].on || opts.reminders[key].on ? cfg.before : 0
       L.push(
         'BEGIN:VEVENT',
@@ -57,12 +57,12 @@ export function buildPrayerIcs(opts: {
         `DTSTART:${z(start)}`,
         `DTEND:${z(start + dur * 60_000)}`,
         `SUMMARY:${esc(name)}`,
-        `DESCRIPTION:${esc(`${name} · ${where} · ${opts.method} / ${opts.madhab === 'hanafi' ? 'Hanafi' : 'Shafi'} Asr · Noor Quran`)}`,
+        `DESCRIPTION:${esc(`${name} · ${where} · ${opts.method} / ${opts.madhab === 'hanafi' ? (lang === 'ar' ? 'حنفي' : 'Hanafi') : lang === 'ar' ? 'شافعي' : 'Shafi'} ${lang === 'ar' ? 'للعصر' : 'Asr'} · ${lang === 'ar' ? 'نور القرآن' : 'Noor Quran'}`)}`,
         `LOCATION:${esc(where)}`,
         'TRANSP:TRANSPARENT',
         'BEGIN:VALARM',
         'ACTION:DISPLAY',
-        `DESCRIPTION:${esc(before ? `${name} in ${before} min` : name)}`,
+        `DESCRIPTION:${esc(before ? (lang === 'bn' ? `${before} মিনিট পর ${name}` : lang === 'ar' ? `${name} بعد ${before} دقيقة` : `${name} in ${before} min`) : name)}`,
         `TRIGGER:${before ? `-PT${before}M` : 'PT0S'}`,
         'END:VALARM',
         'END:VEVENT',

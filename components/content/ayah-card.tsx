@@ -5,6 +5,8 @@ import { chapters, readerHref, surahHref, toArabicDigits } from '@/lib/quran/cha
 import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { refLabelL } from '@/lib/i18n/quran'
 import { Reveal } from './reveal'
+import { T, NotAr } from '@/lib/i18n/text'
+import { RefLabel } from '@/lib/i18n/surah-name'
 
 /** One ayah rendered from the corpus: Arabic + English + Bangla, with links to the reader and the ayah page. */
 export function AyahCard({ verse, index = 0, locale = 'en' }: { verse: RVerse; index?: number; locale?: Locale }) {
@@ -19,10 +21,10 @@ export function AyahCard({ verse, index = 0, locale = 'en' }: { verse: RVerse; i
         <header className="relative mb-4 flex flex-wrap items-center justify-between gap-2">
           <Link href={localeHref(locale, surahHref(verse.surah, verse.n))} className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground transition hover:bg-primary hover:text-primary-foreground">
             <span className="font-arabic text-sm leading-none">{c.nameArabic}</span>
-            <span>{refLabelL(locale, `${verse.surah}:${verse.n}`)}</span>
+            <span>{bn ? refLabelL(locale, `${verse.surah}:${verse.n}`) : <RefLabel r={`${verse.surah}:${verse.n}`} />}</span>
           </Link>
           <Link href={localeHref(locale, readerHref(verse.surah, verse.n))} className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-primary">
-            <BookOpen className="size-3.5" /> {bn ? 'প্রসঙ্গসহ পড়ুন' : 'Read in context'} <ArrowUpRight className="size-3 opacity-60 rtl:-scale-x-100" />
+            <BookOpen className="size-3.5" /> {bn ? 'প্রসঙ্গসহ পড়ুন' : <T en="Read in context" ar="اقرأ في سياقها" />} <ArrowUpRight className="size-3 opacity-60 rtl:-scale-x-100" />
           </Link>
         </header>
         <p lang="ar" dir="rtl" className="quran-text relative text-right text-[length:var(--quran-size,30px)] leading-[2.2]">
@@ -34,7 +36,7 @@ export function AyahCard({ verse, index = 0, locale = 'en' }: { verse: RVerse; i
         <div className="relative mt-4 space-y-3 border-t border-border/70 pt-4">
           {bn ? [trBn, trEn] : [trEn, trBn]}
         </div>
-        <p className="relative mt-3 text-[11px] text-muted-foreground">{bn ? 'তাইসিরুল কুরআন · Saheeh International' : 'Saheeh International · তাইসিরুল কুরআন'}</p>
+        <p className="relative mt-3 text-[11px] text-muted-foreground">{bn ? 'তাইসিরুল কুরআন · Saheeh International' : <>Saheeh International<NotAr> · তাইসিরুল কুরআন</NotAr></>}</p>
       </article>
     </Reveal>
   )

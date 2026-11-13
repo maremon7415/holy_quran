@@ -71,7 +71,7 @@ export function SiteFooter() {
         <FooterCol title={t(C.bangla)} lang="bn">
           {BANGLA_LINKS.map((p) => <NextLink key={p.href} href={p.href} lang="bn" className="font-bangla hover:text-foreground">{p.label}</NextLink>)}
         </FooterCol>
-        <FooterCol title="Noor">
+        <FooterCol title={t({ en: 'Noor', bn: 'নূর', ar: 'نور' })}>
           <Link href="/quran" className="hover:text-foreground">{t(C.allSurahs)}</Link>
           <Link href="/listen" className="hover:text-foreground">{t(C.recitation)}</Link>
           <Link href="/journey" className="hover:text-foreground">{t(C.khatam)}</Link>
@@ -81,7 +81,7 @@ export function SiteFooter() {
       </div>
       <div className="relative mx-auto mt-14 flex max-w-7xl flex-col gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
         <p>{t(C.credits)}</p>
-        <p>© {new Date().getFullYear()} {site.name}</p>
+        <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> {t({ en: site.name, bn: 'নূর কুরআন', ar: 'نور القرآن' })}</p>
       </div>
     </footer>
   )

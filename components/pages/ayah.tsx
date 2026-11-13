@@ -66,7 +66,7 @@ export async function ayahMeta(locale: Locale, { params }: Props): Promise<Metad
       description: bnDesc,
       keywords: [`সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} আয়াত`, `${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} বাংলা উচ্চারণ`, ...(f && !f.en.startsWith('Surah ') ? [f.bn, `${f.bn} বাংলা অর্থসহ`, `${f.bn} বাংলা উচ্চারণ`] : []), `Quran ${key} Bangla`],
       alternates: alternatesFor(url, 'bn'),
-      openGraph: { type: 'article', title: bnTitle, description: bnDesc, url: localeHref('bn', url), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${url}/opengraph-image`, width: 1200, height: 630 }] },
+      openGraph: { type: 'article', title: bnTitle, description: bnDesc, url: localeHref('bn', url), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${localeHref('bn', url)}/opengraph-image`, width: 1200, height: 630 }] },
       twitter: { card: 'summary_large_image', title: bnTitle, description: bnDesc },
     }
   }
@@ -252,7 +252,7 @@ export async function AyahPage({ params, locale }: Props & { locale: Locale }) {
           <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4" dir="rtl">
             {words.map((w) => (
               <li key={w.position} className="card-soft relative flex flex-col items-center px-3 pb-3 pt-2 text-center">
-                <span className="absolute end-2.5 top-2 text-[10px] font-bold tabular-nums text-muted-foreground/70" dir="ltr">{w.position}</span>
+                <span className="absolute end-2.5 top-2 text-[10px] font-bold tabular-nums text-muted-foreground" dir="ltr">{w.position}</span>
                 <span className="font-arabic text-[1.7rem] leading-[1.9] text-arabic" lang="ar">{w.ar}</span>
                 {w.tl && <span className="text-xs italic text-muted-foreground" dir="ltr">{w.tl}</span>}
                 <span className="mt-1.5 text-sm font-semibold leading-snug" dir="ltr">{w.en}</span>

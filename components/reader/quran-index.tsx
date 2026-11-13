@@ -10,6 +10,7 @@ import { useUi } from '@/lib/stores/ui'
 import { useLang, useMounted, useTx } from '@/lib/lang'
 import { getJuzName } from '@/lib/reader/juz'
 import { cn } from '@/lib/utils'
+import { surahNameFor } from '@/lib/i18n/surah-name'
 import { UiIcon } from '@/components/ui-icon'
 
 export interface JuzLite { juz: number; map: Record<string, string>; count: number }
@@ -42,6 +43,7 @@ function ProgressRing({ value, size = 52 }: { value: number; size?: number }) {
 }
 
 function SurahCard({ c, i, progress }: { c: ChapterLite; i: number; progress: number }) {
+  const t = useTx()
   const makki = c.revelationPlace === 'makkah'
   return (
     <motion.li layout="position" transition={{ type: 'spring', stiffness: 380, damping: 34 }} className="list-none">
@@ -55,14 +57,15 @@ function SurahCard({ c, i, progress }: { c: ChapterLite; i: number; progress: nu
           <span className="block truncate font-semibold leading-tight">
             <span className="en-only">{c.nameSimple}</span>
             <span className="bn-only font-bangla">{surahNamesBn[c.id - 1]}</span>
+            <span className="ar-only" lang="ar">{c.nameArabic}</span>
           </span>
           <span className="mt-0.5 block truncate text-[13px] text-muted-foreground">
             <span className="en-only">{c.meaning}</span>
             <span className="bn-only font-bangla">{c.nameBn ?? c.meaning}</span>
           </span>
           <span className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-            <span className={cn('rounded-full px-1.5 py-px', makki ? 'bg-gold-soft text-gold' : 'bg-accent text-primary')}>{makki ? 'Makki' : 'Madani'}</span>
-            <span>{c.versesCount} ayahs</span>
+            <span className={cn('rounded-full px-1.5 py-px', makki ? 'bg-gold-soft text-gold' : 'bg-accent text-primary')}>{makki ? t({ en: 'Makki', bn: 'মাক্কী', ar: 'مكية' }) : t({ en: 'Madani', bn: 'মাদানী', ar: 'مدنية' })}</span>
+            <span>{t({ en: `${c.versesCount} ayahs`, bn: `${toBanglaDigits(c.versesCount)} আয়াত`, ar: `${c.versesCount} آية` })}</span>
           </span>
         </span>
         <span className="font-arabic text-[1.65rem] leading-none text-arabic transition-colors duration-300 group-hover:text-primary" lang="ar">{c.nameArabic}</span>
@@ -73,6 +76,7 @@ function SurahCard({ c, i, progress }: { c: ChapterLite; i: number; progress: nu
 
 export function QuranIndex({ order, juzs }: { order: number[]; juzs: JuzLite[] }) {
   const t = useTx()
+  const lang = useLang()
   const mounted = useMounted()
   const [tab, setTab] = useState<Tab>('surah')
   const [place, setPlace] = useState<Place>('all')
@@ -102,7 +106,7 @@ export function QuranIndex({ order, juzs }: { order: number[]; juzs: JuzLite[] }
   ]
 
   return (
-    <section aria-label="Surah index" className="mt-10">
+    <section aria-label={t({ en: 'Surah index', bn: 'সূরা সূচি', ar: 'فهرس السور' })} className="mt-10">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex rounded-full border bg-card p-1 shadow-sm" role="tablist">
           {tabs.map((x) => (
@@ -114,7 +118,7 @@ export function QuranIndex({ order, juzs }: { order: number[]; juzs: JuzLite[] }
         </div>
         {tab !== 'juz' && (
           <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1">
-            {([['all', t({ en: 'All', bn: 'সব', ar: 'الكل' })], ['makkah', 'Makki'], ['madinah', 'Madani']] as [Place, string][]).map(([id, label]) => (
+            {([['all', t({ en: 'All', bn: 'সব', ar: 'الكل' })], ['makkah', t({ en: 'Makki', bn: 'মাক্কী', ar: 'مكية' })], ['madinah', t({ en: 'Madani', bn: 'মাদানী', ar: 'مدنية' })]] as [Place, string][]).map(([id, label]) => (
               <button key={id} onClick={() => setPlace(id)} className={cn('shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition active:scale-95', place === id ? 'border-primary bg-accent text-primary' : 'bg-card text-muted-foreground hover:text-foreground')}>{label}</button>
             ))}
             <span className="mx-1 w-px shrink-0 bg-border" />
@@ -137,14 +141,14 @@ export function QuranIndex({ order, juzs }: { order: number[]; juzs: JuzLite[] }
                     <span className="flex items-center gap-3">
                       <span className="star-badge size-11 shrink-0 font-display text-sm font-bold text-gold">{j.juz}</span>
                       <span className="min-w-0 flex-1">
-                        <span className="block font-semibold">Juz {j.juz} <span className="font-bangla text-xs text-muted-foreground">· পারা {toBanglaDigits(j.juz)}</span></span>
-                        <span className="block truncate text-xs text-muted-foreground">{name.tl} · {j.count} ayahs</span>
+                        <span className="block font-semibold">{t({ en: `Juz ${j.juz}`, bn: `পারা ${toBanglaDigits(j.juz)}`, ar: `الجزء ${j.juz}` })}</span>
+                        <span className="block truncate text-xs text-muted-foreground">{lang === 'ar' ? '' : `${name.tl} · `}{t({ en: `${j.count} ayahs`, bn: `${toBanglaDigits(j.count)} আয়াত`, ar: `${j.count} آية` })}</span>
                       </span>
                       <span className="font-arabic text-xl text-arabic" lang="ar">{name.ar}</span>
                     </span>
                     <span className="mt-3 flex flex-wrap gap-1.5">
                       {entries.map(([s, range]) => (
-                        <span key={s} className="rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold text-foreground/75">{chapters[+s - 1].nameSimple} <span className="text-muted-foreground">{range}</span></span>
+                        <span key={s} className="rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold text-foreground/75">{surahNameFor(lang, +s)} <span className="text-muted-foreground">{range}</span></span>
                       ))}
                     </span>
                   </Link>
@@ -241,7 +245,7 @@ export function ContinueReading() {
         <div className="flex flex-wrap gap-1.5">
           {POPULAR.map((x) => (
             <Link key={x.en} href={surahHref(x.id, x.ayah)} className="rounded-full bg-surface-2 px-3 py-1.5 text-xs font-semibold transition hover:bg-accent hover:text-primary active:scale-95">
-              {t({ en: x.en, bn: x.bn })}
+              {t({ en: x.en, bn: x.bn, ar: x.ar })}
             </Link>
           ))}
         </div>

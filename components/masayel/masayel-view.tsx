@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 export interface Masala { id: string; category: string; question: { en: string; bn: string }; answer: { en: string; bn: string }; reference: string }
 
 const CAT_BN: Record<string, string> = { Salah: 'নামাজ', Tahara: 'পবিত্রতা', Sawm: 'রোজা', Zakat: 'যাকাত', Hajj: 'হজ্জ' }
+const CAT_AR: Record<string, string> = { Salah: 'الصلاة', Tahara: 'الطهارة', Sawm: 'الصيام', Zakat: 'الزكاة', Hajj: 'الحج' }
 
 export function MasayelView({ items }: { items: Masala[] }) {
   const t = useTx()
@@ -22,7 +23,7 @@ export function MasayelView({ items }: { items: Masala[] }) {
     const s = q.trim().toLowerCase()
     return items.filter((m) => (cat === 'All' || m.category === cat) && (!s || [m.question.en, m.answer.en, m.question.bn, m.answer.bn, m.reference].some((x) => x.toLowerCase().includes(s))))
   }, [items, q, cat])
-  const catLabel = (c: string) => (c === 'All' ? t({ en: 'All', bn: 'সব', ar: 'الكل' }) : lang === 'bn' ? CAT_BN[c] ?? c : c)
+  const catLabel = (c: string) => (c === 'All' ? t({ en: 'All', bn: 'সব', ar: 'الكل' }) : lang === 'bn' ? CAT_BN[c] ?? c : lang === 'ar' ? CAT_AR[c] ?? c : c)
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-32 pt-6 sm:px-6 lg:pb-16 lg:pt-10">
@@ -40,7 +41,7 @@ export function MasayelView({ items }: { items: Masala[] }) {
 
       <div className="relative">
         <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search questions & answers…', bn: 'প্রশ্ন ও উত্তর খুঁজুন…', ar: 'ابحث في الأسئلة والأجوبة…' })} aria-label="Search" className="h-12 w-full rounded-full border bg-card ps-11 pe-11 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search questions & answers…', bn: 'প্রশ্ন ও উত্তর খুঁজুন…', ar: 'ابحث في الأسئلة والأجوبة…' })} aria-label={t({ en: 'Search', bn: 'খুঁজুন', ar: 'بحث' })} className="h-12 w-full rounded-full border bg-card ps-11 pe-11 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
         {q && <button aria-label="Clear" onClick={() => setQ('')} className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground hover:text-foreground"><X className="size-4" /></button>}
       </div>
       <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">

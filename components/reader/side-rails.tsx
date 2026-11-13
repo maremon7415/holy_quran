@@ -32,7 +32,7 @@ export function SurahRail({ current }: { current: number }) {
         onChange={(e) => setQ(e.target.value)}
         placeholder={t({ en: 'Find surah…', bn: 'সূরা খুঁজুন…', ar: 'ابحث عن سورة…' })}
         className="mb-2 h-10 w-full shrink-0 rounded-2xl border bg-background px-3 text-sm outline-none transition focus:border-primary/50"
-        aria-label="Filter surahs"
+        aria-label={t({ en: 'Filter surahs', bn: 'সূরা ফিল্টার', ar: 'تصفية السور' })}
       />
       <div ref={listRef} className="no-scrollbar relative min-h-0 flex-1 overflow-y-auto">
         {list.map((c) => (

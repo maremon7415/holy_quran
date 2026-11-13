@@ -181,7 +181,7 @@ export function QiblaView() {
         <div className="relative mt-6 grid grid-cols-3 gap-3 text-center">
           {[
             { k: t({ en: 'Bearing', bn: 'দিক', ar: 'الاتجاه' }), v: `${Math.round(bearing)}°`, s: cardinal(bearing) },
-            { k: t({ en: 'Distance', bn: 'দূরত্ব', ar: 'المسافة' }), v: Math.round(km).toLocaleString(), s: 'km' },
+            { k: t({ en: 'Distance', bn: 'দূরত্ব', ar: 'المسافة' }), v: Math.round(km).toLocaleString('en-US'), s: 'km' },
             { k: t({ en: 'Heading', bn: 'আপনার মুখ', ar: 'الوجهة' }), v: live ? `${Math.round(((heading! % 360) + 360) % 360)}°` : '—', s: live ? cardinal(((heading! % 360) + 360) % 360) : t({ en: 'no sensor', bn: 'সেন্সর নেই', ar: 'لا يوجد مستشعر' }) },
           ].map((r) => (
             <div key={r.k} className="rounded-2xl bg-surface-2 px-2 py-3">
@@ -211,7 +211,7 @@ export function QiblaView() {
         <UiIcon name="kaaba" size={56} />
         <div>
           <p className="font-display text-lg font-semibold">{t({ en: 'Kaaba, Makkah al-Mukarramah', bn: 'কাবা, মক্কা আল-মুকাররমা', ar: 'الكعبة المشرفة، مكة المكرمة' })}</p>
-          <p className="text-sm text-muted-foreground">{KAABA.lat.toFixed(4)}°N, {KAABA.lon.toFixed(4)}°E · {Math.round(km).toLocaleString()} km</p>
+          <p className="text-sm text-muted-foreground">{KAABA.lat.toFixed(4)}°N, {KAABA.lon.toFixed(4)}°E · {Math.round(km).toLocaleString('en-US')} km</p>
         </div>
       </div>
       <p className="mt-4 text-center text-xs text-muted-foreground">{t({ en: 'Keep your phone flat and away from magnets or metal for best accuracy.', bn: 'সঠিক ফলাফলের জন্য ফোন সমতলে রাখুন এবং চুম্বক বা ধাতু থেকে দূরে রাখুন।', ar: 'أبقِ هاتفك مستويًا وبعيدًا عن المغناطيس والمعادن لأفضل دقة.' })}</p>

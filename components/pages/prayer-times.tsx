@@ -18,7 +18,7 @@ const copy = {
   },
 }
 
-export const prayerMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/prayer-times', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
+export const prayerMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/prayer-times', locale, ogImage: locale === 'bn' ? '/bn/opengraph-image' : undefined })
 
 export function PrayerTimesPage({ locale }: { locale: Locale }) {
   return (

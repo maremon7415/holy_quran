@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { JsonLd } from '@/components/seo/json-ld'
+import { T, NotAr } from '@/lib/i18n/text'
 import { UiIcon } from '@/components/ui-icon'
 import { PlayAllButton, ReciterGallery, SurahAudioList } from '@/components/player/listen-client'
 import { reciters } from '@/lib/audio/reciters'
@@ -22,7 +23,7 @@ const copy = {
   },
 }
 
-export const listenMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/listen', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
+export const listenMeta = (locale: Locale): Metadata => buildMeta({ ...copy[locale], path: '/listen', locale, ogImage: locale === 'bn' ? '/bn/opengraph-image' : undefined })
 
 const featured = [1, 18, 36, 55, 67, 112]
 
@@ -79,20 +80,20 @@ export function ListenPage({ locale }: { locale: Locale }) {
         <div aria-hidden className="absolute -bottom-28 -start-16 -z-10 size-[22rem] rounded-full bg-gold/10 blur-3xl" />
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-            <UiIcon name="listen" size={22} /> {bn ? 'তিলাওয়াত · Listen' : 'Listen · তিলাওয়াত'}
+            <UiIcon name="listen" size={22} /> {bn ? 'তিলাওয়াত' : <><T en="Listen" ar="استماع" /><NotAr> · তিলাওয়াত</NotAr></>}
           </div>
           <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-            {bn ? 'পবিত্র কুরআনের তিলাওয়াত শুনুন' : 'Listen to the Holy Quran'}
+            {bn ? 'পবিত্র কুরআনের তিলাওয়াত শুনুন' : <T en="Listen to the Holy Quran" ar="استمع إلى القرآن الكريم" />}
           </h1>
-          <p className="font-arabic mt-3 text-3xl text-gold sm:text-4xl" lang="ar">استمع إلى القرآن الكريم</p>
+          <NotAr><p className="font-arabic mt-3 text-3xl text-gold sm:text-4xl" lang="ar">استمع إلى القرآن الكريم</p></NotAr>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {bn
               ? `${bnNum(reciters.length)} জন ক্বারী, শব্দে শব্দে হাইলাইট, আয়াত রিপিট ও হিফজ লুপ, স্লিপ টাইমার এবং লক-স্ক্রিন কন্ট্রোল। প্রিয় ক্বারীর কণ্ঠে পবিত্র কুরআন শুনুন।`
-              : `${reciters.length} reciters, word-by-word highlighting, ayah repeat and memorisation loops, a sleep timer, and lock-screen controls. পবিত্র কুরআনের তিলাওয়াত শুনুন প্রিয় ক্বারীর কণ্ঠে।`}
+              : <T en={`${reciters.length} reciters, word-by-word highlighting, ayah repeat and memorisation loops, a sleep timer, and lock-screen controls.`} ar={`${reciters.length} قارئًا، مع تمييز الكلمات أثناء التلاوة، وتكرار الآيات وحلقات الحفظ، ومؤقّت نوم، وأزرار تحكم على شاشة القفل.`} />}
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <PlayAllButton />
-            <a href="#reciters-h" className="inline-flex h-12 items-center rounded-full border border-border bg-card px-6 text-sm font-semibold transition hover:bg-muted">{bn ? 'ক্বারী বেছে নিন' : 'Pick a reciter'}</a>
+            <a href="#reciters-h" className="inline-flex h-12 items-center rounded-full border border-border bg-card px-6 text-sm font-semibold transition hover:bg-muted">{bn ? 'ক্বারী বেছে নিন' : <T en="Pick a reciter" ar="اختر قارئًا" />}</a>
           </div>
         </div>
       </header>

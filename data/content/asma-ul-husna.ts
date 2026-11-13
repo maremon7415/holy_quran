@@ -1,4 +1,5 @@
 import type { AsmaName } from './types'
+import { asmaMeaningAr } from './ar.ts'
 
 /** [arabic, transliteration, EN meaning, BN meaning, EN explanation, BN explanation, ref, attr?] */
 type Row = [string, string, string, string, string, string, string, 1?]
@@ -111,6 +112,6 @@ const slugify = (tl: string) =>
   tl.toLowerCase().replace(/[’‘']/g, '').replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '')
 
 export const asmaUlHusna: AsmaName[] = rows.map(([ar, tl, en, bn, expEn, expBn, ref, attr], i) => ({
-  n: i + 1, slug: slugify(tl), ar, tl, tlBn: tlBn[i], en, bn, expEn, expBn, ref, ...(attr ? { attr: true } : {}),
+  n: i + 1, slug: slugify(tl), ar, tl, tlBn: tlBn[i], en, bn, meaningAr: asmaMeaningAr[i], expEn, expBn, ref, ...(attr ? { attr: true } : {}),
 }))
 export const asmaBySlug = (slug: string) => asmaUlHusna.find((a) => a.slug === slug)

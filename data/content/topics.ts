@@ -1,4 +1,5 @@
 import type { Topic, TopicCategory, L } from './types'
+import { topicAr } from './ar.ts'
 
 export const topicCategories: { id: TopicCategory; title: L; blurb: L; icon: string }[] = [
   { id: 'emotions', icon: 'heart', title: { en: 'Emotions & struggles', bn: 'অনুভূতি ও কঠিন সময়', ar: 'المشاعر والمحن' }, blurb: { en: 'Verses for the heart on heavy days', bn: 'ভারী দিনে মনের জন্য আয়াত', ar: 'آيات للقلب في الأيام الثقيلة' } },
@@ -261,5 +262,5 @@ const raw: T[] = [
     refs: ['49:10', '49:11', '49:12', '49:13', '3:103', '9:71', '5:2'], related: ['kindness', 'forgiving-others', 'justice'], duas: ['rabbana-ighfir-lana-wa-li-ikhwaninal'] },
 ]
 
-export const topics: Topic[] = raw.map((t) => ({ ...t, reflect: { en: t.reflect[0], bn: t.reflect[1] } }))
+export const topics: Topic[] = raw.map((t) => ({ ...t, ar: topicAr[t.slug], reflect: { en: t.reflect[0], bn: t.reflect[1] } }))
 export const topicBySlug = (slug: string) => topics.find((t) => t.slug === slug)

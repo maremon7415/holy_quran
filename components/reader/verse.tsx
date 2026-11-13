@@ -33,8 +33,8 @@ export function arabicRuns(ar: string): ReactNode[] {
   return out
 }
 
-export const AyahMarker = ({ n }: { n: number }) => (
-  <span className={n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'} aria-label={`Ayah ${n}`}>{toArabicDigits(n)}</span>
+export const AyahMarker = ({ n, locale = 'en' }: { n: number; locale?: 'en' | 'bn' }) => (
+  <span className={n >= 100 ? 'ayah-marker ayah-marker-3' : 'ayah-marker'} aria-label={locale === 'bn' ? `আয়াত ${n}` : `Ayah ${n}`} data-ar-aria={`آية ${n}`}>{toArabicDigits(n)}</span>
 )
 
 /**
@@ -60,15 +60,15 @@ export function VerseBlock({ verse, surah, scoped = false, bt, full = false, loc
   return (
     <article id={scoped ? `ayah-${surah}-${v.n}` : `ayah-${v.n}`} data-ayah={v.k} data-j={v.j} data-p={v.p} className="ayah group/ayah">
       <div className="ayah-head">
-        <a href={localeHref(locale, surahHref(surah, v.n))} className="ayah-num" title={locale === 'bn' ? `আয়াত ${v.k} খুলুন` : `Open ayah ${v.k}`}>
+        <a href={localeHref(locale, surahHref(surah, v.n))} className="ayah-num" title={locale === 'bn' ? `আয়াত ${v.k} খুলুন` : `Open ayah ${v.k}`} data-ar-title={`افتح الآية ${v.k}`}>
           {v.k}
-          {v.s === 1 && <span className="text-gold" title="Sajdah">۩</span>}
+          {v.s === 1 && <span className="text-gold" title={locale === 'bn' ? 'সিজদা' : 'Sajdah'} data-ar-title="سجدة">۩</span>}
         </a>
       </div>
       <div className="ayah-ar">
         <p className="quran-text ar-plain" lang="ar" dir="rtl">
           {arabicRuns(v.ar)}
-          <AyahMarker n={v.n} />
+          <AyahMarker n={v.n} locale={locale} />
         </p>
       </div>
       <div className="ayah-tr">

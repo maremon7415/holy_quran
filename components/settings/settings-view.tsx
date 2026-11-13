@@ -1,9 +1,11 @@
 'use client'
+import * as React from 'react'
 import { useRef } from 'react'
 import { toast } from 'sonner'
 import { useReader, type ArabicFont } from '@/lib/stores/reader'
 import { useAppStore } from '@/lib/store'
-import { useMounted, useTx } from '@/lib/lang'
+import { useLang, useMounted, useTx } from '@/lib/lang'
+import { getReciter } from '@/lib/audio/reciters'
 import { ThemeSwatches } from '@/components/shell/theme-picker'
 import { LanguageToggle } from '@/components/shell/language-toggle'
 import { AccountSyncCard } from '@/components/sync/account-card'
@@ -28,6 +30,7 @@ const RECITERS = [
 export function SettingsView() {
   const mounted = useMounted()
   const t = useTx()
+  const lang = useLang()
   const r = useReader()
   const dailyGoal = useAppStore((s) => s.dailyGoal)
   const setDailyGoal = useAppStore((s) => s.setDailyGoal)
@@ -87,7 +90,7 @@ export function SettingsView() {
       </Section>
 
       <Section icon="language" title={t({ en: 'Translations', bn: 'অনুবাদ', ar: 'الترجمات' })}>
-        <Row label="English"><Switch checked={r.showEn} onCheckedChange={(v) => r.set({ showEn: v })} /></Row>
+        <Row label={t({ en: 'English', bn: 'ইংরেজি', ar: 'الإنجليزية' })}><Switch checked={r.showEn} onCheckedChange={(v) => r.set({ showEn: v })} /></Row>
         {r.showEn && (
           <div className="flex gap-2">
             {(['sahih', 'haleem'] as const).map((e) => (
@@ -103,7 +106,7 @@ export function SettingsView() {
         <div className="grid gap-2 sm:grid-cols-2">
           {RECITERS.map((x) => (
             <button key={x.id} onClick={() => r.set({ reciterId: x.id })} className={cn('flex items-center gap-3 rounded-2xl border p-3 text-start text-sm transition', r.reciterId === x.id ? 'border-primary bg-accent' : 'hover:border-primary/40')}>
-              <span className="grid size-9 place-items-center rounded-full bg-gold-soft font-semibold">{x.name.replace(/\(.*\)/, '').split(/[\s-]+/).filter((w) => /^[A-Z]/.test(w)).map((w) => w[0]).slice(0, 2).join('')}</span>{x.name}
+              <span className="grid size-9 place-items-center rounded-full bg-gold-soft font-semibold">{lang === 'ar' ? [...getReciter(x.id).ar][0] : x.name.replace(/\(.*\)/, '').split(/[\s-]+/).filter((w) => /^[A-Z]/.test(w)).map((w) => w[0]).slice(0, 2).join('')}</span>{lang === 'ar' ? getReciter(x.id).ar : x.name}
             </button>
           ))}
         </div>
@@ -137,5 +140,7 @@ function Section({ icon, title, children }: { icon: string; title: string; child
   )
 }
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="flex items-center justify-between gap-4"><span className="text-sm font-medium">{label}</span>{children}</div>
+  const id = React.useId()
+  const control = React.isValidElement<{ 'aria-labelledby'?: string }>(children) ? React.cloneElement(children, { 'aria-labelledby': id }) : children
+  return <div className="flex items-center justify-between gap-4"><span id={id} className="text-sm font-medium">{label}</span>{control}</div>
 }

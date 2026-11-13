@@ -1,4 +1,5 @@
 import type { Dua, DuaCategory, L } from './types'
+import { duaTitleAr } from './ar.ts'
 
 export const duaCategories: { id: DuaCategory; title: L; icon: string }[] = [
   { id: 'morning-evening', title: { en: 'Morning & evening', bn: 'সকাল-সন্ধ্যা', ar: 'أذكار الصباح والمساء' }, icon: 'sun' },
@@ -22,7 +23,7 @@ const rb = (slug: string, ref: string, en: string, bn: string, whenEn: string, w
   slug, cat: 'rabbana', refs: [ref], title: { en, bn }, source: `Quran ${ref}`, when: { en: whenEn, bn: whenBn }, ...extra,
 })
 
-export const duas: Dua[] = [
+const rawDuas: Dua[] = [
   // ───────── Morning & evening
   { slug: 'dua-morning-asbahna', cat: 'morning-evening', title: { en: 'Morning dua: Asbahna wa asbahal mulku lillah', bn: 'সকালের দোয়া: আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ' },
     ar: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
@@ -305,4 +306,6 @@ export const duas: Dua[] = [
   rb('rabbana-atmim-lana-nurana', '66:8', 'Rabbana atmim lana nurana — perfect our light for us', 'রাব্বানা আতমিম লানা নূরানা', 'The dua of the believers on the Day of Resurrection, asking Allah to complete their light and forgive them.', 'কিয়ামতের দিন মুমিনদের দোয়া; নূর পূর্ণ করা ও ক্ষমা চাওয়ার জন্য।', { keywords: ['rabbana atmim lana nurana'] }),
 ]
 
+/** Adds the Arabic title (`title.ar`) from `./ar`. */
+export const duas: Dua[] = rawDuas.map((d) => ({ ...d, title: { ...d.title, ar: duaTitleAr[d.slug] ?? d.title.ar } }))
 export const duaBySlug = (slug: string) => duas.find((d) => d.slug === slug)

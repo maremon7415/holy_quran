@@ -15,6 +15,8 @@ import { articleLd, buildMeta, clip, collectionLd } from '@/lib/content/seo'
 import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { bnNum } from '@/lib/i18n/t'
 import { refLabelL } from '@/lib/i18n/quran'
+import { T, NotAr } from '@/lib/i18n/text'
+import { Labelled } from '@/lib/i18n/labelled'
 
 /* ───────────────────────────── /names-of-allah ───────────────────────────── */
 
@@ -31,7 +33,7 @@ const indexCopy = {
   },
 }
 
-export const namesIndexMeta = (locale: Locale): Metadata => buildMeta({ ...indexCopy[locale], path: '/names-of-allah', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
+export const namesIndexMeta = (locale: Locale): Metadata => buildMeta({ ...indexCopy[locale], path: '/names-of-allah', locale, ogImage: locale === 'bn' ? '/bn/opengraph-image' : undefined })
 
 const faqsEn = [
   { q: 'What are the 99 Names of Allah?', a: 'The 99 Names of Allah, known as Asma ul Husna (the Most Beautiful Names), are names and attributes by which Allah describes Himself in the Quran and the Sunnah, such as Ar-Rahman (the Most Gracious), Al-Ghafur (the Great Forgiver) and Al-Hakim (the All-Wise).' },
@@ -43,7 +45,6 @@ const faqsBn = [
   { q: 'আল্লাহর ৯৯ নাম কী?', a: 'আল্লাহর ৯৯টি সুন্দর নামকে আসমাউল হুসনা বলা হয়। কুরআন ও হাদিসে আল্লাহ নিজের যে নাম ও গুণাবলি উল্লেখ করেছেন, যেমন আর-রহমান (পরম করুণাময়), আল-গফুর (মহাক্ষমাশীল), আল-হাকীম (প্রজ্ঞাময়), সেগুলোই এর অন্তর্ভুক্ত।' },
   { q: 'কুরআনের কোথায় আল্লাহর সুন্দর নামের কথা আছে?', a: 'কুরআনে বলা হয়েছে, “আল্লাহর জন্যই রয়েছে সুন্দর নামসমূহ, সুতরাং সেগুলো দিয়েই তাঁকে ডাকো” (৭:১৮০)। সূরা হাশরের ৫৯:২২–২৪ আয়াতে একসঙ্গে অনেকগুলো নাম উল্লেখ করা হয়েছে।' },
   { q: 'সব জায়গায় কি ৯৯ নামের তালিকা একই?', a: 'অধিকাংশ নামের ব্যাপারে আলেমগণ একমত, তবে উৎসভেদে তালিকায় সামান্য পার্থক্য আছে, কারণ ৯৯ নামের হাদিসে নামগুলো আলাদাভাবে গণনা করা হয়নি। এই পাতায় বহুল প্রচলিত তালিকা অনুসরণ করা হয়েছে, এবং যে নাম কুরআনে সরাসরি নাম হিসেবে নয় বরং গুণ হিসেবে এসেছে তা চিহ্নিত করা হয়েছে।' },
-  { q: 'What are the 99 Names of Allah?', a: faqsEn[0].a },
 ]
 
 export function NamesIndexPage({ locale }: { locale: Locale }) {
@@ -59,7 +60,7 @@ export function NamesIndexPage({ locale }: { locale: Locale }) {
       <Breadcrumbs locale={locale} items={[{ name: bn ? 'আল্লাহর ৯৯ নাম' : '99 Names of Allah', href: '/names-of-allah' }]} className="mb-4" />
       {bn ? (
         <PageHero
-          eyebrow="আসমাউল হুসনা · Asma ul Husna"
+          eyebrow="আসমাউল হুসনা"
           icon="names"
           arabic="أَسْمَاءُ ٱللَّهِ ٱلْحُسْنَىٰ"
           title="আল্লাহর ৯৯টি সুন্দর নাম"
@@ -67,22 +68,22 @@ export function NamesIndexPage({ locale }: { locale: Locale }) {
         />
       ) : (
         <PageHero
-          eyebrow="Asma ul Husna · আসমাউল হুসনা"
+          eyebrow={<><T en="Asma ul Husna" ar="أسماء الله الحسنى" /><NotAr> · আসমাউল হুসনা</NotAr></>}
           icon="names"
           arabic="أَسْمَاءُ ٱللَّهِ ٱلْحُسْنَىٰ"
-          title="The 99 Beautiful Names of Allah"
-          subtitle="Tap a card to reveal its meaning, practise with flashcards, or test yourself with a quiz. প্রতিটি নামের অর্থ, ব্যাখ্যা ও কুরআনের রেফারেন্স সহ।"
+          title={<T en="The 99 Beautiful Names of Allah" ar="أسماء الله الحسنى التسعة والتسعون" />}
+          subtitle={<T en="Tap a card to reveal its meaning, practise with flashcards, or test yourself with a quiz." ar="اضغط على البطاقة لتعرف معناها، وتدرّب بالبطاقات التعليمية، أو اختبر نفسك." />}
         />
       )}
       <div className="mt-6"><NamesExplorer names={items} /></div>
       <section className="mt-12 text-sm leading-relaxed text-muted-foreground">
-        <h2 className="font-display mb-2 text-xl font-semibold text-foreground">{bn ? 'এক নজরে ৯৯টি নাম' : 'All 99 names at a glance'}</h2>
+        <h2 className="font-display mb-2 text-xl font-semibold text-foreground">{bn ? 'এক নজরে ৯৯টি নাম' : <T en="All 99 names at a glance" ar="الأسماء التسعة والتسعون في لمحة" />}</h2>
         <ul className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
           {asmaUlHusna.map((n) => (
             <li key={n.n}>
               <Link href={h(`/names-of-allah/${n.slug}`)} className="hover:text-primary">
-                <span className="inline-block w-7 text-xs opacity-60">{bn ? bnNum(n.n) : n.n}.</span>
-                {bn ? n.tlBn : n.tl} <span lang="ar" className="font-arabic">({n.ar})</span> – {bn ? n.bn : n.en}
+                <span className="inline-block w-7 text-xs text-muted-foreground">{bn ? bnNum(n.n) : n.n}.</span>
+                {bn ? <>{n.tlBn} <span lang="ar" className="font-arabic">({n.ar})</span> – {n.bn}</> : <><NotAr>{n.tl} </NotAr><span lang="ar" className="font-arabic">{n.ar}</span> – <T en={n.en} ar={n.meaningAr} /></>}
               </Link>
             </li>
           ))}
@@ -107,7 +108,7 @@ export async function nameMeta(locale: Locale, { params }: SlugProps): Promise<M
     return buildMeta({
       title: `${n.tlBn} (${n.ar}) অর্থ কী? আল্লাহর ${bnNum(n.n)} নম্বর নাম | ${n.tl}`,
       description: clip(`${n.tlBn} (${n.ar}) অর্থ “${n.bn}”। ${n.expBn} আল্লাহর ৯৯ নামের ${bnNum(n.n)} নম্বর নাম, কুরআনের রেফারেন্সসহ।`, 165),
-      path, locale, type: 'article', ogImage: `${path}/opengraph-image`,
+      path, locale, type: 'article', ogImage: `${localeHref(locale, path)}/opengraph-image`,
       keywords: [`${n.tlBn} অর্থ`, `${n.tlBn} আল্লাহর নাম`, `${n.tlBn} নামের অর্থ`, `${n.tl} meaning`, 'আল্লাহর ৯৯ নাম', 'আসমাউল হুসনা'],
     })
   }
@@ -136,7 +137,6 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
         { q: `${n.tlBn} এর অর্থ কী?`, a: `${n.tlBn} (${n.ar}) অর্থ “${n.bn}”। ${n.expBn}` },
         { q: n.attr ? `কুরআনে ${n.tlBn} গুণটি কোথায় পাওয়া যায়?` : `কুরআনের কোথায় ${n.tlBn} নামটি এসেছে?`, a: n.attr ? `${n.tlBn} নামটি ঐতিহ্যবাহী ৯৯ নামের তালিকাভুক্ত; এর গুণটি দেখা যায় ${ref} আয়াতে: “${verse.bn}”` : `যেমন, ${ref} আয়াতে নামটি এসেছে: “${verse.bn}”` },
         { q: `৯৯ নামের মধ্যে ${n.tlBn} কত নম্বর?`, a: `বহুল প্রচলিত তালিকায় ${n.tlBn} আল্লাহর ৯৯ নামের ${bnNum(n.n)} নম্বর নাম।` },
-        { q: `What does ${n.tl} mean?`, a: `${n.tl} (${n.ar}) means “${n.en}”. ${n.expEn}` },
       ]
     : [
         { q: `What does ${n.tl} mean?`, a: `${n.tl} (${n.ar}) means “${n.en}”. ${n.expEn}` },
@@ -146,7 +146,7 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
       ]
   const expEn = (
     <Reveal key="en"><section className="card-soft h-full rounded-3xl p-5">
-      <h2 className="text-sm font-semibold">{bn ? 'ব্যাখ্যা (ইংরেজি)' : 'Explanation'}</h2>
+      <h2 className="text-sm font-semibold">{bn ? 'ব্যাখ্যা (ইংরেজি)' : <T en="Explanation" ar="الشرح" />}</h2>
       <p lang="en" className="mt-2 text-[15px] leading-relaxed">{n.expEn}</p>
     </section></Reveal>
   )
@@ -161,9 +161,9 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
       <JsonLd data={articleLd({
         headline: bn ? `${n.tlBn} (${n.ar}) – আল্লাহর নামের অর্থ` : `${n.tl} (${n.ar}) – Meaning of the Name of Allah`,
         description: bn ? `${n.tlBn} অর্থ ${n.bn}। ${n.expBn}` : `${n.tl} means ${n.en}. ${n.expEn}`,
-        path: h(path), image: `${path}/opengraph-image`, about: bn ? n.tlBn : n.tl, inLanguage: bn ? 'bn' : undefined,
+        path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? n.tlBn : n.tl, inLanguage: bn ? 'bn' : undefined,
       })} />
-      <Breadcrumbs locale={locale} items={[{ name: bn ? 'আল্লাহর ৯৯ নাম' : '99 Names of Allah', href: '/names-of-allah' }, { name: bn ? n.tlBn : n.tl, href: path }]} className="mb-4" />
+      <Breadcrumbs locale={locale} items={[{ name: bn ? 'আল্লাহর ৯৯ নাম' : '99 Names of Allah', ar: 'أسماء الله الحسنى', href: '/names-of-allah' }, { name: bn ? n.tlBn : n.tl, ar: n.ar, href: path }]} className="mb-4" />
 
       <section className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-accent via-card to-gold-soft/50 px-5 py-10 text-center sm:py-14">
         <div aria-hidden className="bg-pattern absolute inset-0 -z-10 [mask-image:radial-gradient(circle,#000,transparent_72%)]" />
@@ -172,40 +172,38 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
         {bn ? (
           <>
             <h1 className="font-display text-3xl font-semibold sm:text-5xl">{n.tlBn}</h1>
-            <p lang="en" className="mt-1 text-xl text-gold">{n.tl}</p>
             <p lang="bn" className="mx-auto mt-5 max-w-xl text-lg">{n.bn}</p>
-            <p lang="en" className="mx-auto mt-1 max-w-xl text-lg text-muted-foreground">{n.en}</p>
           </>
         ) : (
           <>
-            <h1 className="font-display text-3xl font-semibold sm:text-5xl">{n.tl}</h1>
-            <p className="font-bangla mt-1 text-xl text-gold">{n.tlBn}</p>
-            <p className="mx-auto mt-5 max-w-xl text-lg">{n.en}</p>
-            <p lang="bn" className="font-bangla mx-auto mt-1 max-w-xl text-lg text-muted-foreground">{n.bn}</p>
+            <h1 className="font-display text-3xl font-semibold sm:text-5xl"><T en={n.tl} ar={n.ar} /></h1>
+            <NotAr><p className="font-bangla mt-1 text-xl text-gold">{n.tlBn}</p></NotAr>
+            <p className="mx-auto mt-5 max-w-xl text-lg"><T en={n.en} ar={n.meaningAr} /></p>
+            <NotAr><p lang="bn" className="font-bangla mx-auto mt-1 max-w-xl text-lg text-muted-foreground">{n.bn}</p></NotAr>
           </>
         )}
         <div className="mt-6 flex justify-center"><ShareButton title={bn ? `${n.tlBn} – আল্লাহর নাম` : `${n.tl} – Name of Allah`} path={h(path)} /></div>
       </section>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">{bn ? [expBn, expEn] : [expEn, expBn]}</div>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">{bn ? [expBn] : [expEn, expBn]}</div>
 
       <section className="mt-10" aria-labelledby="ref-h">
         {bn ? (
           <h2 id="ref-h" className="font-display mb-1 text-2xl font-semibold">{n.attr ? 'সংশ্লিষ্ট আয়াত' : 'কুরআনে'}</h2>
         ) : (
-          <h2 id="ref-h" className="font-display mb-1 text-2xl font-semibold">{n.attr ? 'Related verse' : 'In the Quran'} <span className="font-bangla text-lg font-medium text-muted-foreground">· {n.attr ? 'সংশ্লিষ্ট আয়াত' : 'কুরআনে'}</span></h2>
+          <h2 id="ref-h" className="font-display mb-1 text-2xl font-semibold"><T en={n.attr ? 'Related verse' : 'In the Quran'} ar={n.attr ? 'الآية ذات الصلة' : 'في القرآن'} /> <NotAr><span className="font-bangla text-lg font-medium text-muted-foreground">· {n.attr ? 'সংশ্লিষ্ট আয়াত' : 'কুরআনে'}</span></NotAr></h2>
         )}
-        {n.attr && <p className="mb-3 text-sm text-muted-foreground">{bn ? 'এই আয়াতে নামটির গুণ প্রকাশ পেয়েছে; নামটি ঐতিহ্যবাহী ৯৯ নামের তালিকাভুক্ত।' : 'This verse shows the attribute behind the name; the name itself is part of the traditional list of 99 names. · এই আয়াতে নামটির গুণ প্রকাশ পেয়েছে; নামটি ঐতিহ্যবাহী ৯৯ নামের তালিকাভুক্ত।'}</p>}
+        {n.attr && <p className="mb-3 text-sm text-muted-foreground">{bn ? 'এই আয়াতে নামটির গুণ প্রকাশ পেয়েছে; নামটি ঐতিহ্যবাহী ৯৯ নামের তালিকাভুক্ত।' : <T en="This verse shows the attribute behind the name; the name itself is part of the traditional list of 99 names." ar="تُظهر هذه الآية الصفة التي يدل عليها الاسم، والاسم نفسه من الأسماء الحسنى المشهورة." />}</p>}
         <AyahCard verse={verse} locale={locale} />
       </section>
 
       <Faq faqs={faqs} locale={bn ? 'bn' : undefined} />
 
-      <nav aria-label={bn ? 'আগের ও পরের নাম' : 'Previous and next Name'} className="mt-12 grid gap-3 sm:grid-cols-2">
-        <Link href={h(`/names-of-allah/${prev.slug}`)} className="card-soft lift rounded-3xl p-4"><span className="text-xs text-muted-foreground"><span className="inline-block rtl:rotate-180">←</span> {bn ? bnNum(prev.n) : prev.n}</span><span className="mt-1 flex items-baseline justify-between"><span className="font-semibold">{bn ? prev.tlBn : prev.tl}</span><span lang="ar" className="font-arabic text-2xl">{prev.ar}</span></span></Link>
-        <Link href={h(`/names-of-allah/${next.slug}`)} className="card-soft lift rounded-3xl p-4"><span className="text-xs text-muted-foreground">{bn ? bnNum(next.n) : next.n} <span className="inline-block rtl:rotate-180">→</span></span><span className="mt-1 flex items-baseline justify-between"><span className="font-semibold">{bn ? next.tlBn : next.tl}</span><span lang="ar" className="font-arabic text-2xl">{next.ar}</span></span></Link>
-      </nav>
-      <p className="mt-6 text-center text-xs text-muted-foreground"><Link href={h('/names-of-allah')} className="font-semibold text-primary hover:underline"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'আল্লাহর ৯৯টি নাম' : `All 99 Names · ${bnNum(99)} নাম`}</Link></p>
+      <Labelled as="nav" label={{ en: 'Previous and next Name', bn: 'আগের ও পরের নাম', ar: 'الاسم السابق والتالي' }} className="mt-12 grid gap-3 sm:grid-cols-2">
+        <Link href={h(`/names-of-allah/${prev.slug}`)} className="card-soft lift rounded-3xl p-4"><span className="text-xs text-muted-foreground"><span className="inline-block rtl:rotate-180">←</span> {bn ? bnNum(prev.n) : prev.n}</span><span className="mt-1 flex items-baseline justify-between"><span className="font-semibold">{bn ? prev.tlBn : <NotAr>{prev.tl}</NotAr>}</span><span lang="ar" className="font-arabic text-2xl">{prev.ar}</span></span></Link>
+        <Link href={h(`/names-of-allah/${next.slug}`)} className="card-soft lift rounded-3xl p-4"><span className="text-xs text-muted-foreground">{bn ? bnNum(next.n) : next.n} <span className="inline-block rtl:rotate-180">→</span></span><span className="mt-1 flex items-baseline justify-between"><span className="font-semibold">{bn ? next.tlBn : <NotAr>{next.tl}</NotAr>}</span><span lang="ar" className="font-arabic text-2xl">{next.ar}</span></span></Link>
+      </Labelled>
+      <p className="mt-6 text-center text-xs text-muted-foreground"><Link href={h('/names-of-allah')} className="font-semibold text-primary hover:underline"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'আল্লাহর ৯৯টি নাম' : <><T en="All 99 Names" ar="الأسماء الحسنى كلها" /><NotAr>{` · ${bnNum(99)} নাম`}</NotAr></>}</Link></p>
     </div>
   )
 }

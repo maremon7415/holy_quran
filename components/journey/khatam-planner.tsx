@@ -67,14 +67,14 @@ function CreateForm() {
       <div className="flex flex-wrap gap-1.5">
         {kinds.map((x) => (
           <button key={x.k} onClick={() => setKind(x.k)} className={cn('rounded-full border px-3.5 py-1.5 text-sm font-medium transition', kind === x.k ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-surface-2 text-muted-foreground hover:text-foreground')}>
-            {t({ en: x.en, bn: x.bn })}
+            {t({ en: x.en, bn: x.bn, ar: x.ar })}
           </button>
         ))}
       </div>
       <div className="mt-4 max-w-xs">
-        {kind === 'days' && <input type="number" min={1} max={730} value={days} onChange={(e) => setDays(Math.max(1, +e.target.value || 1))} className={input} aria-label="Days" />}
-        {kind === 'pages' && <input type="number" min={1} max={604} value={ppd} onChange={(e) => setPpd(Math.max(1, +e.target.value || 1))} className={input} aria-label="Pages per day" />}
-        {kind === 'date' && <input type="date" min={new Date().toLocaleDateString('en-CA')} value={date} onChange={(e) => setDate(e.target.value)} className={input} aria-label="Finish date" />}
+        {kind === 'days' && <input type="number" min={1} max={730} value={days} onChange={(e) => setDays(Math.max(1, +e.target.value || 1))} className={input} aria-label={t({ en: 'Days', bn: 'দিন', ar: 'أيام' })} />}
+        {kind === 'pages' && <input type="number" min={1} max={604} value={ppd} onChange={(e) => setPpd(Math.max(1, +e.target.value || 1))} className={input} aria-label={t({ en: 'Pages per day', bn: 'দৈনিক পৃষ্ঠা', ar: 'صفحات في اليوم' })} />}
+        {kind === 'date' && <input type="date" min={new Date().toLocaleDateString('en-CA')} value={date} onChange={(e) => setDate(e.target.value)} className={input} aria-label={t({ en: 'Finish date', bn: 'শেষ করার তারিখ', ar: 'تاريخ الإنهاء' })} />}
       </div>
       <p className="mt-4 rounded-2xl bg-surface-2 p-4 text-sm">
         {t({ en: `${total} days · about ${per} page${per === 1 ? '' : 's'} a day (≈ ${per * 2} min of reading).`, bn: `${total} দিন · দৈনিক প্রায় ${per} পৃষ্ঠা (≈ ${per * 2} মিনিট)।`, ar: `${total} يومًا · نحو ${per} صفحة يوميًا (≈ ${per * 2} دقيقة قراءة).` })}

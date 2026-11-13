@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Command } from 'cmdk'
+import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion } from 'framer-motion'
 import { chapters, surahHref, surahNamesBn, readerHref } from '@/lib/quran/chapters'
 import { normalizeLatin } from '@/lib/quran/normalize'
@@ -84,10 +85,23 @@ export function CommandPalette() {
   const go = (href: string) => { setOpen(false); router.push(loc(href)) }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div className="fixed inset-0 z-[100] flex items-start justify-center px-3 pt-[8vh] sm:pt-[12vh]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <AnimatePresence>
+        {open && (
+          <Dialog.Portal forceMount>
+            <Dialog.Overlay asChild forceMount>
+              <motion.div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+            </Dialog.Overlay>
+            <Dialog.Content
+              asChild forceMount aria-describedby={undefined} aria-modal="true"
+              aria-label={t({ en: 'Search the Quran', bn: 'কুরআনে খুঁজুন', ar: 'ابحث في القرآن' })}
+            >
+              <motion.div
+                className="fixed inset-0 z-[101] flex items-start justify-center px-3 pt-[8vh] outline-none sm:pt-[12vh]"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
+              >
+                <Dialog.Title className="sr-only">{t({ en: 'Search the Quran', bn: 'কুরআনে খুঁজুন', ar: 'ابحث في القرآن' })}</Dialog.Title>
           <motion.div
             initial={{ y: -16, scale: 0.97, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: -10, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -161,9 +175,12 @@ export function CommandPalette() {
               </div>
             </Command>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              </motion.div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        )}
+      </AnimatePresence>
+    </Dialog.Root>
   )
 }
 

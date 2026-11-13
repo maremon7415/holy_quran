@@ -6,28 +6,27 @@ import type { Chapter } from '@/lib/quran/types'
 import { surahNamesBn, toBanglaDigits } from '@/lib/quran/chapters'
 import { sanitizeHtml } from '@/lib/reader/sanitize'
 import { UiIcon } from '@/components/ui-icon'
+import { T, NotAr } from '@/lib/i18n/text'
+import { Labelled, Titled } from '@/lib/i18n/labelled'
 import { Disclosure, PlayButton, SettingsButton } from './client-bits'
 
 export function Breadcrumbs({ items, locale = 'en' }: { items: { name: React.ReactNode; href?: string }[]; locale?: Locale }) {
   return (
-    <nav aria-label={locale === 'bn' ? 'ব্রেডক্রাম্ব' : 'Breadcrumb'} className="mb-5 flex flex-wrap items-center gap-1.5 text-xs font-medium text-muted-foreground">
+    <Labelled as="nav" label={{ en: 'Breadcrumb', bn: 'ব্রেডক্রাম্ব', ar: 'مسار التنقل' }} className="mb-5 flex flex-wrap items-center gap-1.5 text-xs font-medium text-muted-foreground">
       {items.map((it, i) => (
         <span key={i} className="flex items-center gap-1.5">
           {i > 0 && <span className="text-muted-foreground/50">/</span>}
           {it.href ? <Link href={localeHref(locale, it.href)} className="transition-colors hover:text-primary">{it.name}</Link> : <span className="text-foreground/80" aria-current="page">{it.name}</span>}
         </span>
       ))}
-    </nav>
+    </Labelled>
   )
 }
 
-export function Chip({ icon, children, title, className = '' }: { icon?: string; children: React.ReactNode; title?: string; className?: string }) {
-  return (
-    <span title={title} className={`inline-flex items-center gap-1.5 rounded-full border bg-card/70 px-2.5 py-1.5 text-[11px] font-semibold text-foreground/80 backdrop-blur sm:px-3 sm:text-xs ${className}`}>
-      {icon && <UiIcon name={icon} size={16} />}
-      {children}
-    </span>
-  )
+export function Chip({ icon, children, title, className = '' }: { icon?: string; children: React.ReactNode; title?: { en: string; bn?: string; ar?: string }; className?: string }) {
+  const cls = `inline-flex items-center gap-1.5 rounded-full border bg-card/70 px-2.5 py-1.5 text-[11px] font-semibold text-foreground/80 backdrop-blur sm:px-3 sm:text-xs ${className}`
+  const body = <>{icon && <UiIcon name={icon} size={16} />}{children}</>
+  return title ? <Titled label={title} className={cls}>{body}</Titled> : <span className={cls}>{body}</span>
 }
 
 export function SurahHeader({ chapter: c, juzFrom, juzTo, info, locale = 'en' }: { chapter: Chapter; juzFrom: number; juzTo: number; info: { en: string | null; bn: string | null }; locale?: Locale }) {
@@ -65,22 +64,24 @@ export function SurahHeader({ chapter: c, juzFrom, juzTo, info, locale = 'en' }:
           ) : (
             <>
               <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-tight">
-                Surah {c.nameSimple}
+                <T en={`Surah ${c.nameSimple}`} ar={`سورة ${c.nameArabic}`} />
               </h1>
-              <p className="mt-1.5 text-base text-muted-foreground sm:text-lg">
-                <span className="italic">{c.meaning}</span>
-                <span className="mx-2 text-muted-foreground/40">•</span>
-                <span className="font-bangla" lang="bn">সূরা {bnName}{c.nameBn ? ` (${c.nameBn})` : ''}</span>
-              </p>
+              <NotAr>
+                <p className="mt-1.5 text-base text-muted-foreground sm:text-lg">
+                  <span className="italic">{c.meaning}</span>
+                  <span className="mx-2 text-muted-foreground/40">•</span>
+                  <span className="font-bangla" lang="bn">সূরা {bnName}{c.nameBn ? ` (${c.nameBn})` : ''}</span>
+                </p>
+              </NotAr>
             </>
           )}
 
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             <Chip icon={makki ? 'kaaba' : 'mosque'}>{makki ? lt(locale, { en: 'Makki · Meccan', bn: 'মাক্কী', ar: 'مكية' }) : lt(locale, { en: 'Madani · Medinan', bn: 'মাদানী', ar: 'مدنية' })}</Chip>
-            <Chip icon="quran">{bn ? `${toBanglaDigits(c.versesCount)} আয়াত` : <>{c.versesCount} {lt(locale, { en: 'Ayahs', bn: 'আয়াত', ar: 'آية' })} <span className="hidden font-bangla text-muted-foreground sm:inline">· {toBanglaDigits(c.versesCount)} আয়াত</span></>}</Chip>
+            <Chip icon="quran">{bn ? `${toBanglaDigits(c.versesCount)} আয়াত` : <>{c.versesCount} {lt(locale, { en: 'Ayahs', bn: 'আয়াত', ar: 'آية' })} <NotAr><span className="hidden font-bangla text-muted-foreground sm:inline">· {toBanglaDigits(c.versesCount)} আয়াত</span></NotAr></>}</Chip>
             <Chip icon="juz">{lt(locale, { en: 'Juz', bn: 'পারা', ar: 'الجزء' })} {juzFrom === juzTo ? n(juzFrom) : `${n(juzFrom)}–${n(juzTo)}`}</Chip>
-            <Chip icon="read" title="Madani mushaf pages">{lt(locale, { en: 'Page', bn: 'পৃষ্ঠা', ar: 'الصفحة' })} {c.pages[0] === c.pages[1] ? n(c.pages[0]) : `${n(c.pages[0])}–${n(c.pages[1])}`}</Chip>
-            <Chip icon="clock" title="Order of revelation" className="hidden sm:inline-flex">{lt(locale, { en: 'Revealed #', bn: 'অবতরণ ক্রম ', ar: 'ترتيب النزول ' })}{n(c.revelationOrder)}</Chip>
+            <Chip icon="read" title={{ en: 'Madani mushaf pages', bn: 'মাদানী মুসহাফের পৃষ্ঠা', ar: 'صفحات المصحف المدني' }}>{lt(locale, { en: 'Page', bn: 'পৃষ্ঠা', ar: 'الصفحة' })} {c.pages[0] === c.pages[1] ? n(c.pages[0]) : `${n(c.pages[0])}–${n(c.pages[1])}`}</Chip>
+            <Chip icon="clock" title={{ en: 'Order of revelation', bn: 'অবতরণ ক্রম', ar: 'ترتيب النزول' }} className="hidden sm:inline-flex">{lt(locale, { en: 'Revealed #', bn: 'অবতরণ ক্রম ', ar: 'ترتيب النزول ' })}{n(c.revelationOrder)}</Chip>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">

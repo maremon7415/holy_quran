@@ -1,4 +1,5 @@
 import '@/app/reader.css'
+import { Labelled } from '@/lib/i18n/labelled'
 import { Fragment } from 'react'
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
@@ -51,7 +52,7 @@ export async function surahMeta(locale: Locale, { params }: Props): Promise<Meta
       description: bnDesc,
       keywords: [`সূরা ${bn}`, `সূরা ${bn} বাংলা উচ্চারণ`, `সূরা ${bn} বাংলা অর্থসহ`, `সূরা ${bn} আরবি`, `সূরা ${bn} তিলাওয়াত`, `Surah ${c.nameSimple} Bangla`, c.nameArabic],
       alternates: alternatesFor(url, 'bn'),
-      openGraph: { type: 'article', title: `সূরা ${bn} (${c.nameArabic}) — বাংলা উচ্চারণ ও অর্থ`, description: bnDesc, url: bnUrl, siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${url}/opengraph-image`, width: 1200, height: 630 }] },
+      openGraph: { type: 'article', title: `সূরা ${bn} (${c.nameArabic}) — বাংলা উচ্চারণ ও অর্থ`, description: bnDesc, url: bnUrl, siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${localeHref('bn', url)}/opengraph-image`, width: 1200, height: 630 }] },
       twitter: { card: 'summary_large_image', title: `সূরা ${bn} — বাংলা উচ্চারণ ও অর্থ`, description: bnDesc },
     }
   }
@@ -107,9 +108,9 @@ export async function SurahPage({ params, locale }: Props & { locale: Locale }) 
     <div className="mx-auto max-w-[1440px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6 lg:pb-20">
       <JsonLd data={[chapterLd, breadcrumbLd(isBn ? [{ name: 'হোম', path: '/bn' }, { name: 'কুরআন', path: localeHref('bn', '/quran') }, { name: `সূরা ${surahNamesBn[id - 1]}`, path: localeHref('bn', surahHref(id)) }] : [{ name: 'Home', path: '/' }, { name: 'Quran', path: '/quran' }, { name: `Surah ${c.nameSimple}`, path: surahHref(id) }])]} />
       <div className="xl:grid xl:grid-cols-[240px_minmax(0,860px)_240px] xl:justify-center xl:gap-8">
-        <aside className="reader-chrome hidden xl:block" aria-label="Surahs">
+        <Labelled as="aside" label={{ en: 'Surahs', bn: 'সূরাসমূহ', ar: 'السور' }} className="reader-chrome hidden xl:block">
           <div className="sticky top-24"><SurahRail current={id} /></div>
-        </aside>
+        </Labelled>
 
         <div className="mx-auto w-full max-w-[860px] min-w-0">
           <SurahHeader chapter={c} juzFrom={juzFrom} juzTo={juzTo} info={info} locale={locale} />
@@ -128,9 +129,9 @@ export async function SurahPage({ params, locale }: Props & { locale: Locale }) 
           <SurahPager id={id} locale={locale} />
         </div>
 
-        <aside className="reader-chrome hidden xl:block" aria-label="Ayahs">
+        <Labelled as="aside" label={{ en: 'Ayahs', bn: 'আয়াতসমূহ', ar: 'الآيات' }} className="reader-chrome hidden xl:block">
           <div className="sticky top-24"><AyahRail surah={id} total={c.versesCount} /></div>
-        </aside>
+        </Labelled>
       </div>
       <ReaderChrome surah={id} chapterIds={[id]} title={isBn ? `${bnNum(id)}. ${surahNamesBn[id - 1]}` : `${id}. ${c.nameSimple}`} titleAr={c.nameArabic} total={c.versesCount} />
     </div>

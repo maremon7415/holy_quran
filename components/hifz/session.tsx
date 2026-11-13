@@ -116,7 +116,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
     <div className="mx-auto max-w-2xl" ref={topRef}>
       <StarBurst burst={burst} />
       <div className="mb-4 flex items-center gap-3">
-        <button onClick={onExit} className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-muted-foreground transition hover:text-foreground" aria-label="Close session">
+        <button onClick={onExit} className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-muted-foreground transition hover:text-foreground" aria-label={t({ en: 'Close session', bn: 'সেশন বন্ধ করুন', ar: 'إنهاء الجلسة' })}>
           <X className="h-4 w-4" />
         </button>
         <div className="min-w-0 flex-1">
@@ -142,7 +142,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
           >
             {step === i && <motion.span layoutId="hifz-step" transition={spring} className="absolute inset-0 rounded-xl bg-card shadow-sm" />}
             <UiIcon name={s.icon} size={20} className="relative" />
-            <span className="relative">{i + 1}. {t({ en: s.en, bn: s.bn })}</span>
+            <span className="relative">{i + 1}. {t({ en: s.en, bn: s.bn, ar: s.ar })}</span>
           </button>
         ))}
       </div>

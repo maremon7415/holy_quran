@@ -126,7 +126,7 @@ export function SavedView() {
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="tablist">
         {tabs.map((x) => (
           <button key={x.id} role="tab" aria-selected={tab === x.id} onClick={() => setTab(x.id)} className={cn('flex h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition active:scale-95', tab === x.id ? 'border-primary bg-primary text-primary-foreground' : 'bg-card hover:border-primary/40')}>
-            <UiIcon name={x.icon} size={20} /> {t({ en: x.en, bn: x.bn })}
+            <UiIcon name={x.icon} size={20} /> {t({ en: x.en, bn: x.bn, ar: x.ar })}
             <span className={cn('rounded-full px-2 text-xs', tab === x.id ? 'bg-primary-foreground/20' : 'bg-surface-2 text-muted-foreground')}>{nf(x.n)}</span>
           </button>
         ))}

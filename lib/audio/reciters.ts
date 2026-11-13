@@ -66,3 +66,21 @@ export function monogram(name: string) {
   const src = parts.length >= 2 ? parts : name.split(/\s+/)
   return (src[0]?.[0] ?? '') + (src[src.length - 1]?.[0] ?? '')
 }
+
+const NOTE_AR: Record<string, string> = {
+  Egypt: 'مصر', Kuwait: 'الكويت', UAE: 'الإمارات', Yemen: 'اليمن', 'Saudi Arabia': 'السعودية',
+  'Imam of Masjid al-Haram': 'إمام المسجد الحرام', 'Imam of Masjid an-Nabawi': 'إمام المسجد النبوي', 'Imam of Masjid Quba': 'إمام مسجد قباء',
+  'Melodic, slow': 'مجوَّد، بطيء', 'Teaching — repeat after me': 'تعليمي — ردّد خلفي',
+}
+const NOTE_BN: Record<string, string> = {
+  Egypt: 'মিসর', Kuwait: 'কুয়েত', UAE: 'সংযুক্ত আরব আমিরাত', Yemen: 'ইয়েমেন', 'Saudi Arabia': 'সৌদি আরব',
+  'Imam of Masjid al-Haram': 'মসজিদুল হারামের ইমাম', 'Imam of Masjid an-Nabawi': 'মসজিদে নববীর ইমাম', 'Imam of Masjid Quba': 'মসজিদে কুবার ইমাম',
+  'Melodic, slow': 'সুরেলা, ধীর', 'Teaching — repeat after me': 'শিক্ষামূলক — আমার পরে পড়ুন',
+}
+const STYLE_AR: Record<ReciterStyle, string> = { Murattal: 'مرتّل', Mujawwad: 'مجوَّد', Muallim: 'معلّم' }
+const STYLE_BN: Record<ReciterStyle, string> = { Murattal: 'মুরাত্তাল', Mujawwad: 'মুজাওয়াদ', Muallim: 'মুআল্লিম' }
+
+/** Reciter display helpers for the UI language (Arabic UI shows the Arabic name, notes and style). */
+export const reciterName = (lang: string, r: Pick<Reciter, 'name' | 'ar'>) => (lang === 'ar' ? r.ar : r.name)
+export const reciterStyle = (lang: string, s: ReciterStyle) => (lang === 'ar' ? STYLE_AR[s] : lang === 'bn' ? STYLE_BN[s] : s)
+export const reciterNote = (lang: string, note?: string) => (!note ? '' : lang === 'ar' ? NOTE_AR[note] ?? note : lang === 'bn' ? NOTE_BN[note] ?? note : note)

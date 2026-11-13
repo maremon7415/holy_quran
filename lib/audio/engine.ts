@@ -15,6 +15,7 @@ import { usePlayer, ayahCount } from '@/lib/stores/player'
 import { useReader } from '@/lib/stores/reader'
 import { chapters, surahNamesBn } from '@/lib/quran/chapters'
 import { useAppStore } from '@/lib/store'
+import { tx, type Lang } from '@/lib/lang'
 import { fetchChapterAudio, prefetchChapterAudio, type ChapterAudio } from './api'
 import { getReciter, everyAyahUrl, type Reciter } from './reciters'
 import { useClock } from './clock'
@@ -26,6 +27,7 @@ import { setMediaMetadata, setMediaState, setMediaPosition, setMediaHandlers, cl
 
 const EPS = 30 // ms: treat an ayah as finished slightly before its end timestamp
 const bn = () => useAppStore.getState().language === 'bn'
+const lng = () => (useAppStore.getState().language as Lang) || 'en'
 
 export class AudioEngine {
   private audio: HTMLAudioElement
@@ -183,7 +185,7 @@ export class AudioEngine {
         this.revokeLocal()
         this.localUrl = local
         if (!local && typeof navigator !== 'undefined' && !navigator.onLine) {
-          toast.info(bn() ? 'আপনি অফলাইনে আছেন। অফলাইনে শুনতে আগে এই তিলাওয়াত ডাউনলোড করুন (সেটিংস → অফলাইন)।' : 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.')
+          toast.info(tx(lng(), { en: 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.', bn: 'আপনি অফলাইনে আছেন। অফলাইনে শুনতে আগে এই তিলাওয়াত ডাউনলোড করুন (সেটিংস → অফলাইন)।', ar: 'أنت غير متصل وهذه التلاوة غير مُنزَّلة. نزّلها من الإعدادات ← دون إنترنت والتنزيلات لتستمع بلا اتصال.' }))
         }
         this.audio.src = local ?? ch.url
         this.applyRate()
@@ -198,14 +200,14 @@ export class AudioEngine {
         if (token !== this.token) return false
         if (typeof navigator !== 'undefined' && !navigator.onLine) {
           // offline and nothing downloaded for this surah/reciter
-          toast.info(bn() ? 'আপনি অফলাইনে আছেন। এই তিলাওয়াত ডাউনলোড করা নেই — সেটিংস → অফলাইন ও ডাউনলোড থেকে ডাউনলোড করুন।' : 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.')
+          toast.info(tx(lng(), { en: 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.', bn: 'আপনি অফলাইনে আছেন। এই তিলাওয়াত ডাউনলোড করা নেই — সেটিংস → অফলাইন ও ডাউনলোড থেকে ডাউনলোড করুন।', ar: 'أنت غير متصل وهذه التلاوة غير مُنزَّلة. نزّلها من الإعدادات ← دون إنترنت والتنزيلات لتستمع بلا اتصال.' }))
           this.loading = false
           clock.set({ buffering: false })
           usePlayer.getState()._set({ status: 'paused' })
           return false
         }
         this.ayahOnly.add(`${rid}:${surah}`)
-        toast.info(bn() ? 'ধারাবাহিক অডিও পাওয়া যায়নি — আয়াত অনুযায়ী অডিওতে যাচ্ছি' : 'Switching to per-ayah audio for a steadier stream')
+        toast.info(tx(lng(), { en: 'Switching to per-ayah audio for a steadier stream', bn: 'ধারাবাহিক অডিও পাওয়া যায়নি — আয়াত অনুযায়ী অডিওতে যাচ্ছি', ar: 'التحويل إلى الصوت آية بآية لبثٍّ أكثر ثباتًا' }))
       }
     }
     // per-ayah mode
@@ -447,7 +449,7 @@ export class AudioEngine {
     if (sleep.mode === 'end') {
       sleep.set(null)
       this.endPlayback()
-      toast(bn() ? 'স্লিপ টাইমার — তিলাওয়াত থেমেছে' : 'Sleep timer — recitation stopped')
+      toast(tx(lng(), { en: 'Sleep timer — recitation stopped', bn: 'স্লিপ টাইমার — তিলাওয়াত থেমেছে', ar: 'مؤقّت النوم — توقفت التلاوة' }))
       return
     }
     if (st.loop) {
@@ -528,7 +530,7 @@ export class AudioEngine {
     const k = `${rid}:${q.surah}`
     const key = st.currentKey ?? `${q.surah}:${q.from}`
     if (this.mode === 'chapter') {
-      toast.info(bn() ? 'অডিও লোড হয়নি — আয়াত অনুযায়ী অডিওতে যাচ্ছি' : 'Audio hiccup — switching to per-ayah audio')
+      toast.info(tx(lng(), { en: 'Audio hiccup — switching to per-ayah audio', bn: 'অডিও লোড হয়নি — আয়াত অনুযায়ী অডিওতে যাচ্ছি', ar: 'تعذّر تحميل الصوت — التحويل إلى الصوت آية بآية' }))
       this.ayahOnly.add(k)
       this.loaded = null
       usePlayer.getState()._set({ status: 'loading' })
@@ -537,13 +539,13 @@ export class AudioEngine {
       return
     }
     if (!this.altReciter.has(k) && getReciter(rid).folder !== 'Alafasy_128kbps') {
-      toast.info(bn() ? 'এই তিলাওয়াত পাওয়া যায়নি — মিশারী আলাফাসীতে যাচ্ছি' : 'That recitation is unavailable — falling back to Mishary Alafasy')
+      toast.info(tx(lng(), { en: 'That recitation is unavailable — falling back to Mishary Alafasy', bn: 'এই তিলাওয়াত পাওয়া যায়নি — মিশারী আলাফাসীতে যাচ্ছি', ar: 'هذه التلاوة غير متاحة — التحويل إلى مشاري العفاسي' }))
       this.altReciter.add(k)
       this.loadAyahSrc(this.ayahNo)
       this.play()
       return
     }
-    toast.error(bn() ? 'অডিও লোড করা যায়নি। ইন্টারনেট সংযোগ দেখুন।' : 'Could not load audio. Please check your connection.')
+    toast.error(tx(lng(), { en: 'Could not load audio. Please check your connection.', bn: 'অডিও লোড করা যায়নি। ইন্টারনেট সংযোগ দেখুন।', ar: 'تعذّر تحميل الصوت. تحقق من اتصالك بالإنترنت.' }))
     this.stopTicker()
     usePlayer.getState()._set({ status: 'error' })
     useClock.getState().set({ buffering: false })
@@ -570,7 +572,7 @@ export class AudioEngine {
       this.safePause()
       this.audio.volume = 1
       if (usePlayer.getState().queue) usePlayer.getState()._set({ status: 'paused' })
-      toast(bn() ? 'স্লিপ টাইমার — তিলাওয়াত থেমেছে' : 'Sleep timer — recitation stopped')
+      toast(tx(lng(), { en: 'Sleep timer — recitation stopped', bn: 'স্লিপ টাইমার — তিলাওয়াত থেমেছে', ar: 'مؤقّت النوم — توقفت التلاوة' }))
     } else if (!this.audio.paused) {
       this.audio.volume = this.sleepVolume()
     }
@@ -582,9 +584,9 @@ export class AudioEngine {
     const q = usePlayer.getState().queue
     if (!q) return
     const c = chapters[q.surah - 1]
-    const name = bn() ? surahNamesBn[q.surah - 1] || c.nameSimple : c.nameSimple
+    const name = lng() === 'ar' ? c.nameArabic : bn() ? surahNamesBn[q.surah - 1] || c.nameSimple : c.nameSimple
     setMediaMetadata({
-      title: `${name} · ${bn() ? 'আয়াত' : 'Ayah'} ${this.ayahNo}`,
+      title: `${name} · ${tx(lng(), { en: 'Ayah', bn: 'আয়াত', ar: 'آية' })} ${this.ayahNo}`,
       artist: getReciter(useReader.getState().reciterId).name,
       album: `Noor Quran — ${c.nameArabic}`,
     })
