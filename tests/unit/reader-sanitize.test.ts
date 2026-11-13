@@ -88,9 +88,7 @@ describe('sanitizeHtml — preserves legitimate markup', () => {
     const once = sanitizeHtml('<p onclick="x">a</p><a href="/2">b</a><b>c</b>')
     expect(sanitizeHtml(once)).toBe(once)
   })
-  // BUG: lib/reader/sanitize.ts:25 — rewriteHref's "already one of ours" branch strips the fragment, so re-sanitising
-  // `/surah/al-baqarah#ayah-255` yields `/surah/al-baqarah` (anchor lost). Harmless unless output is sanitised twice.
-  it.skip('keeps #ayah-N when sanitising already-rewritten links', () => {
+  it('keeps #ayah-N when sanitising already-rewritten links', () => {
     expect(rewriteHref('/surah/al-baqarah#ayah-255')).toBe('/surah/al-baqarah#ayah-255')
   })
 })

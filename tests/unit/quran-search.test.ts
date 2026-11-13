@@ -44,9 +44,7 @@ describe('searchQuran', () => {
     await expect(searchQuran('(((', 5)).resolves.toBeDefined()
     await expect(searchQuran('[a-z]+', 5)).resolves.toBeDefined()
   })
-  // BUG: lib/quran/search.ts:30 — a query made only of punctuation (".*", "!!", "--") normalises to "" so
-  // `terms` is empty and `every` matches ALL 6,236 verses (total=6236). Should return {total:0,hits:[]}.
-  it.skip('punctuation-only query returns nothing', async () => {
+  it('punctuation-only query returns nothing', async () => {
     expect((await searchQuran('.*', 5)).total).toBe(0)
     expect((await searchQuran('!!', 5)).total).toBe(0)
   })

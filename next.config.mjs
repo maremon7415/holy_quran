@@ -11,6 +11,9 @@ const nextConfig = {
     '/api/hifz/verses/[surah]': ['./data/quran/**/*'],
     '/search': ['./data/quran/**/*'],
   },
+  async rewrites() {
+    return [{ source: '/sitemap.xml', destination: '/sitemap-index.xml' }]
+  },
   async headers() {
     return [
       { source: '/sw.js', headers: [{ key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' }] },

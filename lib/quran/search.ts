@@ -32,6 +32,7 @@ export async function searchQuran(q: string, limit = 30): Promise<{ total: numbe
   const field: 'ar' | 'bn' | 'en' = isArabic(query) ? 'ar' : isBangla(query) ? 'bn' : 'en'
   const nq = field === 'ar' ? normalizeArabic(query) : field === 'en' ? normalizeLatin(query) : query.trim()
   const terms = nq.split(' ').filter(Boolean)
+  if (!terms.length) return { total: 0, hits: [] } // punctuation-only queries normalise to nothing
   const scored: SearchHit[] = []
   let total = 0
   for (const r of rows) {

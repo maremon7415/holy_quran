@@ -21,7 +21,10 @@ export function rewriteHref(raw: string | undefined | null): string | null {
   if (href.startsWith('#')) return /^#[\w-]+$/.test(href) ? href : null
   const path = href.replace(/[?#].*$/, '')
   // already one of ours
-  if (/^\/(surah|juz)\/[\w-]+(\/\d{1,3})?\/?$/.test(path)) return path
+  if (/^\/(surah|juz)\/[\w-]+(\/\d{1,3})?\/?$/.test(path)) {
+    const frag = href.match(/#ayah-\d{1,3}$/)?.[0] ?? ''
+    return path + frag
+  }
   const ref = path.match(/^\/?(\d{1,3})(?:[/:](\d{1,3})(?:-\d{1,3})?)?\/?$/)
   if (ref) {
     const s = +ref[1]
