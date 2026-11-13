@@ -1,6 +1,7 @@
 'use client'
 import { create } from 'zustand'
 import type { DeviceInfo } from './types'
+import type { PauseReason } from './meta'
 
 export type SyncStatus = 'disabled' | 'checking' | 'signed-out' | 'paused' | 'idle' | 'syncing' | 'synced' | 'offline' | 'error'
 
@@ -21,6 +22,8 @@ interface SyncUiState {
   error: string | null
   devices: DeviceInfo[]
   deviceId: string | null
+  /** why sync is paused ('remote-reset' = the cloud copy was deleted on another device) */
+  pauseReason: PauseReason | null
   patch: (p: Partial<Omit<SyncUiState, 'patch'>>) => void
 }
 
@@ -34,5 +37,6 @@ export const useSyncState = create<SyncUiState>((set) => ({
   error: null,
   devices: [],
   deviceId: null,
+  pauseReason: null,
   patch: (p) => set(p),
 }))

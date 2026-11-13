@@ -11,7 +11,7 @@ import { SyncStatusPill, timeAgo } from './sync-status'
 export function AccountSyncCard() {
   const t = useTx()
   const lang = useLang()
-  const { enabled, user, status, lastSyncedAt, error } = useSyncState()
+  const { enabled, user, status, lastSyncedAt, error, pauseReason } = useSyncState()
 
   return (
     <section className="card-soft mt-6 space-y-4 p-5 sm:p-7">
@@ -35,11 +35,12 @@ export function AccountSyncCard() {
             <SyncStatusPill className="ms-auto shrink-0" />
           </div>
           {status === 'error' && error && <p className="text-sm text-destructive">{error}</p>}
+          {status === 'paused' && pauseReason === 'remote-reset' && <p role="alert" className="text-sm font-medium">{t({ en: 'Your cloud data was deleted on another device — turn sync back on to upload this device\'s data.', bn: 'অন্য একটি ডিভাইস থেকে আপনার ক্লাউড তথ্য মুছে ফেলা হয়েছে — এই ডিভাইসের তথ্য আপলোড করতে আবার সিঙ্ক চালু করুন।', ar: 'حُذفت بياناتك السحابية من جهاز آخر — شغّل المزامنة مجددًا لرفع بيانات هذا الجهاز.' })}</p>}
           <p className="text-xs text-muted-foreground">{t({ en: 'Last synced', bn: 'শেষ সিঙ্ক', ar: 'آخر مزامنة' })}: {timeAgo(lastSyncedAt, lang)}</p>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => void engine.sync('manual')} disabled={status === 'syncing'} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+            <button onClick={() => (status === 'paused' ? engine.resume() : void engine.sync('manual'))} disabled={status === 'syncing'} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60">
               <RefreshCw className={status === 'syncing' ? 'size-4 animate-spin' : 'size-4'} />
-              {t({ en: 'Sync now', bn: 'এখনই সিঙ্ক', ar: 'زامن الآن' })}
+              {status === 'paused' ? t({ en: 'Turn sync on', bn: 'সিঙ্ক চালু করুন', ar: 'تشغيل المزامنة' }) : t({ en: 'Sync now', bn: 'এখনই সিঙ্ক', ar: 'زامن الآن' })}
             </button>
             <Link href="/account" className="rounded-full border px-5 py-2.5 text-sm font-semibold">{t({ en: 'Manage account', bn: 'অ্যাকাউন্ট ম্যানেজ', ar: 'إدارة الحساب' })}</Link>
           </div>

@@ -35,10 +35,33 @@ describe('sync handlers (in-memory repo)', () => {
     const big = body(0, { 'noor-hifz': { updatedAt: '2026-01-01T00:00:00Z', data: { s: 'x'.repeat(2 * 1024 * 1024) } } })
     expect((await handlePut(repo, 'u', big)).status).toBe(413)
   })
-  it('DELETE removes the doc', async () => {
+  it('DELETE clears the stores but keeps a reset marker (epoch) instead of removing the doc', async () => {
+    const repo = memoryRepo()
+    await handlePut(repo, 'u1', body(0))
+    const del = await handleDelete(repo, 'u1')
+    expect(del.body).toMatchObject({ version: 2, epoch: 1, stores: {}, devices: [] })
+    expect((del.body as any).resetAt).toEqual(expect.any(String))
+    expect((await handleGet(repo, 'u1')).body).toMatchObject({ version: 2, epoch: 1, stores: {} })
+  })
+  it('a device holding the pre-delete epoch cannot re-upload (not even with version 0)', async () => {
     const repo = memoryRepo()
     await handlePut(repo, 'u1', body(0))
     await handleDelete(repo, 'u1')
-    expect((await handleGet(repo, 'u1')).body).toMatchObject({ version: 0 })
+    // old client: no epoch, retries with version 0 after a 409 — the bug that recreated deleted data
+    const v0 = await handlePut(repo, 'u1', body(0))
+    expect(v0.status).toBe(409)
+    expect((v0.body as any).error).toBe('epoch_mismatch')
+    // right version, stale epoch
+    const stale = await handlePut(repo, 'u1', JSON.stringify({ version: 2, epoch: 0, stores: {}, device: { id: 'dev-1234', name: 'x' } }))
+    expect(stale.status).toBe(409)
+    expect((stale.body as any)).toMatchObject({ error: 'epoch_mismatch', current: { epoch: 1, version: 2 } })
+    expect((await handleGet(repo, 'u1')).body).toMatchObject({ stores: {} })
+    // a client that saw the new epoch may upload again (user turned sync back on)
+    const ok = await handlePut(repo, 'u1', JSON.stringify({ version: 2, epoch: 1, stores: JSON.parse(body(0)).stores }))
+    expect(ok.status).toBe(200)
+    expect(ok.body).toMatchObject({ version: 3, epoch: 1 })
+  })
+  it('DELETE without a doc is a no-op', async () => {
+    expect((await handleDelete(memoryRepo(), 'nobody')).body).toMatchObject({ version: 0, epoch: 0 })
   })
 })

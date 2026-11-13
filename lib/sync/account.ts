@@ -44,15 +44,24 @@ export async function refreshAccount(): Promise<AccountUser | null> {
   return u
 }
 
-export async function signInWithPassword(email: string, password: string): Promise<boolean> {
+/** Resolves to 'ok', 'rate_limited' (too many attempts from this network) or 'invalid'. */
+export async function signInWithPassword(email: string, password: string): Promise<'ok' | 'invalid' | 'rate_limited'> {
   const res = await signIn('credentials', { email, password, redirect: false })
-  if (!res || res.error) return false
+  if (!res || res.error) return (res as { code?: string } | undefined)?.code === 'rate_limited' ? 'rate_limited' : 'invalid'
   await refreshAccount()
-  return true
+  return 'ok'
 }
 
 export function signInWithGoogle(callbackUrl: string) {
   return signIn('google', { callbackUrl })
+}
+
+/** Account settings → "Link Google sign-in": registers a short-lived link request, then runs the Google flow. */
+export async function linkGoogle(): Promise<boolean> {
+  const res = await fetch('/api/auth/link-google', { method: 'POST', credentials: 'same-origin' })
+  if (!res.ok) return false
+  await signIn('google', { callbackUrl: '/account?linked=google' })
+  return true
 }
 
 /** Sign out but keep every bit of local data. */
@@ -61,9 +70,4 @@ export async function signOutKeepLocal() {
   engine.stop()
 }
 
-/** Only same-site relative paths are allowed as post-login redirects. */
-export function safeCallback(raw: string | null | undefined, fallback = '/account'): string {
-  if (!raw || !raw.startsWith('/') || raw.startsWith('//') || raw.startsWith('/\\')) return fallback
-  if (raw.startsWith('/login') || raw.startsWith('/register')) return fallback
-  return raw
-}
+export { safeCallback } from './callback'

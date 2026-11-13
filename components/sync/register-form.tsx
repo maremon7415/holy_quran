@@ -31,12 +31,15 @@ export function RegisterForm() {
     try {
       const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: fd.get('name'), email, password: pw }) })
       if (res.ok) {
-        const ok = await signInWithPassword(email, pw)
-        if (ok) { router.push(callback); router.refresh() } else router.push(`/login?callbackUrl=${encodeURIComponent(callback)}`)
+        // the server answers the same way for an email that already has an account (no enumeration);
+        // in that case signing in with the submitted password fails and we show a neutral hint
+        const r = await signInWithPassword(email, pw)
+        if (r === 'ok') { router.push(callback); router.refresh() }
+        else setError(t({ en: 'Could not create the account — if you already have one, sign in instead.', bn: 'অ্যাকাউন্ট খোলা যায়নি — আগে থেকেই অ্যাকাউন্ট থাকলে সাইন ইন করুন।', ar: 'تعذّر إنشاء الحساب — إن كان لديك حساب بالفعل فسجّل الدخول.' }))
       } else {
         const data = (await res.json().catch(() => ({}))) as { code?: string }
         setError(
-          data.code === 'email_taken' ? t({ en: 'An account with this email already exists. Try signing in.', bn: 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে। সাইন ইন করুন।', ar: 'يوجد حساب بهذا البريد الإلكتروني. جرّب تسجيل الدخول.' })
+          data.code === 'rate_limited' ? t({ en: 'Too many attempts. Please try again later.', bn: 'অনেকবার চেষ্টা হয়েছে। পরে আবার চেষ্টা করুন।', ar: 'محاولات كثيرة. يُرجى المحاولة لاحقًا.' })
           : data.code === 'weak_password' ? t({ en: 'Password must be at least 8 characters.', bn: 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।', ar: 'يجب ألا تقل كلمة المرور عن ٨ أحرف.' })
           : data.code === 'invalid_email' ? t({ en: 'Enter a valid email address.', bn: 'সঠিক ইমেইল দিন।', ar: 'أدخل بريدًا إلكترونيًا صالحًا.' })
           : t({ en: 'Registration failed.', bn: 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।', ar: 'فشل التسجيل.' }),

@@ -31,11 +31,21 @@ export interface SyncDoc {
   updatedAt: string | null
   stores: Record<string, StoreSnap>
   devices: DeviceInfo[]
+  /**
+   * Reset counter, bumped by DELETE ("Delete my cloud data"). The document survives the delete (stores are cleared,
+   * version keeps counting up), so a device that last synced under an older epoch knows the cloud copy was wiped on
+   * purpose and must not silently re-upload its data. Missing on old documents = 0.
+   */
+  epoch: number
+  /** when the cloud copy was last deleted (null = never) */
+  resetAt: string | null
 }
 
 export interface SyncPutBody {
   /** The version the client last saw (optimistic concurrency). */
   version: number
+  /** The epoch the client last saw; a PUT with another epoch is rejected with 409 `epoch_mismatch`. Default 0. */
+  epoch?: number
   stores: Record<string, StoreSnap>
   device?: { id: string; name: string }
 }

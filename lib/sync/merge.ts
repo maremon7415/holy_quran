@@ -8,8 +8,13 @@
  *  - noor-hifz    : cards per ayah = latest review; log per day = max; milestones = union; prefs = LWW
  *  - noor-journey : khatam plans = union by id (per-plan furthest); activeId = LWW
  *  - others       : last-write-wins by store updatedAt (records are shallow-merged so new keys survive)
+ *
+ * Deletions: bookmarks, favourites, duas, hifz cards and khatam plans carry per-item tombstones (`_clock`, see
+ * tombstones.ts). After the union, an item whose tombstone is newer than its last modification is dropped, so a delete
+ * on one device is not undone by another device's copy, while re-adding after the delete still wins.
  */
 import type { StoreSnap } from './types'
+import { applyTombstones, splitClock, withClock } from './tombstones'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Obj = Record<string, any>
@@ -204,13 +209,23 @@ export function mergePrefs(a: Obj, b: Obj, aUpdated: string, bUpdated: string): 
   return out
 }
 
-export function mergeData(key: string, a: Obj, b: Obj, aUpdated: string, bUpdated: string): Obj {
+function mergeStates(key: string, a: Obj, b: Obj, aUpdated: string, bUpdated: string): Obj {
   switch (key) {
     case 'quran-store': return mergeQuranStore(a, b, aUpdated, bUpdated)
     case 'noor-hifz': return mergeHifz(a, b, aUpdated, bUpdated)
     case 'noor-journey': return mergeJourney(a, b, aUpdated, bUpdated)
     default: return mergePrefs(a, b, aUpdated, bUpdated)
   }
+}
+
+/** Merge two wire payloads (store state + optional `_clock`), honouring tombstones. */
+export function mergeData(key: string, a: Obj, b: Obj, aUpdated: string, bUpdated: string): Obj {
+  const sa = splitClock(a)
+  const sb = splitClock(b)
+  const merged = mergeStates(key, sa.state, sb.state, aUpdated, bUpdated)
+  const { state, clock } = applyTombstones(key, merged, sa.state, sb.state, sa.clock, sb.clock)
+  if (key === 'noor-journey' && state.activeId && !arr(state.khatams).some((k) => k?.id === state.activeId)) state.activeId = null
+  return withClock(state, clock)
 }
 
 // ---------- three-way resolution ----------

@@ -1,12 +1,12 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from '@/lib/i18n/link'
 import { toast } from 'sonner'
 import { RefreshCw, Smartphone, Download, Upload, LogOut, Trash2, Cloud } from 'lucide-react'
 import { UiIcon } from '@/components/ui-icon'
 import { useLang, useMounted, useTx } from '@/lib/lang'
 import { exportBackup, importBackup } from '@/lib/sync/backup'
-import { signOutKeepLocal } from '@/lib/sync/account'
+import { linkGoogle, signOutKeepLocal } from '@/lib/sync/account'
 import * as engine from '@/lib/sync/engine'
 import { useSyncState } from '@/lib/sync/state'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
@@ -27,9 +27,21 @@ export function AccountView() {
   const mounted = useMounted()
   const t = useTx()
   const lang = useLang()
-  const { enabled, user, status, lastSyncedAt, error, devices, deviceId } = useSyncState()
+  const { enabled, google, user, status, lastSyncedAt, error, devices, deviceId, pauseReason } = useSyncState()
   const fileRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
+  useEffect(() => {
+    // read once on mount (no useSearchParams → no Suspense boundary needed)
+    const q = new URLSearchParams(window.location.search)
+    setNotice(q.get('error') ?? (q.get('linked') === 'google' ? 'linked' : null))
+  }, [])
+  const doLinkGoogle = async () => {
+    setBusy(true)
+    try {
+      if (!(await linkGoogle())) toast.error(t({ en: 'Could not start linking. Please sign in again.', bn: 'লিংক শুরু করা যায়নি। আবার সাইন ইন করুন।', ar: 'تعذّر بدء الربط. يُرجى تسجيل الدخول مرة أخرى.' }))
+    } finally { setBusy(false) }
+  }
 
   const doImport = async (f: File) => {
     try {
@@ -108,7 +120,10 @@ export function AccountView() {
           <Panel icon="clock" title={t({ en: 'Sync', bn: 'সিঙ্ক', ar: 'المزامنة' })}>
             {status === 'error' && error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
             {status === 'offline' && <p className="text-sm text-muted-foreground">{t({ en: 'You are offline. Changes are kept on this device and will sync when you are back online.', bn: 'আপনি অফলাইন। পরিবর্তন এই ডিভাইসে আছে, অনলাইনে ফিরলে সিঙ্ক হবে।', ar: 'أنت غير متصل. تُحفظ التغييرات على هذا الجهاز وستُزامن عند عودة الاتصال.' })}</p>}
-            {status === 'paused' && <p className="text-sm text-muted-foreground">{t({ en: 'Sync is off. Your data stays on this device only.', bn: 'সিঙ্ক বন্ধ। আপনার তথ্য শুধু এই ডিভাইসে থাকবে।', ar: 'المزامنة متوقفة. تبقى بياناتك على هذا الجهاز فقط.' })}</p>}
+            {status === 'paused' && pauseReason === 'remote-reset' && (
+              <p role="alert" className="text-sm font-medium text-foreground">{t({ en: 'Your cloud data was deleted on another device — turn sync back on to upload this device\'s data.', bn: 'অন্য একটি ডিভাইস থেকে আপনার ক্লাউড তথ্য মুছে ফেলা হয়েছে — এই ডিভাইসের তথ্য আপলোড করতে আবার সিঙ্ক চালু করুন।', ar: 'حُذفت بياناتك السحابية من جهاز آخر — شغّل المزامنة مجددًا لرفع بيانات هذا الجهاز.' })}</p>
+            )}
+            {status === 'paused' && pauseReason !== 'remote-reset' && <p className="text-sm text-muted-foreground">{t({ en: 'Sync is off. Your data stays on this device only.', bn: 'সিঙ্ক বন্ধ। আপনার তথ্য শুধু এই ডিভাইসে থাকবে।', ar: 'المزامنة متوقفة. تبقى بياناتك على هذا الجهاز فقط.' })}</p>}
             <p className="text-sm text-muted-foreground">{t({ en: 'Last synced', bn: 'শেষ সিঙ্ক', ar: 'آخر مزامنة' })}: <span className="font-medium text-foreground">{timeAgo(lastSyncedAt, lang)}</span></p>
             <div className="flex flex-wrap gap-2">
               {status === 'paused' ? (
@@ -150,7 +165,10 @@ export function AccountView() {
 
       {enabled && user && (
         <Panel icon="settings" title={t({ en: 'Session & privacy', bn: 'সেশন ও গোপনীয়তা', ar: 'الجلسة والخصوصية' })}>
+          {notice === 'linked' && <p role="status" className="text-sm font-medium text-primary">{t({ en: 'Google sign-in is now linked to this account.', bn: 'গুগল সাইন-ইন এখন এই অ্যাকাউন্টের সাথে যুক্ত।', ar: 'تم ربط تسجيل الدخول عبر Google بهذا الحساب.' })}</p>}
+          {notice === 'GoogleLinkedElsewhere' && <p role="alert" className="text-sm font-medium text-destructive">{t({ en: 'That Google account is already linked to a different Noor account.', bn: 'এই গুগল অ্যাকাউন্টটি অন্য একটি নূর অ্যাকাউন্টের সাথে যুক্ত।', ar: 'حساب Google هذا مرتبط بحساب آخر في نور.' })}</p>}
           <div className="flex flex-wrap gap-2">
+            {google && <button onClick={doLinkGoogle} disabled={busy} className={`${btn} border`}>{t({ en: 'Link Google sign-in', bn: 'গুগল সাইন-ইন যুক্ত করুন', ar: 'ربط تسجيل الدخول عبر Google' })}</button>}
             <button onClick={signOut} disabled={busy} className={`${btn} border`}><LogOut className="size-4" />{t({ en: 'Sign out (keep local data)', bn: 'সাইন আউট (লোকাল তথ্য থাকবে)', ar: 'تسجيل الخروج (مع إبقاء البيانات المحلية)' })}</button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
