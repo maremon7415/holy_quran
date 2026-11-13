@@ -30,3 +30,17 @@ Set `NEXT_PUBLIC_SITE_URL` to your production URL (used for canonical URLs, site
 - Icons: `node scripts/icons/render.mjs` re-renders the PNG icon set from SVG sources.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for conventions.
+
+## Accounts & sync (optional)
+
+Noor Quran works fully without an account: bookmarks, notes, progress, hifz and preferences live in the browser. If you deploy with a MongoDB database, visitors can create an account and sync that data across devices (`/account`, Settings → Account & sync).
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `MONGODB_URI` | for accounts | MongoDB connection string |
+| `AUTH_SECRET` (or legacy `NEXTAUTH_SECRET`) | for accounts | Signs session JWTs — `npx auth secret` |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | optional | Enables Google sign-in (callback `/api/auth/callback/google`) |
+
+Accounts are enabled only when both `MONGODB_URI` and a secret are present (`GET /api/auth/status` reports it); otherwise the sign-in UI is hidden and nothing errors. See `.env.example`.
+
+How sync works: on sign-in the device pulls the cloud copy, merges it with local data (bookmarks/favourites/duas unioned, reading history per day max, progress furthest, hifz cards latest review, khatam plans by id, preferences last-write-wins), then pushes. After that changes are pushed after a short debounce and on focus/online. `GET/PUT/DELETE /api/sync` (≤ 2 MB, optimistic `version`, 409 on conflict). Tests: `npx vitest run tests/unit/sync-*.test.ts` (the integration test uses `mongodb-memory-server`, and skips itself if no mongod binary can be downloaded).

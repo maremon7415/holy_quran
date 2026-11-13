@@ -1,91 +1,51 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import GoogleProvider from "next-auth/providers/google"
-import GitHubProvider from "next-auth/providers/github"
-import bcrypt from "bcryptjs"
-import { connectDB } from "./lib/db"
-import User from "./models/User"
+import NextAuth, { type NextAuthConfig } from 'next-auth'
+import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
+import { authSecret, googleEnabled } from '@/lib/auth-env'
+import { verifyCredentials } from '@/lib/auth-credentials'
+import { connectDB } from '@/lib/db'
+import User from '@/models/User'
+
+declare module 'next-auth' {
+  interface Session {
+    user: { id: string; name?: string | null; email?: string | null; image?: string | null }
+  }
+}
+
+const providers: NextAuthConfig['providers'] = [
+  Credentials({
+    name: 'Email',
+    credentials: { email: { label: 'Email', type: 'email' }, password: { label: 'Password', type: 'password' } },
+    authorize: (credentials) => verifyCredentials(credentials),
+  }),
+]
+// Google is opt-in: only registered when both vars are present.
+if (googleEnabled()) providers.push(Google({ clientId: process.env.AUTH_GOOGLE_ID, clientSecret: process.env.AUTH_GOOGLE_SECRET }))
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID || "",
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    // }),
-    // GitHubProvider({
-    //   clientId: process.env.GITHUB_ID || "",
-    //   clientSecret: process.env.GITHUB_SECRET || "",
-    // }),
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials")
-        }
-        await connectDB()
-        const user = await User.findOne({ email: credentials.email })
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials")
-        }
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        )
-        if (!isCorrectPassword) {
-          throw new Error("Invalid credentials")
-        }
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-        }
-      }
-    })
-  ],
-  pages: {
-    signIn: '/login',
-  },
+  providers,
+  trustHost: true,
+  // A placeholder keeps module evaluation safe when no secret is set; every route checks accountsEnabled() first.
+  secret: authSecret() ?? 'accounts-disabled-placeholder',
+  session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 90 },
+  pages: { signIn: '/login', error: '/login' },
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google" || account?.provider === "github") {
-        await connectDB()
-        const existingUser = await User.findOne({ email: user.email })
-        if (!existingUser) {
-          await User.create({
-            name: user.name,
-            email: user.email,
-            image: user.image,
-          })
-        }
-      }
-      return true
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub as string
-      }
-      return session
-    },
     async jwt({ token, user, account }) {
-      if (user) {
-        token.sub = user.id
-      } else if (account?.provider === "google" || account?.provider === "github") {
-        // If it's an OAuth login, we need to get their actual MongoDB id
+      if (account?.provider === 'google') {
+        // map the Google identity onto our own User document (create on first sign-in)
         await connectDB()
-        const dbUser = await User.findOne({ email: token.email })
-        if (dbUser) {
-          token.sub = dbUser._id.toString()
-        }
+        const email = (token.email ?? user?.email ?? '').toLowerCase()
+        let u = await User.findOne({ email })
+        if (!u) u = await User.create({ name: user?.name || email.split('@')[0], email, image: user?.image ?? undefined })
+        token.sub = u._id.toString()
+      } else if (user?.id) {
+        token.sub = user.id
       }
       return token
-    }
+    },
+    async session({ session, token }) {
+      if (token.sub) session.user.id = token.sub
+      return session
+    },
   },
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 })

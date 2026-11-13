@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, type Document } from 'mongoose'
 
 export interface IUser extends Document {
   name: string
@@ -7,14 +7,14 @@ export interface IUser extends Document {
   image?: string
 }
 
-const UserSchema: Schema = new Schema(
+const UserSchema = new Schema<IUser>(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String }, // Optional because of OAuth providers
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String }, // absent for OAuth-only users
     image: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
+export default (mongoose.models.User as mongoose.Model<IUser>) || mongoose.model<IUser>('User', UserSchema)

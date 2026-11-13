@@ -9,6 +9,7 @@ import { useLang, useMounted, useTx } from '@/lib/lang'
 import { UiIcon } from '@/components/ui-icon'
 import { LocationPicker } from './location-picker'
 import { SunArc } from './sun-arc'
+import { RemindersCard } from './reminders-card'
 import { cn } from '@/lib/utils'
 
 const METHODS: { id: string; en: string; bn: string }[] = [
@@ -199,6 +200,8 @@ export function PrayerView() {
           )
         })}
       </div>
+
+      <RemindersCard />
 
       {/* settings */}
       <section className="card-soft mt-5 p-4 sm:p-6">

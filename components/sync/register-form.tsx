@@ -1,0 +1,66 @@
+'use client'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
+import { useTx } from '@/lib/lang'
+import { AccountsOff, AuthCard, GoogleButton, OrDivider, PasswordMeter, btnCls, fieldCls, labelCls } from '@/components/auth-card'
+import { loadAccountStatus, safeCallback, signInWithGoogle, signInWithPassword } from '@/lib/sync/account'
+import { useSyncState } from '@/lib/sync/state'
+
+export function RegisterForm() {
+  const router = useRouter()
+  const t = useTx()
+  const params = useSearchParams()
+  const callback = safeCallback(params.get('callbackUrl'))
+  const { enabled, google } = useSyncState()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [pw, setPw] = useState('')
+  useEffect(() => { void loadAccountStatus() }, [])
+
+  if (enabled === null) return <div className="card-soft h-96 w-full max-w-md shimmer" />
+  if (!enabled) return <AccountsOff t={t} />
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    const fd = new FormData(e.currentTarget)
+    const email = String(fd.get('email'))
+    try {
+      const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: fd.get('name'), email, password: pw }) })
+      if (res.ok) {
+        const ok = await signInWithPassword(email, pw)
+        if (ok) { router.push(callback); router.refresh() } else router.push(`/login?callbackUrl=${encodeURIComponent(callback)}`)
+      } else {
+        const data = (await res.json().catch(() => ({}))) as { code?: string }
+        setError(
+          data.code === 'email_taken' ? t({ en: 'An account with this email already exists. Try signing in.', bn: 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে। সাইন ইন করুন।' })
+          : data.code === 'weak_password' ? t({ en: 'Password must be at least 8 characters.', bn: 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।' })
+          : data.code === 'invalid_email' ? t({ en: 'Enter a valid email address.', bn: 'সঠিক ইমেইল দিন।' })
+          : t({ en: 'Registration failed.', bn: 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।' }),
+        )
+      }
+    } catch {
+      setError(t({ en: 'Something went wrong. Please try again.', bn: 'কিছু ভুল হয়েছে। আবার চেষ্টা করুন।' }))
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <AuthCard
+      title={t({ en: 'Create your account', bn: 'অ্যাকাউন্ট খুলুন' })}
+      subtitle={t({ en: 'Keep your bookmarks and progress safe across devices', bn: 'সব ডিভাইসে বুকমার্ক ও অগ্রগতি নিরাপদ রাখুন' })}
+      footer={<>{t({ en: 'Already have an account?', bn: 'আগেই অ্যাকাউন্ট আছে?' })} <Link href={`/login?callbackUrl=${encodeURIComponent(callback)}`} className="font-semibold text-primary hover:underline">{t({ en: 'Sign in', bn: 'সাইন ইন' })}</Link></>}
+    >
+      {google && (<><GoogleButton onClick={() => void signInWithGoogle(callback)} label={t({ en: 'Sign up with Google', bn: 'গুগল দিয়ে সাইন আপ' })} /><OrDivider label={t({ en: 'or with email', bn: 'অথবা ইমেইল দিয়ে' })} /></>)}
+      <form onSubmit={submit} className="space-y-4">
+        <label className="block"><span className={labelCls}>{t({ en: 'Name', bn: 'নাম' })}</span><input name="name" type="text" required maxLength={80} autoComplete="name" className={fieldCls} /></label>
+        <label className="block"><span className={labelCls}>{t({ en: 'Email', bn: 'ইমেইল' })}</span><input name="email" type="email" required autoComplete="email" className={fieldCls} /></label>
+        <div><label className="block"><span className={labelCls}>{t({ en: 'Password', bn: 'পাসওয়ার্ড' })}</span><input value={pw} onChange={(e) => setPw(e.target.value)} type="password" required minLength={8} maxLength={72} autoComplete="new-password" className={fieldCls} /></label><PasswordMeter value={pw} t={t} /></div>
+        {error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
+        <button type="submit" disabled={loading} className={btnCls}>{loading ? <Loader2 className="size-5 animate-spin" /> : t({ en: 'Create account', bn: 'অ্যাকাউন্ট খুলুন' })}</button>
+      </form>
+    </AuthCard>
+  )
+}

@@ -9,6 +9,7 @@ import { useTx } from '@/lib/lang'
 import { useUi } from '@/lib/stores/ui'
 import { cn } from '@/lib/utils'
 import { UiIcon } from '@/components/ui-icon'
+import { HeaderAccount } from '@/components/sync/header-account'
 import { ThemePicker } from './theme-picker'
 import { LanguageToggle } from './language-toggle'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -83,7 +84,7 @@ export function SiteHeader() {
           <button onClick={() => openPalette(true)} className="grid size-10 place-items-center rounded-full transition hover:bg-muted md:hidden" aria-label="Search"><UiIcon name="search" size={22} /></button>
           <LanguageToggle className="hidden sm:flex" />
           <ThemePicker />
-          <Link href="/journey" className="hidden size-10 place-items-center rounded-full transition hover:bg-muted sm:grid" aria-label="My journey"><UiIcon name="user" size={24} /></Link>
+          <HeaderAccount />
         </div>
       </div>
       <AnimatePresence />

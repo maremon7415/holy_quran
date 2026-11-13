@@ -21,6 +21,7 @@ import { useClock } from './clock'
 import { usePlayerPrefs } from './prefs'
 import { useSleep } from './sleep'
 import { audioBridge } from './bridge'
+import { getOfflineAudioObjectUrl } from '@/lib/offline/audio-cache'
 import { setMediaMetadata, setMediaState, setMediaPosition, setMediaHandlers, clearMedia } from './media-session'
 
 const EPS = 30 // ms: treat an ayah as finished slightly before its end timestamp
@@ -34,6 +35,8 @@ export class AudioEngine {
   private loaded: { surah: number; reciter: number } | null = null
   private loading = false
   private token = 0
+  private localUrl: string | null = null
+  private revokeLocal() { if (this.localUrl) { URL.revokeObjectURL(this.localUrl); this.localUrl = null } }
   private reportedKey: string | null = null
   private ayahNo = 1
   private repeatLeft = 1
@@ -76,6 +79,7 @@ export class AudioEngine {
     if (this.sleepIv) clearInterval(this.sleepIv)
     audioBridge.seekFraction = undefined
     this.audio.pause()
+    this.revokeLocal()
     this.pre.removeAttribute('src')
     clearMedia()
   }
@@ -135,6 +139,7 @@ export class AudioEngine {
     this.safePause()
     this.audio.removeAttribute('src')
     this.audio.load()
+    this.revokeLocal()
     this.pre.removeAttribute('src')
     this.loaded = null
     this.ch = null
@@ -172,7 +177,15 @@ export class AudioEngine {
         if (token !== this.token) return false
         this.ch = ch
         this.mode = 'chapter'
-        this.audio.src = ch.url
+        // prefer a downloaded copy (blob: URL — seekable); fall back to the network
+        const local = await getOfflineAudioObjectUrl(ch.url)
+        if (token !== this.token) { if (local) URL.revokeObjectURL(local); return false }
+        this.revokeLocal()
+        this.localUrl = local
+        if (!local && typeof navigator !== 'undefined' && !navigator.onLine) {
+          toast.info(bn() ? 'আপনি অফলাইনে আছেন। অফলাইনে শুনতে আগে এই তিলাওয়াত ডাউনলোড করুন (সেটিংস → অফলাইন)।' : 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.')
+        }
+        this.audio.src = local ?? ch.url
         this.applyRate()
         await this.whenReady(token)
         if (token !== this.token) return false

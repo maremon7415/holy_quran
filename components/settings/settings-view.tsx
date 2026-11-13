@@ -6,10 +6,12 @@ import { useAppStore } from '@/lib/store'
 import { useMounted, useTx } from '@/lib/lang'
 import { ThemeSwatches } from '@/components/shell/theme-picker'
 import { LanguageToggle } from '@/components/shell/language-toggle'
+import { AccountSyncCard } from '@/components/sync/account-card'
 import { UiIcon } from '@/components/ui-icon'
 import { Switch } from '@/components/ui/switch'
 import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils'
+import { OfflineDownloads } from '@/components/offline/offline-downloads'
 
 const FONTS: { id: ArabicFont; label: string }[] = [
   { id: 'amiri-quran', label: 'Amiri Quran' },
@@ -107,6 +109,10 @@ export function SettingsView() {
         </div>
         <Row label={t({ en: 'Follow the recited ayah', bn: 'তিলাওয়াতের সাথে স্ক্রল' })}><Switch checked={r.autoScroll} onCheckedChange={(v) => r.set({ autoScroll: v })} /></Row>
       </Section>
+
+      <OfflineDownloads />
+
+      <AccountSyncCard />
 
       <Section icon="journey" title={t({ en: 'Goals & data', bn: 'লক্ষ্য ও তথ্য' })}>
         <Row label={`${t({ en: 'Daily goal', bn: 'দৈনিক লক্ষ্য' })} · ${dailyGoal} ${t({ en: 'ayahs', bn: 'আয়াত' })}`}><Slider className="w-44" min={1} max={100} step={1} value={[dailyGoal]} onValueChange={([v]) => setDailyGoal(v)} /></Row>

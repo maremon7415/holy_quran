@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
+// Build id is baked into the client and passed to the service worker (/sw.js?v=...) so every deploy gets fresh, versioned caches.
+const BUILD_ID = (process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || String(Date.now())).slice(0, 12)
 const nextConfig = {
+  env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
   images: { unoptimized: true },
   // Quran corpus is read from disk at request time for on-demand ayah pages & search
   outputFileTracingIncludes: {
