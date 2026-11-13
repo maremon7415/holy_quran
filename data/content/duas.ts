@@ -78,7 +78,7 @@ export const duas: Dua[] = [
   { slug: 'dua-before-sleeping', cat: 'sleep', title: { en: 'Dua before sleeping: Bismika Allahumma amutu wa ahya', bn: 'ঘুমানোর দোয়া: বিসমিকাল্লাহুম্মা আমুতু ওয়া আহইয়া' },
     ar: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', tl: 'Bismikallahumma amutu wa ahya.',
     meaning: { en: 'In Your name, O Allah, I die and I live.', bn: 'হে আল্লাহ, আপনার নামেই আমি মরি এবং বাঁচি।' },
-    source: 'Sahih al-Bukhari 6312', when: { en: 'When lying down to sleep, on the right side.', bn: 'ঘুমাতে শোয়ার সময়, ডান কাতে শুয়ে।' }, keywords: ['sleeping dua', 'ঘুমের দোয়া', 'ঘুমানোর আগের দোয়া'], related: ['dua-upon-waking', 'ayatul-kursi', 'dua-allahumma-qini-adhabaka', 'surah-ikhlas-falaq-nas'] },
+    source: 'Sahih al-Bukhari 6324', when: { en: 'When lying down to sleep, on the right side.', bn: 'ঘুমাতে শোয়ার সময়, ডান কাতে শুয়ে।' }, keywords: ['sleeping dua', 'ঘুমের দোয়া', 'ঘুমানোর আগের দোয়া'], related: ['dua-upon-waking', 'ayatul-kursi', 'dua-allahumma-qini-adhabaka', 'surah-ikhlas-falaq-nas'] },
   { slug: 'dua-upon-waking', cat: 'sleep', title: { en: 'Dua upon waking up: Alhamdu lillahilladhi ahyana', bn: 'ঘুম থেকে উঠার দোয়া: আলহামদু লিল্লাহিল্লাযী আহইয়ানা' },
     ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
     tl: 'Alhamdu lillahil-ladhi ahyana ba‘da ma amatana wa ilayhin-nushur.',
@@ -185,7 +185,7 @@ export const duas: Dua[] = [
     ar: 'لَا إِلَهَ إِلَّا اللَّهُ الْعَظِيمُ الْحَلِيمُ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لَا إِلَهَ إِلَّا اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ',
     tl: 'La ilaha illallahul-‘Azimul-Halim, la ilaha illallahu Rabbul-‘Arshil-‘Azim, la ilaha illallahu Rabbus-samawati wa Rabbul-ardi wa Rabbul-‘Arshil-Karim.',
     meaning: { en: 'There is no god but Allah, the Mighty, the Forbearing. There is no god but Allah, Lord of the Mighty Throne. There is no god but Allah, Lord of the heavens, Lord of the earth and Lord of the Noble Throne.', bn: 'আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি মহান, সহনশীল। আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি মহান আরশের রব। আল্লাহ ছাড়া কোনো ইলাহ নেই, তিনি আসমানসমূহের রব, জমিনের রব এবং সম্মানিত আরশের রব।' },
-    source: 'Sahih al-Bukhari 6345; Sahih Muslim 2730', when: { en: 'In hardship or distress. Ibn ‘Abbas reported that the Prophet ﷺ used to say it at times of distress.', bn: 'বিপদ ও কষ্টের সময়। ইবনে আব্বাস (রা.) বর্ণনা করেন, নবী ﷺ কষ্টের সময় এটি বলতেন।' }, keywords: ['dua for difficult times', 'বিপদে পড়লে কী দোয়া পড়বো', 'বিপদ থেকে মুক্তির দোয়া'], related: ['dua-for-anxiety', 'dua-of-yunus', 'ya-hayyu-ya-qayyum'] },
+    source: 'Sahih al-Bukhari 6346; Sahih Muslim 2730', when: { en: 'In hardship or distress. Ibn ‘Abbas reported that the Prophet ﷺ used to say it at times of distress.', bn: 'বিপদ ও কষ্টের সময়। ইবনে আব্বাস (রা.) বর্ণনা করেন, নবী ﷺ কষ্টের সময় এটি বলতেন।' }, keywords: ['dua for difficult times', 'বিপদে পড়লে কী দোয়া পড়বো', 'বিপদ থেকে মুক্তির দোয়া'], related: ['dua-for-anxiety', 'dua-of-yunus', 'ya-hayyu-ya-qayyum'] },
   { slug: 'dua-of-yunus', cat: 'anxiety', refs: ['21:87'], title: { en: 'Dua of Prophet Yunus (Jonah): La ilaha illa anta subhanaka', bn: 'ইউনুস (আ.)-এর দোয়া: লা ইলাহা ইল্লা আনতা সুবহানাকা' },
     source: 'Quran 21:87; Jami at-Tirmidhi 3505', when: { en: 'Said by Yunus ﷺ in the darkness of the whale’s belly. The Prophet ﷺ taught that no Muslim calls on Allah with it for anything except that Allah answers him.', bn: 'ইউনুস (আ.) মাছের পেটের অন্ধকারে এটি বলেছিলেন। নবী ﷺ শিখিয়েছেন, কোনো মুসলিম এই দোয়ায় আল্লাহকে ডাকলে আল্লাহ তার ডাকে সাড়া দেন।' }, keywords: ['dua yunus'], related: ['dua-for-distress', 'dua-for-anxiety'] },
   { slug: 'hasbunallahu-wa-nimal-wakil', cat: 'anxiety', refs: ['3:173'], title: { en: 'Hasbunallahu wa ni‘mal wakil (Allah is enough for us)', bn: 'হাসবুনাল্লাহু ওয়া নিমাল ওয়াকিল' },
@@ -274,8 +274,8 @@ export const duas: Dua[] = [
     ar: 'يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ', tl: 'Ya muqallibal-qulub, thabbit qalbi ‘ala dinik.',
     meaning: { en: 'O Turner of hearts, make my heart firm upon Your religion.', bn: 'হে অন্তরসমূহের পরিবর্তনকারী, আমার অন্তরকে আপনার দীনের ওপর অবিচল রাখুন।' },
     source: 'Jami at-Tirmidhi 2140', when: { en: 'Umm Salamah reported that this was among the Prophet’s ﷺ most frequent duas.', bn: 'উম্মে সালামা (রা.) বর্ণনা করেন, নবী ﷺ-এর সবচেয়ে বেশি পঠিত দোয়াগুলোর একটি ছিল এটি।' }, keywords: ['dua for steadfastness', 'ঈমানের উপর অটল থাকার দোয়া'], related: ['rabbana-la-tuzigh-qulubana', 'dua-qunut'] },
-  { slug: 'dua-when-it-rains', cat: 'protection', title: { en: 'Dua when it rains: Allahumma sayyiban nafi‘a', bn: 'বৃষ্টির সময়ের দোয়া: আল্লাহুম্মা সাইয়্যিবান নাফিআ' },
-    ar: 'اللَّهُمَّ صَيِّبًا نَافِعًا', tl: 'Allahumma sayyiban nafi‘a.', meaning: { en: 'O Allah, make it a beneficial rain.', bn: 'হে আল্লাহ, এটিকে উপকারী বৃষ্টিতে পরিণত করুন।' },
+  { slug: 'dua-when-it-rains', cat: 'protection', title: { en: 'Dua when it rains: Sayyiban nafi‘a', bn: 'বৃষ্টির সময়ের দোয়া: সাইয়্যিবান নাফিআ' },
+    ar: 'صَيِّبًا نَافِعًا', tl: 'Sayyiban nafi‘a.', meaning: { en: '(O Allah, make it) a beneficial, abundant rain.', bn: '(হে আল্লাহ, এটিকে) উপকারী, প্রবল বর্ষণে পরিণত করুন।' },
     source: 'Sahih al-Bukhari 1032', when: { en: 'When it rains.', bn: 'বৃষ্টি হলে।' }, keywords: ['বৃষ্টির দোয়া'] },
 
   // ───────── Rabbana duas of the Quran
