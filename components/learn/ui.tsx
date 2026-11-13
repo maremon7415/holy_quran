@@ -61,7 +61,7 @@ export function ScholarNote({ locale }: { locale: Locale }) {
 export function HadithRef({ id, locale }: { id: string; locale: Locale }) {
   const h = learnHadithById(id)
   if (!h) return null
-  return <Link href={hadithUrl(h.book, h.number, locale)} className="text-primary hover:underline">{h.ref}</Link>
+  return <Link href={hadithUrl(h.book, h.number, locale)} className="text-primary underline underline-offset-2">{h.ref}</Link>
 }
 
 export function SourceLine({ hadith, dua, locale }: { hadith?: string[]; dua?: string; locale: Locale }) {
@@ -71,7 +71,7 @@ export function SourceLine({ hadith, dua, locale }: { hadith?: string[]; dua?: s
     <p className="mt-2 text-xs text-muted-foreground">
       {lt(locale, { en: 'Source', bn: 'উৎস', ar: 'المصدر' })}:{' '}
       {hadith?.map((id, i) => <span key={id}>{i > 0 && ', '}<HadithRef id={id} locale={locale} /></span>)}
-      {d && <>{hadith?.length ? ' · ' : ''}<Link href={localeHref(locale, `/dua/${d.slug}`)} className="text-primary hover:underline">{lt(locale, { en: 'dua page', bn: 'দোয়ার পাতা', ar: 'صفحة الدعاء' })}</Link></>}
+      {d && <>{hadith?.length ? ' · ' : ''}<Link href={localeHref(locale, `/dua/${d.slug}`)} className="text-primary underline underline-offset-2">{lt(locale, { en: 'dua page', bn: 'দোয়ার পাতা', ar: 'صفحة الدعاء' })}</Link></>}
     </p>
   )
 }

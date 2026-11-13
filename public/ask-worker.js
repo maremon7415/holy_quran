@@ -1,6 +1,6 @@
 /* Ask the Quran — opt-in on-device smart search (module Web Worker, plain JS on purpose: no bundling of onnxruntime-web).
  * Loads transformers.js from jsDelivr (pinned) and the same multilingual embedding model the server uses; the model
- * files are cached by the browser (Cache Storage "transformers-cache"), so the ~120 MB download happens once.
+ * files are cached by the browser (Cache Storage "transformers-cache"), so the ~210 MB download happens once.
  * Also loads the precomputed ayah vectors (/ask/embeddings.bin) so meaning-based search keeps working offline.
  *
  * Messages in:  {type:'init', header, vectorsUrl} | {type:'embed', id, text} | {type:'search', id, vec, k}

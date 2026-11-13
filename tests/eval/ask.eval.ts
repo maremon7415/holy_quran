@@ -71,7 +71,7 @@ describe('Ask the Quran eval (real model)', () => {
           }
       console.log('best tune weights', best.w, 'recall', (best.score / tune.length).toFixed(3))
     }
-    const t = await table(DEFAULT_WEIGHTS)
+    const t = await table(process.env.ASK_WEIGHTS ? JSON.parse(process.env.ASK_WEIGHTS) : DEFAULT_WEIGHTS)
     console.table(t)
     expect(t.all.hybrid).toBeGreaterThanOrEqual(t.all.lexical)
   })

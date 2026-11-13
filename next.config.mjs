@@ -16,7 +16,7 @@ const ASK_TRACE_EXCLUDES = [
   'scripts/.cache/**',
 ]
 // onnxruntime's native binding dlopen()s libonnxruntime.so.1, which the file tracer cannot see
-const ASK_TRACE_INCLUDES = ['./data/quran/**/*', './node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/*']
+const ASK_TRACE_INCLUDES = ['./data/quran/**/*', './node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/{libonnxruntime.so.1,onnxruntime_binding.node}']
 const nextConfig = {
   env: { NEXT_PUBLIC_BUILD_ID: BUILD_ID },
   images: { unoptimized: true },

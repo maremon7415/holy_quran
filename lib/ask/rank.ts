@@ -6,13 +6,16 @@
  *       + W.lexical × (ayah is a hit of the strict full-text search on the content words)
  *       + W.topic   × topic-match strength (the question names a curated topic that lists the ayah)
  *
- * Weights were tuned on the `tune` half of tests/fixtures/ask-eval.json (see scripts/eval-ask.test.ts).
+ * Weights were grid-searched on the `tune` half of tests/fixtures/ask-eval.json (`ASK_TUNE=1 pnpm eval:ask`, tests/eval/ask.eval.ts);
+ * the `holdout` half is only reported.
  */
 import { rowOf, ayahKeys, topK } from './vectors'
 import { matchedTerms, type AyahText, type Script, type Term, type TopicMatch } from './text'
 
 export interface Weights { overlap: number; lexical: number; topic: number; pool: number }
-export const DEFAULT_WEIGHTS: Weights = { overlap: 0.04, lexical: 0.02, topic: 0.05, pool: 150 }
+export const DEFAULT_WEIGHTS: Weights = { overlap: 0.04, lexical: 0, topic: 0.1, pool: 150 }
+/** Without a query vector (model unavailable) the boosts are the whole score. */
+export const LEXICAL_MODE_WEIGHTS: Weights = { overlap: 1, lexical: 0.5, topic: 0.6, pool: 0 }
 
 export interface Scored {
   row: number
@@ -47,7 +50,7 @@ export function expandRef(ref: string): [number, number][] {
 }
 
 export function rank(input: RankInput, limit = 15): Scored[] {
-  const W = { ...DEFAULT_WEIGHTS, ...input.weights }
+  const W = input.semantic ? { ...DEFAULT_WEIGHTS, ...input.weights } : LEXICAL_MODE_WEIGHTS
   const keys = ayahKeys()
   const lexical = new Set(input.lexicalRows ?? [])
   const topicStrength = new Map<number, { s: number; slugs: string[] }>()

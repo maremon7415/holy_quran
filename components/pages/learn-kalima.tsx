@@ -102,7 +102,7 @@ export async function KalimaPage({ locale }: { locale: Locale }) {
               <SourceLine hadith={k.hadith} locale={locale} />
               {k.dua && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {k.dua.map((s, i) => { const d = duaBySlug(s); return d ? <span key={s}>{i > 0 && ' · '}<Link href={h(`/dua/${s}`)} className="text-primary hover:underline">{bn ? d.title.bn.split(':')[0] : d.title.en.split(':')[0]}</Link></span> : null })}
+                  {k.dua.map((s, i) => { const d = duaBySlug(s); return d ? <span key={s}>{i > 0 && ' · '}<Link href={h(`/dua/${s}`)} className="text-primary underline underline-offset-2">{bn ? d.title.bn.split(':')[0] : d.title.en.split(':')[0]}</Link></span> : null })}
                 </p>
               )}
             </div>

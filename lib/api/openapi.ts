@@ -50,7 +50,7 @@ export function openApiSpec() {
       '/api/v1/ask': {
         get: {
           tags: ['Quran'], operationId: 'askQuran', summary: 'Ask the Quran — meaning-based (semantic) search in English, Bangla or Arabic',
-          description: 'A natural question ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Cosine similarity of multilingual-e5-small embeddings (question vs. each ayah’s English + Bangla translation) plus small boosts for shared words and curated topics; consecutive ayahs are merged into ranges. No generated text. If the model is unavailable the response has `mode: "lexical"` and a `note`.',
+          description: 'A natural question ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Cosine similarity of EmbeddingGemma-300m embeddings (question vs. each ayah’s English + Bangla translation) plus small boosts for shared words and curated topics; consecutive ayahs are merged into ranges. No generated text. If the model is unavailable the response has `mode: "lexical"` and a `note`.',
           parameters: [
             { name: 'q', in: 'query', required: true, schema: { type: 'string', minLength: 2, maxLength: 300 }, example: 'what does the Quran say about patience in hardship' },
             { name: 'lang', in: 'query', schema: { type: 'string', enum: ['en', 'bn', 'ar'] }, description: 'Translation returned with the Arabic (default: English + Bangla); bn adds Bangla uccharon' },

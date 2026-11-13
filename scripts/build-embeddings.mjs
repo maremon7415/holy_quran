@@ -2,13 +2,15 @@
 /**
  * Precompute "Ask the Quran" passage embeddings (semantic search) — run OFFLINE, commit the output.
  *
- *   node scripts/build-embeddings.mjs                     # → data/quran/embeddings.bin + embeddings.json
+ *   pnpm build:embeddings                                 # → data/quran/embeddings.bin + embeddings.json (~25 min on 4 CPUs)
  *   node scripts/build-embeddings.mjs --limit 300 --out /tmp/x   # quick experiment
- *   EMBED_MODEL=Xenova/paraphrase-multilingual-MiniLM-L12-v2 node scripts/build-embeddings.mjs --out /tmp/y
+ *   EMBED_MODEL=Xenova/multilingual-e5-small node scripts/build-embeddings.mjs --out /tmp/y   # compare a model
+ *   node scripts/build-embeddings.mjs --dims 256          # Matryoshka-truncated EmbeddingGemma vectors
  *
- * Passage text per ayah = English (Saheeh International) + Bangla (Taisirul Quran), prefixed "passage: "
- * for the e5 family. Vectors are mean-pooled + L2-normalised, then quantised to int8 with a per-vector
- * scale (v ≈ q * scale). Binary layout: [count*dims int8][count float32 scales] (little endian).
+ * Model: EmbeddingGemma-300m (q4 ONNX, 100+ languages incl. Bangla; Gemma terms of use). On the 33-query fixture it
+ * reached semantic-only recall@10 0.61 vs 0.16 for multilingual-e5-small (see docs/ARCHITECTURE.md → Ask the Quran).
+ * Passage text per ayah = English (Saheeh International) + Bangla (Taisirul Quran) with the model's document prompt.
+ * Vectors are L2-normalised, then quantised to int8 with a per-vector scale (v ≈ q * scale). Binary layout: [count*dims int8][count float32 scales] (little endian).
  * Order = canonical mushaf order (1:1 … 114:6); keys are implicit from chapters.json verse counts.
  *
  * Model files are cached in scripts/.cache/hf (git-ignored). Uses modest batches to keep memory low.
@@ -22,10 +24,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
 const arg = (name, def) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : def }
 
-const MODEL = process.env.EMBED_MODEL || 'Xenova/multilingual-e5-small'
+const MODEL = process.env.EMBED_MODEL || 'onnx-community/embeddinggemma-300m-ONNX'
 const OUT = path.resolve(arg('out', path.join(root, 'data/quran')))
 const LIMIT = Number(arg('limit', '0')) || Infinity
-const BATCH = Number(arg('batch', '16'))
+const BATCH = Number(arg('batch', '8'))
 const TEXT = arg('text', 'both') // en | bn | both (experiments)
 
 /** Per-model-family settings; copied into the header so query-time embedding (server + browser) matches. */

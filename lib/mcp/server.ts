@@ -44,7 +44,7 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
 
   server.registerTool('ask_quran', {
     title: 'Ask the Quran (search by meaning)',
-    description: 'Meaning-based (semantic) search: a natural question in English, Bangla or Arabic ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Ranked by embedding similarity (multilingual-e5-small) with small word/topic boosts; consecutive ayahs are merged into ranges. Each result has Arabic, translation, matched words/topics, canonical URL and citation. No generated text — quote the ayahs and cite the URLs.',
+    description: 'Meaning-based (semantic) search: a natural question in English, Bangla or Arabic ("what does Allah say about people who are patient in hardship?", "বাবা-মায়ের সাথে আচরণ") → the most relevant ayahs even without shared keywords. Ranked by embedding similarity (EmbeddingGemma-300m, multilingual) with small word/topic boosts; consecutive ayahs are merged into ranges. Each result has Arabic, translation, matched words/topics, canonical URL and citation. No generated text — quote the ayahs and cite the URLs.',
     inputSchema: {
       question: z.string().min(2).max(300).describe('A natural-language question or theme'),
       lang: z.enum(['en', 'bn', 'ar']).optional().describe('Translation to return with the Arabic (default: English + Bangla)'),

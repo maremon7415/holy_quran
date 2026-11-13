@@ -2,7 +2,7 @@ import 'server-only'
 /**
  * Server-side query embedding for Ask the Quran (transformers.js + onnxruntime-node, CPU).
  *
- * The model (~118 MB quantised ONNX) is NOT bundled: it is downloaded from the Hugging Face CDN on the
+ * The model (EmbeddingGemma-300m, q4 ONNX ≈ 190 MB + 20 MB tokenizer) is NOT bundled: it is downloaded from the Hugging Face CDN on the
  * first request of an instance into a writable cache dir (/tmp on Vercel), then kept in memory.
  * Locally the offline build cache `scripts/.cache/hf` is reused when present.
  * Set ASK_SEMANTIC=off to disable the model entirely (Ask then falls back to lexical search).

@@ -123,11 +123,12 @@ export async function SalahPage({ locale }: { locale: Locale }) {
         </p>
         <FiqhNote locale={locale}>
           {lt(locale, {
-            en: 'The number of sunnah rak‘ahs and whether witr is wajib or sunnah differ between the schools; the table follows the Hanafi school. The Jumu‘ah prayer replaces Dhuhr on Friday with 2 fard rak‘ahs after the khutbah.',
-            bn: 'সুন্নত রাকআতের সংখ্যা এবং বিতর ওয়াজিব না সুন্নত, তা নিয়ে মাযহাবের মধ্যে মতভেদ আছে; তালিকাটি হানাফী মাযহাব অনুযায়ী। জুমার দিন খুতবার পর ২ রাকআত ফরজ জুমার নামাজ যোহরের স্থান নেয়।',
+            en: 'The number of sunnah rak‘ahs and whether witr is wajib or sunnah differ between the schools; the table follows the Hanafi school. The Jumu‘ah prayer replaces Dhuhr on Friday with 2 fard rak‘ahs after the khutbah. For the dates of Eid (and its prayer) see the Islamic events pages.',
+            bn: 'সুন্নত রাকআতের সংখ্যা এবং বিতর ওয়াজিব না সুন্নত, তা নিয়ে মাযহাবের মধ্যে মতভেদ আছে; তালিকাটি হানাফী মাযহাব অনুযায়ী। জুমার দিন খুতবার পর ২ রাকআত ফরজ জুমার নামাজ যোহরের স্থান নেয়। ঈদের তারিখ ও ঈদের নামাজের জন্য ইসলামি দিবসের পাতা দেখুন।',
             ar: 'يختلف المذاهب في عدد السنن وفي وجوب الوتر أو سنيته، والجدول وفق المذهب الحنفي.',
           })}
         </FiqhNote>
+        <p className="mt-3 text-sm"><Link href={h('/events')} className="font-semibold text-primary hover:underline">{lt(locale, { en: 'Islamic events: Eid, Ramadan and more', bn: 'ইসলামি দিবস: ঈদ, রমজান ও আরও', ar: 'المناسبات الإسلامية: العيد ورمضان' })} <span className="inline-block rtl:rotate-180">→</span></Link></p>
       </Section>
 
       <Section id="steps" title={lt(locale, { en: 'How to pray, step by step', bn: 'ধাপে ধাপে নামাজ পড়ার নিয়ম', ar: 'خطوات الصلاة' })} intro={lt(locale, { en: 'Follow the Prophet’s instruction “pray as you have seen me pray”', bn: 'নবী ﷺ-এর নির্দেশ “আমাকে যেভাবে নামাজ পড়তে দেখেছ সেভাবে পড়”', ar: 'اتبع قوله ﷺ: «صلّوا كما رأيتموني أصلي»' })}>
@@ -149,7 +150,7 @@ export async function SalahPage({ locale }: { locale: Locale }) {
                   {s.dua && s.dua.length > 0 && (
                     <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                       <span className="font-semibold">{lt(locale, { en: 'Related duas:', bn: 'সম্পর্কিত দোয়া:', ar: 'أدعية ذات صلة:' })}</span>
-                      {s.dua.map((slug) => { const d = duaBySlug(slug); return d ? <Link key={slug} href={h(`/dua/${slug}`)} className="text-primary hover:underline">{bn ? d.title.bn.split(':')[0] : d.title.en.split(':')[0]}</Link> : null })}
+                      {s.dua.map((slug) => { const d = duaBySlug(slug); return d ? <Link key={slug} href={h(`/dua/${slug}`)} className="text-primary underline underline-offset-2">{bn ? d.title.bn.split(':')[0] : d.title.en.split(':')[0]}</Link> : null })}
                     </p>
                   )}
                 </div>

@@ -100,6 +100,7 @@ export async function LearnHubPage({ locale }: { locale: Locale }) {
         <p className="mt-4 text-sm text-muted-foreground">
           {lt(locale, { en: 'Then continue with', bn: 'এরপর দেখুন', ar: 'ثم تابع مع' })}{' '}
           <Link href={h('/prayer-times')} className="font-semibold text-primary hover:underline">{lt(locale, { en: 'prayer times', bn: 'নামাজের সময়', ar: 'مواقيت الصلاة' })}</Link>,{' '}
+          <Link href={h('/events')} className="font-semibold text-primary hover:underline">{lt(locale, { en: 'Islamic events & dates', bn: 'ইসলামি দিবস ও তারিখ', ar: 'المناسبات والتواريخ الإسلامية' })}</Link>,{' '}
           <Link href={h('/dua')} className="font-semibold text-primary hover:underline">{lt(locale, { en: 'duas', bn: 'দোয়া', ar: 'الأدعية' })}</Link>{' '}
           {lt(locale, { en: 'and', bn: 'ও', ar: 'و' })}{' '}
           <Link href={h('/juz/30')} className="font-semibold text-primary hover:underline">{lt(locale, { en: 'Juz Amma', bn: 'আমপারা', ar: 'جزء عمّ' })}</Link>.

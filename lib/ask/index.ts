@@ -181,7 +181,7 @@ export async function askApi(question: string, opts: { lang?: AskLang; limit?: n
     mode: r.mode,
     ...(r.note ? { note: r.note } : {}),
     model: r.model,
-    method: 'Cosine similarity between multilingual-e5-small embeddings of the question and of each ayah (English Saheeh International + Bangla Taisirul Quran), plus small boosts for shared words and curated topics. Consecutive matching ayahs are merged into ranges. No generated text.',
+    method: `Cosine similarity between ${r.model.split('/').pop()} embeddings of the question and of each ayah (English Saheeh International + Bangla Taisirul Quran), plus small boosts for shared words and curated topics. Consecutive matching ayahs are merged into ranges. No generated text.`,
     results: r.results.map((g) => ({
       reference: g.ref,
       surah: { id: g.surah, name: g.surahName, nameArabic: g.surahNameAr, nameBangla: g.surahNameBn },

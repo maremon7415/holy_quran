@@ -256,7 +256,7 @@ function LocalToggle({ local, t, num }: { local: ReturnType<typeof useLocalModel
         <>
           <span>{t({ en: 'Smart search runs on our server.', bn: 'স্মার্ট অনুসন্ধান আমাদের সার্ভারে চলে।', ar: 'البحث الذكي يعمل على خادمنا.' })}</span>
           <button type="button" onClick={local.enable} className="rounded-full border border-border bg-card px-3 py-1 font-semibold text-foreground hover:bg-accent">
-            {t({ en: 'Enable smart search on this device (downloads ~120 MB once, cached)', bn: 'এই ডিভাইসে স্মার্ট অনুসন্ধান চালু করুন (একবার ~১২০ MB ডাউনলোড, সংরক্ষিত থাকে)', ar: 'فعّل البحث الذكي على جهازك (تنزيل ~120 ميغابايت مرة واحدة)' })}
+            {t({ en: 'Enable smart search on this device (downloads ~210 MB once, cached)', bn: 'এই ডিভাইসে স্মার্ট অনুসন্ধান চালু করুন (একবার ~২১০ MB ডাউনলোড, সংরক্ষিত থাকে)', ar: 'فعّل البحث الذكي على جهازك (تنزيل ~210 ميغابايت مرة واحدة)' })}
           </button>
         </>
       )}
