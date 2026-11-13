@@ -1,6 +1,7 @@
 'use client'
 import { chapters, surahHref, juzHref } from '@/lib/quran/chapters'
-import { CHANNEL } from './cache'
+import { localeHref, type Locale } from '@/lib/i18n/routes'
+import { CHANNEL, markDownloadedLocales } from './cache'
 
 export interface PagesProgress {
   type: 'progress'
@@ -16,12 +17,17 @@ export interface PagesProgress {
   refresh?: boolean
 }
 
-export const allPagePaths = (withJuz: boolean) => [
-  '/quran',
-  '/offline',
-  ...chapters.map((c) => surahHref(c.id)),
-  ...(withJuz ? Array.from({ length: 30 }, (_, i) => juzHref(i + 1)) : []),
-]
+/** Pages of one language: English `/x` (also used by the Arabic UI) or the Bangla twins `/bn/x`. `/offline` has no twin and is shared. */
+export const allPagePaths = (withJuz: boolean, locale: Locale = 'en') =>
+  [
+    '/quran',
+    '/offline',
+    ...chapters.map((c) => surahHref(c.id)),
+    ...(withJuz ? Array.from({ length: 30 }, (_, i) => juzHref(i + 1)) : []),
+  ].map((p) => localeHref(locale, p))
+
+/** Pages for several languages, de-duplicated (`/offline` once). */
+export const allPagePathsFor = (withJuz: boolean, locales: Locale[]) => [...new Set(locales.flatMap((l) => allPagePaths(withJuz, l)))]
 
 async function worker() {
   if (!('serviceWorker' in navigator)) return null
@@ -31,11 +37,13 @@ async function worker() {
 export const canDownloadPages = async () => !!(await worker())
 
 /** Ask the service worker to fetch + cache pages (and the JS/CSS they reference). Resumable: already-cached pages are skipped. */
-export async function startPagesDownload(opts: { withJuz: boolean; force?: boolean }) {
+export async function startPagesDownload(opts: { withJuz: boolean; force?: boolean; locales?: Locale[] }) {
   const sw = await worker()
   if (!sw) throw new Error('no-sw')
+  const locales = opts.locales?.length ? opts.locales : (['en'] as Locale[])
   const jobId = Math.random().toString(36).slice(2)
-  sw.postMessage({ type: 'noor:dl-start', jobId, urls: allPagePaths(opts.withJuz), force: !!opts.force })
+  markDownloadedLocales(locales)
+  sw.postMessage({ type: 'noor:dl-start', jobId, urls: allPagePathsFor(opts.withJuz, locales), force: !!opts.force })
   return jobId
 }
 export async function cancelPagesDownload() {

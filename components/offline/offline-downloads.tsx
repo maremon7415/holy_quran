@@ -3,15 +3,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from '@/lib/i18n/link'
 import { toast } from 'sonner'
 import { Check, Download, Loader2, Trash2, X, HardDrive } from 'lucide-react'
-import { useMounted, useTx } from '@/lib/lang'
+import { useLang, useMounted, useTx } from '@/lib/lang'
+import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { useReader } from '@/lib/stores/reader'
 import { chapters, surahNamesBn, surahHref } from '@/lib/quran/chapters'
 import { getReciter } from '@/lib/audio/reciters'
 import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
-import { cachedPagePaths, deleteDownloadedPages, EST_AUDIO_ALL_MB, EST_PAGES_MB, fmtBytes, isPersisted, requestPersist, storageEstimate } from '@/lib/offline/cache'
-import { cancelPagesDownload, canDownloadPages, startPagesDownload, subscribeProgress, type PagesProgress } from '@/lib/offline/pages'
+import { cachedPagePaths, deleteDownloadedPages, getDownloadedLocales, EST_AUDIO_ALL_MB, EST_PAGES_MB, fmtBytes, isPersisted, requestPersist, storageEstimate } from '@/lib/offline/cache'
+import { allPagePathsFor, cancelPagesDownload, canDownloadPages, startPagesDownload, subscribeProgress, type PagesProgress } from '@/lib/offline/pages'
 import { deleteAllAudio, deleteSurahAudio, useAudioIndex, verifyAudioIndex } from '@/lib/offline/audio-cache'
 import { cancelAudioJobs, enqueueSurahs, useAudioJobs } from '@/lib/offline/audio-queue'
 
@@ -30,8 +31,13 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
   const entries = useAudioIndex((s) => s.entries)
   const jobs = useAudioJobs()
   const [swOk, setSwOk] = useState<boolean | null>(null)
-  const [pagesCached, setPagesCached] = useState(0)
-  const [juzCached, setJuzCached] = useState(0)
+  // pages are downloaded for the UI language's URLs (Arabic UI uses the English pages); the other language is an opt-in extra
+  const lang = useLang()
+  const primary: Locale = lang === 'bn' ? 'bn' : 'en'
+  const other: Locale = primary === 'bn' ? 'en' : 'bn'
+  const [counts, setCounts] = useState<Record<Locale, { surah: number; juz: number }>>({ en: { surah: 0, juz: 0 }, bn: { surah: 0, juz: 0 } })
+  const [alsoOther, setAlsoOther] = useState(false)
+  const alsoTouched = useRef(false)
   const [withJuz, setWithJuz] = useState(false)
   const [prog, setProg] = useState<PagesProgress | null>(null)
   const [storage, setStorage] = useState<{ usage: number; quota: number } | null>(null)
@@ -40,8 +46,13 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
 
   const refresh = useCallback(async () => {
     const paths = await cachedPagePaths()
-    setPagesCached(chapters.filter((c) => paths.has(surahHref(c.id))).length)
-    setJuzCached(Array.from({ length: 30 }, (_, i) => `/juz/${i + 1}`).filter((p) => paths.has(p)).length)
+    const per = (l: Locale) => ({
+      surah: chapters.filter((c) => paths.has(localeHref(l, surahHref(c.id)))).length,
+      juz: Array.from({ length: 30 }, (_, i) => localeHref(l, `/juz/${i + 1}`)).filter((p) => paths.has(p)).length,
+    })
+    setCounts({ en: per('en'), bn: per('bn') })
+    // remember an earlier "both languages" download so Update keeps both fresh
+    if (!alsoTouched.current && getDownloadedLocales().length > 1) setAlsoOther(true)
     setStorage(await storageEstimate())
     setPersisted(await isPersisted())
   }, [])
@@ -68,6 +79,11 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
   useEffect(() => { if (mounted) void storageEstimate().then(setStorage) }, [mounted, entries, jobs.current])
 
   const running = prog && prog.state === 'running'
+  const active: Locale[] = alsoOther ? [primary, other] : [primary]
+  const pagesCached = counts[primary].surah
+  const juzCached = counts[primary].juz
+  const activeSaved = active.reduce((a, l) => a + counts[l].surah, 0)
+  const otherName = other === 'bn' ? t({ en: 'Bangla', bn: 'বাংলা', ar: 'البنغالية' }) : t({ en: 'English', bn: 'ইংরেজি', ar: 'الإنجليزية' })
   const audioDone = useMemo(() => chapters.filter((c) => entries[`${reciterId}:${c.id}`]), [entries, reciterId])
   const audioBytes = useMemo(() => Object.entries(entries).filter(([k]) => k.startsWith(`${reciterId}:`)).reduce((a, [, v]) => a + v.bytes, 0), [entries, reciterId])
   const allAudioBytes = useMemo(() => Object.values(entries).reduce((a, v) => a + v.bytes, 0), [entries])
@@ -75,15 +91,15 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
 
   if (!mounted) return <div className="card-soft mt-6 h-72 rounded-3xl shimmer" />
 
-  const pagesPct = prog && prog.state === 'running' ? (prog.phase === 'pages' ? (prog.done / Math.max(1, prog.total)) * 85 : 85 + (prog.done / Math.max(1, prog.total)) * 15) : (pagesCached / 114) * 100
-  const complete = pagesCached >= 114
+  const pagesPct = prog && prog.state === 'running' ? (prog.phase === 'pages' ? (prog.done / Math.max(1, prog.total)) * 85 : 85 + (prog.done / Math.max(1, prog.total)) * 15) : (activeSaved / (114 * active.length)) * 100
+  const complete = active.every((l) => counts[l].surah >= 114)
   const surahName = (id: number) => (t({ en: 'en', bn: 'bn', ar: 'ar' }) === 'bn' ? surahNamesBn[id - 1] ?? chapters[id - 1].nameSimple : t({ en: 'en', bn: 'bn', ar: 'ar' }) === 'ar' ? chapters[id - 1].nameArabic : chapters[id - 1].nameSimple)
 
   const startPages = async () => {
     try {
       void requestPersist().then(setPersisted)
-      setProg({ type: 'progress', jobId: '', phase: 'pages', state: 'running', done: 0, total: 114, bytes: 0, failed: 0 })
-      await startPagesDownload({ withJuz })
+      setProg({ type: 'progress', jobId: '', phase: 'pages', state: 'running', done: 0, total: allPagePathsFor(withJuz, active).length, bytes: 0, failed: 0 })
+      await startPagesDownload({ withJuz, locales: active })
     } catch {
       setProg(null)
       toast.error(t({ en: 'Offline mode needs the installed app / production build (service worker not active yet — reload once and try again).', bn: 'অফলাইন মোডের জন্য সার্ভিস ওয়ার্কার চালু থাকতে হবে — একবার রিলোড করে আবার চেষ্টা করুন।', ar: 'يتطلب الوضع دون اتصال التطبيق المثبّت أو نسخة الإنتاج (عامل الخدمة غير نشط بعد — أعد التحميل وحاول مجددًا).' }))
@@ -125,7 +141,7 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
       {/* reading */}
       <div>
         <h3 className="font-semibold">{t({ en: 'Read the whole Quran offline', bn: 'অফলাইনে পুরো কুরআন পড়ুন', ar: 'اقرأ القرآن كاملًا دون اتصال' })}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{t({ en: `Saves all 114 surah pages (Arabic, English, Bangla, transliteration) and the app files they need — about ${EST_PAGES_MB} MB. Pages you open are also saved automatically.`, bn: `১১৪টি সূরার সব পৃষ্ঠা (আরবি, ইংরেজি, বাংলা, উচ্চারণ) ও প্রয়োজনীয় অ্যাপ ফাইল সংরক্ষণ হবে — প্রায় ${EST_PAGES_MB} MB। যে পৃষ্ঠা খুলবেন তা নিজে থেকেও সংরক্ষিত হয়।`, ar: `يحفظ صفحات السور الـ١١٤ كلها (العربية والإنجليزية والبنغالية والنقحرة) وملفات التطبيق اللازمة — نحو ${EST_PAGES_MB} م.ب. وتُحفظ الصفحات التي تفتحها تلقائيًا أيضًا.` })}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t({ en: `Saves all 114 surah pages (Arabic, English, Bangla, transliteration) and the app files they need — about ${EST_PAGES_MB * active.length} MB. Pages you open are also saved automatically.`, bn: `১১৪টি সূরার সব পৃষ্ঠা (আরবি, ইংরেজি, বাংলা, উচ্চারণ) ও প্রয়োজনীয় অ্যাপ ফাইল সংরক্ষণ হবে — প্রায় ${EST_PAGES_MB * active.length} MB। যে পৃষ্ঠা খুলবেন তা নিজে থেকেও সংরক্ষিত হয়।`, ar: `يحفظ صفحات السور الـ١١٤ كلها (العربية والإنجليزية والبنغالية والنقحرة) وملفات التطبيق اللازمة — نحو ${EST_PAGES_MB * active.length} م.ب. وتُحفظ الصفحات التي تفتحها تلقائيًا أيضًا.` })}</p>
         <div className="mt-3">{bar(pagesPct)}</div>
         <p className="mt-2 text-xs text-muted-foreground tabular-nums" aria-live="polite">
           {running
@@ -137,18 +153,20 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
             : complete
               ? t({ en: `All 114 surahs saved${juzCached ? ` · ${juzCached}/30 juz pages` : ''}`, bn: `সব ১১৪টি সূরা সংরক্ষিত${juzCached ? ` · ${juzCached}/৩০ পারা` : ''}` })
               : t({ en: `${pagesCached}/114 surahs saved`, bn: `${pagesCached}/১১৪টি সূরা সংরক্ষিত`, ar: `حُفظت ${pagesCached}/114 سورة` })}
+          {alsoOther && !running ? ` · ${otherName} ${counts[other].surah}/114` : ''}
           {prog?.failed ? ` · ${t({ en: `${prog.failed} failed — press Resume`, bn: `${prog.failed}টি ব্যর্থ — আবার চালান`, ar: `فشل ${prog.failed} — اضغط استئناف` })}` : ''}
         </p>
+        <label className="mt-3 flex items-center justify-between gap-4 text-sm"><span>{t({ en: `Also save the ${otherName} pages`, bn: `${otherName} পৃষ্ঠাও সংরক্ষণ করুন`, ar: `احفظ أيضًا صفحات ${otherName}` })}</span><Switch aria-label={t({ en: `Also download the ${otherName} pages`, bn: `${otherName} পৃষ্ঠাও ডাউনলোড করুন`, ar: `نزّل أيضًا صفحات ${otherName}` })} checked={alsoOther} onCheckedChange={(v) => { alsoTouched.current = true; setAlsoOther(v) }} disabled={!!running} /></label>
         <label className="mt-3 flex items-center justify-between gap-4 text-sm"><span>{t({ en: 'Also save the 30 juz pages', bn: '৩০ পারার পৃষ্ঠাও সংরক্ষণ করুন', ar: 'احفظ أيضًا صفحات الأجزاء الثلاثين' })}</span><Switch checked={withJuz} onCheckedChange={setWithJuz} disabled={!!running} /></label>
         <div className="mt-4 flex flex-wrap gap-2">
           {running ? (
             <button onClick={() => void cancelPagesDownload()} className={cn(btn, 'border')}><X className="size-4" />{t({ en: 'Cancel', bn: 'বাতিল', ar: 'إلغاء' })}</button>
           ) : (
             <button onClick={startPages} disabled={swOk === false} className={cn(btn, 'bg-primary text-primary-foreground')}>
-              <Download className="size-4" />{complete && (!withJuz || juzCached === 30) ? t({ en: 'Update', bn: 'আপডেট', ar: 'تحديث' }) : pagesCached > 0 ? t({ en: 'Resume download', bn: 'ডাউনলোড চালিয়ে যান', ar: 'استئناف التنزيل' }) : t({ en: 'Download Quran', bn: 'কুরআন ডাউনলোড', ar: 'تنزيل القرآن' })}
+              <Download className="size-4" />{complete && (!withJuz || active.every((l) => counts[l].juz === 30)) ? t({ en: 'Update', bn: 'আপডেট', ar: 'تحديث' }) : activeSaved > 0 ? t({ en: 'Resume download', bn: 'ডাউনলোড চালিয়ে যান', ar: 'استئناف التنزيل' }) : t({ en: 'Download Quran', bn: 'কুরআন ডাউনলোড', ar: 'تنزيل القرآن' })}
             </button>
           )}
-          {(pagesCached > 0 || juzCached > 0) && !running && (
+          {(counts.en.surah + counts.bn.surah > 0 || counts.en.juz + counts.bn.juz > 0) && !running && (
             <button onClick={() => void deleteDownloadedPages().then(refresh)} className={cn(btn, 'border text-muted-foreground')}><Trash2 className="size-4" />{t({ en: 'Remove', bn: 'মুছুন', ar: 'إزالة' })}</button>
           )}
         </div>

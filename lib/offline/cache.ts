@@ -7,6 +7,23 @@ export const EST_PAGES_MB = 65
 /** Approx. size of the whole Quran as 128 kbps chapter mp3s. */
 export const EST_AUDIO_ALL_MB = 360
 
+/** Which page languages ("en" = /x pages, "bn" = /bn/x pages) the user asked to download — mirrors what is in Cache Storage; kept so "Update" re-downloads the same set. */
+export const LOCALES_KEY = 'noor-offline-locales'
+export type DlLocale = 'en' | 'bn'
+export function getDownloadedLocales(): DlLocale[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(LOCALES_KEY) || '[]')
+    return Array.isArray(v) ? v.filter((x): x is DlLocale => x === 'en' || x === 'bn') : []
+  } catch {
+    return []
+  }
+}
+/** Adds to the stored set (a later download of the other language does not forget the first). */
+export function markDownloadedLocales(add: DlLocale[]) {
+  try { localStorage.setItem(LOCALES_KEY, JSON.stringify([...new Set([...getDownloadedLocales(), ...add])])) } catch { /* private mode */ }
+}
+export const clearDownloadedLocales = () => { try { localStorage.removeItem(LOCALES_KEY) } catch { /* ignore */ } }
+
 export const hasCacheApi = () => typeof caches !== 'undefined'
 
 /** Find the current versioned cache ('pages' | 'assets' | 'api'), highest version wins. */
@@ -32,6 +49,7 @@ export async function cachedPagePaths(): Promise<Set<string>> {
 }
 
 export async function deleteDownloadedPages() {
+  clearDownloadedLocales()
   if (!hasCacheApi()) return
   for (const k of await caches.keys()) if (/^noor-v2[A-Za-z0-9]*-pages$/.test(k) || k === 'noor-downloads-v1' || k === 'noor-downloads-assets-v1') await caches.delete(k)
 }

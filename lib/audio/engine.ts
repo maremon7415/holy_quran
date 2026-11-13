@@ -132,6 +132,7 @@ export class AudioEngine {
     const s = usePlayer.getState()
     if (!s.queue || !s.currentKey) return
     this.loaded = null
+    this.revokeLocal()
     if (s.status !== 'paused') usePlayer.getState()._set({ status: 'loading' })
     void this.sync(false)
   }
@@ -171,6 +172,8 @@ export class AudioEngine {
     this.loaded = null
     this.loading = true
     this.safePause()
+    // a new load always supersedes the previous blob: URL (reciter change, next surah, per-ayah fallback, ayah-only reciter)
+    this.revokeLocal()
     const count = ayahCount(surah)
 
     if (r.chapter && !this.ayahOnly.has(`${rid}:${surah}`)) {
@@ -198,6 +201,8 @@ export class AudioEngine {
         return true
       } catch {
         if (token !== this.token) return false
+        // the blob: URL (if any) belongs to the failed chapter load — release it before falling back / giving up
+        this.revokeLocal()
         if (typeof navigator !== 'undefined' && !navigator.onLine) {
           // offline and nothing downloaded for this surah/reciter
           toast.info(tx(lng(), { en: 'You’re offline and this recitation isn’t downloaded. Download it in Settings → Offline & downloads to listen without internet.', bn: 'আপনি অফলাইনে আছেন। এই তিলাওয়াত ডাউনলোড করা নেই — সেটিংস → অফলাইন ও ডাউনলোড থেকে ডাউনলোড করুন।', ar: 'أنت غير متصل وهذه التلاوة غير مُنزَّلة. نزّلها من الإعدادات ← دون إنترنت والتنزيلات لتستمع بلا اتصال.' }))

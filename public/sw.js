@@ -1,15 +1,19 @@
 /* Noor Quran service worker — offline reading, offline downloads, prayer reminders.
  *
- * Caches (versioned by VERSION = noor-v2 + the build id passed as /sw.js?v=<id>; every deploy therefore gets a new SW and
- * activate wipes all older noor-* caches except noor-audio-v1, so stale HTML can never reference deleted chunks):
+ * Caches (versioned by VERSION = noor-v2 + the build id passed as /sw.js?v=<id>; every deploy therefore gets a new SW. A new SW
+ * does NOT skipWaiting on its own: the page shows an "Update available — Reload" toast and posts noor:skip-waiting. Older
+ * versioned caches are retired after a 24h grace period (not at activate) and stay readable by the fetch handler meanwhile, so
+ * tabs still running the previous build can lazy-load their chunks instead of hitting ChunkLoadError):
  *   {V}-core    precache (/, /quran, /offline) — never trimmed
  *   {V}-pages   pages you visited (network-first, 3s timeout, bounded)
- *   noor-downloads-v1 / noor-downloads-assets-v1  pages + assets stored by "Download the whole Quran" (UNversioned, never trimmed, refreshed in the background after a deploy)
+ *   noor-downloads-v1 / noor-downloads-assets-v1  pages + assets stored by "Download the whole Quran" (UNversioned, never trimmed; both /x and /bn/x
+ *      pages. A downloaded page is refreshed lazily the next time it is visited online (only the chunks it newly needs are fetched); a
+ *      full background refresh only runs on an unmetered-looking connection (no saveData, not 2g/3g), at most every 3 days)
  *   {V}-assets  _next/static, icons, fonts (cache-first, bounded)
  *   {V}-api     api.quran.com / api.qurancdn.com JSON (stale-while-revalidate, bounded)
  *   noor-audio-v1   recitation mp3s saved by the page (NOT versioned — survives deploys; only the page writes to it)
  *
- * Messages (page -> SW): noor:dl-start {jobId, urls, force?} · noor:dl-cancel · noor:prayer-check
+ * Messages (page -> SW): noor:dl-start {jobId, urls, force?} · noor:dl-cancel · noor:prayer-check · noor:skip-waiting · noor:refresh-downloads
  * Progress (SW -> page): BroadcastChannel "noor-offline" {type:'progress', jobId, phase, state, done, total, bytes, failed, current}
  * Prayer reminders: the page mirrors the next 7 days of reminders into IndexedDB (db noor-offline, store kv, key prayer-schedule);
  * on `periodicsync` ("prayer-check") the SW shows the ones that are due. */
@@ -17,7 +21,7 @@ const BUILD = ((new URL(self.location.href)).searchParams.get('v') || 'dev').rep
 const VERSION = `noor-v2${BUILD}`
 const CORE = `${VERSION}-core`
 const PAGES = `${VERSION}-pages`
-// Offline-download caches are NOT versioned: they survive deploys and are refreshed in the background (refreshDownloads).
+// Offline-download caches are NOT versioned: they survive deploys and are refreshed lazily (refreshDownloadedPage) or, on unmetered links, in the background (refreshDownloads).
 const DL = 'noor-downloads-v1' // downloaded page HTML
 const DLA = 'noor-downloads-assets-v1' // every _next asset those pages reference (kept self-consistent with DL)
 const ASSETS = `${VERSION}-assets`
@@ -31,8 +35,8 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CORE)
       .then((c) => Promise.allSettled(PRECACHE.map((u) => c.add(u).catch(() => {}))))
-      .then(() => warmCore())
-      .then(() => self.skipWaiting()),
+      .then(() => warmCore()),
+    // no skipWaiting here: an updated SW waits until the user accepts the "Update available" toast (noor:skip-waiting) or all old tabs close
   )
 })
 
@@ -52,12 +56,38 @@ async function warmCore() {
 }
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('noor-') && !KEEP.has(k)).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim()),
-  )
+  e.waitUntil(retireOldCaches().catch(() => {}).then(() => self.clients.claim()))
 })
+
+/** Older versioned caches are kept for GRACE after the first activate that sees them (tabs of the previous build may still lazy-load chunks from them); then deleted. */
+const GRACE = 24 * 60 * 60 * 1000
+async function retireOldCaches() {
+  const old = (await caches.keys()).filter((k) => k.startsWith('noor-') && !KEEP.has(k))
+  const seen = (await idbRun('kv', 'readonly', (s) => s.get('retired-caches')).catch(() => undefined)) || {}
+  const now = Date.now()
+  const next = {}
+  for (const k of old) {
+    const at = typeof seen[k] === 'number' ? seen[k] : now
+    if (now - at >= GRACE) await caches.delete(k)
+    else next[k] = at
+  }
+  await idbRun('kv', 'readwrite', (s) => s.put(next, 'retired-caches')).catch(() => {})
+}
+
+/** false on metered / slow links: Save-Data on, or an effective connection type of slow-2g / 2g / 3g. Unknown (no Network Information API) counts as fine. */
+function dataOk() {
+  const c = self.navigator && self.navigator.connection
+  if (!c) return true
+  if (c.saveData === true) return false
+  return !/^(slow-2g|2g|3g)$/.test(c.effectiveType || '')
+}
+
+/** /bn/x <-> /x : the other-language twin of a path (used when only the twin is cached). */
+function twinPath(pathname) {
+  if (pathname === '/bn') return '/'
+  if (pathname.startsWith('/bn/')) return pathname.slice(3)
+  return pathname === '/' ? '/bn' : '/bn' + pathname
+}
 
 const trim = async (name, max) => {
   const c = await caches.open(name)
@@ -97,7 +127,8 @@ self.addEventListener('fetch', (e) => {
   if (url.pathname.startsWith('/_next/static') || /\.(png|svg|woff2?|ttf|ico|webp|jpg)$/.test(url.pathname)) {
     e.respondWith(
       caches.open(ASSETS).then(async (c) => {
-        const hit = (await c.match(req)) || (await (await caches.open(DLA)).match(req))
+        // current assets -> downloaded assets -> any other cache (previous builds' assets during their grace period)
+        const hit = (await c.match(req)) || (await (await caches.open(DLA)).match(req)) || (await caches.match(req))
         if (hit) return hit
         const res = await fetch(req)
         if (cacheable(res)) { c.put(req, res.clone()); trim(ASSETS, 1500) }
@@ -108,17 +139,20 @@ self.addEventListener('fetch', (e) => {
   }
 
   if (req.mode === 'navigate' || req.headers.get('accept')?.includes('text/html')) {
-    e.respondWith(navigate(req, url))
+    e.respondWith(navigate(req, url, e))
   }
 })
 
 /** Network-first with a short timeout: a flaky connection falls back to the cached copy instead of hanging. */
-async function navigate(req, url) {
+async function navigate(req, url, e) {
   if (PRIVATE.test(url.pathname)) return fetch(req).catch(async () => (await caches.match('/offline')) || Response.error())
   const network = fetch(req).then((res) => {
     if (cacheable(res)) {
       const copy = res.clone()
       caches.open(PAGES).then((c) => c.put(req, copy).then(() => trim(PAGES, 300)))
+      // a downloaded page that is visited online is refreshed for free (we already have the new HTML)
+      const fresh = res.clone()
+      try { e.waitUntil(refreshDownloadedPage(url, fresh).catch(() => {})) } catch (_) {}
     }
     return res
   })
@@ -134,6 +168,10 @@ async function navigate(req, url) {
   }
   const cached = (await caches.match(req)) || (await caches.match(url.pathname)) || (await caches.match(url.origin + url.pathname))
   if (cached) return cached
+  // only the other-language twin is saved (e.g. /bn/surah/x requested, /surah/x downloaded): a page in the other language beats the offline page
+  const twin = twinPath(url.pathname)
+  const twinHit = (await caches.match(twin + url.search)) || (await caches.match(twin))
+  if (twinHit) return twinHit
   // nothing cached: if we only timed out, keep waiting for the network; otherwise show the offline page
   try { return await network } catch { /* offline */ }
   return (await caches.match('/offline')) || Response.error()
@@ -148,24 +186,102 @@ self.addEventListener('message', (e) => {
   const d = e.data || {}
   if (d.type === 'noor:dl-start') e.waitUntil(runDownload(d))
   else if (d.type === 'noor:dl-cancel') job.cancel = true
-  else if (d.type === 'noor:refresh-downloads') e.waitUntil(refreshDownloads())
+  else if (d.type === 'noor:refresh-downloads') e.waitUntil(refreshDownloads().then(() => retireOldCaches()).catch(() => {}))
+  else if (d.type === 'noor:skip-waiting') self.skipWaiting()
   else if (d.type === 'noor:prayer-check') e.waitUntil(checkPrayers(true))
   else if (d.type === 'noor:ping') post({ type: 'pong', running: job.running })
 })
 
-/** After a deploy: re-fetch every downloaded page + newly referenced chunks (throttled), then prune unreferenced assets. Once per build. */
+const DAY = 24 * 60 * 60 * 1000
+const stamp = (h) => { const o = cleanHeaders(h); o.set('x-noor-build', BUILD); return o }
+
+/** Lazy refresh: a downloaded page that the user opens online replaces its stored copy; only chunks it newly references are added (no full re-download). */
+async function refreshDownloadedPage(url, res) {
+  const dl = await caches.open(DL)
+  const key = url.pathname + url.search
+  const old = await dl.match(key)
+  if (!old || old.headers.get('x-noor-build') === BUILD) return
+  const blob = await res.blob()
+  await dl.put(new Request(key), new Response(blob, { status: 200, statusText: 'OK', headers: stamp(res.headers) }))
+  await warmAssets(pageAssetUrls(await blob.text()))
+}
+
+/** Make sure the downloaded-assets cache holds `urls` (+ the lazy chunks / fonts they reference). Copies from the runtime cache when possible;
+ *  only goes to the network when the connection looks unmetered. Already-stored files are skipped, so a deploy costs just its delta. */
+async function warmAssets(urls) {
+  const dla = await caches.open(DLA)
+  const queue = [...urls]
+  const seen = new Set(queue)
+  for (let i = 0; i < queue.length && i < 400; i++) {
+    const u = queue[i]
+    let res = await dla.match(u)
+    if (res) continue
+    res = (await caches.match(u)) // current / previous runtime asset cache
+    if (!res && dataOk()) {
+      try { res = await fetch(u) } catch (_) { res = null }
+    }
+    if (!res || !cacheable(res)) continue
+    const blob = await res.blob()
+    await dla.put(new Request(u), new Response(blob, { status: 200, headers: cleanHeaders(res.headers) }))
+    if (/\.(css|js)(\?|$)/.test(u)) {
+      const text = await blob.text()
+      const more = /\.css(\?|$)/.test(u) ? cssUrls(text, self.location.origin + u) : [...pageAssetUrls(text)]
+      for (const f of more) if (!seen.has(f)) { seen.add(f); queue.push(f) }
+    }
+  }
+}
+
+/** Background refresh of downloaded pages that are still on an older build. Only on an unmetered-looking connection, once per build and at most every 3 days. */
 async function refreshDownloads() {
-  if (job.running) return
+  if (job.running || !dataOk() || (self.navigator && self.navigator.onLine === false)) return
   try {
-    const last = await idbRun('kv', 'readonly', (s) => s.get('downloads-build')).catch(() => undefined)
-    if (last === BUILD) return
+    const last = await idbRun('kv', 'readonly', (s) => s.get('downloads-refresh')).catch(() => undefined)
+    if (last && (last.build === BUILD || Date.now() - last.at < 3 * DAY)) return
     const dl = await caches.open(DL)
-    const urls = (await dl.keys()).map((r) => { const u = new URL(r.url); return u.pathname + u.search })
-    if (!urls.length) { await idbRun('kv', 'readwrite', (s) => s.put(BUILD, 'downloads-build')).catch(() => {}); return }
-    await runDownload({ jobId: 'refresh-' + BUILD, urls, force: true, refresh: true })
-    // only mark done if it finished cleanly (the job reports via BroadcastChannel; check by re-running cheaply next time otherwise)
-    if (!job.cancel && lastRefreshOk) await idbRun('kv', 'readwrite', (s) => s.put(BUILD, 'downloads-build')).catch(() => {})
+    const stale = []
+    for (const r of await dl.keys()) {
+      const hit = await dl.match(r)
+      if (hit && hit.headers.get('x-noor-build') !== BUILD) { const u = new URL(r.url); stale.push(u.pathname + u.search) }
+    }
+    if (stale.length) {
+      lastRefreshOk = false
+      await runDownload({ jobId: 'refresh-' + BUILD, urls: stale, force: true, refresh: true })
+      if (job.cancel || !lastRefreshOk) return
+    }
+    await idbRun('kv', 'readwrite', (s) => s.put({ build: BUILD, at: Date.now() }, 'downloads-refresh')).catch(() => {})
+    await pruneDownloadAssets()
   } catch (_) {}
+}
+
+/** Drop stored chunks that no downloaded page references any more (page -> js/css -> lazy chunks / fonts closure). Never prunes when no page is stored. */
+async function pruneDownloadAssets() {
+  const lastAt = await idbRun('kv', 'readonly', (s) => s.get('downloads-prune-at')).catch(() => undefined)
+  if (typeof lastAt === 'number' && Date.now() - lastAt < 14 * DAY) return
+  const dl = await caches.open(DL)
+  const assets = await caches.open(DLA)
+  const pages = await dl.keys()
+  if (!pages.length) return
+  const need = new Set()
+  for (const r of pages) {
+    const hit = await dl.match(r)
+    if (!hit) return // incomplete picture: do not prune
+    for (const a of pageAssetUrls(await hit.text())) need.add(a)
+  }
+  const queue = [...need]
+  for (let i = 0; i < queue.length; i++) {
+    const u = queue[i]
+    if (!/\.(css|js)(\?|$)/.test(u)) continue
+    const res = await assets.match(u)
+    if (!res) continue
+    const text = await res.text()
+    const more = /\.css(\?|$)/.test(u) ? cssUrls(text, self.location.origin + u) : [...pageAssetUrls(text)]
+    for (const f of more) if (!need.has(f)) { need.add(f); queue.push(f) }
+  }
+  for (const k of await assets.keys()) {
+    const u = new URL(k.url)
+    if (!need.has(u.pathname + u.search)) await assets.delete(k)
+  }
+  await idbRun('kv', 'readwrite', (s) => s.put(Date.now(), 'downloads-prune-at')).catch(() => {})
 }
 let lastRefreshOk = false
 
@@ -228,7 +344,7 @@ async function runDownload({ jobId, urls, force, refresh }) {
             if (!cacheable(res)) throw new Error('bad response ' + res.status)
             const blob = await res.blob()
             bytes += blob.size
-            await dl.put(req, new Response(blob, { status: 200, statusText: 'OK', headers: cleanHeaders(res.headers) }))
+            await dl.put(req, new Response(blob, { status: 200, statusText: 'OK', headers: stamp(res.headers) }))
             text = await blob.text()
           }
           for (const a of pageAssetUrls(text)) assetSet.add(a)
@@ -288,13 +404,6 @@ async function runDownload({ jobId, urls, force, refresh }) {
       }
     }
     await Promise.all([aworker(), aworker(), aworker()])
-    if (refresh && !job.cancel && failed === 0 && assetSet.size) {
-      // drop chunks no downloaded page references any more (assetSet is the full closure: pages -> js/css -> lazy chunks/fonts)
-      for (const k of await assets.keys()) {
-        const u = new URL(k.url)
-        if (!assetSet.has(u.pathname + u.search)) await assets.delete(k)
-      }
-    }
     lastRefreshOk = !job.cancel && failed === 0
     report('assets', job.cancel ? 'cancelled' : 'done')
   } catch (e) {

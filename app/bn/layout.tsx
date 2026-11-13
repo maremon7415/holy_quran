@@ -14,6 +14,8 @@ export const metadata: Metadata = {
 export default function BnLayout({ children }: { children: React.ReactNode }) {
   return (
     <LocaleProvider locale="bn">
+      {/* The shared root layout still emits <html lang="en"> (see docs/ARCHITECTURE.md); React hoists this into <head> so pre-JS consumers get the language. */}
+      <meta httpEquiv="content-language" content="bn" />
       <div lang="bn">{children}</div>
     </LocaleProvider>
   )

@@ -4,12 +4,13 @@ import Link from '@/lib/i18n/link'
 import { chapters, surahHref } from '@/lib/quran/chapters'
 import { cachedPagePaths } from '@/lib/offline/cache'
 import { useTx } from '@/lib/lang'
+import { localeHref } from '@/lib/i18n/routes'
 
 /** Lists the surahs that are stored on this device (used on the offline fallback page). */
 export function SavedSurahs() {
   const t = useTx()
   const [ids, setIds] = useState<number[] | null>(null)
-  useEffect(() => { void cachedPagePaths().then((p) => setIds(chapters.filter((c) => p.has(surahHref(c.id))).map((c) => c.id))) }, [])
+  useEffect(() => { void cachedPagePaths().then((p) => setIds(chapters.filter((c) => p.has(surahHref(c.id)) || p.has(localeHref('bn', surahHref(c.id)))).map((c) => c.id))) }, [])
   if (!ids) return null
   return (
     <div className="mt-8 w-full text-start">

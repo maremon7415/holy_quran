@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { fmtBytes, findCache, cachedPagePaths, deleteDownloadedPages, hasCacheApi, AUDIO_CACHE, CHANNEL } from '@/lib/offline/cache'
-import { allPagePaths } from '@/lib/offline/pages'
+import { allPagePaths, allPagePathsFor } from '@/lib/offline/pages'
 import { audioKey, metaUrl } from '@/lib/offline/audio-cache'
 import { chapters } from '@/lib/quran/chapters'
 
@@ -41,6 +41,21 @@ describe('allPagePaths', () => {
     expect(all).toContain('/juz/1')
     expect(all).toContain('/juz/30')
     expect(new Set(all).size).toBe(all.length)
+  })
+})
+
+describe('allPagePaths for Bangla', () => {
+  it('lists the /bn twins (offline page shared) and combines locales without duplicates', () => {
+    const bn = allPagePaths(true, 'bn')
+    expect(bn.slice(0, 2)).toEqual(['/bn/quran', '/offline'])
+    expect(bn).toHaveLength(2 + 114 + 30)
+    expect(bn).toContain('/bn/surah/al-fatihah')
+    expect(bn).toContain('/bn/juz/30')
+    expect(bn.filter((p) => !p.startsWith('/bn/') && p !== '/offline')).toEqual([])
+    const both = allPagePathsFor(false, ['en', 'bn'])
+    expect(both).toHaveLength(2 * (1 + 114) + 1)
+    expect(both.filter((p) => p === '/offline')).toHaveLength(1)
+    expect(allPagePathsFor(false, ['en'])).toEqual(allPagePaths(false))
   })
 })
 
