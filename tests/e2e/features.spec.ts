@@ -6,7 +6,11 @@ async function gradeRecall(page: Page, grade: RegExp) {
   const btn = page.getByRole('button', { name: grade })
   const reveal = page.getByRole('button', { name: 'Reveal next word' })
   for (let i = 0; i < 80; i++) {
-    if (await btn.isVisible()) { await btn.click(); return }
+    if (await btn.isVisible()) {
+      // the bar re-renders while the previous chunk animates out; retry the click if it detaches
+      const ok = await btn.click({ timeout: 1500 }).then(() => true, () => false)
+      if (ok) return
+    }
     await reveal.click({ timeout: 500 }).catch(() => {})
   }
   throw new Error('grade bar never appeared')
@@ -33,6 +37,7 @@ test.describe('hifz studio', () => {
     await gradeRecall(page, /^Good/)
     await expect(page.getByText('2/2')).toBeVisible()
     await page.getByRole('button', { name: /4\. Recall/ }).click()
+    await expect(page.getByRole('button', { name: /^Good/ })).toBeHidden() // fresh chunk: nothing revealed yet
     await gradeRecall(page, /^Good/)
     await expect(page.getByRole('heading', { name: 'Session complete' })).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText(/4 ayahs? in memory/)).toBeVisible()

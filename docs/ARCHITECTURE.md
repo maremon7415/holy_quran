@@ -46,3 +46,11 @@ Next.js 16 (App Router, React 19, Turbopack), Tailwind CSS v4 (tokens in `app/gl
 
 ## Layout
 `app/layout.tsx` renders `SiteHeader`, `MobileTabBar` (fixed bottom on < lg — leave ~6rem bottom padding on mobile pages), `SiteFooter`, `CommandPalette`, `PlayerRoot` (global audio player). Pages render inside `<main>`; use `mx-auto max-w-7xl px-4 sm:px-6` containers.
+
+## Testing & CI
+- **Unit / API** (`tests/unit`, vitest, `pnpm test`): pure logic in `lib/**`, route handlers called directly (`import { GET } from '@/app/api/search/route'`), data-integrity checks over `data/quran` + `data/content`. `server-only` is aliased to a stub (`tests/helpers/server-only.ts`). Files that need a timezone set `process.env.TZ` at the very top (see `hifz-streak-dst.test.ts`).
+- **E2E** (`tests/e2e`, Playwright, `pnpm test:e2e`): `baseURL` = `E2E_BASE_URL` (default `http://localhost:3100`). Import `test`/`expect` from `./fixtures` — it stubs third-party hosts, hides the Next dev overlay and exposes `problems` (page errors / console errors). Add a new main route to `MAIN_ROUTES` in `fixtures.ts` to put it under the console-error sweep; add it to `ROUTES` in `a11y.spec.ts` for axe.
+- **Conventions**: use roles/labels over CSS selectors; ayahs are `article[data-ayah="67:5"]`; reader prefs are `data-show-en|bn|tl` on `<html>`; persisted stores are in localStorage (`noor-hifz`, `noor-journey`, `noor-reader`, `quran-store`, `theme`). Wait for `networkidle` before interacting right after load (hydration). Never assert on Arabic with literal diacritics — match `/[\u0600-\u06FF]{3,}/`.
+- **Bugs**: a failing test that exposes a real bug is committed as `.skip`/`.fixme` with `// BUG: file:line — repro`; un-skip it in the PR that fixes the bug.
+- **A11y**: serious/critical axe violations must be fixed or listed in `tests/e2e/a11y-known-issues.json` (the list may only shrink).
+- **CI**: `.github/workflows/ci.yml` (typecheck, unit, `validate:content`, build, e2e on chromium) on PRs and `master`; `.github/workflows/content.yml` weekly `verify:hadith`. Run `pnpm check` locally before pushing.

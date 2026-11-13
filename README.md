@@ -44,3 +44,48 @@ Noor Quran works fully without an account: bookmarks, notes, progress, hifz and 
 Accounts are enabled only when both `MONGODB_URI` and a secret are present (`GET /api/auth/status` reports it); otherwise the sign-in UI is hidden and nothing errors. See `.env.example`.
 
 How sync works: on sign-in the device pulls the cloud copy, merges it with local data (bookmarks/favourites/duas unioned, reading history per day max, progress furthest, hifz cards latest review, khatam plans by id, preferences last-write-wins), then pushes. After that changes are pushed after a short debounce and on focus/online. `GET/PUT/DELETE /api/sync` (≤ 2 MB, optimistic `version`, 409 on conflict). Tests: `npx vitest run tests/unit/sync-*.test.ts` (the integration test uses `mongodb-memory-server`, and skips itself if no mongod binary can be downloaded).
+
+## Testing
+
+```bash
+pnpm check              # typecheck + unit tests + content validation (run before every PR; ~10 s)
+pnpm test               # vitest unit + API-route tests (tests/unit/**), ~3 s
+pnpm test:e2e           # Playwright, chromium (tests/e2e/**)
+pnpm validate:content   # every Quran ref in topics / duas / names resolves against data/quran
+pnpm verify:hadith      # checks hadith duas against the open hadith corpus (needs internet; weekly in CI)
+```
+
+**Unit tests** (`tests/unit`, vitest, node env) cover the pure logic: chapter/slug resolution, ref parsing, search ranking,
+SM-2 review math, khatam/page math, hifz streaks across DST (`TZ=America/New_York`), the HTML sanitizer against XSS
+payloads, reciter catalogue, SEO/JSON-LD builders, sync merge, **data integrity** (114 chapters, 6,236 verses, juz map covers
+each verse exactly once, all content refs and slugs valid) and the API route handlers called directly with a `Request`.
+`server-only` is stubbed in `vitest.config.ts` so server modules can be imported.
+
+**E2E tests** (`tests/e2e`, Playwright) drive a real browser: home, command palette, reader (settings, themes, deep links,
+keyboard), single-ayah SEO (JSON-LD, canonical, real 404s), topics/duas/names (+ quiz), search, `/saved`, hifz session,
+khatam planner, prayer times with geolocation (Dhaka), mobile tab bar, sitemap/robots/llms.txt, a console-error sweep over the
+main routes, axe accessibility audits and loose performance budgets. Requests to third-party hosts (quran.com API, audio
+CDNs) are stubbed by `tests/e2e/fixtures.ts`, so the suite is hermetic.
+
+```bash
+# against a running server (default http://localhost:3100; override with E2E_BASE_URL)
+E2E_BASE_URL=http://localhost:3000 pnpm test:e2e
+pnpm test:e2e tests/e2e/quran-reader.spec.ts       # one file
+pnpm test:e2e -g "command palette"                  # by title
+PW_CHROMIUM_PATH=/path/to/chrome pnpm test:e2e      # use a preinstalled chromium
+npx playwright install chromium                     # first run on a fresh machine
+```
+
+Prefer a **production build** for e2e (`pnpm build && pnpm start -p 3000`, then `E2E_BASE_URL=http://localhost:3000`):
+the dev server compiles routes lazily, which is slow and can flake under parallel workers (use `PW_WORKERS=2`).
+
+**Accessibility allow-list.** `tests/e2e/a11y.spec.ts` fails on any *serious/critical* axe violation that is not listed in
+`tests/e2e/a11y-known-issues.json` (route → rule id). The list is a tracked backlog, not a place to hide things: fix the
+app, then delete the entry. To regenerate after a large change: `A11Y_COLLECT=/tmp/a11y.ndjson pnpm test:e2e a11y`.
+
+**Known bugs** found by the tests are kept as `test.skip` / `test.fixme` with a `// BUG:` comment — grep for `BUG:`.
+
+**CI** (`.github/workflows/ci.yml`) runs on every PR and push to `master`: typecheck → unit tests → content validation
+(job `verify`), and `pnpm build` → Playwright e2e against `pnpm start` (job `e2e`; Playwright's `webServer` starts the app on
+port 3000). The HTML report and traces are uploaded as an artifact when e2e fails. `next build` needs no secrets;
+`NEXT_PUBLIC_SITE_URL` is a placeholder. `.github/workflows/content.yml` runs `verify:hadith` weekly.

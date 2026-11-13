@@ -15,6 +15,7 @@ for (const route of MAIN_ROUTES) {
     expect(res?.status(), `${route} status`).toBe(200)
     await page.waitForLoadState('networkidle')
     await expect(page.locator('#main')).toBeVisible()
+    expect(await page.locator('main').count(), `${route}: exactly one <main> landmark (no nested <main>)`).toBe(1)
     // let lazy effects (service worker registration, stores hydrating, intersection observers) run
     await page.waitForTimeout(500)
     expect(problems.list, `errors on ${route}`).toEqual([])
