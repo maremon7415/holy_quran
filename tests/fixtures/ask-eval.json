@@ -1,5 +1,5 @@
 {
-  "about": "Quality fixture for Ask the Quran (semantic search). Every expected ref was checked against data/quran (Saheeh International) before being added. split=tune queries were used to pick the hybrid weights; split=holdout queries were not looked at while tuning. Run: node --experimental-strip-types scripts/eval-ask.mjs",
+  "about": "Quality fixture for Ask the Quran (semantic search). Every expected ref was checked against data/quran (Saheeh International) before being added. split=tune queries were used to pick the hybrid weights; split=holdout queries were not looked at while tuning. Run: pnpm eval:ask (tests/eval/ask.eval.ts, real model; ASK_TUNE=1 grid-searches the hybrid weights on the tune split)",
   "queries": [
     { "id": "patience-en", "split": "tune", "lang": "en", "q": "what does Allah say about people who are patient in hardship?", "expected": ["2:153", "2:155", "2:156", "2:157", "39:10"] },
     { "id": "patience-bn", "split": "holdout", "lang": "bn", "q": "বিপদে ধৈর্য ধারণকারীদের সম্পর্কে আল্লাহ কী বলেন?", "expected": ["2:153", "2:155", "2:156", "2:157", "39:10"] },

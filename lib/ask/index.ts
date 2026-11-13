@@ -188,7 +188,7 @@ export async function askApi(question: string, opts: { lang?: AskLang; limit?: n
       score: g.score,
       similarity: g.similarity,
       matched: { words: g.why.words, topics: g.why.topics.map((t) => t.slug) },
-      ayahs: g.ayahs.map((a) => ({
+      ayahs: g.ayahs.map((a): { key: string; arabic: string; saheeh?: string; bangla?: string; uccharon?: string } => ({
         key: a.key, arabic: a.arabic,
         ...(lang === 'bn' ? { bangla: a.bn, ...(a.uccharon ? { uccharon: a.uccharon } : {}) } : lang === 'ar' ? {} : lang === 'en' ? { saheeh: a.en } : { saheeh: a.en, bangla: a.bn }),
       })),

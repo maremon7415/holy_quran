@@ -12,6 +12,7 @@ A fast, beautiful, SEO-first Quran web app: read, listen, understand and memoris
 - **Learn** – step-by-step guides (`/learn`): how to pray salah (Hanafi, with notes where schools differ), wudu with diagrams, 17 tajweed rules with coloured real Quran examples and audio, the six kalimas, and the Arabic alphabet with a practice quiz (en / bn / ar).
 - **Daily life** – prayer times, Qibla compass, Hijri calendar, tasbih counter, masayel.
 - **Search** – ⌘K command palette: surah names (EN/BN/AR), `2:255` references and full-text search across Arabic, English and Bangla.
+- **Ask the Quran** – `/ask`: ask a question in Bangla, English or Arabic and find verses by meaning (open EmbeddingGemma model, precomputed ayah vectors, hybrid word/topic boosts; optional on-device mode; graceful fallback to word search). Also `/api/v1/ask` and the MCP tool `ask_quran`. Eval: `pnpm eval:ask`.
 - **Share as image** – beautiful 1080×1350 ayah cards.
 - **SEO / AI visibility** – every surah, juz, topic, dua and name is pre-rendered; 6,236 single-ayah landing pages; JSON-LD (Book/Chapter, Quotation, FAQPage, BreadcrumbList, Article); sitemaps; `robots.txt` welcoming AI crawlers; `/llms.txt` and `/llms-full.txt`; dynamic OG images.
 - **Languages** – full UI in English, **Bangla** (`/bn/…` server-rendered twins of every content page, hreflang, Bangla uccharon = Arabic pronunciation in Bangla script shown by default, Bangla OG images where the glyphs shape correctly) and **Arabic** (RTL, mirrored layout, Arabic names for topics, duas, the 99 Names, reciters and famous ayahs).

@@ -105,6 +105,7 @@ export function AskClient({ initialQuery = '' }: { initialQuery?: string }) {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(text) } }}
           rows={2}
+          dir="auto"
           maxLength={300}
           autoComplete="off"
           placeholder={t({ en: 'Ask a question in English, Bangla or Arabic…', bn: 'বাংলা, ইংরেজি বা আরবিতে প্রশ্ন লিখুন…', ar: 'اكتب سؤالك بالعربية أو الإنجليزية أو البنغالية…' })}
@@ -117,7 +118,7 @@ export function AskClient({ initialQuery = '' }: { initialQuery?: string }) {
 
       <div className="mt-4 flex flex-wrap gap-2" aria-label={t({ en: 'Example questions', bn: 'উদাহরণ প্রশ্ন', ar: 'أسئلة مقترحة' })}>
         {examples.map((q) => (
-          <button key={q} type="button" onClick={() => ask(q)} lang={/[ঀ-৿]/.test(q) ? 'bn' : /[؀-ۿ]/.test(q) ? 'ar' : 'en'} className="lift rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-start text-sm hover:bg-accent">{q}</button>
+          <button key={q} type="button" dir="auto" onClick={() => ask(q)} lang={/[ঀ-৿]/.test(q) ? 'bn' : /[؀-ۿ]/.test(q) ? 'ar' : 'en'} className="lift rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-start text-sm hover:bg-accent">{q}</button>
         ))}
       </div>
 
