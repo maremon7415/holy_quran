@@ -94,14 +94,16 @@ export function buildMeta(m: { title: string; description: string; path: string;
   if (m.markdown) alternates.types = markdownAlternate(alternates.canonical)
   const url = absoluteUrl(alternates.canonical)
   const ogLocale = locale === 'bn' ? 'bn_BD' : site.locale
+  // every page gets a share image: the page's own, else the site card (Bangla card on /bn)
+  const ogImage = m.ogImage ?? (locale === 'bn' ? '/bn/opengraph-image' : '/opengraph-image')
   const altLocales = locale === 'bn' ? ['en_US'] : [...site.alternateLocales]
   return {
     title: { absolute: m.title },
     description: m.description,
     keywords: m.keywords,
     alternates,
-    openGraph: { type: m.type ?? 'website', siteName: locale === 'bn' ? `${site.name} · নূর কুরআন` : site.name, title: m.title, description: m.description, url, locale: ogLocale, alternateLocale: altLocales, ...(m.ogImage ? { images: [{ url: m.ogImage, width: 1200, height: 630 }] } : {}) },
-    twitter: { card: 'summary_large_image', title: m.title, description: m.description, ...(m.ogImage ? { images: [m.ogImage] } : {}) },
+    openGraph: { type: m.type ?? 'website', siteName: locale === 'bn' ? `${site.name} · নূর কুরআন` : site.name, title: m.title, description: m.description, url, locale: ogLocale, alternateLocale: altLocales, images: [{ url: ogImage, width: 1200, height: 630 }] },
+    twitter: { card: 'summary_large_image', title: m.title, description: m.description, images: [ogImage] },
     ...(m.noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }

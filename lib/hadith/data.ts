@@ -3,7 +3,8 @@ import 'server-only'
 import raw from '@/data/hadith/index.json'
 import { COLLECTION_SLUGS, collectionMeta, type CollectionSlug } from './collections'
 
-export type BookRow = [n: number, name: string, first: number, last: number, count: number]
+/** [book, name, first number, last number, count, runs?]: `runs` = [start, end, start, end …] for the few books whose numbers are interleaved with another book's. */
+export type BookRow = [n: number, name: string, first: number, last: number, count: number, runs?: number[]]
 export interface CollectionIndex {
   first: number; last: number; count: number
   langs: { ar: number; en: number; bn: number }
@@ -74,9 +75,14 @@ export const bookRow = (slug: CollectionSlug, n: number): BookRow | undefined =>
 export function bookNumbers(slug: CollectionSlug, n: number): number[] | null {
   const b = bookRow(slug, n)
   if (!b) return []
-  const nums = numbersOf(slug)
-  if (nums) return null
+  if (numbersOf(slug)) return null
   const out: number[] = []
-  for (let k = b[2]; k <= b[3]; k++) if (isServable(slug, k)) out.push(k)
+  if (b[5]) { for (let i = 0; i < b[5].length; i += 2) for (let k = b[5][i]; k <= b[5][i + 1]; k++) if (isServable(slug, k)) out.push(k) } else for (let k = b[2]; k <= b[3]; k++) if (isServable(slug, k)) out.push(k)
   return out
+}
+
+/** The book a (non-Muslim) number belongs to; Muslim numbers may sit in two books, so callers use the entry's own reference there. */
+export function bookOfNumber(slug: CollectionSlug, n: number): BookRow | undefined {
+  const rows = index.collections[slug].books
+  return rows.find((b) => (b[5] ? b[5].some((_, i) => i % 2 === 0 && n >= b[5]![i] && n <= b[5]![i + 1]) : n >= b[2] && n <= b[3]))
 }

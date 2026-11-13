@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: '*', allow: ['/', '/api/v1/'], disallow: ['/api/'] },
       ...bots.map((userAgent) => ({ userAgent, allow: ['/', '/api/v1/'], disallow: ['/api/'] })),
     ],
-    sitemap: Array.from({ length: SITEMAP_COUNT }, (_, i) => `${site.url}/sitemap/${i}.xml`),
+    sitemap: [...Array.from({ length: SITEMAP_COUNT }, (_, i) => `${site.url}/sitemap/${i}.xml`), `${site.url}/sitemap-places.xml`],
     host: site.url,
   }
 }

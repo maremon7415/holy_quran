@@ -82,7 +82,8 @@ test.describe('AI & developer surfaces', () => {
     expect((await ldOf(page)).find((n) => n['@type'] === 'Chapter').sameAs[0]).toMatch(/wikidata/)
     await page.goto('/bn/names-of-allah/ar-rahman')
     const term = (await ldOf(page)).find((n) => n['@type'] === 'DefinedTerm')
-    expect(term.inLanguage).toBe('bn')
+    expect(term.name).toMatch(/[\u0980-\u09FF]/) // Bangla variant on /bn
+    expect(term.inDefinedTermSet.url).toMatch(/\/bn\/names-of-allah$/)
     await page.goto('/bn/topics/patience')
     await expect(page.locator('#quick-answer')).toContainText(/কুরআন/)
   })

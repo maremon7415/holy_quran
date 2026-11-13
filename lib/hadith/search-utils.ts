@@ -16,7 +16,11 @@ export const detectLang = (q: string): HadithLang => (isArabic(q) ? 'ar' : isBan
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /** Bangla vowel signs often vary (হাদিস / হাদীস): let ি match ী and ু match ূ. */
-const bnPattern = (t: string) => esc(t.normalize('NFC')).replace(/[িী]/g, '[িী]').replace(/[ুূ]/g, '[ুূ]').replace(/[‌‍]/g, '')
+const bnPattern = (t: string) => esc(t.normalize('NFC').replace(/[\u200c\u200d]/g, ''))
+  .replace(/[িী]/g, '[িী]')
+  .replace(/[ুূ]/g, '[ুূ]')
+  // য় is stored either as য + nukta or precomposed, and is often doubled in spelling (নিয়ত / নিয়্যত / নিয়্যাত)
+  .replace(new RegExp('য'+String.fromCharCode(0x9bc), 'g'), '(?:য'+String.fromCharCode(0x9bc)+'|'+String.fromCharCode(0x9df)+')(?:'+String.fromCharCode(0x9cd)+'য)?া?')
 
 export interface Query {
   raw: string
@@ -28,7 +32,7 @@ export interface Query {
 }
 
 export function parseQuery(raw: string, lang: HadithLang = detectLang(raw)): Query {
-  const cleaned = raw.replace(/[‌‍]/g, '').trim().slice(0, 200)
+  const cleaned = raw.replace(/[\u200c\u200d]/g, '').trim().slice(0, 200)
   let words: string[]
   let phrase: string
   if (lang === 'ar') {
@@ -102,23 +106,39 @@ const AR_NAMES: [RegExp, CollectionSlug][] = [
   [/قدسي|القدسية/, 'qudsi40'],
 ]
 
+const EN_FILLER = new Set(['hadith', 'hadis', 'hadeeth', 'no', 'no.', 'number', 'num', 'sahih', 'sahih.', 'sunan', 'jami', 'jami`', "jami'", 'al', 'an', 'at', 'as', 'of', 'in', 'book', 'imam', 'the'])
+const BN_FILLER = /হাদিস|হাদীস|শরীফ|সহীহ|সহিহ|সুনানে|সুনান|জামে|ইমাম|নং|নম্বর|নাম্বার|এর|-/g
+const AR_FILLER = /صحيح|حديث|رقم|سنن|جامع|كتاب|ال(?=\s)|\bال\b/g
+
+/**
+ * "Sahih Bukhari hadith 1", "বুখারী হাদিস ১", "bukhari:7", "صحيح مسلم 2564" → a direct hadith reference.
+ * Deliberately strict: after removing filler words the rest must be exactly a collection name, so that
+ * "muslim women 100" or "hadith about prayer 5" stay ordinary searches.
+ */
 export function parseHadithReference(q: string): { collection: CollectionSlug; number: number } | null {
   const s = asciiDigits(q).trim().replace(/\s+/g, ' ')
   const nm = s.match(/(\d{1,5})(?!.*\d)/)
   if (!nm) return null
   const number = Number(nm[1])
-  const rest = (s.slice(0, nm.index) + ' ' + s.slice((nm.index ?? 0) + nm[1].length)).replace(/[:#/.,-]/g, ' ').replace(/\s+/g, ' ').trim()
+  const rest = (s.slice(0, nm.index) + ' ' + s.slice((nm.index ?? 0) + nm[1].length)).replace(/[:#/.,\-–—()]/g, ' ').replace(/\s+/g, ' ').trim()
   if (!rest) return null
   let slug: CollectionSlug | null = null
-  for (const [re, c] of [...BN_NAMES, ...AR_NAMES]) if (re.test(rest)) { slug = c; break }
-  if (!slug && /^[\x20-\x7e]+$/.test(rest)) {
-    const words = rest.toLowerCase().replace(/[’‘`´]/g, "'").split(' ').filter((w) => !['hadith', 'hadis', 'no', 'no.', 'number', 'num', 'sahih', 'sunan', 'jami', 'al', 'an', 'at', 'as', 'of', 'in', 'book'].includes(w))
-    // try progressively: whole remainder, then each word
-    slug = collectionFromName(words.join(' ')) ?? collectionFromName(rest.toLowerCase()) ?? words.map((w) => collectionFromName(w)).find(Boolean) ?? null
-    if (!slug && /nawawi/.test(rest.toLowerCase())) slug = 'nawawi40'
-    if (!slug && /qudsi/.test(rest.toLowerCase())) slug = 'qudsi40'
-    if (!slug && /abu\s*dawu?d|abi\s*dawu?d/.test(rest.toLowerCase())) slug = 'abudawud'
-    if (!slug && /ibn\s*maj/.test(rest.toLowerCase())) slug = 'ibnmajah'
+  if (/[\u0980-\u09FF]/.test(rest)) {
+    for (const [re, c] of BN_NAMES) {
+      const m = rest.match(re)
+      if (m && !rest.replace(re, ' ').replace(BN_FILLER, ' ').trim()) { slug = c; break }
+    }
+  } else if (/[\u0600-\u06FF]/.test(rest)) {
+    for (const [re, c] of AR_NAMES) {
+      const m = rest.match(re)
+      if (m && !rest.replace(re, ' ').replace(AR_FILLER, ' ').replace(/\s+/g, '').trim()) { slug = c; break }
+    }
+  } else {
+    const low = rest.toLowerCase().replace(/[’‘`´]/g, "'")
+    const words = low.split(' ').filter((w) => !EN_FILLER.has(w))
+    const name = words.join(' ')
+    if (!words.length) return null
+    slug = collectionFromName(name) ?? (/^(?:an-?)?nawawi(?:'?s)?(?: forty| 40)?$/.test(name) ? 'nawawi40' : /^(?:forty )?qudsi$|^hadith qudsi$/.test(name) ? 'qudsi40' : /^abu ?dawu?d$|^abi ?dawu?d$/.test(name) ? 'abudawud' : /^ibn ?maja?h?$/.test(name) ? 'ibnmajah' : null)
   }
   const meta = slug && collectionMeta(slug)
   if (!slug || !meta || number < 1 || number > meta.max) return null

@@ -13,7 +13,7 @@ import { lt } from '@/lib/i18n/lt'
 const copy = {
   en: {
     title: 'Noor Quran API for Developers: Quran, Duas & 99 Names JSON',
-    description: 'Free, keyless JSON API for the Quran (Arabic, English, Bangla, uccharon), authentic duas, Quran topics and the 99 Names of Allah. OpenAPI 3.1, CORS, markdown pages and an MCP server.',
+    description: 'Free, keyless JSON API for the Quran in Arabic, English & Bangla, authentic duas, topics and the 99 Names of Allah. OpenAPI 3.1, CORS, markdown and MCP.',
   },
   bn: {
     title: 'ডেভেলপারদের জন্য নূর কুরআন API: কুরআন, দোয়া ও ৯৯ নাম',

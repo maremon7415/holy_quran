@@ -1,13 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useLang, useMounted, useTx } from '@/lib/lang'
-import { fmtClock, zonedYmd, ymdKey, bnDigits } from '@/lib/places/times'
+import { fmtClock, zonedYmd, ymdKey, bnDigits } from '@/lib/places/dates'
 import { REMINDER_NAMES } from '@/lib/prayer/times'
 
 export interface LiveDay { date: string; fajr: number; dhuhr: number; asr: number; maghrib: number; isha: number; friday: boolean }
 const KEYS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const
 
-/** Live "next prayer" countdown for a city (client island). Also marks the current prayer card in the server-rendered grid (`[data-slot]`). */
+/** Live "next prayer" countdown for a city (client island). Also marks the current prayer card in the server-rendered grid (`[data-prayer]`). */
 export function CityLive({ tz, cityName, days }: { tz: string; cityName: string; days: LiveDay[] }) {
   const mounted = useMounted()
   const lang = useLang()
@@ -36,8 +36,8 @@ export function CityLive({ tz, cityName, days }: { tz: string; cityName: string;
 
   useEffect(() => {
     if (now == null) return
-    document.querySelectorAll<HTMLElement>('[data-slot]').forEach((el) => {
-      const s = el.dataset.slot
+    document.querySelectorAll<HTMLElement>('[data-prayer]').forEach((el) => {
+      const s = el.dataset.prayer
       if (s === current) el.setAttribute('data-current', 'true')
       else el.removeAttribute('data-current')
       if (s === next?.key || (s === 'dhuhr' && next?.key === 'jumuah')) el.setAttribute('data-next', 'true')

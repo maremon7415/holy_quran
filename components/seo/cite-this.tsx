@@ -30,10 +30,10 @@ export function CiteThis({ locale = 'en', className = '', ...input }: CiteInput 
       <dl className="mt-4 grid gap-3">
         {FORMATS.map((f) => (
           <div key={f.k} className="rounded-2xl bg-muted/50 p-3 sm:p-4">
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{bn ? f.bn : <T en={f.en} ar={f.ar} />}</dt>
-              <CopyButton text={c[f.k]} label={{ en: `Copy ${f.en}`, bn: `${f.bn} কপি`, ar: `نسخ ${f.ar}` }} className="py-1.5" />
-            </div>
+            <dt className="flex items-center justify-between gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              {bn ? f.bn : <T en={f.en} ar={f.ar} />}
+              <CopyButton text={c[f.k]} label={{ en: `Copy ${f.en}`, bn: `${f.bn} কপি`, ar: `نسخ ${f.ar}` }} className="py-1.5 normal-case tracking-normal" />
+            </dt>
             <dd lang="en" className="mt-1.5 break-words font-mono text-[13px] leading-relaxed text-foreground/85">{c[f.k]}</dd>
           </div>
         ))}

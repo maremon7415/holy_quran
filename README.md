@@ -35,6 +35,33 @@ Set `NEXT_PUBLIC_SITE_URL` to your production URL (used for canonical URLs, site
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for conventions.
 
+## SEO & AI visibility
+
+Noor is built to be the source search engines and AI assistants retrieve and cite for Quran ayahs, duas, the 99 Names and Quran topics.
+
+| Surface | Where | Notes |
+| --- | --- | --- |
+| **MCP server** | `POST /api/mcp` (docs: `/mcp`, `/bn/mcp`) | Streamable HTTP, stateless, no auth. Tools: `search_quran`, `get_ayah`, `get_surah`, `get_tafsir` (Quran.com, cached), `find_dua`, `get_topic_verses`, `get_name_of_allah`, plus `search`/`fetch` for ChatGPT connectors & deep research. Hadith tools plug in via `lib/mcp/providers.ts` (`HadithProvider`, `lib/mcp/extensions.ts`). |
+| **JSON API** | `/api/v1/ayah/{ref}`, `/surah/{id}`, `/surahs`, `/search?q=`, `/duas`, `/duas/{slug}`, `/topics`, `/topics/{slug}`, `/names`, `/names/{id}` | CORS `*`, `s-maxage=86400`, JSON errors with real 400/404. OpenAPI 3.1 at `/openapi.json`; human docs at `/developers`. |
+| **Markdown alternates** | append `.md` to any ayah, surah, juz, topic, dua or Name page (`/surah/al-baqarah/255.md`, `/bn/topics/patience.md`) | `proxy.ts` rewrites to `app/md/[...path]`; pages advertise `<link rel="alternate" type="text/markdown">`; listed in `llms.txt` / `llms-full.txt`. |
+| **Citations** | “Cite this” block on ayah, dua, name and topic pages | Plain / APA / MLA / Markdown, canonical URL. Short links `/2:255`, `/2/255`, `/2.255` → 308 to the ayah page. |
+| **Structured data** | `lib/seo/structured.ts`, `lib/seo/wikidata.ts` | Organization + WebSite (`sameAs` GitHub), Book/Chapter with Wikidata + Wikipedia `sameAs` for all 114 surahs (`lib/seo/wikidata-surahs.json`, rebuilt with `pnpm wikidata:surahs`, every mapping verified by ≥2 Wikidata signals), Quotation (+`isPartOf`, `citation`, `speakable`) for ayahs, DefinedTerm/DefinedTermSet for the 99 Names, Dataset on `/developers`, FAQPage, BreadcrumbList — Bangla variants on `/bn`. |
+| **Answer-first content** | topic “Quick answer”, ayah “Summary” (first sentences of the tafsir, attributed), surah “Key facts” | Server-rendered, built only from existing content (`lib/content/answers.ts`). |
+| **IndexNow** | key at `/{INDEXNOW_KEY}.txt`; `pnpm indexnow` (`scripts/indexnow.mjs`) | Submits every sitemap URL in batches of ≤ 10,000 to `api.indexnow.org` (Bing → ChatGPT search & Copilot, Yandex, Seznam). `.github/workflows/indexnow.yml` runs on manual dispatch, on push to `master` (after waiting for the deploy) and on a successful production `deployment_status`; it skips when the secrets are unset. |
+| **Verification** | `metadata.verification` from env | `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` (`msvalidate.01`), `YANDEX_VERIFICATION`. |
+
+| Variable | Where | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | deployment | Canonical origin for every URL and citation |
+| `INDEXNOW_KEY` | deployment **and** GitHub secret | IndexNow key file + submissions |
+| `SITE_URL` | GitHub secret (or shell) | Origin `pnpm indexnow` reads the sitemaps from |
+| `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` / `YANDEX_VERIFICATION` | deployment | Search-console verification meta tags |
+
+```bash
+INDEXNOW_KEY=… SITE_URL=https://your.site pnpm indexnow --dry-run   # list what would be submitted
+claude mcp add --transport http noor-quran https://your.site/api/mcp  # try the MCP server
+```
+
 ## Accounts & sync (optional)
 
 Noor Quran works fully without an account: bookmarks, notes, progress, hifz and preferences live in the browser. If you deploy with a MongoDB database, visitors can create an account and sync that data across devices (`/account`, Settings → Account & sync).

@@ -34,6 +34,18 @@ const BANGLA_LINKS = [
   { href: '/topics/anxiety', label: 'দুশ্চিন্তা দূর করার আয়াত' },
 ].map((l) => ({ ...l, href: localeHref('bn', l.href) }))
 
+/** Popular city timetables (static labels: the footer must not pull the 150-city dataset into every page). */
+const POPULAR_CITIES: { slug: string; label: Tr }[] = [
+  { slug: 'dhaka', label: { en: 'Dhaka', bn: 'ঢাকা', ar: 'دكا' } },
+  { slug: 'chattogram', label: { en: 'Chattogram', bn: 'চট্টগ্রাম', ar: 'شيتاغونغ' } },
+  { slug: 'sylhet', label: { en: 'Sylhet', bn: 'সিলেট', ar: 'سيلهيت' } },
+  { slug: 'rajshahi', label: { en: 'Rajshahi', bn: 'রাজশাহী', ar: 'راجشاهي' } },
+  { slug: 'khulna', label: { en: 'Khulna', bn: 'খুলনা', ar: 'خولنا' } },
+  { slug: 'london', label: { en: 'London', bn: 'লন্ডন', ar: 'لندن' } },
+  { slug: 'new-york', label: { en: 'New York', bn: 'নিউ ইয়র্ক', ar: 'نيويورك' } },
+  { slug: 'makkah', label: { en: 'Makkah', bn: 'মক্কা', ar: 'مكة المكرمة' } },
+]
+
 const C = {
   popularSurahs: { en: 'Popular Surahs', bn: 'জনপ্রিয় সূরা', ar: 'سور مختارة' },
   popular: { en: 'Popular', bn: 'জনপ্রিয়', ar: 'الأكثر زيارة' },
@@ -82,6 +94,15 @@ export function SiteFooter() {
           <a href={site.github} className="hover:text-foreground" rel="noopener">{t(C.github)}</a>
         </FooterCol>
       </div>
+      <nav aria-label={t({ en: 'Prayer times by city', bn: 'শহরভিত্তিক নামাজের সময়', ar: 'مواقيت الصلاة حسب المدينة' })} className="relative mx-auto mt-12 max-w-7xl px-4 sm:px-6">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground">{t({ en: 'Prayer times', bn: 'নামাজের সময়সূচি', ar: 'مواقيت الصلاة' })}</h2>
+        <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          {POPULAR_CITIES.map((c) => <li key={c.slug}><Link href={`/prayer-times/${c.slug}`} className="hover:text-foreground">{t(c.label)}</Link></li>)}
+          <li><Link href="/ramadan" className="hover:text-foreground">{t({ en: 'Ramadan timetable', bn: 'রমজানের সময়সূচি', ar: 'جدول رمضان' })}</Link></li>
+          <li><Link href="/hijri-date" className="hover:text-foreground">{t({ en: 'Hijri date today', bn: 'আজকের হিজরি তারিখ', ar: 'التاريخ الهجري' })}</Link></li>
+          <li><Link href="/zakat-calculator" className="hover:text-foreground">{t({ en: 'Zakat calculator', bn: 'যাকাত ক্যালকুলেটর', ar: 'حاسبة الزكاة' })}</Link></li>
+        </ul>
+      </nav>
       <div className="relative mx-auto mt-14 flex max-w-7xl flex-col gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
         <p>{t(C.credits)}</p>
         <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> {t({ en: site.name, bn: 'নূর কুরআন', ar: 'نور القرآن' })}</p>

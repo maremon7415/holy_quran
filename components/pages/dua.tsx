@@ -117,7 +117,7 @@ export async function duaMeta(locale: Locale, { params }: SlugProps): Promise<Me
     })
   }
   return buildMeta({
-    title: `${d.title.en} | Arabic, Meaning & Source | ${d.title.bn}`,
+    title: `${shortTitle(d.title.en)}: Arabic, Meaning & Source | ${shortTitle(d.title.bn)}`,
     description: clip(`${r.meaning.en} — ${d.source}. Arabic text, transliteration and Bangla meaning. ${r.meaning.bn}`, 165),
     path, type: 'article', markdown: true,
     keywords: [d.title.en, d.title.bn, ...(d.keywords ?? []), 'dua', 'দোয়া', 'dua meaning', 'dua in Arabic'],

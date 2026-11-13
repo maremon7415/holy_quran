@@ -64,6 +64,7 @@ Append \`.md\` to any ayah, surah, juz, topic, dua or Names page for clean markd
 - [99 Names of Allah](${u('/names-of-allah')}): meaning, explanation and Quran reference for each name
 - [Search](${u('/search?q=patience')}): full-text search in Arabic, English and Bangla (?q=)
 - [Listen](${u('/listen')}): recitation audio
+- [Prayer times by city](${u('/prayer-times')}): today's Fajr, Dhuhr, Asr, Maghrib, Isha, sehri and iftar, 30-day and monthly timetables for all 64 districts of Bangladesh and ~85 world cities, e.g. [Dhaka](${u('/prayer-times/dhaka')}), [Chattogram](${u('/prayer-times/chattogram')}), [London](${u('/prayer-times/london')}), [Makkah](${u('/prayer-times/makkah')}); [Ramadan sehri & iftar timetable](${u('/ramadan')}); [Today's Hijri date & converter](${u('/hijri-date')}); [Zakat calculator](${u('/zakat-calculator')})
 - [Hifz](${u('/hifz')}) · [Prayer times](${u('/prayer-times')}) · [Qibla](${u('/qibla')}) · [Hijri calendar](${u('/calendar')}) · [Dhikr counter](${u('/dhikr')})
 - [About, sources and credits](${u('/about')})
 
@@ -78,6 +79,7 @@ Append \`.md\` to any ayah, surah, juz, topic, dua or Names page for clean markd
 নূর কুরআনের প্রতিটি প্রধান পাতার একটি বাংলা সংস্করণ আছে \`/bn\` ঠিকানায় (একই slug, বাংলা শিরোনাম ও বিবরণ; hreflang দিয়ে সংযুক্ত)। বাংলাভাষী ব্যবহারকারীকে উদ্ধৃত করার সময় এই লিংকগুলো ব্যবহার করুন।
 Every main page has a Bangla version under /bn (same slugs, Bangla UI and headings, linked with hreflang).
 
+- [ঢাকার নামাজের সময়সূচি আজ](${ub('/prayer-times/dhaka')}) · [রমজানের সেহরি ও ইফতারের সময়সূচি](${ub('/ramadan')}) · [আজকের হিজরি তারিখ](${ub('/hijri-date')}) · [যাকাত ক্যালকুলেটর](${ub('/zakat-calculator')})
 - [হোম (বাংলা)](${ub('/')}) · [সম্পূর্ণ কুরআন](${ub('/quran')})
 - [আয়াতুল কুরসি বাংলা অর্থসহ](${ub('/surah/al-baqarah/255')}) · [সূরা ইয়াসিন](${ub('/surah/ya-sin')}) · [সূরা মুলক](${ub('/surah/al-mulk')})
 - [হাদিস সমগ্র](${ub('/hadith')}) · [সহীহ বুখারী ১](${ub('/hadith/bukhari/1')}) · [মুসলিম শরীফ](${ub('/hadith/muslim')})

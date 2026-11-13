@@ -57,14 +57,14 @@ export async function ayahMeta(locale: Locale, { params }: Props): Promise<Metad
   const { c, key, title } = titleFor(p.id, p.n)
   const v = (await getVerses(p.id))[p.n - 1]
   const bnRef = `সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} আয়াতের বাংলা উচ্চারণ ও অর্থ`
-  const description = `${c.nameSimple} ${key}: “${v.en.length > 140 ? v.en.slice(0, 137).replace(/\s+\S*$/, '') + '…' : v.en}” Arabic text, Bangla uccharon (pronunciation), transliteration, Bangla & English translation, word-by-word and tafsir. ${bnRef}।`
+  const description = `${c.nameSimple} ${key}: “${v.en.length > 80 ? v.en.slice(0, 77).replace(/\s+\S*$/, '') + '…' : v.en}” Arabic, English & Bangla, uccharon and tafsir.`
   const url = surahHref(p.id, p.n)
   if (locale === 'bn') {
     const f = getFamousAyah(key)
     const nick = f && !f.en.startsWith('Surah ') ? ` (${f.bn})` : ''
     const bnTitle = `সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} আয়াত${nick} — বাংলা উচ্চারণ ও অর্থ`
-    const short = v.bn.length > 150 ? v.bn.slice(0, 147).replace(/\s+\S*$/, '') + '…' : v.bn
-    const bnDesc = `সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.id)}:${toBanglaDigits(p.n)} এর বাংলা অর্থ: “${short}” আরবি, বাংলা উচ্চারণ, শব্দে শব্দে অর্থ ও তাফসীরসহ।`
+    const short = v.bn.length > 80 ? v.bn.slice(0, 77).replace(/\s+\S*$/, '') + '…' : v.bn
+    const bnDesc = `সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.id)}:${toBanglaDigits(p.n)} এর বাংলা অর্থ: “${short}” আরবি, বাংলা উচ্চারণ ও তাফসীরসহ।`
     return {
       title: { absolute: bnTitle },
       description: bnDesc,
@@ -75,8 +75,9 @@ export async function ayahMeta(locale: Locale, { params }: Props): Promise<Metad
     }
   }
   return {
-    title: { absolute: `${title} | ${bnRef}` },
+    title: { absolute: title },
     description,
+    keywords: [`Quran ${key}`, `Surah ${c.nameSimple} ayah ${p.n}`, bnRef],
     alternates: { ...alternatesFor(url, 'en'), types: markdownAlternate(url) },
     openGraph: { type: 'article', title, description, url, siteName: site.name, locale: 'en_US', alternateLocale: ['bn_BD', 'ar_SA'] },
     twitter: { card: 'summary_large_image', title, description },

@@ -68,23 +68,49 @@ for (const [slug, key] of Object.entries(COLLECTIONS)) {
   const nums = [...groups.keys()].sort((a, b) => a - b)
   const dead = nums.filter((n) => { const g = groups.get(n); return !g.ar && !g.en && !g.bn })
   const sectionNames = info[key].metadata.sections
-  // books from each hadith's own `reference.book` (robust for Muslim, where one number may sit in two books)
+  // books: each entry's `reference.book` when set; otherwise (the corpus has book 0 for hundreds of Bukhari / Nasa'i / Ibn
+  // Majah entries) the section whose hadithnumber range contains it, else the previous entry's book.
+  const sd = info[key].metadata.section_details
+  const named = (b) => !!sectionNames[b]?.trim()
+  let lastBook = -1
+  const bookOf = (h) => {
+    if (h.reference.book > 0) return (lastBook = h.reference.book)
+    for (const [b, r] of Object.entries(sd)) if (named(b) && r.hadithnumber_last > 0 && h.hadithnumber >= r.hadithnumber_first && h.hadithnumber <= r.hadithnumber_last) return (lastBook = Number(b))
+    return lastBook
+  }
   const bookMap = new Map()
   const seenBook = new Set()
   ara.forEach((h) => {
     const n = numOf(h)
     if (n == null || !(n >= 1)) return
-    const b = h.reference.book
+    const b = bookOf(h)
+    if (b < 0) throw new Error(`${slug} ${h.hadithnumber}: no book`)
     const k = `${b}:${n}`
     if (seenBook.has(k)) return
     seenBook.add(k)
     let e = bookMap.get(b)
-    if (!e) bookMap.set(b, (e = { first: n, last: n, count: 0 }))
-    e.first = Math.min(e.first, n); e.last = Math.max(e.last, n); e.count++
+    if (!e) bookMap.set(b, (e = { first: n, last: n, count: 0, nums: [] }))
+    e.first = Math.min(e.first, n); e.last = Math.max(e.last, n); e.count++; e.nums.push(n)
   })
   const books = [...bookMap.entries()].sort((a, b) => a[0] - b[0])
     .filter(([b]) => sectionNames[b] && (b > 0 || !isMuslim))
-    .map(([b, e]) => [b, sectionNames[b].trim(), e.first, e.last, e.count])
+    .map(([b, e]) => {
+      const row = [b, sectionNames[b].trim(), e.first, e.last, e.count]
+      if (!isMuslim && e.last - e.first + 1 !== e.count) {
+        // interleaved book: list its runs [start, end, start, end …]
+        const ns = [...e.nums].sort((x, y) => x - y)
+        const runs = []
+        for (const n of ns) { const r = runs[runs.length - 1]; if (r && r[1] === n - 1) r[1] = n; else runs.push([n, n]) }
+        row.push(runs.flat())
+      }
+      return row
+    })
+  if (!isMuslim) {
+    const total = books.reduce((a, b) => a + b[4], 0)
+    if (total !== nums.length) throw new Error(`${slug}: books cover ${total} of ${nums.length} numbers`)
+    const bad = books.filter((b) => b[5])
+    if (bad.length) console.warn(`  note: ${slug}: interleaved books (stored as runs): ${bad.map((b) => b[0]).join(',')}`)
+  }
 
   const c = {
     first: nums[0], last: nums[nums.length - 1], count: nums.length,

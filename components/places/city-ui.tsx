@@ -31,7 +31,7 @@ export function PrayerGrid({ city, day, locale }: { city: City; day: CityDay; lo
       {slots.map((k) => {
         const nm = REMINDER_NAMES[k === 'dhuhr' && day.friday ? 'jumuah' : k]
         return (
-          <div key={k} data-slot={k} className={cardCls}>
+          <div key={k} data-prayer={k} className={cardCls}>
             <UiIcon name={ICONS[k]} size={30} className="mx-auto" />
             <h3 className="mt-2 text-sm font-semibold text-muted-foreground">{lt(locale, nm)}</h3>
             <p className="font-display mt-1 text-2xl font-semibold"><Clock ms={day[k]} tz={city.tz} locale={locale} /></p>

@@ -1,6 +1,6 @@
-import { HadithIndexPage, hadithIndexMeta, hadithListRevalidate } from '@/components/pages/hadith'
+import { HadithIndexPage, hadithIndexMeta } from '@/components/pages/hadith'
 
-export const revalidate = hadithListRevalidate
+export const revalidate = 3600
 export const metadata = hadithIndexMeta('en')
 export default function Page() {
   return <HadithIndexPage locale="en" />

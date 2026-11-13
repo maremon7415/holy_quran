@@ -53,7 +53,7 @@ async function loadRows(slug: CollectionSlug, lang: HadithLang): Promise<Loaded 
         const n = urlNumberOf(slug, h)
         const raw = h.text?.trim()
         if (n == null || !raw || !isServable(slug, n)) continue
-        const t = lang === 'ar' ? normalizeArabic(raw.replace(/[‎‏]/g, '')) : lang === 'en' ? cleanEnglish(raw) : raw.replace(/\s+/g, ' ').replace(/\s*\[\d+\]\s*/g, ' ')
+        const t = lang === 'ar' ? normalizeArabic(raw.replace(/[\u200e\u200f]/g, '')) : lang === 'en' ? cleanEnglish(raw) : raw.replace(/\s+/g, ' ').replace(/\s*\[\d+\]\s*/g, ' ')
         rows.push({ n, t })
         chars += t.length
       }
@@ -119,6 +119,7 @@ export async function searchHadith(q: string, opts: SearchOptions = {}): Promise
   const slugs = (only ? [only] : COLLECTIONS.map((c) => c.slug)).filter((s) => collectionMeta(s)!.langs[lang])
   const base: SearchResponse = { query: query.raw, lang, terms: query.tokens, exact, collections: slugs, total: 0, results: [], failed: [] }
   if (!query.tokens.length || query.raw.length < 2) return base
+  if (exact) return base // a pure reference ("Bukhari 1"): jump to it instead of text-searching every collection
 
   const regs = query.tokens.map((t) => tokenRegex(t, lang))
   const gregs = regs.map((r) => new RegExp(r.source, 'gi'))

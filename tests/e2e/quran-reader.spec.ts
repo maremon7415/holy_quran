@@ -186,7 +186,7 @@ test.describe('single ayah page /surah/al-baqarah/255', () => {
     }
     expect(types).toContain('BreadcrumbList')
     expect(types.some((t) => ['Article', 'FAQPage', 'WebPage', 'Quotation', 'CreativeWork'].includes(t))).toBe(true)
-    const allowed = new Set(['BreadcrumbList', 'ListItem', 'Article', 'FAQPage', 'Question', 'Answer', 'WebPage', 'Thing', 'Organization', 'ImageObject', 'Quotation', 'CreativeWork', 'Person', 'Language', 'WebSite', 'SearchAction', 'EntryPoint', 'Chapter', 'Book', 'ItemList', 'HowTo', 'HowToStep', 'AudioObject', 'WebApplication', 'Offer', 'Claim', 'DefinedTerm', 'Quantity'])
+    const allowed = new Set(['BreadcrumbList', 'ListItem', 'Article', 'FAQPage', 'Question', 'Answer', 'WebPage', 'Thing', 'Organization', 'ImageObject', 'Quotation', 'CreativeWork', 'Person', 'Language', 'WebSite', 'SearchAction', 'EntryPoint', 'Chapter', 'Book', 'ItemList', 'HowTo', 'HowToStep', 'AudioObject', 'WebApplication', 'Offer', 'Claim', 'DefinedTerm', 'Quantity', 'SpeakableSpecification', 'DefinedTermSet', 'Dataset', 'DataDownload'])
     for (const t of types) expect(allowed.has(t), `unexpected @type ${t}`).toBe(true)
   })
   test('has Arabic text, translations and links back to the surah reader', async ({ page }) => {

@@ -19,7 +19,10 @@ export const BN_ROUTES = [
   '/quran',
   '/surah/*', '/surah/*/*',
   '/juz/*',
-  '/prayer-times',
+  '/prayer-times', '/prayer-times/*', '/prayer-times/*/*',
+  '/ramadan', '/ramadan/*', '/ramadan/*/*',
+  '/hijri-date',
+  '/zakat-calculator',
   '/hadith', '/hadith/*', '/hadith/*/*', '/hadith/*/book/*', '/hadith/*/book/*/page/*',
   '/mcp', '/developers',
 ] as const

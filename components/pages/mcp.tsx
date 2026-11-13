@@ -12,7 +12,7 @@ import { lt } from '@/lib/i18n/lt'
 const copy = {
   en: {
     title: 'Noor Quran MCP Server: Quran, Duas & Tafsir for AI Agents',
-    description: 'Connect Claude, ChatGPT, Cursor or any MCP client to Noor Quran: search the Quran, get ayahs with Arabic, English & Bangla, tafsir, duas, topics and the 99 Names, with citation links.',
+    description: 'Connect Claude, ChatGPT, Cursor or any MCP client to Noor Quran: ayahs in Arabic, English & Bangla, tafsir, duas, topics and the 99 Names, with citations.',
   },
   bn: {
     title: 'নূর কুরআন MCP সার্ভার: AI এজেন্টের জন্য কুরআন, দোয়া ও তাফসীর',

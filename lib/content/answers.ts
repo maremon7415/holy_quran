@@ -17,7 +17,7 @@ const strip = (html: string) =>
 export function firstSentences(text: string, max = 320, minLen = 60): string {
   const t = text.replace(/\s+/g, ' ').trim()
   if (!t) return ''
-  const parts = t.split(/(?<=[.!?।])\s+(?=[^a-z])/u)
+  const parts = t.split(/(?<=[.!?।]["'”’)]?)\s+(?=[^a-z])/u)
   let out = ''
   for (const p of parts) {
     if (!out) out = p

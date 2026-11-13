@@ -121,7 +121,6 @@ export function nameTermLd(locale: Locale, n: { n: number; slug: string; ar: str
     alternateName: [n.ar, n.tl, n.tlBn],
     termCode: String(n.n),
     description: locale === 'bn' ? `${n.bn}। ${n.expBn}` : `${n.en}. ${n.expEn}`,
-    inLanguage: locale,
     url,
     inDefinedTermSet: { '@type': 'DefinedTermSet', '@id': `${absoluteUrl(localeHref(locale, '/names-of-allah'))}#set`, name: locale === 'bn' ? 'আল্লাহর ৯৯ নাম' : 'The 99 Names of Allah', url: absoluteUrl(localeHref(locale, '/names-of-allah')) },
     subjectOf: { '@type': 'Quotation', name: `Quran ${n.ref}`, url: absoluteUrl(surahHref(+s, +a.split('-')[0])) },

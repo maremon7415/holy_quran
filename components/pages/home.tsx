@@ -14,7 +14,11 @@ import { T, NotAr } from '@/lib/i18n/text'
 import { SurahName, SurahMeaning } from '@/lib/i18n/surah-name'
 
 export function homeMeta(locale: Locale): Metadata {
-  if (locale !== 'bn') return { alternates: alternatesFor('/', 'en') }
+  if (locale !== 'bn') {
+    const title = `${site.name} — Read Al Quran Online in Bangla & English`
+    const description = 'Read the Holy Quran with Arabic, Bangla & English translation, word-by-word, tajweed, tafsir and audio, plus duas, the 99 Names and prayer times. Free, ad-free.'
+    return { title: { absolute: title }, description, alternates: alternatesFor('/', 'en'), twitter: { card: 'summary_large_image', title, description } }
+  }
   const title = 'নূর কুরআন — বাংলা অর্থসহ আল কুরআন পড়ুন, শুনুন ও মুখস্থ করুন'
   return {
     title: { absolute: title },

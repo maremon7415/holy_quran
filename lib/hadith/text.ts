@@ -5,7 +5,7 @@ export function cleanEnglish(s: string): string {
   return s.replace(/\s+/g, ' ').replace(/([A-Za-z)’'"”])\:(?=[^\s\d])/g, '$1: ').trim()
 }
 export const cleanBangla = (s: string) => s.replace(/\s+/g, ' ').replace(/\s*\[\d+\]\s*/g, ' ').trim()
-export const cleanArabic = (s: string) => s.replace(/\s+/g, ' ').replace(/‏\.‏/g, '.').trim()
+export const cleanArabic = (s: string) => s.replace(/\s+/g, ' ').replace(/\u200f\.\u200f/g, '.').trim()
 
 const stripHonorifics = (s: string) => s.replace(/\s*\((?:ra|r\.a\.?|may Allah be pleased with (?:him|her|them))\)/gi, '').replace(/\s*\(raa?\)/gi, '').trim()
 

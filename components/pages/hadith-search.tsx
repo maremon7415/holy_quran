@@ -76,7 +76,7 @@ export async function HadithSearchPage({ locale, searchParams }: { locale: Local
         </Link>
       )}
 
-      {res && (
+      {res && !res.exact && (
         <section aria-live="polite" className="mt-8">
           <p className="text-sm text-muted-foreground" role="status">
             {res.total > 0
@@ -85,7 +85,7 @@ export async function HadithSearchPage({ locale, searchParams }: { locale: Local
           </p>
           {res.failed.length > 0 && <p className="mt-2 rounded-2xl border border-border bg-muted/60 px-4 py-3 text-xs text-muted-foreground" role="alert">{lt(locale, { en: 'Some collections could not be searched right now (network). Results may be incomplete, please try again.', bn: 'কিছু গ্রন্থে এখন অনুসন্ধান করা যায়নি (নেটওয়ার্ক)। ফল অসম্পূর্ণ হতে পারে; আবার চেষ্টা করুন।', ar: 'تعذّر البحث في بعض الكتب الآن؛ قد تكون النتائج ناقصة، فحاول مجددًا.' })}</p>}
           {res.total === 0 && res.failed.length === 0 && <p className="mt-2 text-sm text-muted-foreground">{lt(locale, { en: 'Try different or fewer words, or another spelling. Bangla and Arabic searches only match text in that language.', bn: 'ভিন্ন বা কম শব্দ, অথবা অন্য বানান চেষ্টা করুন। বাংলা ও আরবি অনুসন্ধান কেবল সেই ভাষার পাঠে মেলে।', ar: 'جرّب كلمات مختلفة أو أقل، أو تهجئة أخرى؛ البحث بالعربية والبنغالية يطابق نصوص تلك اللغة فقط.' })}</p>}
-          <ol className="mt-4 grid gap-3">
+          <ol className="mt-4 grid gap-3" data-list="results">
             {res.results.map((r) => {
               const m = collectionMeta(r.collection)!
               const f = featuredFor(r.collection, r.number)

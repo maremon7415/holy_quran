@@ -3,15 +3,19 @@ import { test, expect } from './fixtures'
 const locs = (xml: string) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname)
 
 test.describe('sitemaps', () => {
-  test('/sitemap.xml is an index of 6 sitemaps that all resolve', async ({ request }) => {
+  test('/sitemap.xml is an index of the Quran sitemaps (0-5) plus the hadith ones, all resolving', async ({ request }) => {
     const res = await request.get('/sitemap.xml')
     expect(res.status()).toBe(200)
     expect(res.headers()['content-type']).toContain('xml')
     const xml = await res.text()
     expect(xml).toContain('<sitemapindex')
-    expect(locs(xml)).toEqual([0, 1, 2, 3, 4, 5].map((i) => `/sitemap/${i}.xml`))
-    expect((xml.match(/<sitemap>/g) ?? []).length).toBe(6)
-    for (const p of locs(xml)) expect((await request.get(p)).status(), p).toBe(200)
+    expect(locs(xml)).toContain('/sitemap-places.xml') // city / Ramadan / Hijri / Zakat pages
+    const all = locs(xml).filter((p) => p !== '/sitemap-places.xml')
+    expect(all.slice(0, 6)).toEqual([0, 1, 2, 3, 4, 5].map((i) => `/sitemap/${i}.xml`))
+    expect(all.length).toBeGreaterThanOrEqual(6)
+    expect(all).toEqual(all.map((_, i) => `/sitemap/${i}.xml`)) // contiguous ids; hadith files (English, then /bn) follow
+    expect((xml.match(/<sitemap>/g) ?? []).length).toBe(all.length + 1)
+    for (const p of all) expect((await request.get(p)).status(), p).toBe(200)
   })
 
   test('/sitemap/3.xml lists the /bn pages with xhtml:link hreflang alternates', async ({ request }) => {

@@ -29,7 +29,6 @@ import { bookUrl, collectionUrl, hadithUrl } from '@/lib/hadith/url'
 import { HadithFetchError } from '@/lib/hadith/fetch'
 import { clipText } from '@/lib/hadith/text'
 
-export const hadithRevalidate = 21600 // 6 h: heals an error state quickly; the texts themselves are cached 30 days by fetch()
 
 export type HadithProps = { params: Promise<{ collection: string; number: string }> }
 
@@ -94,7 +93,7 @@ function faqs(locale: Locale, meta: CollectionMeta, n: number, h: Hadith): { q: 
   const bn = locale === 'bn'
   const first = h.entries[0]
   const gr = h.entries.flatMap((e) => e.grades)
-  const ref = `Book ${first.ref.book}, Hadith ${first.ref.hadith}`
+  const ref = first.ref.hadith ? `Book ${first.ref.book}, Hadith ${first.ref.hadith}` : `Book ${first.ref.book}`
   const out: { q: string; a: string }[] = []
   out.push(bn
     ? { q: `${meta.name.bn} ${bnNum(n)} নং হাদিসটি কী?`, a: `এটি ${meta.name.bn} গ্রন্থের ${bnNum(n)} নম্বর হাদিস${h.book ? ` (${h.book.name}, ${ref})` : ''}।${first.bn ? ` ${clipText(first.bn, 220)}` : ''}` }
@@ -162,12 +161,12 @@ export async function HadithPage({ locale, params }: { locale: Locale } & Hadith
   const mainText = (bn ? first.bn ?? first.en : first.en ?? first.bn) ?? ''
   const title = bn ? hadith.titleBn || '' : hadith.title
   const duaSlugs = duaSlugsForHadith(meta.slug, n)
-  const refText = `Book ${first.ref.book}, Hadith ${first.ref.hadith}`
+  const refText = first.ref.book > 0 ? (first.ref.hadith ? `Book ${first.ref.book}, Hadith ${first.ref.hadith}` : `Book ${first.ref.book}`) : ''
   const cite = `${meta.cite} ${n}`
   const bnCite = `${meta.name.bn} ${bnNum(n)}`
   const formats = {
     short: bn ? `${bnCite} (${cite})` : cite,
-    full: `${cite}${hadith.book ? ` (${refText})` : ''}. ${site.name}${bn ? ' · নূর কুরআন' : ''}. ${url}`,
+    full: `${cite}${refText ? ` (${refText})` : ''}. ${site.name}${bn ? ' · নূর কুরআন' : ''}. ${url}`,
     quote: `${mainText ? `“${clipText(mainText, 360)}”\n` : ''}— ${bn ? `${bnCite} / ` : ''}${cite}\n${url}`,
     markdown: `[${bn ? bnCite : cite}](${url})`,
   }
@@ -288,7 +287,7 @@ export async function HadithPage({ locale, params }: { locale: Locale } & Hadith
           <div><dt className={dt}>{lt(locale, { en: 'Reference', bn: 'রেফারেন্স', ar: 'الإحالة' })}</dt><dd className="mt-1 font-semibold" lang="en">{cite}</dd></div>
           <div><dt className={dt}>{lt(locale, { en: 'Collection', bn: 'গ্রন্থ', ar: 'الكتاب' })}</dt><dd className="mt-1"><Link className="font-semibold hover:text-primary" href={collectionUrl(meta.slug, locale)}>{name}</Link></dd></div>
           {hadith.book && <div><dt className={dt}>{lt(locale, { en: 'Book', bn: 'অধ্যায়', ar: 'الكتاب (الباب)' })}</dt><dd className="mt-1"><Link className="font-semibold hover:text-primary" href={bookUrl(meta.slug, hadith.book.n, locale)}><span lang="en">{hadith.book.n}. {hadith.book.name}</span></Link></dd></div>}
-          <div><dt className={dt}>{lt(locale, { en: 'In-book reference', bn: 'অধ্যায়ভিত্তিক রেফারেন্স', ar: 'الإحالة داخل الكتاب' })}</dt><dd className="mt-1 font-semibold" lang="en">{refText}</dd></div>
+          {refText && <div><dt className={dt}>{lt(locale, { en: 'In-book reference', bn: 'অধ্যায়ভিত্তিক রেফারেন্স', ar: 'الإحالة داخل الكتاب' })}</dt><dd className="mt-1 font-semibold" lang="en">{refText}</dd></div>}
           <div><dt className={dt}>{lt(locale, { en: 'Numbering', bn: 'নম্বর পদ্ধতি', ar: 'الترقيم' })}</dt><dd className="mt-1 text-sm text-foreground/85">{meta.slug === 'muslim' ? lt(locale, { en: 'Muhammad Fu’ad ‘Abd al-Baqi (as cited worldwide)', bn: 'মুহাম্মাদ ফুআদ আবদুল বাকী (বিশ্বব্যাপী প্রচলিত)', ar: 'ترقيم محمد فؤاد عبد الباقي' }) : lt(locale, { en: 'Standard numbering (as on sunnah.com)', bn: 'প্রচলিত নম্বর (sunnah.com-এর অনুরূপ)', ar: 'الترقيم المعتمد المتداول' })}</dd></div>
           <div><dt className={dt}>{lt(locale, { en: 'Permanent link', bn: 'স্থায়ী লিংক', ar: 'الرابط الدائم' })}</dt><dd className="mt-1 break-all text-sm"><a href={url} className="hover:text-primary" dir="ltr">{url}</a></dd></div>
         </dl>

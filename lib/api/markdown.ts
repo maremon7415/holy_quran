@@ -17,6 +17,7 @@ export interface MdDoc { body: string; canonical: string }
 
 const footer = (canonical: string, cite: string, locale: Locale) =>
   [
+    '',
     '---',
     '',
     locale === 'bn' ? `**উদ্ধৃতি / Cite:** ${cite}` : `**Cite:** ${cite}`,

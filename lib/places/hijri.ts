@@ -1,4 +1,4 @@
-import { addDays, parseYmd, ymdKey, type Ymd } from './times'
+import { addDays, parseYmd, ymdKey, type Ymd } from './dates'
 
 export interface Hijri { y: number; m: number; d: number }
 

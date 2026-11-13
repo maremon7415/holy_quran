@@ -187,6 +187,11 @@ describe('search helpers', () => {
     expect(tokenRegex('হাদিস', 'bn').test('এই হাদীসটি')).toBe(true)
     expect(tokenRegex('পূর্ব', 'bn').test('পুর্ব দিক')).toBe(true)
   })
+  it('Bangla spelling variants of য় (নিয়ত / নিয়্যত / নিয়্যাত) match each other', () => {
+    for (const w of ['নিয়ত', 'নিয়্যত', 'নিয়্যতের', 'নিয়্যাত']) expect(tokenRegex('নিয়ত', 'bn').test(w), w).toBe(true)
+    expect(tokenRegex('দয়া', 'bn').test('আল্লাহর দয়ালু')).toBe(true)
+    expect(tokenRegex('নিয়ত', 'bn').test('নি' + String.fromCharCode(0x9df) + 'ত')).toBe(true) // precomposed য়
+  })
   it('highlights hits', () => {
     const p = highlightParts('Be patient and patience is light', ['patience'], 'en')
     expect(p.filter((x) => x.hit).map((x) => x.t)).toEqual(['patient', 'patience'])
@@ -216,5 +221,9 @@ describe('search helpers', () => {
     expect(parseHadithReference('muslim 3034')).toBeNull()
     expect(parseHadithReference('bukhari')).toBeNull()
     expect(parseHadithReference('1')).toBeNull()
+    expect(parseHadithReference('muslim women 100')).toBeNull()
+    expect(parseHadithReference('prophet muhammad 5')).toBeNull()
+    expect(parseHadithReference('মুসলিম নারী ১০০')).toBeNull()
+    expect(parseHadithReference('বুখারী ও মুসলিম ৫')).toBeNull()
   })
 })

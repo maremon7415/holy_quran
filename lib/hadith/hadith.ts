@@ -1,7 +1,7 @@
 import 'server-only'
 import { cache } from 'react'
 import { collectionMeta, resolveCollectionSlug, type CollectionSlug, type HadithLang } from './collections'
-import { allIndexes, bookNumbers, bookRow, collectionIndex, corpusNumbers, isServable, neighbours, type BookRow } from './data'
+import { allIndexes, bookNumbers, bookOfNumber, bookRow, collectionIndex, corpusNumbers, isServable, neighbours, type BookRow } from './data'
 import { fetchApi, HadithFetchError, type ApiHadith, type ApiSection } from './fetch'
 import { normalizeGrades, type Grade } from './grades'
 import { subLetter, urlNumberOf } from './numbering'
@@ -22,8 +22,8 @@ export interface HadithEntry {
   bn?: string
   narrator?: string
   grades: Grade[]
-  /** In-book reference: Book {book}, Hadith {hadith}. */
-  ref: { book: number; hadith: number }
+  /** In-book reference: Book {book}, Hadith {hadith}; `hadith` is null when the corpus has no in-book number for it. */
+  ref: { book: number; hadith: number | null }
 }
 
 export interface Hadith {
@@ -69,7 +69,7 @@ function build(slug: CollectionSlug, data: Partial<Record<HadithLang, ApiHadith[
   for (const l of ALL_LANGS) {
     for (const h of data[l] ?? []) {
       let e = byId.get(h.hadithnumber)
-      if (!e) byId.set(h.hadithnumber, (e = { sub: '', id: h.hadithnumber, grades: [], ref: h.reference }))
+      if (!e) byId.set(h.hadithnumber, (e = { sub: '', id: h.hadithnumber, grades: [], ref: { book: h.reference?.book ?? 0, hadith: h.reference?.hadith > 0 ? h.reference.hadith : null } }))
       const text = (h.text ?? '').trim()
       if (text) e[l] = l === 'ar' ? cleanArabic(text) : l === 'en' ? cleanEnglish(text) : cleanBangla(text)
       if (!e.grades.length && h.grades?.length) e.grades = normalizeGrades(h.grades)
@@ -114,8 +114,9 @@ export const getHadith = cache(async (collection: string, number: number, langs:
     if (failed.length) throw new HadithFetchError(`${slug}/${number}`)
     return null
   }
-  const bk = entries[0].ref.book
-  const row = bookRow(slug, bk)
+  // Muslim: the entry's own book (one number can sit in two books); others: from the index (the corpus reference is 0 for many)
+  const row = slug === 'muslim' ? bookRow(slug, entries[0].ref.book) : bookOfNumber(slug, number)
+  for (const e of entries) if (row && e.ref.book <= 0) e.ref = { book: row[0], hadith: null }
   const f = featuredFor(slug, number)
   const { prev, next } = neighbours(slug, number)
   return {

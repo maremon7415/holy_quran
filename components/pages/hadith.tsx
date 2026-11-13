@@ -28,7 +28,6 @@ import { parseHadithNumber } from '@/lib/hadith/numbering'
 import { bookUrl, collectionUrl, hadithUrl, BOOK_PAGE_SIZE } from '@/lib/hadith/url'
 import { clipText } from '@/lib/hadith/text'
 
-export const hadithListRevalidate = 3600
 
 const N = (locale: Locale, v: number | string) => (locale === 'bn' ? bnNum(v) : String(v))
 const fmt = (locale: Locale, n: number) => N(locale, n.toLocaleString('en-US'))
@@ -352,7 +351,7 @@ export async function BookPage({ locale, params }: { locale: Locale } & BookProp
           <Link className="mt-4 inline-block rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground" href={bookUrl(m.slug, bk, locale, page)} prefetch={false}>{lt(locale, { en: 'Try again', bn: 'আবার চেষ্টা করুন', ar: 'حاول مرة أخرى' })}</Link>
         </div>
       ) : (
-        <ol className="mt-8 grid gap-3" start={data.items[0]?.number}>
+        <ol className="mt-8 grid gap-3" start={data.items[0]?.number} data-list="hadiths">
           {data.items.map((i) => <HadithRow key={i.number} collection={m} number={i.number} title={i.title} entries={i.entries} locale={locale} />)}
         </ol>
       )}
