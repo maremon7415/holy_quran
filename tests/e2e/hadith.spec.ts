@@ -106,6 +106,9 @@ test.describe('hadith library', () => {
     await expect(page.locator('main ol[data-list="hadiths"] > li')).toHaveCount(25)
     await page.getByRole('link', { name: '2', exact: true }).first().click()
     await expect(page).toHaveURL(/\/hadith\/abudawud\/book\/2\/page\/2$/)
+    // canonical is what crawlers see on a fresh load (client navigation can leave the previous page's streamed tag behind)
+    await page.reload()
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(1)
     expect(await canonical(page)).toBe('/hadith/abudawud/book/2/page/2')
   })
 

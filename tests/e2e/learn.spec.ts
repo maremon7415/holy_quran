@@ -311,7 +311,7 @@ test.describe('/learn/arabic-alphabet', () => {
       await quiz.locator('[data-quiz-next]').click()
     }
     await expect(quiz.locator('[data-quiz-result]')).toContainText('5/10')
-    expect(await page.evaluate(() => localStorage.getItem('noor-alphabet-best'))).toBe('5')
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('noor-alphabet-best'))).toBe('5')
     await quiz.locator('[data-quiz-restart]').click()
     await expect(quiz.locator('[data-quiz-question]')).toContainText('1/10')
     // other modes

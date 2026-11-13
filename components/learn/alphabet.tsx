@@ -154,8 +154,11 @@ export function AlphabetQuiz() {
   const done = round && i >= round.length
   useEffect(() => {
     if (!done) return
-    setBest((b) => { const nb = Math.max(b ?? 0, score); try { localStorage.setItem('noor-alphabet-best', String(nb)) } catch { /* ignore */ } return nb })
-  }, [done, score])
+    const nb = Math.max(best ?? 0, score)
+    if (nb === best) return
+    setBest(nb)
+    try { localStorage.setItem('noor-alphabet-best', String(nb)) } catch { /* ignore */ }
+  }, [done, score, best])
 
   const answer = (l: ArabicLetter) => {
     if (!q || picked) return
