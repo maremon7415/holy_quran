@@ -30,7 +30,7 @@ export function AccountsOff({ t }: { t: (v: { en: string; bn: string }) => strin
       subtitle={t({ en: 'Everything works without an account. Your data stays on this device.', bn: 'অ্যাকাউন্ট ছাড়াই সবকিছু কাজ করে। আপনার তথ্য এই ডিভাইসে থাকে।' })}
       footer={<a href="/" className="font-semibold text-primary hover:underline">{t({ en: 'Back to home', bn: 'হোমে ফিরুন' })}</a>}
     >
-      <p className="text-center text-sm text-muted-foreground">{t({ en: 'Accounts not enabled on this deployment.', bn: 'এই ডিপ্লয়মেন্টে অ্যাকাউন্ট চালু নেই।' })}</p>
+      <p className="text-center text-sm text-muted-foreground">{t({ en: 'Sign-in appears here once the site owner connects a database.', bn: 'সাইট মালিক ডাটাবেস যুক্ত করলে এখানে সাইন ইন আসবে।' })}</p>
     </AuthCard>
   )
 }

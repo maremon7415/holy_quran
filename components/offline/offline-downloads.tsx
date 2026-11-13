@@ -48,14 +48,19 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
 
   useEffect(() => {
     if (!mounted) return
-    void canDownloadPages().then(setSwOk)
+    let alive = true
+    let tries = 0
+    const check = () => void canDownloadPages().then((ok) => { if (!alive) return; setSwOk(ok); if (!ok && tries++ < 15) setTimeout(check, 1500) })
+    check()
     void refresh()
     void verifyAudioIndex()
-    return subscribeProgress((p) => {
+    const unsub = subscribeProgress((p) => {
       lastMsg.current = Date.now()
       setProg(p)
       if (p.state === 'done' || p.state === 'cancelled' || p.state === 'error') { void refresh(); if (p.state === 'done') toast.success(t({ en: 'The whole Quran is saved for offline reading.', bn: 'পুরো কুরআন অফলাইনে পড়ার জন্য সংরক্ষিত হয়েছে।' })) }
+      else if (p.phase === 'pages' && p.done % 10 === 0) void refresh()
     })
+    return () => { alive = false; unsub() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, refresh])
 
