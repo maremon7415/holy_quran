@@ -80,14 +80,14 @@ export function VerseBlock({ verse, surah, scoped = false, bt, full = false }: {
 }
 
 /** Bismillah header shown before every surah except 1 (where it is ayah 1) and 9 (none). */
-export function Bismillah({ className = '' }: { className?: string }) {
+export function Bismillah({ className = '', locale }: { className?: string; locale?: 'en' | 'bn' }) {
   return (
     <div className={`relative mx-auto flex max-w-xl flex-col items-center py-6 ${className}`}>
       <p className="quran-text text-center text-[length:calc(var(--quran-size,34px)*1.05)] leading-[1.9]" lang="ar" dir="rtl">
         بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
       </p>
       <p className="mt-1 text-center text-xs tracking-wide text-muted-foreground hide-in-mushaf">
-        In the name of Allah, the Entirely Merciful, the Especially Merciful
+        {locale === 'bn' ? 'পরম করুণাময় অতি দয়ালু আল্লাহর নামে' : 'In the name of Allah, the Entirely Merciful, the Especially Merciful'}
       </p>
     </div>
   )

@@ -8,7 +8,7 @@ import { useTx } from '@/lib/lang'
 import { cn } from '@/lib/utils'
 
 /** Big "Play surah" CTA (or play a single-ayah range). */
-export function PlayButton({ surah, from, to, label, className }: { surah: number; from?: number; to?: number; label?: { en: string; bn: string }; className?: string }) {
+export function PlayButton({ surah, from, to, label, className }: { surah: number; from?: number; to?: number; label?: { en: string; bn: string; ar?: string }; className?: string }) {
   const t = useTx()
   const active = usePlayer((s) => s.queue?.surah === surah && s.status !== 'idle' && (from == null || (s.queue.from === from)))
   const playing = usePlayer((s) => s.status === 'playing' || s.status === 'loading')
@@ -51,7 +51,7 @@ export function SettingsButton({ className }: { className?: string }) {
 }
 
 /** Height-animated disclosure whose content is always server-rendered (SEO). */
-export function Disclosure({ label, children, defaultOpen = false, className, preview = false }: { label: { en: string; bn: string }; children: ReactNode; defaultOpen?: boolean; className?: string; /** show a faded peek when closed */ preview?: boolean }) {
+export function Disclosure({ label, children, defaultOpen = false, className, preview = false }: { label: { en: string; bn: string; ar?: string }; children: ReactNode; defaultOpen?: boolean; className?: string; /** show a faded peek when closed */ preview?: boolean }) {
   const t = useTx()
   const [open, setOpen] = useState(defaultOpen)
   return (

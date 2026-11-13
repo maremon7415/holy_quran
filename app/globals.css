@@ -247,6 +247,9 @@
   html.lang-ar .font-display { font-family: var(--font-noto-naskh), var(--font-display-serif), serif; }
   /* Bangla conjuncts and Arabic cursive break with letter-spacing (uppercase/tracking kickers). */
   html.lang-ar body *, html[lang='bn'] body * { letter-spacing: normal !important; }
+  /* /bn reader pages: Bangla uccharon, then Bangla meaning, then English. */
+  .bn-first .ayah-tr > [data-tr='bt'] { order: -2; }
+  .bn-first .ayah-tr > [data-tr='bn'] { order: -1; }
   /* In the RTL interface, English/Bangla content blocks keep their own direction. */
   html[dir='rtl'] :is([lang='en'], [lang='bn'], [data-tr='en'], [data-tr='bn'], [data-tr='tl']) { direction: ltr; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
