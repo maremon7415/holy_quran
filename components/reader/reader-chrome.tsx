@@ -85,7 +85,7 @@ function ProgressBar() {
   }, [mv])
   return (
     <div className="absolute inset-x-0 bottom-0 h-[3px] overflow-hidden bg-transparent">
-      <motion.div className="h-full origin-left rounded-r-full bg-gradient-to-r from-primary via-primary to-gold" style={{ scaleX: x }} />
+      <motion.div className="h-full origin-left rtl:origin-right rounded-e-full bg-gradient-to-r from-primary via-primary to-gold" style={{ scaleX: x }} />
     </div>
   )
 }
@@ -170,33 +170,33 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
         aria-hidden={!showBar}
       >
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-3 px-4 sm:px-6">
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="group flex min-w-0 items-center gap-2.5 text-left" aria-label="Back to top">
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="group flex min-w-0 items-center gap-2.5 text-start" aria-label="Back to top">
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-primary transition-transform group-hover:-translate-y-0.5"><ArrowUp className="size-4" /></span>
             <span className="min-w-0">
               <span className="block truncate font-display text-[15px] font-semibold leading-tight">{title}</span>
               <span className="block truncate text-[11px] font-medium text-muted-foreground">
                 {inView ? (
                   <>
-                    {inView.key} · {t({ en: 'Juz', bn: 'পারা' })} {digits(inView.juz)} · {t({ en: 'Page', bn: 'পৃষ্ঠা' })} {digits(inView.page)}
+                    {inView.key} · {t({ en: 'Juz', bn: 'পারা', ar: 'الجزء' })} {digits(inView.juz)} · {t({ en: 'Page', bn: 'পৃষ্ঠা', ar: 'الصفحة' })} {digits(inView.page)}
                   </>
                 ) : ' '}
               </span>
             </span>
           </button>
-          <span className="ml-auto hidden font-arabic text-xl text-gold sm:block" lang="ar">{titleAr}</span>
-          <form onSubmit={onJump} className="ml-auto flex items-center sm:ml-3">
-            <label className="sr-only" htmlFor="jump-ayah">{t({ en: 'Jump to ayah', bn: 'আয়াতে যান' })}</label>
+          <span className="ms-auto hidden font-arabic text-xl text-gold sm:block" lang="ar">{titleAr}</span>
+          <form onSubmit={onJump} className="ms-auto flex items-center sm:ms-3">
+            <label className="sr-only" htmlFor="jump-ayah">{t({ en: 'Jump to ayah', bn: 'আয়াতে যান', ar: 'انتقل إلى آية' })}</label>
             <input
               ref={inputRef}
               id="jump-ayah"
               inputMode="numeric"
               value={jump}
               onChange={(e) => setJump(e.target.value.replace(/[^\d:]/g, ''))}
-              placeholder={surah ? t({ en: 'Ayah #', bn: 'আয়াত' }) : '2:255'}
+              placeholder={surah ? t({ en: 'Ayah #', bn: 'আয়াত', ar: 'رقم الآية' }) : '2:255'}
               className="h-9 w-[5.5rem] rounded-full border bg-card/70 px-3 text-center text-sm font-semibold tabular-nums outline-none transition focus:w-28 focus:border-primary/50 focus:shadow-[0_0_0_3px_var(--glow)]"
             />
           </form>
-          <button type="button" onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-9 shrink-0 place-items-center rounded-full transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস' })}>
+          <button type="button" onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-9 shrink-0 place-items-center rounded-full transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস', ar: 'إعدادات القراءة' })}>
             <SlidersHorizontal className="size-[18px]" />
           </button>
         </div>
@@ -208,7 +208,7 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
         initial={false}
         animate={{ bottom: dockBottom }}
         transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-        className="reader-chrome fixed right-3 z-40 sm:right-5 lg:right-8"
+        className="reader-chrome fixed end-3 z-40 sm:end-5 lg:end-8"
         style={{ bottom: dockBottom }}
       >
         <div className="flex flex-col items-center gap-1 rounded-full border bg-popover/90 p-1.5 backdrop-blur-xl lg:flex-row-reverse shadow-[0_18px_40px_-16px_rgb(var(--shadow-color)/0.55)]">
@@ -217,7 +217,7 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
             whileTap={{ scale: 0.88 }}
             onClick={onPlay}
             className={cn('grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_20px_-8px_var(--primary)]', isPlaying && 'pulse-ring')}
-            aria-label={isPlaying ? t({ en: 'Pause', bn: 'বিরতি' }) : t({ en: 'Play recitation', bn: 'তিলাওয়াত শুনুন' })}
+            aria-label={isPlaying ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play recitation', bn: 'তিলাওয়াত শুনুন', ar: 'تشغيل التلاوة' })}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={isPlaying ? 'pause' : 'play'} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={{ duration: 0.15 }}>
@@ -225,10 +225,10 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
               </motion.span>
             </AnimatePresence>
           </motion.button>
-          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-11 place-items-center rounded-full text-foreground/80 transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস' })}>
+          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useReaderUi.getState().setSettingsOpen(true)} className="grid size-11 place-items-center rounded-full text-foreground/80 transition hover:bg-muted" aria-label={t({ en: 'Reading settings', bn: 'সেটিংস', ar: 'إعدادات القراءة' })}>
             <SlidersHorizontal className="size-[19px]" />
           </motion.button>
-          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'grid text-primary' : 'hidden text-foreground/80 sm:grid')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড' })} title="Focus (f)">
+          <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => useUi.getState().setImmersive(!immersive)} className={cn('size-11 place-items-center rounded-full transition hover:bg-muted', immersive ? 'grid text-primary' : 'hidden text-foreground/80 sm:grid')} aria-label={immersive ? t({ en: 'Exit focus mode', bn: 'ফোকাস মোড বন্ধ', ar: 'الخروج من وضع التركيز' }) : t({ en: 'Focus mode', bn: 'ফোকাস মোড', ar: 'وضع التركيز' })} title="Focus (f)">
             {immersive ? <Minimize2 className="size-[18px]" /> : <Maximize2 className="size-[18px]" />}
           </motion.button>
         </div>
@@ -244,9 +244,9 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
             exit={{ y: -40, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 32 }}
             onClick={() => useUi.getState().setImmersive(false)}
-            className="reader-chrome glass fixed right-4 top-4 z-50 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-lg"
+            className="reader-chrome glass fixed end-4 top-4 z-50 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold shadow-lg"
           >
-            <Minimize2 className="size-4" /> {t({ en: 'Exit focus', bn: 'ফোকাস বন্ধ' })} <kbd className="hidden rounded border bg-muted px-1 text-[10px] sm:inline">Esc</kbd>
+            <Minimize2 className="size-4" /> {t({ en: 'Exit focus', bn: 'ফোকাস বন্ধ', ar: 'إنهاء التركيز' })} <kbd className="hidden rounded border bg-muted px-1 text-[10px] sm:inline">Esc</kbd>
           </motion.button>
         )}
       </AnimatePresence>

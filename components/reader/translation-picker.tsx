@@ -44,14 +44,14 @@ export function TranslationPicker() {
   return (
     <div className="mt-3">
       {ids.length > 0 && (
-        <ul className="mb-2 flex flex-wrap gap-2" aria-label={t({ en: 'Extra translations', bn: 'অতিরিক্ত অনুবাদ' })}>
+        <ul className="mb-2 flex flex-wrap gap-2" aria-label={t({ en: 'Extra translations', bn: 'অতিরিক্ত অনুবাদ', ar: 'ترجمات إضافية' })}>
           {ids.map((id) => {
             const m = byId.get(id)
             return (
-              <li key={id} className="flex max-w-full items-center gap-1 rounded-full border bg-card py-1 pl-3 pr-1 text-[13px] font-semibold">
+              <li key={id} className="flex max-w-full items-center gap-1 rounded-full border bg-card py-1 ps-3 pe-1 text-[13px] font-semibold">
                 <span className="truncate">{m ? m.name : `#${id}`}</span>
                 {m && <span className="shrink-0 text-[11px] font-medium text-muted-foreground">{cap(m.langName)}</span>}
-                <button type="button" onClick={() => toggle(id)} className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground" aria-label={t({ en: `Remove ${m?.name ?? id}`, bn: `সরান ${m?.name ?? id}` })}>
+                <button type="button" onClick={() => toggle(id)} className="grid size-6 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground" aria-label={t({ en: `Remove ${m?.name ?? id}`, bn: `সরান ${m?.name ?? id}`, ar: `إزالة ${m?.name ?? id}` })}>
                   <X className="size-3.5" />
                 </button>
               </li>
@@ -66,7 +66,7 @@ export function TranslationPicker() {
         className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed px-3 py-2.5 text-sm font-semibold text-primary transition hover:border-primary/50 hover:bg-accent"
       >
         <Plus className={cn('size-4 transition-transform', open && 'rotate-45')} />
-        {open ? t({ en: 'Done', bn: 'সম্পন্ন' }) : t({ en: 'Add a translation', bn: 'অনুবাদ যোগ করুন' })}
+        {open ? t({ en: 'Done', bn: 'সম্পন্ন', ar: 'تم' }) : t({ en: 'Add a translation', bn: 'অনুবাদ যোগ করুন', ar: 'أضف ترجمة' })}
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -77,18 +77,18 @@ export function TranslationPicker() {
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder={t({ en: 'Search language or translator…', bn: 'ভাষা বা অনুবাদক খুঁজুন…' })}
+                  placeholder={t({ en: 'Search language or translator…', bn: 'ভাষা বা অনুবাদক খুঁজুন…', ar: 'ابحث عن لغة أو مترجم…' })}
                   className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                  aria-label={t({ en: 'Search translations', bn: 'অনুবাদ খুঁজুন' })}
+                  aria-label={t({ en: 'Search translations', bn: 'অনুবাদ খুঁজুন', ar: 'ابحث في الترجمات' })}
                 />
               </label>
               <div className="mt-1 max-h-72 overflow-y-auto overscroll-contain" role="listbox" aria-multiselectable="true">
                 {!cat && !err && [0, 1, 2, 3].map((i) => <div key={i} className="shimmer m-2 h-9 rounded-xl bg-muted" />)}
-                {err && <p className="p-3 text-sm text-muted-foreground">{t({ en: 'Could not load the list. Check your connection.', bn: 'তালিকা লোড করা যায়নি। ইন্টারনেট সংযোগ দেখুন।' })}</p>}
-                {cat && list.length === 0 && <p className="p-3 text-sm text-muted-foreground">{t({ en: 'No match', bn: 'কিছু পাওয়া যায়নি' })}</p>}
+                {err && <p className="p-3 text-sm text-muted-foreground">{t({ en: 'Could not load the list. Check your connection.', bn: 'তালিকা লোড করা যায়নি। ইন্টারনেট সংযোগ দেখুন।', ar: 'تعذّر تحميل القائمة. تحقق من اتصالك.' })}</p>}
+                {cat && list.length === 0 && <p className="p-3 text-sm text-muted-foreground">{t({ en: 'No match', bn: 'কিছু পাওয়া যায়নি', ar: 'لا توجد نتائج' })}</p>}
                 {list.map(({ m, featured }, i) => {
                   const on = ids.includes(m.id)
-                  const header = i === 0 && featured ? t({ en: 'Popular', bn: 'জনপ্রিয়' }) : !featured && (i === 0 || list[i - 1].featured) ? t({ en: 'All translations', bn: 'সব অনুবাদ' }) : null
+                  const header = i === 0 && featured ? t({ en: 'Popular', bn: 'জনপ্রিয়', ar: 'الأكثر قراءة' }) : !featured && (i === 0 || list[i - 1].featured) ? t({ en: 'All translations', bn: 'সব অনুবাদ', ar: 'كل الترجمات' }) : null
                   return (
                     <div key={`${featured ? 'f' : 'a'}${m.id}`}>
                       {header && <p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{header}</p>}
@@ -97,7 +97,7 @@ export function TranslationPicker() {
                         role="option"
                         aria-selected={on}
                         onClick={() => toggle(m.id)}
-                        className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition', on ? 'bg-accent' : 'hover:bg-muted')}
+                        className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start transition', on ? 'bg-accent' : 'hover:bg-muted')}
                       >
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-semibold">{m.name}</span>

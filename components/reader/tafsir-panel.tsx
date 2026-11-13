@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { useReaderUi } from '@/lib/reader/ui-store'
@@ -57,19 +57,19 @@ export function TafsirPanel() {
       open={!!key}
       onOpenChange={(o) => !o && open(null)}
       wide
-      title={<span>{t({ en: 'Tafsir', bn: 'তাফসীর' })} <span className="text-muted-foreground">· {c?.nameSimple} {k}</span></span>}
+      title={<span>{t({ en: 'Tafsir', bn: 'তাফসীর', ar: 'التفسير' })} <span className="text-muted-foreground">· {c?.nameSimple} {k}</span></span>}
       footer={
         <div className="flex items-center justify-between gap-2">
           <button type="button" disabled={!neighbour(-1)} onClick={() => go(-1)} className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold transition hover:bg-muted disabled:opacity-40">
-            <ChevronLeft className="size-4" /> {t({ en: 'Previous', bn: 'আগের' })}
+            <ChevronLeft className="size-4 rtl:rotate-180" /> {t({ en: 'Previous', bn: 'আগের', ar: 'السابق' })}
           </button>
           {k && (
             <Link href={surahHref(s, a)} onClick={() => open(null)} className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
-              {t({ en: 'Ayah page', bn: 'আয়াত পেজ' })} <ExternalLink className="size-3.5" />
+              {t({ en: 'Ayah page', bn: 'আয়াত পেজ', ar: 'صفحة الآية' })} <ExternalLink className="size-3.5" />
             </Link>
           )}
           <button type="button" disabled={!neighbour(1)} onClick={() => go(1)} className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold transition hover:bg-muted disabled:opacity-40">
-            {t({ en: 'Next', bn: 'পরের' })} <ChevronRight className="size-4" />
+            {t({ en: 'Next', bn: 'পরের', ar: 'التالي' })} <ChevronRight className="size-4 rtl:rotate-180" />
           </button>
         </div>
       }
@@ -102,7 +102,7 @@ export function TafsirPanel() {
               {[92, 100, 84, 96, 70, 88].map((w, i) => <div key={i} className="shimmer h-4 rounded-full bg-muted" style={{ width: `${w}%` }} />)}
             </div>
           )}
-          {state.status === 'error' && <p className="rounded-2xl bg-muted p-4 text-sm text-muted-foreground">{t({ en: 'Could not load tafsir. Check your connection and try again.', bn: 'তাফসীর লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।' })}</p>}
+          {state.status === 'error' && <p className="rounded-2xl bg-muted p-4 text-sm text-muted-foreground">{t({ en: 'Could not load tafsir. Check your connection and try again.', bn: 'তাফসীর লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।', ar: 'تعذّر تحميل التفسير. تحقق من اتصالك وحاول مرة أخرى.' })}</p>}
           {state.status === 'ok' &&
             (state.html ? (
               <>
@@ -111,8 +111,8 @@ export function TafsirPanel() {
               </>
             ) : (
               <div className="rounded-2xl bg-muted p-4 text-sm text-muted-foreground">
-                {t({ en: 'The commentary for this ayah is included with a neighbouring ayah.', bn: 'এই আয়াতের তাফসীর পার্শ্ববর্তী আয়াতের সাথে দেওয়া হয়েছে।' })}{' '}
-                {neighbour(-1) && <button type="button" className="font-semibold text-primary underline-offset-2 hover:underline" onClick={() => go(-1)}>{t({ en: 'See previous ayah', bn: 'আগের আয়াত দেখুন' })}</button>}
+                {t({ en: 'The commentary for this ayah is included with a neighbouring ayah.', bn: 'এই আয়াতের তাফসীর পার্শ্ববর্তী আয়াতের সাথে দেওয়া হয়েছে।', ar: 'تفسير هذه الآية مُدرج مع آية مجاورة.' })}{' '}
+                {neighbour(-1) && <button type="button" className="font-semibold text-primary underline-offset-2 hover:underline" onClick={() => go(-1)}>{t({ en: 'See previous ayah', bn: 'আগের আয়াত দেখুন', ar: 'انظر الآية السابقة' })}</button>}
               </div>
             ))}
         </motion.div>

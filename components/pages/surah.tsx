@@ -120,7 +120,7 @@ export async function SurahPage({ params, locale }: Props & { locale: Locale }) 
             {verses.map((v, i) => (
               <Fragment key={v.n}>
                 {i > 0 && <div className="ayah-divider" aria-hidden />}
-                <VerseBlock verse={v} surah={id} bt={bt[i]} />
+                <VerseBlock verse={v} surah={id} bt={bt[i]} locale={locale} />
               </Fragment>
             ))}
           </div>

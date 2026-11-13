@@ -15,14 +15,14 @@ const ayahEls = () => Array.from(document.querySelectorAll<HTMLElement>('[data-a
 // ------------------------------------------------------------------ per-ayah toolbar
 
 const ACTIONS = [
-  { a: 'play', icon: 'play', cls: 'ab', label: { en: 'Play from this ayah', bn: 'এখান থেকে শুনুন' } },
-  { a: 'save', icon: 'bookmark', cls: 'ab ab-save', label: { en: 'Bookmark', bn: 'বুকমার্ক' } },
-  { a: 'tafsir', icon: 'tafsir', cls: 'ab', label: { en: 'Tafsir', bn: 'তাফসীর' } },
-  { a: 'copy', icon: 'copy', cls: 'ab ab-wide', label: { en: 'Copy', bn: 'কপি' } },
-  { a: 'share', icon: 'share', cls: 'ab ab-wide', label: { en: 'Share link', bn: 'লিংক শেয়ার' } },
-  { a: 'img', icon: 'image', cls: 'ab', label: { en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার' } },
-  { a: 'wbw', icon: 'wbw', cls: 'ab ab-wide', label: { en: 'Word by word', bn: 'শব্দে শব্দে' } },
-  { a: 'more', icon: 'more', cls: 'ab ab-narrow', label: { en: 'More actions', bn: 'আরও' } },
+  { a: 'play', icon: 'play', cls: 'ab', label: { en: 'Play from this ayah', bn: 'এখান থেকে শুনুন', ar: 'تشغيل من هذه الآية' } },
+  { a: 'save', icon: 'bookmark', cls: 'ab ab-save', label: { en: 'Bookmark', bn: 'বুকমার্ক', ar: 'علامة حفظ' } },
+  { a: 'tafsir', icon: 'tafsir', cls: 'ab', label: { en: 'Tafsir', bn: 'তাফসীর', ar: 'التفسير' } },
+  { a: 'copy', icon: 'copy', cls: 'ab ab-wide', label: { en: 'Copy', bn: 'কপি', ar: 'نسخ' } },
+  { a: 'share', icon: 'share', cls: 'ab ab-wide', label: { en: 'Share link', bn: 'লিংক শেয়ার', ar: 'مشاركة الرابط' } },
+  { a: 'img', icon: 'image', cls: 'ab', label: { en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার', ar: 'مشاركة كصورة' } },
+  { a: 'wbw', icon: 'wbw', cls: 'ab ab-wide', label: { en: 'Word by word', bn: 'শব্দে শব্দে', ar: 'كلمة بكلمة' } },
+  { a: 'more', icon: 'more', cls: 'ab ab-narrow', label: { en: 'More actions', bn: 'আরও', ar: 'إجراءات أخرى' } },
 ] as const
 
 function toolbarTemplate(lang: Lang) {
@@ -69,7 +69,7 @@ function useAyahToolbar(lang: Lang) {
         const on = key === k
         if (!b) continue
         setOn(b, on, false)
-        b.setAttribute('aria-label', on ? tx(lang, { en: 'Pause', bn: 'বিরতি' }) : tx(lang, ACTIONS[0].label))
+        b.setAttribute('aria-label', on ? tx(lang, { en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : tx(lang, ACTIONS[0].label))
         b.querySelector('use')?.setAttribute('href', on ? '#ri-pause' : '#ri-play')
       }
       playKey = k

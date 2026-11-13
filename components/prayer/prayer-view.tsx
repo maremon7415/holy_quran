@@ -12,19 +12,19 @@ import { SunArc } from './sun-arc'
 import { RemindersCard } from './reminders-card'
 import { cn } from '@/lib/utils'
 
-const METHODS: { id: string; en: string; bn: string }[] = [
-  { id: 'Karachi', en: 'University of Islamic Sciences, Karachi', bn: 'করাচি বিশ্ববিদ্যালয়' },
-  { id: 'MuslimWorldLeague', en: 'Muslim World League', bn: 'মুসলিম ওয়ার্ল্ড লিগ' },
-  { id: 'Egyptian', en: 'Egyptian General Authority', bn: 'মিসরীয় সাধারণ কর্তৃপক্ষ' },
-  { id: 'UmmAlQura', en: 'Umm al-Qura, Makkah', bn: 'উম্মুল কুরা, মক্কা' },
-  { id: 'NorthAmerica', en: 'ISNA (North America)', bn: 'ISNA (উত্তর আমেরিকা)' },
-  { id: 'MoonsightingCommittee', en: 'Moonsighting Committee', bn: 'মুনসাইটিং কমিটি' },
-  { id: 'Dubai', en: 'Dubai', bn: 'দুবাই' },
-  { id: 'Kuwait', en: 'Kuwait', bn: 'কুয়েত' },
-  { id: 'Qatar', en: 'Qatar', bn: 'কাতার' },
-  { id: 'Singapore', en: 'Singapore', bn: 'সিঙ্গাপুর' },
-  { id: 'Turkey', en: 'Turkey (Diyanet)', bn: 'তুরস্ক (দিয়ানেত)' },
-  { id: 'Tehran', en: 'Tehran', bn: 'তেহরান' },
+const METHODS: { id: string; en: string; bn: string; ar?: string }[] = [
+  { id: 'Karachi', en: 'University of Islamic Sciences, Karachi', bn: 'করাচি বিশ্ববিদ্যালয়', ar: 'جامعة العلوم الإسلامية، كراتشي' },
+  { id: 'MuslimWorldLeague', en: 'Muslim World League', bn: 'মুসলিম ওয়ার্ল্ড লিগ', ar: 'رابطة العالم الإسلامي' },
+  { id: 'Egyptian', en: 'Egyptian General Authority', bn: 'মিসরীয় সাধারণ কর্তৃপক্ষ', ar: 'الهيئة المصرية العامة للمساحة' },
+  { id: 'UmmAlQura', en: 'Umm al-Qura, Makkah', bn: 'উম্মুল কুরা, মক্কা', ar: 'أم القرى، مكة المكرمة' },
+  { id: 'NorthAmerica', en: 'ISNA (North America)', bn: 'ISNA (উত্তর আমেরিকা)', ar: 'الجمعية الإسلامية لأمريكا الشمالية' },
+  { id: 'MoonsightingCommittee', en: 'Moonsighting Committee', bn: 'মুনসাইটিং কমিটি', ar: 'لجنة رؤية الهلال' },
+  { id: 'Dubai', en: 'Dubai', bn: 'দুবাই', ar: 'دبي' },
+  { id: 'Kuwait', en: 'Kuwait', bn: 'কুয়েত', ar: 'الكويت' },
+  { id: 'Qatar', en: 'Qatar', bn: 'কাতার', ar: 'قطر' },
+  { id: 'Singapore', en: 'Singapore', bn: 'সিঙ্গাপুর', ar: 'سنغافورة' },
+  { id: 'Turkey', en: 'Turkey (Diyanet)', bn: 'তুরস্ক (দিয়ানেত)', ar: 'تركيا (الشؤون الدينية)' },
+  { id: 'Tehran', en: 'Tehran', bn: 'তেহরান', ar: 'طهران' },
 ]
 
 type Key = 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
@@ -82,13 +82,13 @@ export function PrayerView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasLoc, latitude, longitude, method, madhab, dayKey])
 
-  const loc = lang === 'bn' ? 'bn-BD' : 'en-US'
+  const loc = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar' : 'en-US'
   const fmt = (ms: number) => new Intl.DateTimeFormat(loc, { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(ms)
   const fmtNum = (s: string) => (lang === 'bn' ? s.replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[+d]) : s)
 
   if (!mounted) return <div className="mx-auto max-w-5xl px-4 pb-32 pt-8 sm:px-6"><div className="card-soft h-[28rem] shimmer" /></div>
 
-  const hijri = new Intl.DateTimeFormat(`${lang === 'bn' ? 'bn' : 'en'}-u-ca-islamic-umalqura`, { timeZone: tz, day: 'numeric', month: 'long', year: 'numeric' }).format(now)
+  const hijri = new Intl.DateTimeFormat(`${lang === 'bn' ? 'bn' : lang === 'ar' ? 'ar' : 'en'}-u-ca-islamic-umalqura`, { timeZone: tz, day: 'numeric', month: 'long', year: 'numeric' }).format(now)
   const hijriAr = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { timeZone: tz, day: 'numeric', month: 'long', year: 'numeric' }).format(now)
   const greg = new Intl.DateTimeFormat(loc, { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now)
 
@@ -100,9 +100,9 @@ export function PrayerView() {
           <div aria-hidden className="bg-pattern absolute inset-0 opacity-60" />
           <div className="relative">
             <UiIcon name="prayer" size={88} className="mx-auto" />
-            <h2 className="mt-4 font-display text-2xl font-semibold">{t({ en: 'Where are you praying?', bn: 'আপনি কোথায় আছেন?' })}</h2>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{t({ en: 'Share your location or pick a city to see accurate prayer times. It stays on your device.', bn: 'সঠিক নামাজের সময় দেখতে লোকেশন দিন বা শহর বাছাই করুন। এটি শুধু আপনার ডিভাইসেই থাকে।' })}</p>
-            <LocationPicker className="mt-6 text-left" />
+            <h2 className="mt-4 font-display text-2xl font-semibold">{t({ en: 'Where are you praying?', bn: 'আপনি কোথায় আছেন?', ar: 'أين تصلي؟' })}</h2>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{t({ en: 'Share your location or pick a city to see accurate prayer times. It stays on your device.', bn: 'সঠিক নামাজের সময় দেখতে লোকেশন দিন বা শহর বাছাই করুন। এটি শুধু আপনার ডিভাইসেই থাকে।', ar: 'شارك موقعك أو اختر مدينة لترى مواقيت الصلاة بدقة. يبقى الموقع على جهازك.' })}</p>
+            <LocationPicker className="mt-6 text-start" />
           </div>
         </motion.div>
       </div>
@@ -120,18 +120,18 @@ export function PrayerView() {
   const remain = Math.max(0, nextAt - now)
   const hh = Math.floor(remain / 3_600_000), mm = Math.floor((remain % 3_600_000) / 60_000), ss = Math.floor((remain % 60_000) / 1000)
   const prog = Math.min(1, Math.max(0, (now - prevAt) / (nextAt - prevAt)))
-  const label = (k: Key) => { const r = ROWS.find((x) => x.key === k)!; return k === 'dhuhr' && isFriday ? t({ en: 'Jumu’ah', bn: 'জুমা' }) : t({ en: r.en, bn: r.bn }) }
+  const label = (k: Key) => { const r = ROWS.find((x) => x.key === k)!; return k === 'dhuhr' && isFriday ? t({ en: 'Jumu’ah', bn: 'জুমা', ar: 'الجمعة' }) : t({ en: r.en, bn: r.bn }) }
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-32 pt-6 sm:px-6 lg:pb-16 lg:pt-10">
       {/* header */}
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Prayer times', bn: 'নামাজের সময়সূচি' })}</p>
-          <h1 className="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Prayer Times Today', bn: 'আজকের নামাজের সময়' })}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{t({ en: 'Prayer times', bn: 'নামাজের সময়সূচি', ar: 'مواقيت الصلاة' })}</p>
+          <h1 className="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">{t({ en: 'Prayer Times Today', bn: 'আজকের নামাজের সময়', ar: 'مواقيت الصلاة اليوم' })}</h1>
         </div>
         <button onClick={() => setChanging((v) => !v)} className="inline-flex h-10 items-center gap-2 rounded-full border bg-card px-4 text-sm font-medium transition hover:border-primary/40">
-          <MapPin className="size-4 text-primary" /> {location.city ?? t({ en: 'My location', bn: 'আমার অবস্থান' })}
+          <MapPin className="size-4 text-primary" /> {location.city ?? t({ en: 'My location', bn: 'আমার অবস্থান', ar: 'موقعي' })}
           <ChevronDown className={cn('size-4 text-muted-foreground transition', changing && 'rotate-180')} />
         </button>
       </div>
@@ -146,7 +146,7 @@ export function PrayerView() {
           <div className="bg-pattern absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
         </div>
         <div className="relative text-center">
-          <p className="text-sm text-muted-foreground">{t({ en: 'Next prayer', bn: 'পরবর্তী নামাজ' })}</p>
+          <p className="text-sm text-muted-foreground">{t({ en: 'Next prayer', bn: 'পরবর্তী নামাজ', ar: 'الصلاة القادمة' })}</p>
           <h2 className="mt-1 flex items-center justify-center gap-3 font-display text-4xl font-semibold sm:text-5xl">
             <UiIcon name={nextRow.icon} size={40} /> {label(nextKey)}
             <span className="font-arabic text-2xl text-gold sm:text-3xl" lang="ar">{nextRow.ar}</span>
@@ -154,7 +154,7 @@ export function PrayerView() {
           <p aria-live="off" className="mt-3 font-display text-5xl font-semibold tabular-nums tracking-tight sm:text-7xl">
             {fmtNum(`${pad(hh)}:${pad(mm)}`)}<span className="text-gold">:{fmtNum(pad(ss))}</span>
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">{t({ en: 'at', bn: 'সময়' })} {fmtNum(fmt(nextAt))}{nextAt === nextFajr && nextKey === 'fajr' && now > times.isha ? t({ en: ' tomorrow', bn: ' (আগামীকাল)' }) : ''}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t({ en: 'at', bn: 'সময়', ar: 'الساعة' })} {fmtNum(fmt(nextAt))}{nextAt === nextFajr && nextKey === 'fajr' && now > times.isha ? t({ en: ' tomorrow', bn: ' (আগামীকাল)', ar: ' غدًا' }) : ''}</p>
           <div className="mx-auto mt-4 h-1.5 max-w-xs overflow-hidden rounded-full bg-muted">
             <motion.div className="h-full rounded-full bg-gradient-to-r from-gold to-primary" animate={{ width: `${prog * 100}%` }} transition={{ type: 'spring', stiffness: 380, damping: 30 }} />
           </div>
@@ -195,7 +195,7 @@ export function PrayerView() {
                 <p className="truncate text-sm font-semibold">{label(r.key)}</p>
                 <p className="font-display text-xl font-semibold tabular-nums leading-tight sm:text-2xl">{fmtNum(fmt(times[r.key]))}</p>
               </div>
-              {isNext && <span className="absolute right-3 top-3 size-2 rounded-full bg-primary pulse-ring" />}
+              {isNext && <span className="absolute end-3 top-3 size-2 rounded-full bg-primary pulse-ring" />}
             </motion.div>
           )
         })}
@@ -205,12 +205,12 @@ export function PrayerView() {
 
       {/* settings */}
       <section className="card-soft mt-5 p-4 sm:p-6">
-        <button onClick={() => setShowSettings((v) => !v)} className="flex w-full items-center justify-between text-left">
+        <button onClick={() => setShowSettings((v) => !v)} className="flex w-full items-center justify-between text-start">
           <span className="flex items-center gap-3">
             <UiIcon name="settings" size={28} />
             <span>
-              <span className="block font-display text-lg font-semibold">{t({ en: 'Calculation settings', bn: 'হিসাবের সেটিংস' })}</span>
-              <span className="block text-sm text-muted-foreground">{METHODS.find((m) => m.id === method)?.[lang === 'bn' ? 'bn' : 'en'] ?? method} · {madhab === 'hanafi' ? t({ en: 'Hanafi Asr', bn: 'হানাফি আসর' }) : t({ en: 'Standard Asr', bn: 'শাফেয়ি আসর' })}</span>
+              <span className="block font-display text-lg font-semibold">{t({ en: 'Calculation settings', bn: 'হিসাবের সেটিংস', ar: 'إعدادات الحساب' })}</span>
+              <span className="block text-sm text-muted-foreground">{METHODS.find((m) => m.id === method)?.[lang === 'bn' ? 'bn' : lang === 'ar' ? 'ar' : 'en'] ?? method} · {madhab === 'hanafi' ? t({ en: 'Hanafi Asr', bn: 'হানাফি আসর', ar: 'العصر حنفي' }) : t({ en: 'Standard Asr', bn: 'শাফেয়ি আসর', ar: 'العصر (الجمهور)' })}</span>
             </span>
           </span>
           <ChevronDown className={cn('size-5 text-muted-foreground transition', showSettings && 'rotate-180')} />
@@ -218,26 +218,26 @@ export function PrayerView() {
         {showSettings && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-5 grid gap-5 overflow-hidden sm:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold">{t({ en: 'Calculation method', bn: 'গণনা পদ্ধতি' })}</span>
+              <span className="mb-2 block text-sm font-semibold">{t({ en: 'Calculation method', bn: 'গণনা পদ্ধতি', ar: 'طريقة الحساب' })}</span>
               <select value={method} onChange={(e) => setMethod(e.target.value)} className="h-11 w-full rounded-2xl border bg-background px-3 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20">
-                {METHODS.map((m) => <option key={m.id} value={m.id}>{lang === 'bn' ? m.bn : m.en}</option>)}
+                {METHODS.map((m) => <option key={m.id} value={m.id}>{lang === 'bn' ? m.bn : lang === 'ar' ? m.ar ?? m.en : m.en}</option>)}
               </select>
             </label>
             <div>
-              <span className="mb-2 block text-sm font-semibold">{t({ en: 'Asr (madhab)', bn: 'আসর (মাযহাব)' })}</span>
+              <span className="mb-2 block text-sm font-semibold">{t({ en: 'Asr (madhab)', bn: 'আসর (মাযহাব)', ar: 'العصر (المذهب)' })}</span>
               <div className="grid grid-cols-2 gap-1 rounded-full bg-muted p-1">
                 {(['shafi', 'hanafi'] as const).map((m) => (
                   <button key={m} onClick={() => setMadhab(m)} className={cn('h-9 rounded-full text-sm font-medium transition', madhab === m ? 'bg-card shadow-sm' : 'text-muted-foreground')}>
-                    {m === 'shafi' ? t({ en: 'Shafi / Standard', bn: 'শাফেয়ি / সাধারণ' }) : t({ en: 'Hanafi', bn: 'হানাফি' })}
+                    {m === 'shafi' ? t({ en: 'Shafi / Standard', bn: 'শাফেয়ি / সাধারণ', ar: 'شافعي / الجمهور' }) : t({ en: 'Hanafi', bn: 'হানাফি', ar: 'حنفي' })}
                   </button>
                 ))}
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">{t({ en: 'Hanafi Asr begins when a shadow is twice the object’s length.', bn: 'হানাফি মতে আসর শুরু হয় ছায়া বস্তুর দ্বিগুণ হলে।' })}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{t({ en: 'Hanafi Asr begins when a shadow is twice the object’s length.', bn: 'হানাফি মতে আসর শুরু হয় ছায়া বস্তুর দ্বিগুণ হলে।', ar: 'يبدأ العصر عند الحنفية حين يصير ظل الشيء مثليه.' })}</p>
             </div>
           </motion.div>
         )}
       </section>
-      <p className="mt-4 text-center text-xs text-muted-foreground">{t({ en: 'Times are calculated on your device for the chosen location. Adjust a few minutes for local mosque schedules.', bn: 'সময় আপনার ডিভাইসে হিসাব করা। স্থানীয় মসজিদের সময়ের সাথে কয়েক মিনিটের পার্থক্য হতে পারে।' })}</p>
+      <p className="mt-4 text-center text-xs text-muted-foreground">{t({ en: 'Times are calculated on your device for the chosen location. Adjust a few minutes for local mosque schedules.', bn: 'সময় আপনার ডিভাইসে হিসাব করা। স্থানীয় মসজিদের সময়ের সাথে কয়েক মিনিটের পার্থক্য হতে পারে।', ar: 'تُحسب المواقيت على جهازك للموقع المختار. اضبطها بضع دقائق وفق جدول مسجدك المحلي.' })}</p>
     </div>
   )
 }

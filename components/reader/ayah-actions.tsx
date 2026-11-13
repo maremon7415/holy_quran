@@ -27,16 +27,16 @@ export const AyahActions = memo(function AyahActions({ k, surah, ayah }: { k: st
 
   return (
     <div className="ayah-actions">
-      <button type="button" onClick={play} className="ab" data-on={playing || undefined} aria-label={playing ? t({ en: 'Pause', bn: 'বিরতি' }) : t({ en: 'Play from this ayah', bn: 'এখান থেকে শুনুন' })}>
+      <button type="button" onClick={play} className="ab" data-on={playing || undefined} aria-label={playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play from this ayah', bn: 'এখান থেকে শুনুন', ar: 'تشغيل من هذه الآية' })}>
         <I id={playing ? 'pause' : 'play'} />
       </button>
-      <button type="button" onClick={() => toggleBookmark(k)} className="ab ab-save" data-on={isSaved || undefined} aria-pressed={isSaved} aria-label={t({ en: 'Bookmark', bn: 'বুকমার্ক' })}><I id="bookmark" /></button>
-      <button type="button" onClick={() => useReaderUi.getState().openTafsir(k)} className="ab" aria-label={t({ en: 'Tafsir', bn: 'তাফসীর' })}><I id="tafsir" /></button>
-      <button type="button" onClick={() => copyAyah(k)} className="ab ab-wide" aria-label={t({ en: 'Copy', bn: 'কপি' })}><I id="copy" /></button>
-      <button type="button" onClick={() => shareAyahLink(k)} className="ab ab-wide" aria-label={t({ en: 'Share link', bn: 'লিংক শেয়ার' })}><I id="share" /></button>
-      <button type="button" onClick={() => useReaderUi.getState().openShare(k)} className="ab" aria-label={t({ en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার' })}><I id="image" /></button>
-      <button type="button" onClick={() => useReaderUi.getState().toggleWbw(k)} className="ab ab-wide" data-on={wbwOn || undefined} aria-pressed={wbwOn} aria-label={t({ en: 'Word by word', bn: 'শব্দে শব্দে' })}><I id="wbw" /></button>
-      <button type="button" onClick={() => useReaderUi.getState().openMenu(k)} className="ab ab-narrow" aria-label={t({ en: 'More actions', bn: 'আরও' })}><I id="more" /></button>
+      <button type="button" onClick={() => toggleBookmark(k)} className="ab ab-save" data-on={isSaved || undefined} aria-pressed={isSaved} aria-label={t({ en: 'Bookmark', bn: 'বুকমার্ক', ar: 'علامة حفظ' })}><I id="bookmark" /></button>
+      <button type="button" onClick={() => useReaderUi.getState().openTafsir(k)} className="ab" aria-label={t({ en: 'Tafsir', bn: 'তাফসীর', ar: 'التفسير' })}><I id="tafsir" /></button>
+      <button type="button" onClick={() => copyAyah(k)} className="ab ab-wide" aria-label={t({ en: 'Copy', bn: 'কপি', ar: 'نسخ' })}><I id="copy" /></button>
+      <button type="button" onClick={() => shareAyahLink(k)} className="ab ab-wide" aria-label={t({ en: 'Share link', bn: 'লিংক শেয়ার', ar: 'مشاركة الرابط' })}><I id="share" /></button>
+      <button type="button" onClick={() => useReaderUi.getState().openShare(k)} className="ab" aria-label={t({ en: 'Share as image', bn: 'ছবি হিসেবে শেয়ার', ar: 'مشاركة كصورة' })}><I id="image" /></button>
+      <button type="button" onClick={() => useReaderUi.getState().toggleWbw(k)} className="ab ab-wide" data-on={wbwOn || undefined} aria-pressed={wbwOn} aria-label={t({ en: 'Word by word', bn: 'শব্দে শব্দে', ar: 'كلمة بكلمة' })}><I id="wbw" /></button>
+      <button type="button" onClick={() => useReaderUi.getState().openMenu(k)} className="ab ab-narrow" aria-label={t({ en: 'More actions', bn: 'আরও', ar: 'إجراءات أخرى' })}><I id="more" /></button>
     </div>
   )
 })

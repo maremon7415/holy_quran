@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { chapters, surahHref, surahNamesBn } from '@/lib/quran/chapters'
 import { normalizeLatin } from '@/lib/quran/normalize'
@@ -30,7 +30,7 @@ export function SurahRail({ current }: { current: number }) {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder={t({ en: 'Find surah…', bn: 'সূরা খুঁজুন…' })}
+        placeholder={t({ en: 'Find surah…', bn: 'সূরা খুঁজুন…', ar: 'ابحث عن سورة…' })}
         className="mb-2 h-10 w-full shrink-0 rounded-2xl border bg-background px-3 text-sm outline-none transition focus:border-primary/50"
         aria-label="Filter surahs"
       />
@@ -42,8 +42,8 @@ export function SurahRail({ current }: { current: number }) {
             data-current={c.id === current ? '' : undefined}
             className={cn('flex items-center gap-2.5 rounded-xl px-2 py-2 text-sm transition-colors', c.id === current ? 'bg-accent font-semibold text-accent-foreground' : 'text-foreground/80 hover:bg-muted')}
           >
-            <span className="w-6 text-right text-xs tabular-nums text-muted-foreground">{c.id}</span>
-            <span className="min-w-0 flex-1 truncate">{lang === 'bn' ? surahNamesBn[c.id - 1] : c.nameSimple}</span>
+            <span className="w-6 text-end text-xs tabular-nums text-muted-foreground">{c.id}</span>
+            <span className="min-w-0 flex-1 truncate">{lang === 'bn' ? surahNamesBn[c.id - 1] : lang === 'ar' ? c.nameArabic : c.nameSimple}</span>
             <span className="font-arabic text-base text-muted-foreground" lang="ar">{c.nameArabic}</span>
           </Link>
         ))}
@@ -70,7 +70,7 @@ export function AyahRail({ surah, total }: { surah: number; total: number }) {
   return (
     <div className="flex max-h-[calc(100dvh-13rem)] flex-col gap-3">
       <div className="flex min-h-0 flex-col rounded-3xl border bg-card/60 p-3">
-        <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Ayahs', bn: 'আয়াত' })}</p>
+        <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Ayahs', bn: 'আয়াত', ar: 'الآيات' })}</p>
         <div ref={gridRef} className="no-scrollbar grid min-h-0 grid-cols-5 gap-1 overflow-y-auto">
           {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
             <button
@@ -87,7 +87,7 @@ export function AyahRail({ surah, total }: { surah: number; total: number }) {
       </div>
       {tajweed && (
         <div className="rounded-3xl border bg-card/60 p-3">
-          <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Tajweed', bn: 'তাজবীদ' })}</p>
+          <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{t({ en: 'Tajweed', bn: 'তাজবীদ', ar: 'التجويد' })}</p>
           <TajweedLegend />
         </div>
       )}

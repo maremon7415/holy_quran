@@ -63,13 +63,13 @@ export function Panel({
                 className={cn(
                   'reader-chrome fixed z-[81] flex flex-col overflow-hidden border bg-popover text-popover-foreground shadow-[0_30px_80px_-20px_rgb(var(--shadow-color)/0.45)] outline-none',
                   desktop
-                    ? cn('inset-y-3 right-3 rounded-[1.75rem]', wide ? 'w-[min(560px,calc(100vw-1.5rem))]' : 'w-[min(420px,calc(100vw-1.5rem))]')
+                    ? cn('inset-y-3 end-3 rounded-[1.75rem]', wide ? 'w-[min(560px,calc(100vw-1.5rem))]' : 'w-[min(420px,calc(100vw-1.5rem))]')
                     : 'inset-x-0 bottom-0 max-h-[90dvh] rounded-t-[2rem] pb-[env(safe-area-inset-bottom)]',
                   className
                 )}
-                initial={desktop ? { x: '105%', opacity: 0.6 } : { y: '100%' }}
+                initial={desktop ? { x: slideX(), opacity: 0.6 } : { y: '100%' }}
                 animate={desktop ? { x: 0, opacity: 1 } : { y: 0 }}
-                exit={desktop ? { x: '105%', opacity: 0.6 } : { y: '100%' }}
+                exit={desktop ? { x: slideX(), opacity: 0.6 } : { y: '100%' }}
                 transition={spring}
                 drag={desktop ? false : 'y'}
                 dragControls={drag}
@@ -108,3 +108,6 @@ export function Panel({
     </Dialog.Root>
   )
 }
+
+/** Side panel slides in from the inline-end edge (left in the RTL Arabic UI). */
+const slideX = () => (typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ? '-105%' : '105%')

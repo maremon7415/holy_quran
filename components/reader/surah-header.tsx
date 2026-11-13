@@ -104,7 +104,7 @@ export function SurahHeader({ chapter: c, juzFrom, juzTo, info, locale = 'en' }:
                 </>
               ) : (
                 <>
-                  {c.summaryEn && <p className="text-[15px] leading-relaxed text-foreground/85">{c.summaryEn}</p>}
+                  {c.summaryEn && <p lang="en" className="text-[15px] leading-relaxed text-foreground/85">{c.summaryEn}</p>}
                   {c.summaryBn && <p lang="bn" className="mt-2 font-bangla text-[15px] leading-relaxed text-foreground/85">{c.summaryBn}</p>}
                   {infoEn && <div className="reader-prose mt-4 border-t pt-4" lang="en" dangerouslySetInnerHTML={{ __html: infoEn }} />}
                   {infoBn && <div className="reader-prose mt-4 border-t pt-4 font-bangla" lang="bn" dangerouslySetInnerHTML={{ __html: infoBn }} />}

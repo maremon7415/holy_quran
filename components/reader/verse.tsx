@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { Verse } from '@/lib/quran/types'
 import { surahHref, toArabicDigits } from '@/lib/quran/chapters'
 import { tokenizeArabic } from '@/lib/reader/words'
+import { localeHref } from '@/lib/i18n/routes'
 
 /**
  * Arabic text as plain text runs (+ gold waqf marks). Word spans (`.w[data-w]`) for the
@@ -44,7 +45,7 @@ export const AyahMarker = ({ n }: { n: number }) => (
  * `full` (single-ayah pages) also renders Abdel Haleem + Latin transliteration; on surah / juz
  * pages those are fetched on demand when the reader turns them on.
  */
-export function VerseBlock({ verse, surah, scoped = false, bt, full = false }: {
+export function VerseBlock({ verse, surah, scoped = false, bt, full = false, locale = 'en' }: {
   verse: Verse
   surah: number
   /** juz pages hold several surahs → ids like ayah-2-255 */
@@ -52,12 +53,14 @@ export function VerseBlock({ verse, surah, scoped = false, bt, full = false }: {
   /** Bangla uccharon (pronunciation) */
   bt?: string
   full?: boolean
+  /** 'bn' on /bn pages: ayah links stay under /bn */
+  locale?: 'en' | 'bn'
 }) {
   const v = verse
   return (
     <article id={scoped ? `ayah-${surah}-${v.n}` : `ayah-${v.n}`} data-ayah={v.k} data-j={v.j} data-p={v.p} className="ayah group/ayah">
       <div className="ayah-head">
-        <a href={surahHref(surah, v.n)} className="ayah-num" title={`Open ayah ${v.k}`}>
+        <a href={localeHref(locale, surahHref(surah, v.n))} className="ayah-num" title={locale === 'bn' ? `আয়াত ${v.k} খুলুন` : `Open ayah ${v.k}`}>
           {v.k}
           {v.s === 1 && <span className="text-gold" title="Sajdah">۩</span>}
         </a>

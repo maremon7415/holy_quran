@@ -15,7 +15,10 @@ function notFound(req: NextRequest) {
  *    (the pages stream behind a loading.tsx Suspense boundary, so notFound() there would come after a 200)
  */
 export function proxy(req: NextRequest) {
-  const [, , seg, ...rest] = req.nextUrl.pathname.split('/')
+  // /bn/surah/* (Bangla twins) is handled exactly like /surah/*, keeping the /bn prefix on redirects.
+  const bn = req.nextUrl.pathname.startsWith('/bn/')
+  const parts = req.nextUrl.pathname.split('/')
+  const [, , seg, ...rest] = bn ? parts.slice(1) : parts
   if (!seg) return NextResponse.next()
   let id: number | null
   if (slugs.has(seg)) id = chapters.findIndex((c) => c.slug === seg) + 1
@@ -34,8 +37,8 @@ export function proxy(req: NextRequest) {
   }
   if (slugs.has(seg)) return NextResponse.next()
   const url = req.nextUrl.clone()
-  url.pathname = ['/surah', chapters[id - 1].slug, ...rest].join('/')
+  url.pathname = [bn ? '/bn/surah' : '/surah', chapters[id - 1].slug, ...rest].join('/')
   return NextResponse.redirect(url, 308)
 }
 
-export const config = { matcher: ['/surah/:path*'] }
+export const config = { matcher: ['/surah/:path*', '/bn/surah/:path*'] }

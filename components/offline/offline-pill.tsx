@@ -28,7 +28,7 @@ export function OfflinePill() {
           className="glass inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium text-foreground shadow-lg"
         >
           <WifiOff className="size-4 text-gold" />
-          {t({ en: 'Offline — saved content only', bn: 'অফলাইন — শুধু সংরক্ষিত কনটেন্ট' })}
+          {t({ en: 'Offline — saved content only', bn: 'অফলাইন — শুধু সংরক্ষিত কনটেন্ট', ar: 'دون اتصال — المحتوى المحفوظ فقط' })}
         </motion.div>
       )}
     </AnimatePresence>
