@@ -100,6 +100,7 @@ function Duas({ locale }: { locale: Locale }) {
             })}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
+            <Link href={dl('dua-for-breaking-fast-iftar')} className={chipCls}>{lt(locale, { en: 'Iftar dua page', bn: 'ইফতারের দোয়া', ar: 'دعاء الإفطار' })}</Link>
             <Link href={dl('dua-laylatul-qadr')} className={chipCls}>{lt(locale, { en: 'Dua for Laylatul Qadr', bn: 'শবে কদরের দোয়া', ar: 'دعاء ليلة القدر' })}</Link>
             <Link href={localeHref(locale, '/dua')} className={chipCls}>{lt(locale, { en: 'All duas', bn: 'সব দোয়া', ar: 'كل الأدعية' })}</Link>
           </div>

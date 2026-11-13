@@ -129,6 +129,11 @@ export function CommandPalette() {
               </div>
               <Command.List className="overflow-y-auto overscroll-contain p-2 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground">
                 <Command.Empty className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  {!loading && q.trim().length >= 3 && (
+                    <button type="button" onClick={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} className="mb-3 block w-full text-sm font-semibold text-primary hover:underline">
+                      {t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })}
+                    </button>
+                  )}
                   {loading ? t({ en: 'Searching 6,236 ayahs…', bn: '৬,২৩৬ আয়াতে খোঁজা হচ্ছে…', ar: 'جارٍ البحث في ٦٢٣٦ آية…' }) : t({ en: 'No results. Try another word or a reference like 2:255.', bn: 'কিছু পাওয়া যায়নি। অন্য শব্দ বা ২:২৫৫ এর মতো লিখুন।', ar: 'لا نتائج. جرّب كلمة أخرى أو مرجعًا مثل 2:255.' })}
                 </Command.Empty>
 
@@ -169,12 +174,6 @@ export function CommandPalette() {
                   </Command.Group>
                 )}
 
-                {q.trim().length >= 2 && (
-                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
-                    <Item icon="search" onSelect={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} title={t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })} />
-                  </Command.Group>
-                )}
-
                 {hits.length > 0 && (
                   <Command.Group heading={`${t({ en: 'Ayahs', bn: 'আয়াত', ar: 'الآيات' })} · ${total}`}>
                     {hits.map((h) => (
@@ -190,6 +189,12 @@ export function CommandPalette() {
                     )}
                   </Command.Group>
                 )}
+                {q.trim().length >= 3 && (hits.length > 0 || surahMatches.length > 0) && (
+                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
+                    <Item icon="search" onSelect={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} title={t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })} />
+                  </Command.Group>
+                )}
+
               </Command.List>
               <div className="hidden items-center gap-4 border-t px-4 py-2 text-[11px] text-muted-foreground sm:flex">
                 <span><kbd className="rounded border px-1">↑↓</kbd> {t({ en: 'navigate', bn: 'নেভিগেট', ar: 'تنقّل' })}</span>

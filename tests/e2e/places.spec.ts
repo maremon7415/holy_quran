@@ -121,7 +121,7 @@ test.describe('Hijri date', () => {
     await page.locator('form[aria-labelledby="h2g"] select').nth(0).selectOption('9')
     await page.locator('form[aria-labelledby="h2g"] select').nth(1).selectOption('1')
     await expect(page.getByTestId('h2g-result')).toContainText('Monday, 8 February 2027')
-    await expect(page.getByText('Upcoming Islamic events')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Upcoming Islamic events' })).toBeVisible()
     await page.goto('/bn/hijri-date')
     await expect(page.getByRole('heading', { level: 1 })).toContainText('আজ আরবি মাসের কত তারিখ')
     await expect(page.getByTestId('hijri-bd')).toContainText('হিজরি')
