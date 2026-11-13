@@ -1,4 +1,5 @@
 import type { HadithProvider } from './extensions'
+import { hadithMcpProvider } from '@/lib/hadith/api'
 
 /**
  * Wire optional providers here. When the hadith library (lib/hadith) is ready, export an
@@ -9,4 +10,4 @@ import type { HadithProvider } from './extensions'
  *
  * `get_hadith` / `search_hadith` then appear in tools/list automatically.
  */
-export const hadithProvider: HadithProvider | null = null
+export const hadithProvider: HadithProvider | null = hadithMcpProvider

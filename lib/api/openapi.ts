@@ -47,6 +47,28 @@ export function openApiSpec() {
           responses: { 200: okJson('SearchResult', 'Ranked ayahs'), 400: err },
         },
       },
+      '/api/v1/hadith': { get: { tags: ['Hadith'], operationId: 'listHadithCollections', summary: 'Hadith collections (Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasai, Ibn Majah, Malik, Nawawi, Qudsi) with counts', responses: { 200: { description: 'Collections' } } } },
+      '/api/v1/hadith/{collection}/{number}': {
+        get: {
+          tags: ['Hadith'], operationId: 'getHadith', summary: 'One hadith: Arabic, English, Bangla, narrator, grade, canonical url and citation',
+          description: 'Numbers are the commonly cited ones (sunnah.com); Sahih Muslim uses the Muhammad Fu’ad Abd al-Baqi numbering. Narrations sharing a number are returned together.',
+          parameters: [{ name: 'collection', in: 'path', required: true, schema: { type: 'string', enum: ['bukhari', 'muslim', 'abudawud', 'tirmidhi', 'nasai', 'ibnmajah', 'malik', 'nawawi40', 'qudsi40'] } }, { name: 'number', in: 'path', required: true, schema: { type: 'integer', minimum: 1 }, example: 1 }],
+          responses: { 200: { description: 'Hadith' }, 400: err, 404: err, 502: err },
+        },
+      },
+      '/api/v1/hadith/search': {
+        get: {
+          tags: ['Hadith'], operationId: 'searchHadith', summary: 'Search hadith in English, Bangla or Arabic (language detected from the query; "Bukhari 1" returns `exact`)',
+          parameters: [
+            { name: 'q', in: 'query', required: true, schema: { type: 'string', minLength: 2, maxLength: 200 } },
+            { name: 'collection', in: 'query', schema: { type: 'string' }, description: 'Restrict to one collection (faster).' },
+            { name: 'lang', in: 'query', schema: { type: 'string', enum: ['en', 'bn', 'ar'] } },
+            { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
+            { name: 'offset', in: 'query', schema: { type: 'integer', minimum: 0, default: 0 } },
+          ],
+          responses: { 200: { description: 'Ranked hadiths with snippets' }, 400: err, 502: err },
+        },
+      },
       '/api/v1/duas': {
         get: {
           tags: ['Duas'], operationId: 'listDuas', summary: 'List or search duas',

@@ -76,7 +76,7 @@ export async function hadithMeta(locale: Locale, { params }: HadithProps): Promi
     return buildMeta({
       title: `${meta.name.bn} হাদিস ${bnNum(n)}${tBn ? ` — ${tBn}` : ''} | ${meta.aliasBn} ${bnNum(n)} নং হাদিস`,
       description: clip(`${meta.name.bn} ${bnNum(n)}${hadith.book ? `, ${hadith.book.name}` : ''}: ${txt} — আরবি পাঠ, বাংলা ও ইংরেজি অনুবাদ, বর্ণনাকারী ও রেফারেন্সসহ।`, 165),
-      path, locale, type: 'article',
+      path, locale, type: 'article', markdown: true,
       keywords: [`${meta.name.bn} ${bnNum(n)}`, `${meta.aliasBn} হাদিস ${bnNum(n)}`, `${meta.name.bn} ${bnNum(n)} নং হাদিস`, ...(tBn ? [tBn] : []), `${meta.cite} ${n}`, 'হাদিস', 'হাদিস বাংলা অনুবাদ'],
     })
   }
@@ -84,7 +84,7 @@ export async function hadithMeta(locale: Locale, { params }: HadithProps): Promi
   return buildMeta({
     title: `${meta.cite} ${n}${t ? ` — ${t}` : ''} | ${meta.name.bn} ${bnNum(n)}`,
     description: clip(`${meta.cite} ${n}${hadith.book ? `, ${hadith.book.name}` : ''}: “${txt}” Arabic text, English and Bangla translation, narrator${gradeNote ? `, grade (${gradeNote})` : ''} and citation.`, 165),
-    path, type: 'article',
+    path, type: 'article', markdown: true,
     keywords: [`${meta.cite} ${n}`, `${meta.cite} hadith ${n}`, `${meta.name.en.replace(/^Sahih /, '')} hadith ${n}`, ...(t ? [t] : []), 'hadith', `${meta.aliasBn} হাদিস ${bnNum(n)}`],
   })
 }

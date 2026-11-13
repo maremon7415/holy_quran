@@ -33,6 +33,9 @@ export const API_ENDPOINTS: { path: string; example: string; en: string; bn: str
   { path: '/api/v1/duas/{slug}', example: '/api/v1/duas/dua-for-anxiety', en: 'One dua with Arabic, transliteration, meaning and source.', bn: 'একটি দোয়া — আরবি, উচ্চারণ, অর্থ ও উৎস।' },
   { path: '/api/v1/topics/{slug}', example: '/api/v1/topics/patience', en: 'What the Quran says about a topic: quick answer + verses.', bn: 'কোনো বিষয়ে কুরআন কী বলে: সংক্ষিপ্ত উত্তর ও আয়াত।' },
   { path: '/api/v1/names', example: '/api/v1/names', en: 'The 99 Names of Allah (also /api/v1/names/{number|slug}).', bn: 'আল্লাহর ৯৯ নাম (এবং /api/v1/names/{নম্বর})।' },
+  { path: '/api/v1/hadith', example: '/api/v1/hadith', en: 'Hadith collections (Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasai, Ibn Majah, Malik, Nawawi, Qudsi) with counts.', bn: 'হাদিস গ্রন্থসমূহ ও সংখ্যা (বুখারী, মুসলিম, আবু দাউদ ইত্যাদি)।' },
+  { path: '/api/v1/hadith/{collection}/{number}', example: '/api/v1/hadith/bukhari/1', en: 'One hadith: Arabic, English, Bangla, narrator, grade, url and citation (Muslim = Abd al-Baqi numbers).', bn: 'একটি হাদিস — আরবি, ইংরেজি, বাংলা, রাবী, মান ও রেফারেন্স।' },
+  { path: '/api/v1/hadith/search?q=', example: '/api/v1/hadith/search?q=patience&collection=bukhari', en: 'Search hadith in Arabic, English and Bangla (collection, lang, limit, offset).', bn: 'আরবি, ইংরেজি ও বাংলায় হাদিস অনুসন্ধান।' },
 ]
 
 function Code({ children, label }: { children: string; label?: string }) {

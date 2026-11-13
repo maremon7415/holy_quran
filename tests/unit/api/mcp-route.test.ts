@@ -28,7 +28,7 @@ describe('MCP endpoint /api/mcp (JSON-RPC over Streamable HTTP, stateless)', () 
     const { result } = await rpc('tools/list')
     const names = result.tools.map((t: { name: string }) => t.name)
     expect(names).toEqual(expect.arrayContaining(['search_quran', 'get_ayah', 'get_surah', 'get_tafsir', 'find_dua', 'get_topic_verses', 'get_name_of_allah']))
-    expect(names).not.toContain('get_hadith') // no provider wired yet
+    expect(names).toEqual(expect.arrayContaining(['get_hadith', 'search_hadith'])) // hadith provider is wired
     for (const t of result.tools) {
       expect(t.annotations?.readOnlyHint).toBe(true)
       expect(t.inputSchema.type).toBe('object')
