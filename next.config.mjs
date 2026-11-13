@@ -13,9 +13,17 @@ const nextConfig = {
     '/api/search': ['./data/quran/**/*'],
     '/api/hifz/verses/[surah]': ['./data/quran/**/*'],
     '/search': ['./data/quran/**/*'],
+    // AI / developer surfaces read the corpus at request time
+    '/api/v1/**/*': ['./data/quran/**/*'],
+    '/api/mcp': ['./data/quran/**/*'],
+    '/md/[...path]': ['./data/quran/**/*'],
   },
   async rewrites() {
-    return [{ source: '/sitemap.xml', destination: '/sitemap-index.xml' }]
+    return [
+      { source: '/sitemap.xml', destination: '/sitemap-index.xml' },
+      // IndexNow key file /{INDEXNOW_KEY}.txt (route checks the key; robots.txt, llms.txt … are real routes and win)
+      { source: '/:key([a-zA-Z0-9-]{8,128}).txt', destination: '/api/indexnow/:key' },
+    ]
   },
   async headers() {
     return [

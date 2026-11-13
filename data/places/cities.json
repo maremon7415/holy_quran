@@ -1,0 +1,2519 @@
+{
+ "source": "Open-Meteo geocoding API (GeoNames) — https://open-meteo.com/en/docs/geocoding-api",
+ "countries": {
+  "BD": {
+   "en": "Bangladesh",
+   "bn": "বাংলাদেশ"
+  },
+  "SA": {
+   "en": "Saudi Arabia",
+   "bn": "সৌদি আরব"
+  },
+  "AE": {
+   "en": "United Arab Emirates",
+   "bn": "সংযুক্ত আরব আমিরাত"
+  },
+  "QA": {
+   "en": "Qatar",
+   "bn": "কাতার"
+  },
+  "KW": {
+   "en": "Kuwait",
+   "bn": "কুয়েত"
+  },
+  "OM": {
+   "en": "Oman",
+   "bn": "ওমান"
+  },
+  "BH": {
+   "en": "Bahrain",
+   "bn": "বাহরাইন"
+  },
+  "EG": {
+   "en": "Egypt",
+   "bn": "মিসর"
+  },
+  "JO": {
+   "en": "Jordan",
+   "bn": "জর্ডান"
+  },
+  "IQ": {
+   "en": "Iraq",
+   "bn": "ইরাক"
+  },
+  "IR": {
+   "en": "Iran",
+   "bn": "ইরান"
+  },
+  "SY": {
+   "en": "Syria",
+   "bn": "সিরিয়া"
+  },
+  "LB": {
+   "en": "Lebanon",
+   "bn": "লেবানন"
+  },
+  "IL": {
+   "en": "Palestine",
+   "bn": "ফিলিস্তিন"
+  },
+  "TR": {
+   "en": "Türkiye",
+   "bn": "তুরস্ক"
+  },
+  "MA": {
+   "en": "Morocco",
+   "bn": "মরক্কো"
+  },
+  "DZ": {
+   "en": "Algeria",
+   "bn": "আলজেরিয়া"
+  },
+  "TN": {
+   "en": "Tunisia",
+   "bn": "তিউনিসিয়া"
+  },
+  "SD": {
+   "en": "Sudan",
+   "bn": "সুদান"
+  },
+  "PK": {
+   "en": "Pakistan",
+   "bn": "পাকিস্তান"
+  },
+  "IN": {
+   "en": "India",
+   "bn": "ভারত"
+  },
+  "AF": {
+   "en": "Afghanistan",
+   "bn": "আফগানিস্তান"
+  },
+  "UZ": {
+   "en": "Uzbekistan",
+   "bn": "উজবেকিস্তান"
+  },
+  "LK": {
+   "en": "Sri Lanka",
+   "bn": "শ্রীলঙ্কা"
+  },
+  "MY": {
+   "en": "Malaysia",
+   "bn": "মালয়েশিয়া"
+  },
+  "ID": {
+   "en": "Indonesia",
+   "bn": "ইন্দোনেশিয়া"
+  },
+  "SG": {
+   "en": "Singapore",
+   "bn": "সিঙ্গাপুর"
+  },
+  "BN": {
+   "en": "Brunei",
+   "bn": "ব্রুনেই"
+  },
+  "TH": {
+   "en": "Thailand",
+   "bn": "থাইল্যান্ড"
+  },
+  "PH": {
+   "en": "Philippines",
+   "bn": "ফিলিপাইন"
+  },
+  "JP": {
+   "en": "Japan",
+   "bn": "জাপান"
+  },
+  "KR": {
+   "en": "South Korea",
+   "bn": "দক্ষিণ কোরিয়া"
+  },
+  "CN": {
+   "en": "China",
+   "bn": "চীন"
+  },
+  "HK": {
+   "en": "Hong Kong",
+   "bn": "হংকং"
+  },
+  "GB": {
+   "en": "United Kingdom",
+   "bn": "যুক্তরাজ্য"
+  },
+  "FR": {
+   "en": "France",
+   "bn": "ফ্রান্স"
+  },
+  "DE": {
+   "en": "Germany",
+   "bn": "জার্মানি"
+  },
+  "IT": {
+   "en": "Italy",
+   "bn": "ইতালি"
+  },
+  "ES": {
+   "en": "Spain",
+   "bn": "স্পেন"
+  },
+  "NL": {
+   "en": "Netherlands",
+   "bn": "নেদারল্যান্ডস"
+  },
+  "BE": {
+   "en": "Belgium",
+   "bn": "বেলজিয়াম"
+  },
+  "SE": {
+   "en": "Sweden",
+   "bn": "সুইডেন"
+  },
+  "RU": {
+   "en": "Russia",
+   "bn": "রাশিয়া"
+  },
+  "BA": {
+   "en": "Bosnia and Herzegovina",
+   "bn": "বসনিয়া ও হার্জেগোভিনা"
+  },
+  "US": {
+   "en": "United States",
+   "bn": "যুক্তরাষ্ট্র"
+  },
+  "CA": {
+   "en": "Canada",
+   "bn": "কানাডা"
+  },
+  "AU": {
+   "en": "Australia",
+   "bn": "অস্ট্রেলিয়া"
+  },
+  "NZ": {
+   "en": "New Zealand",
+   "bn": "নিউজিল্যান্ড"
+  },
+  "ZA": {
+   "en": "South Africa",
+   "bn": "দক্ষিণ আফ্রিকা"
+  },
+  "NG": {
+   "en": "Nigeria",
+   "bn": "নাইজেরিয়া"
+  },
+  "KE": {
+   "en": "Kenya",
+   "bn": "কেনিয়া"
+  },
+  "ET": {
+   "en": "Ethiopia",
+   "bn": "ইথিওপিয়া"
+  },
+  "SN": {
+   "en": "Senegal",
+   "bn": "সেনেগাল"
+  },
+  "SO": {
+   "en": "Somalia",
+   "bn": "সোমালিয়া"
+  }
+ },
+ "cities": [
+  {
+   "slug": "dhaka",
+   "name": {
+    "en": "Dhaka",
+    "bn": "ঢাকা"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.7104,
+   "lng": 90.4074,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1185241
+  },
+  {
+   "slug": "faridpur",
+   "name": {
+    "en": "Faridpur",
+    "bn": "ফরিদপুর"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.6061,
+   "lng": 89.8406,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1203344
+  },
+  {
+   "slug": "gazipur",
+   "name": {
+    "en": "Gazipur",
+    "bn": "গাজীপুর"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.9984,
+   "lng": 90.4223,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1200109
+  },
+  {
+   "slug": "gopalganj",
+   "name": {
+    "en": "Gopalganj",
+    "bn": "গোপালগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.2235,
+   "lng": 90.0604,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1202120
+  },
+  {
+   "slug": "kishoreganj",
+   "name": {
+    "en": "Kishoreganj",
+    "bn": "কিশোরগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 24.4394,
+   "lng": 90.7829,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1337249
+  },
+  {
+   "slug": "madaripur",
+   "name": {
+    "en": "Madaripur",
+    "bn": "মাদারীপুর"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.171,
+   "lng": 90.2094,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1337245
+  },
+  {
+   "slug": "manikganj",
+   "name": {
+    "en": "Manikganj",
+    "bn": "মানিকগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.8577,
+   "lng": 90.0096,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1348441
+  },
+  {
+   "slug": "munshiganj",
+   "name": {
+    "en": "Munshiganj",
+    "bn": "মুন্সীগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.5517,
+   "lng": 90.5346,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336141
+  },
+  {
+   "slug": "narayanganj",
+   "name": {
+    "en": "Narayanganj",
+    "bn": "নারায়ণগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.6135,
+   "lng": 90.503,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185155
+  },
+  {
+   "slug": "narsingdi",
+   "name": {
+    "en": "Narsingdi",
+    "bn": "নরসিংদী"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.923,
+   "lng": 90.7177,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185117
+  },
+  {
+   "slug": "rajbari",
+   "name": {
+    "en": "Rajbari",
+    "bn": "রাজবাড়ী"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.7573,
+   "lng": 89.6463,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7479432
+  },
+  {
+   "slug": "shariatpur",
+   "name": {
+    "en": "Shariatpur",
+    "bn": "শরীয়তপুর"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 23.21,
+   "lng": 90.35,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7701323
+  },
+  {
+   "slug": "tangail",
+   "name": {
+    "en": "Tangail",
+    "bn": "টাঙ্গাইল"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 24.2498,
+   "lng": 89.9166,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336144
+  },
+  {
+   "slug": "chattogram",
+   "name": {
+    "en": "Chattogram",
+    "bn": "চট্টগ্রাম"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.3384,
+   "lng": 91.8317,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "aliases": [
+    "chittagong",
+    "chittagonj"
+   ],
+   "geonamesId": 1205733
+  },
+  {
+   "slug": "bandarban",
+   "name": {
+    "en": "Bandarban",
+    "bn": "বান্দরবান"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.1953,
+   "lng": 92.2195,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185270
+  },
+  {
+   "slug": "brahmanbaria",
+   "name": {
+    "en": "Brahmanbaria",
+    "bn": "ব্রাহ্মণবাড়িয়া"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 23.9746,
+   "lng": 91.1123,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336142
+  },
+  {
+   "slug": "chandpur",
+   "name": {
+    "en": "Chandpur",
+    "bn": "চাঁদপুর"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 23.2271,
+   "lng": 90.6543,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1207337
+  },
+  {
+   "slug": "cumilla",
+   "name": {
+    "en": "Cumilla",
+    "bn": "কুমিল্লা"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 23.4619,
+   "lng": 91.185,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "comilla"
+   ],
+   "geonamesId": 1185186
+  },
+  {
+   "slug": "coxs-bazar",
+   "name": {
+    "en": "Cox’s Bazar",
+    "bn": "কক্সবাজার"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 21.4397,
+   "lng": 92.0096,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "cox-s-bazar",
+    "coxsbazar"
+   ],
+   "geonamesId": 1336134
+  },
+  {
+   "slug": "feni",
+   "name": {
+    "en": "Feni",
+    "bn": "ফেনী"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 23.0144,
+   "lng": 91.3966,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185224
+  },
+  {
+   "slug": "khagrachhari",
+   "name": {
+    "en": "Khagrachhari",
+    "bn": "খাগড়াছড়ি"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.6688,
+   "lng": 92.3841,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "khagrachari"
+   ],
+   "geonamesId": 1197805
+  },
+  {
+   "slug": "lakshmipur",
+   "name": {
+    "en": "Lakshmipur",
+    "bn": "লক্ষ্মীপুর"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.9443,
+   "lng": 90.83,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "laxmipur"
+   ],
+   "geonamesId": 1196292
+  },
+  {
+   "slug": "noakhali",
+   "name": {
+    "en": "Noakhali",
+    "bn": "নোয়াখালী"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.8176,
+   "lng": 91.0894,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185103
+  },
+  {
+   "slug": "rangamati",
+   "name": {
+    "en": "Rangamati",
+    "bn": "রাঙ্গামাটি"
+   },
+   "country": "BD",
+   "admin": "Chittagong",
+   "lat": 22.6432,
+   "lng": 92.1919,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336139
+  },
+  {
+   "slug": "rajshahi",
+   "name": {
+    "en": "Rajshahi",
+    "bn": "রাজশাহী"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.374,
+   "lng": 88.6011,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1185128
+  },
+  {
+   "slug": "bogura",
+   "name": {
+    "en": "Bogura",
+    "bn": "বগুড়া"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.851,
+   "lng": 89.3711,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "bogra"
+   ],
+   "geonamesId": 1337233
+  },
+  {
+   "slug": "joypurhat",
+   "name": {
+    "en": "Joypurhat",
+    "bn": "জয়পুরহাট"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 25.0945,
+   "lng": 89.0229,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "jaipurhat"
+   ],
+   "geonamesId": 7887985
+  },
+  {
+   "slug": "naogaon",
+   "name": {
+    "en": "Naogaon",
+    "bn": "নওগাঁ"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.8042,
+   "lng": 88.9488,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1192366
+  },
+  {
+   "slug": "natore",
+   "name": {
+    "en": "Natore",
+    "bn": "নাটোর"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.4111,
+   "lng": 88.9867,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7483813
+  },
+  {
+   "slug": "chapainawabganj",
+   "name": {
+    "en": "Chapainawabganj",
+    "bn": "চাঁপাইনবাবগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.5903,
+   "lng": 88.2744,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "nawabganj"
+   ],
+   "geonamesId": 1337240
+  },
+  {
+   "slug": "pabna",
+   "name": {
+    "en": "Pabna",
+    "bn": "পাবনা"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.0064,
+   "lng": 89.2372,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336143
+  },
+  {
+   "slug": "sirajganj",
+   "name": {
+    "en": "Sirajganj",
+    "bn": "সিরাজগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Rajshahi Division",
+   "lat": 24.4577,
+   "lng": 89.708,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185115
+  },
+  {
+   "slug": "khulna",
+   "name": {
+    "en": "Khulna",
+    "bn": "খুলনা"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 22.8098,
+   "lng": 89.5644,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1336135
+  },
+  {
+   "slug": "bagerhat",
+   "name": {
+    "en": "Bagerhat",
+    "bn": "বাগেরহাট"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 22.6566,
+   "lng": 89.7912,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185281
+  },
+  {
+   "slug": "chuadanga",
+   "name": {
+    "en": "Chuadanga",
+    "bn": "চুয়াডাঙ্গা"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.5387,
+   "lng": 89.201,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7479106
+  },
+  {
+   "slug": "jashore",
+   "name": {
+    "en": "Jashore",
+    "bn": "যশোর"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.1697,
+   "lng": 89.2137,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "jessore"
+   ],
+   "geonamesId": 1336140
+  },
+  {
+   "slug": "jhenaidah",
+   "name": {
+    "en": "Jhenaidah",
+    "bn": "ঝিনাইদহ"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.542,
+   "lng": 89.183,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "jhenida"
+   ],
+   "geonamesId": 7701326
+  },
+  {
+   "slug": "kushtia",
+   "name": {
+    "en": "Kushtia",
+    "bn": "কুষ্টিয়া"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.9028,
+   "lng": 89.1194,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185191
+  },
+  {
+   "slug": "magura",
+   "name": {
+    "en": "Magura",
+    "bn": "মাগুরা"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.487,
+   "lng": 89.4159,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7649230
+  },
+  {
+   "slug": "meherpur",
+   "name": {
+    "en": "Meherpur",
+    "bn": "মেহেরপুর"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.7769,
+   "lng": 88.6303,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 8304418
+  },
+  {
+   "slug": "narail",
+   "name": {
+    "en": "Narail",
+    "bn": "নড়াইল"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 23.1551,
+   "lng": 89.4951,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185293
+  },
+  {
+   "slug": "satkhira",
+   "name": {
+    "en": "Satkhira",
+    "bn": "সাতক্ষীরা"
+   },
+   "country": "BD",
+   "admin": "Khulna Division",
+   "lat": 22.7082,
+   "lng": 89.0718,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185111
+  },
+  {
+   "slug": "barishal",
+   "name": {
+    "en": "Barishal",
+    "bn": "বরিশাল"
+   },
+   "country": "BD",
+   "admin": "Barisal Division",
+   "lat": 22.705,
+   "lng": 90.3701,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "aliases": [
+    "barisal"
+   ],
+   "geonamesId": 1336137
+  },
+  {
+   "slug": "barguna",
+   "name": {
+    "en": "Barguna",
+    "bn": "বরগুনা"
+   },
+   "country": "BD",
+   "admin": "Barisal Division",
+   "lat": 22.1567,
+   "lng": 90.1176,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 8304391
+  },
+  {
+   "slug": "bhola",
+   "name": {
+    "en": "Bhola",
+    "bn": "ভোলা"
+   },
+   "country": "BD",
+   "admin": "Barisal Division",
+   "lat": 22.6876,
+   "lng": 90.644,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1336136
+  },
+  {
+   "slug": "jhalokati",
+   "name": {
+    "en": "Jhalokati",
+    "bn": "ঝালকাঠি"
+   },
+   "country": "BD",
+   "admin": "Dhaka Division",
+   "lat": 22.6426,
+   "lng": 90.2011,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "jhalakathi"
+   ],
+   "geonamesId": 8432944
+  },
+  {
+   "slug": "patuakhali",
+   "name": {
+    "en": "Patuakhali",
+    "bn": "পটুয়াখালী"
+   },
+   "country": "BD",
+   "admin": "Barisal Division",
+   "lat": 22.3683,
+   "lng": 90.3458,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7646711
+  },
+  {
+   "slug": "pirojpur",
+   "name": {
+    "en": "Pirojpur",
+    "bn": "পিরোজপুর"
+   },
+   "country": "BD",
+   "admin": "Barisal Division",
+   "lat": 22.5797,
+   "lng": 89.9752,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185138
+  },
+  {
+   "slug": "sylhet",
+   "name": {
+    "en": "Sylhet",
+    "bn": "সিলেট"
+   },
+   "country": "BD",
+   "admin": "Sylhet Division",
+   "lat": 24.899,
+   "lng": 91.872,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1185099
+  },
+  {
+   "slug": "habiganj",
+   "name": {
+    "en": "Habiganj",
+    "bn": "হবিগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Sylhet Division",
+   "lat": 24.3804,
+   "lng": 91.413,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185209
+  },
+  {
+   "slug": "moulvibazar",
+   "name": {
+    "en": "Moulvibazar",
+    "bn": "মৌলভীবাজার"
+   },
+   "country": "BD",
+   "admin": "Sylhet Division",
+   "lat": 24.4889,
+   "lng": 91.7708,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "maulvibazar"
+   ],
+   "geonamesId": 1185166
+  },
+  {
+   "slug": "sunamganj",
+   "name": {
+    "en": "Sunamganj",
+    "bn": "সুনামগঞ্জ"
+   },
+   "country": "BD",
+   "admin": "Sylhet Division",
+   "lat": 25.0689,
+   "lng": 91.4024,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185105
+  },
+  {
+   "slug": "rangpur",
+   "name": {
+    "en": "Rangpur",
+    "bn": "রংপুর"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.7466,
+   "lng": 89.2517,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1185188
+  },
+  {
+   "slug": "dinajpur",
+   "name": {
+    "en": "Dinajpur",
+    "bn": "দিনাজপুর"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.6274,
+   "lng": 88.6378,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1203891
+  },
+  {
+   "slug": "gaibandha",
+   "name": {
+    "en": "Gaibandha",
+    "bn": "গাইবান্ধা"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.3297,
+   "lng": 89.5435,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7921384
+  },
+  {
+   "slug": "kurigram",
+   "name": {
+    "en": "Kurigram",
+    "bn": "কুড়িগ্রাম"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.8116,
+   "lng": 89.6428,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7646708
+  },
+  {
+   "slug": "lalmonirhat",
+   "name": {
+    "en": "Lalmonirhat",
+    "bn": "লালমনিরহাট"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.9172,
+   "lng": 89.4459,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185181
+  },
+  {
+   "slug": "nilphamari",
+   "name": {
+    "en": "Nilphamari",
+    "bn": "নীলফামারী"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 25.9417,
+   "lng": 88.8467,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 7646714
+  },
+  {
+   "slug": "panchagarh",
+   "name": {
+    "en": "Panchagarh",
+    "bn": "পঞ্চগড়"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 26.3334,
+   "lng": 88.5578,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185141
+  },
+  {
+   "slug": "thakurgaon",
+   "name": {
+    "en": "Thakurgaon",
+    "bn": "ঠাকুরগাঁও"
+   },
+   "country": "BD",
+   "admin": "Rangpur Division",
+   "lat": 26.031,
+   "lng": 88.4699,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185092
+  },
+  {
+   "slug": "mymensingh",
+   "name": {
+    "en": "Mymensingh",
+    "bn": "ময়মনসিংহ"
+   },
+   "country": "BD",
+   "admin": "Mymensingh Division",
+   "lat": 24.7564,
+   "lng": 90.4065,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "division": true,
+   "geonamesId": 1185162
+  },
+  {
+   "slug": "jamalpur",
+   "name": {
+    "en": "Jamalpur",
+    "bn": "জামালপুর"
+   },
+   "country": "BD",
+   "admin": "Mymensingh Division",
+   "lat": 24.9197,
+   "lng": 89.9481,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1185106
+  },
+  {
+   "slug": "netrokona",
+   "name": {
+    "en": "Netrokona",
+    "bn": "নেত্রকোণা"
+   },
+   "country": "BD",
+   "admin": "Mymensingh Division",
+   "lat": 24.8835,
+   "lng": 90.729,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "netrakona"
+   ],
+   "geonamesId": 1185116
+  },
+  {
+   "slug": "sherpur",
+   "name": {
+    "en": "Sherpur",
+    "bn": "শেরপুর"
+   },
+   "country": "BD",
+   "admin": "Mymensingh Division",
+   "lat": 25.0188,
+   "lng": 90.0175,
+   "tz": "Asia/Dhaka",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1337248
+  },
+  {
+   "slug": "makkah",
+   "name": {
+    "en": "Makkah",
+    "bn": "মক্কা"
+   },
+   "country": "SA",
+   "admin": "Mecca Region",
+   "lat": 21.4266,
+   "lng": 39.8256,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "aliases": [
+    "mecca",
+    "makka"
+   ],
+   "geonamesId": 104515
+  },
+  {
+   "slug": "madinah",
+   "name": {
+    "en": "Madinah",
+    "bn": "মদিনা"
+   },
+   "country": "SA",
+   "admin": "Medina Region",
+   "lat": 24.4686,
+   "lng": 39.6142,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "aliases": [
+    "medina",
+    "madina"
+   ],
+   "geonamesId": 109223
+  },
+  {
+   "slug": "riyadh",
+   "name": {
+    "en": "Riyadh",
+    "bn": "রিয়াদ"
+   },
+   "country": "SA",
+   "admin": "Riyadh Region",
+   "lat": 24.6877,
+   "lng": 46.7219,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "geonamesId": 108410
+  },
+  {
+   "slug": "jeddah",
+   "name": {
+    "en": "Jeddah",
+    "bn": "জেদ্দা"
+   },
+   "country": "SA",
+   "admin": "Mecca Region",
+   "lat": 21.4901,
+   "lng": 39.1862,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "aliases": [
+    "jiddah"
+   ],
+   "geonamesId": 105343
+  },
+  {
+   "slug": "dammam",
+   "name": {
+    "en": "Dammam",
+    "bn": "দাম্মাম"
+   },
+   "country": "SA",
+   "admin": "Eastern Province",
+   "lat": 26.4344,
+   "lng": 50.1033,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "geonamesId": 110336
+  },
+  {
+   "slug": "taif",
+   "name": {
+    "en": "Taif",
+    "bn": "তায়েফ"
+   },
+   "country": "SA",
+   "admin": "Mecca Region",
+   "lat": 21.2703,
+   "lng": 40.4158,
+   "tz": "Asia/Riyadh",
+   "method": "UmmAlQura",
+   "madhab": "shafi",
+   "geonamesId": 107968
+  },
+  {
+   "slug": "dubai",
+   "name": {
+    "en": "Dubai",
+    "bn": "দুবাই"
+   },
+   "country": "AE",
+   "admin": "Dubai",
+   "lat": 25.0772,
+   "lng": 55.3093,
+   "tz": "Asia/Dubai",
+   "method": "Dubai",
+   "madhab": "shafi",
+   "geonamesId": 292223
+  },
+  {
+   "slug": "abu-dhabi",
+   "name": {
+    "en": "Abu Dhabi",
+    "bn": "আবুধাবি"
+   },
+   "country": "AE",
+   "admin": "Abu Dhabi Emirate",
+   "lat": 24.4512,
+   "lng": 54.397,
+   "tz": "Asia/Dubai",
+   "method": "Dubai",
+   "madhab": "shafi",
+   "geonamesId": 292968
+  },
+  {
+   "slug": "sharjah",
+   "name": {
+    "en": "Sharjah",
+    "bn": "শারজাহ"
+   },
+   "country": "AE",
+   "admin": "Emirate of Sharjah",
+   "lat": 25.3342,
+   "lng": 55.4122,
+   "tz": "Asia/Dubai",
+   "method": "Dubai",
+   "madhab": "shafi",
+   "geonamesId": 292672
+  },
+  {
+   "slug": "doha",
+   "name": {
+    "en": "Doha",
+    "bn": "দোহা"
+   },
+   "country": "QA",
+   "admin": "Baladiyat ad Dawhah",
+   "lat": 25.2855,
+   "lng": 51.531,
+   "tz": "Asia/Qatar",
+   "method": "Qatar",
+   "madhab": "shafi",
+   "geonamesId": 290030
+  },
+  {
+   "slug": "kuwait-city",
+   "name": {
+    "en": "Kuwait City",
+    "bn": "কুয়েত সিটি"
+   },
+   "country": "KW",
+   "admin": "Al Asimah",
+   "lat": 29.367,
+   "lng": 47.9743,
+   "tz": "Asia/Kuwait",
+   "method": "Kuwait",
+   "madhab": "shafi",
+   "geonamesId": 285787
+  },
+  {
+   "slug": "muscat",
+   "name": {
+    "en": "Muscat",
+    "bn": "মাসকাট"
+   },
+   "country": "OM",
+   "admin": "Muscat",
+   "lat": 23.5841,
+   "lng": 58.4078,
+   "tz": "Asia/Muscat",
+   "method": "Dubai",
+   "madhab": "shafi",
+   "geonamesId": 287286
+  },
+  {
+   "slug": "manama",
+   "name": {
+    "en": "Manama",
+    "bn": "মানামা"
+   },
+   "country": "BH",
+   "admin": "Manama",
+   "lat": 26.2279,
+   "lng": 50.5857,
+   "tz": "Asia/Bahrain",
+   "method": "Kuwait",
+   "madhab": "shafi",
+   "geonamesId": 290340
+  },
+  {
+   "slug": "cairo",
+   "name": {
+    "en": "Cairo",
+    "bn": "কায়রো"
+   },
+   "country": "EG",
+   "admin": "Cairo Governorate",
+   "lat": 30.0626,
+   "lng": 31.2497,
+   "tz": "Africa/Cairo",
+   "method": "Egyptian",
+   "madhab": "shafi",
+   "geonamesId": 360630
+  },
+  {
+   "slug": "alexandria",
+   "name": {
+    "en": "Alexandria",
+    "bn": "আলেকজান্দ্রিয়া"
+   },
+   "country": "EG",
+   "admin": "Alexandria Governorate",
+   "lat": 31.2018,
+   "lng": 29.9158,
+   "tz": "Africa/Cairo",
+   "method": "Egyptian",
+   "madhab": "shafi",
+   "geonamesId": 361058
+  },
+  {
+   "slug": "amman",
+   "name": {
+    "en": "Amman",
+    "bn": "আম্মান"
+   },
+   "country": "JO",
+   "admin": "Amman Governorate",
+   "lat": 31.9552,
+   "lng": 35.945,
+   "tz": "Asia/Amman",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 250441
+  },
+  {
+   "slug": "baghdad",
+   "name": {
+    "en": "Baghdad",
+    "bn": "বাগদাদ"
+   },
+   "country": "IQ",
+   "admin": "Baghdad",
+   "lat": 33.3406,
+   "lng": 44.4009,
+   "tz": "Asia/Baghdad",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 98182
+  },
+  {
+   "slug": "tehran",
+   "name": {
+    "en": "Tehran",
+    "bn": "তেহরান"
+   },
+   "country": "IR",
+   "admin": "Tehran",
+   "lat": 35.6944,
+   "lng": 51.4215,
+   "tz": "Asia/Tehran",
+   "method": "Tehran",
+   "madhab": "shafi",
+   "geonamesId": 112931
+  },
+  {
+   "slug": "damascus",
+   "name": {
+    "en": "Damascus",
+    "bn": "দামেস্ক"
+   },
+   "country": "SY",
+   "admin": "Damascus Governorate",
+   "lat": 33.5102,
+   "lng": 36.2913,
+   "tz": "Asia/Damascus",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 170654
+  },
+  {
+   "slug": "beirut",
+   "name": {
+    "en": "Beirut",
+    "bn": "বৈরুত"
+   },
+   "country": "LB",
+   "admin": "Beirut",
+   "lat": 33.8933,
+   "lng": 35.5016,
+   "tz": "Asia/Beirut",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 276781
+  },
+  {
+   "slug": "jerusalem",
+   "name": {
+    "en": "Jerusalem",
+    "bn": "জেরুজালেম"
+   },
+   "country": "IL",
+   "admin": "Jerusalem",
+   "lat": 31.769,
+   "lng": 35.2163,
+   "tz": "Asia/Jerusalem",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "aliases": [
+    "al-quds"
+   ],
+   "geonamesId": 281184
+  },
+  {
+   "slug": "istanbul",
+   "name": {
+    "en": "Istanbul",
+    "bn": "ইস্তাম্বুল"
+   },
+   "country": "TR",
+   "admin": "Istanbul",
+   "lat": 41.0138,
+   "lng": 28.9497,
+   "tz": "Europe/Istanbul",
+   "method": "Turkey",
+   "madhab": "shafi",
+   "geonamesId": 745044
+  },
+  {
+   "slug": "ankara",
+   "name": {
+    "en": "Ankara",
+    "bn": "আঙ্কারা"
+   },
+   "country": "TR",
+   "admin": "Ankara",
+   "lat": 39.9199,
+   "lng": 32.8543,
+   "tz": "Europe/Istanbul",
+   "method": "Turkey",
+   "madhab": "shafi",
+   "geonamesId": 323786
+  },
+  {
+   "slug": "casablanca",
+   "name": {
+    "en": "Casablanca",
+    "bn": "কাসাব্লাঙ্কা"
+   },
+   "country": "MA",
+   "admin": "Casablanca-Settat",
+   "lat": 33.5883,
+   "lng": -7.6114,
+   "tz": "Africa/Casablanca",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2553604
+  },
+  {
+   "slug": "algiers",
+   "name": {
+    "en": "Algiers",
+    "bn": "আলজিয়ার্স"
+   },
+   "country": "DZ",
+   "admin": "Algiers Province",
+   "lat": 36.7323,
+   "lng": 3.0875,
+   "tz": "Africa/Algiers",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2507480
+  },
+  {
+   "slug": "tunis",
+   "name": {
+    "en": "Tunis",
+    "bn": "তিউনিস"
+   },
+   "country": "TN",
+   "admin": "Tunis Governorate",
+   "lat": 36.819,
+   "lng": 10.1658,
+   "tz": "Africa/Tunis",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2464470
+  },
+  {
+   "slug": "khartoum",
+   "name": {
+    "en": "Khartoum",
+    "bn": "খার্তুম"
+   },
+   "country": "SD",
+   "admin": "Khartoum State",
+   "lat": 15.5518,
+   "lng": 32.5324,
+   "tz": "Africa/Khartoum",
+   "method": "Egyptian",
+   "madhab": "shafi",
+   "geonamesId": 379252
+  },
+  {
+   "slug": "karachi",
+   "name": {
+    "en": "Karachi",
+    "bn": "করাচি"
+   },
+   "country": "PK",
+   "admin": "Sindh",
+   "lat": 24.8608,
+   "lng": 67.0104,
+   "tz": "Asia/Karachi",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1174872
+  },
+  {
+   "slug": "lahore",
+   "name": {
+    "en": "Lahore",
+    "bn": "লাহোর"
+   },
+   "country": "PK",
+   "admin": "Punjab",
+   "lat": 31.558,
+   "lng": 74.3507,
+   "tz": "Asia/Karachi",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1172451
+  },
+  {
+   "slug": "islamabad",
+   "name": {
+    "en": "Islamabad",
+    "bn": "ইসলামাবাদ"
+   },
+   "country": "PK",
+   "admin": "Islamabad",
+   "lat": 33.7215,
+   "lng": 73.0433,
+   "tz": "Asia/Karachi",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1176615
+  },
+  {
+   "slug": "delhi",
+   "name": {
+    "en": "Delhi",
+    "bn": "দিল্লি"
+   },
+   "country": "IN",
+   "admin": "National Capital Territory of Delhi",
+   "lat": 28.6519,
+   "lng": 77.2315,
+   "tz": "Asia/Kolkata",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "new-delhi"
+   ],
+   "geonamesId": 1273294
+  },
+  {
+   "slug": "mumbai",
+   "name": {
+    "en": "Mumbai",
+    "bn": "মুম্বাই"
+   },
+   "country": "IN",
+   "admin": "Maharashtra",
+   "lat": 19.0728,
+   "lng": 72.8826,
+   "tz": "Asia/Kolkata",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "bombay"
+   ],
+   "geonamesId": 1275339
+  },
+  {
+   "slug": "kolkata",
+   "name": {
+    "en": "Kolkata",
+    "bn": "কলকাতা"
+   },
+   "country": "IN",
+   "admin": "West Bengal",
+   "lat": 22.5626,
+   "lng": 88.363,
+   "tz": "Asia/Kolkata",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "aliases": [
+    "calcutta"
+   ],
+   "geonamesId": 1275004
+  },
+  {
+   "slug": "hyderabad",
+   "name": {
+    "en": "Hyderabad",
+    "bn": "হায়দরাবাদ"
+   },
+   "country": "IN",
+   "admin": "Telangana",
+   "lat": 17.384,
+   "lng": 78.4564,
+   "tz": "Asia/Kolkata",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1269843
+  },
+  {
+   "slug": "kabul",
+   "name": {
+    "en": "Kabul",
+    "bn": "কাবুল"
+   },
+   "country": "AF",
+   "admin": "Kabul",
+   "lat": 34.5281,
+   "lng": 69.1723,
+   "tz": "Asia/Kabul",
+   "method": "Karachi",
+   "madhab": "hanafi",
+   "geonamesId": 1138958
+  },
+  {
+   "slug": "tashkent",
+   "name": {
+    "en": "Tashkent",
+    "bn": "তাশখন্দ"
+   },
+   "country": "UZ",
+   "admin": "Tashkent",
+   "lat": 41.2647,
+   "lng": 69.2163,
+   "tz": "Asia/Tashkent",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 1512569
+  },
+  {
+   "slug": "colombo",
+   "name": {
+    "en": "Colombo",
+    "bn": "কলম্বো"
+   },
+   "country": "LK",
+   "admin": "Western Province",
+   "lat": 6.9355,
+   "lng": 79.8487,
+   "tz": "Asia/Colombo",
+   "method": "Karachi",
+   "madhab": "shafi",
+   "geonamesId": 1248991
+  },
+  {
+   "slug": "kuala-lumpur",
+   "name": {
+    "en": "Kuala Lumpur",
+    "bn": "কুয়ালালামপুর"
+   },
+   "country": "MY",
+   "admin": "Kuala Lumpur",
+   "lat": 3.1412,
+   "lng": 101.6865,
+   "tz": "Asia/Kuala_Lumpur",
+   "method": "Singapore",
+   "madhab": "shafi",
+   "geonamesId": 1735161
+  },
+  {
+   "slug": "jakarta",
+   "name": {
+    "en": "Jakarta",
+    "bn": "জাকার্তা"
+   },
+   "country": "ID",
+   "admin": "Jakarta Special Capital Region",
+   "lat": -6.2146,
+   "lng": 106.8451,
+   "tz": "Asia/Jakarta",
+   "method": "Singapore",
+   "madhab": "shafi",
+   "geonamesId": 1642911
+  },
+  {
+   "slug": "singapore",
+   "name": {
+    "en": "Singapore",
+    "bn": "সিঙ্গাপুর"
+   },
+   "country": "SG",
+   "admin": null,
+   "lat": 1.2897,
+   "lng": 103.8501,
+   "tz": "Asia/Singapore",
+   "method": "Singapore",
+   "madhab": "shafi",
+   "geonamesId": 1880252
+  },
+  {
+   "slug": "bandar-seri-begawan",
+   "name": {
+    "en": "Bandar Seri Begawan",
+    "bn": "বন্দর সেরি বেগাওয়ান"
+   },
+   "country": "BN",
+   "admin": "Brunei-Muara District",
+   "lat": 4.8903,
+   "lng": 114.9401,
+   "tz": "Asia/Brunei",
+   "method": "Singapore",
+   "madhab": "shafi",
+   "aliases": [
+    "brunei"
+   ],
+   "geonamesId": 1820906
+  },
+  {
+   "slug": "bangkok",
+   "name": {
+    "en": "Bangkok",
+    "bn": "ব্যাংকক"
+   },
+   "country": "TH",
+   "admin": "Bangkok",
+   "lat": 13.754,
+   "lng": 100.5014,
+   "tz": "Asia/Bangkok",
+   "method": "Singapore",
+   "madhab": "shafi",
+   "geonamesId": 1609350
+  },
+  {
+   "slug": "manila",
+   "name": {
+    "en": "Manila",
+    "bn": "ম্যানিলা"
+   },
+   "country": "PH",
+   "admin": "National Capital Region",
+   "lat": 14.6042,
+   "lng": 120.9822,
+   "tz": "Asia/Manila",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 1701668
+  },
+  {
+   "slug": "tokyo",
+   "name": {
+    "en": "Tokyo",
+    "bn": "টোকিও"
+   },
+   "country": "JP",
+   "admin": "Tokyo",
+   "lat": 35.6895,
+   "lng": 139.6917,
+   "tz": "Asia/Tokyo",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 1850147
+  },
+  {
+   "slug": "seoul",
+   "name": {
+    "en": "Seoul",
+    "bn": "সিউল"
+   },
+   "country": "KR",
+   "admin": "Seoul",
+   "lat": 37.566,
+   "lng": 126.9784,
+   "tz": "Asia/Seoul",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 1835848
+  },
+  {
+   "slug": "beijing",
+   "name": {
+    "en": "Beijing",
+    "bn": "বেইজিং"
+   },
+   "country": "CN",
+   "admin": "Beijing Municipality",
+   "lat": 39.9075,
+   "lng": 116.3972,
+   "tz": "Asia/Shanghai",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "aliases": [
+    "peking"
+   ],
+   "geonamesId": 1816670
+  },
+  {
+   "slug": "hong-kong",
+   "name": {
+    "en": "Hong Kong",
+    "bn": "হংকং"
+   },
+   "country": "HK",
+   "admin": null,
+   "lat": 22.2783,
+   "lng": 114.1747,
+   "tz": "Asia/Hong_Kong",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 1819729
+  },
+  {
+   "slug": "london",
+   "name": {
+    "en": "London",
+    "bn": "লন্ডন"
+   },
+   "country": "GB",
+   "admin": "England",
+   "lat": 51.5085,
+   "lng": -0.1257,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2643743
+  },
+  {
+   "slug": "birmingham",
+   "name": {
+    "en": "Birmingham",
+    "bn": "বার্মিংহাম"
+   },
+   "country": "GB",
+   "admin": "England",
+   "lat": 52.4814,
+   "lng": -1.8998,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2655603
+  },
+  {
+   "slug": "manchester",
+   "name": {
+    "en": "Manchester",
+    "bn": "ম্যানচেস্টার"
+   },
+   "country": "GB",
+   "admin": "England",
+   "lat": 53.4809,
+   "lng": -2.2374,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2643123
+  },
+  {
+   "slug": "bradford",
+   "name": {
+    "en": "Bradford",
+    "bn": "ব্র্যাডফোর্ড"
+   },
+   "country": "GB",
+   "admin": "England",
+   "lat": 53.7939,
+   "lng": -1.7521,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2654993
+  },
+  {
+   "slug": "leicester",
+   "name": {
+    "en": "Leicester",
+    "bn": "লেস্টার"
+   },
+   "country": "GB",
+   "admin": "England",
+   "lat": 52.6386,
+   "lng": -1.1317,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2644668
+  },
+  {
+   "slug": "glasgow",
+   "name": {
+    "en": "Glasgow",
+    "bn": "গ্লাসগো"
+   },
+   "country": "GB",
+   "admin": "Scotland",
+   "lat": 55.8651,
+   "lng": -4.2576,
+   "tz": "Europe/London",
+   "method": "MuslimWorldLeague",
+   "madhab": "hanafi",
+   "geonamesId": 2648579
+  },
+  {
+   "slug": "paris",
+   "name": {
+    "en": "Paris",
+    "bn": "প্যারিস"
+   },
+   "country": "FR",
+   "admin": "Île-de-France Region",
+   "lat": 48.8534,
+   "lng": 2.3488,
+   "tz": "Europe/Paris",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2988507
+  },
+  {
+   "slug": "marseille",
+   "name": {
+    "en": "Marseille",
+    "bn": "মার্সেই"
+   },
+   "country": "FR",
+   "admin": "Provence-Alpes-Côte d'Azur",
+   "lat": 43.297,
+   "lng": 5.3811,
+   "tz": "Europe/Paris",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2995469
+  },
+  {
+   "slug": "berlin",
+   "name": {
+    "en": "Berlin",
+    "bn": "বার্লিন"
+   },
+   "country": "DE",
+   "admin": "State of Berlin",
+   "lat": 52.5244,
+   "lng": 13.4105,
+   "tz": "Europe/Berlin",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2950159
+  },
+  {
+   "slug": "rome",
+   "name": {
+    "en": "Rome",
+    "bn": "রোম"
+   },
+   "country": "IT",
+   "admin": "Lazio",
+   "lat": 41.8919,
+   "lng": 12.5113,
+   "tz": "Europe/Rome",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 3169070
+  },
+  {
+   "slug": "madrid",
+   "name": {
+    "en": "Madrid",
+    "bn": "মাদ্রিদ"
+   },
+   "country": "ES",
+   "admin": "Madrid",
+   "lat": 40.4165,
+   "lng": -3.7026,
+   "tz": "Europe/Madrid",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 3117735
+  },
+  {
+   "slug": "amsterdam",
+   "name": {
+    "en": "Amsterdam",
+    "bn": "আমস্টারডাম"
+   },
+   "country": "NL",
+   "admin": "North Holland",
+   "lat": 52.374,
+   "lng": 4.8897,
+   "tz": "Europe/Amsterdam",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2759794
+  },
+  {
+   "slug": "brussels",
+   "name": {
+    "en": "Brussels",
+    "bn": "ব্রাসেলস"
+   },
+   "country": "BE",
+   "admin": "Brussels Capital",
+   "lat": 50.8505,
+   "lng": 4.3488,
+   "tz": "Europe/Brussels",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2800866
+  },
+  {
+   "slug": "stockholm",
+   "name": {
+    "en": "Stockholm",
+    "bn": "স্টকহোম"
+   },
+   "country": "SE",
+   "admin": "Stockholm County",
+   "lat": 59.3294,
+   "lng": 18.0687,
+   "tz": "Europe/Stockholm",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2673730
+  },
+  {
+   "slug": "moscow",
+   "name": {
+    "en": "Moscow",
+    "bn": "মস্কো"
+   },
+   "country": "RU",
+   "admin": "Moscow",
+   "lat": 55.752,
+   "lng": 37.6178,
+   "tz": "Europe/Moscow",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 524901
+  },
+  {
+   "slug": "sarajevo",
+   "name": {
+    "en": "Sarajevo",
+    "bn": "সারায়েভো"
+   },
+   "country": "BA",
+   "admin": "Federation of Bosnia and Herzegovina",
+   "lat": 43.8486,
+   "lng": 18.3564,
+   "tz": "Europe/Sarajevo",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 3191281
+  },
+  {
+   "slug": "new-york",
+   "name": {
+    "en": "New York",
+    "bn": "নিউ ইয়র্ক"
+   },
+   "country": "US",
+   "admin": "New York",
+   "lat": 40.7143,
+   "lng": -74.006,
+   "tz": "America/New_York",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "aliases": [
+    "new-york-city",
+    "nyc"
+   ],
+   "geonamesId": 5128581
+  },
+  {
+   "slug": "chicago",
+   "name": {
+    "en": "Chicago",
+    "bn": "শিকাগো"
+   },
+   "country": "US",
+   "admin": "Illinois",
+   "lat": 41.85,
+   "lng": -87.65,
+   "tz": "America/Chicago",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 4887398
+  },
+  {
+   "slug": "los-angeles",
+   "name": {
+    "en": "Los Angeles",
+    "bn": "লস অ্যাঞ্জেলেস"
+   },
+   "country": "US",
+   "admin": "California",
+   "lat": 34.0522,
+   "lng": -118.2437,
+   "tz": "America/Los_Angeles",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 5368361
+  },
+  {
+   "slug": "houston",
+   "name": {
+    "en": "Houston",
+    "bn": "হিউস্টন"
+   },
+   "country": "US",
+   "admin": "Texas",
+   "lat": 29.7633,
+   "lng": -95.3633,
+   "tz": "America/Chicago",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 4699066
+  },
+  {
+   "slug": "detroit",
+   "name": {
+    "en": "Detroit",
+    "bn": "ডেট্রয়েট"
+   },
+   "country": "US",
+   "admin": "Michigan",
+   "lat": 42.3314,
+   "lng": -83.0457,
+   "tz": "America/Detroit",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 4990729
+  },
+  {
+   "slug": "washington-dc",
+   "name": {
+    "en": "Washington, D.C.",
+    "bn": "ওয়াশিংটন, ডি.সি."
+   },
+   "country": "US",
+   "admin": "District of Columbia",
+   "lat": 38.8951,
+   "lng": -77.0364,
+   "tz": "America/New_York",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "aliases": [
+    "washington"
+   ],
+   "geonamesId": 4140963
+  },
+  {
+   "slug": "toronto",
+   "name": {
+    "en": "Toronto",
+    "bn": "টরন্টো"
+   },
+   "country": "CA",
+   "admin": "Ontario",
+   "lat": 43.7064,
+   "lng": -79.3986,
+   "tz": "America/Toronto",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 6167865
+  },
+  {
+   "slug": "montreal",
+   "name": {
+    "en": "Montréal",
+    "bn": "মন্ট্রিয়াল"
+   },
+   "country": "CA",
+   "admin": "Quebec",
+   "lat": 45.5088,
+   "lng": -73.5878,
+   "tz": "America/Toronto",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "aliases": [
+    "montreal"
+   ],
+   "geonamesId": 6077243
+  },
+  {
+   "slug": "vancouver",
+   "name": {
+    "en": "Vancouver",
+    "bn": "ভ্যাঙ্কুভার"
+   },
+   "country": "CA",
+   "admin": "British Columbia",
+   "lat": 49.2497,
+   "lng": -123.1193,
+   "tz": "America/Vancouver",
+   "method": "NorthAmerica",
+   "madhab": "shafi",
+   "geonamesId": 6173331
+  },
+  {
+   "slug": "sydney",
+   "name": {
+    "en": "Sydney",
+    "bn": "সিডনি"
+   },
+   "country": "AU",
+   "admin": "New South Wales",
+   "lat": -33.8678,
+   "lng": 151.2073,
+   "tz": "Australia/Sydney",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2147714
+  },
+  {
+   "slug": "melbourne",
+   "name": {
+    "en": "Melbourne",
+    "bn": "মেলবোর্ন"
+   },
+   "country": "AU",
+   "admin": "Victoria",
+   "lat": -37.814,
+   "lng": 144.9633,
+   "tz": "Australia/Melbourne",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2158177
+  },
+  {
+   "slug": "auckland",
+   "name": {
+    "en": "Auckland",
+    "bn": "অকল্যান্ড"
+   },
+   "country": "NZ",
+   "admin": "Auckland",
+   "lat": -36.8485,
+   "lng": 174.7635,
+   "tz": "Pacific/Auckland",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2193733
+  },
+  {
+   "slug": "johannesburg",
+   "name": {
+    "en": "Johannesburg",
+    "bn": "জোহানেসবার্গ"
+   },
+   "country": "ZA",
+   "admin": "Gauteng",
+   "lat": -26.2023,
+   "lng": 28.0436,
+   "tz": "Africa/Johannesburg",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 993800
+  },
+  {
+   "slug": "cape-town",
+   "name": {
+    "en": "Cape Town",
+    "bn": "কেপ টাউন"
+   },
+   "country": "ZA",
+   "admin": "Western Cape",
+   "lat": -33.9258,
+   "lng": 18.4232,
+   "tz": "Africa/Johannesburg",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 3369157
+  },
+  {
+   "slug": "lagos",
+   "name": {
+    "en": "Lagos",
+    "bn": "লাগোস"
+   },
+   "country": "NG",
+   "admin": "Lagos",
+   "lat": 6.4541,
+   "lng": 3.3947,
+   "tz": "Africa/Lagos",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2332459
+  },
+  {
+   "slug": "kano",
+   "name": {
+    "en": "Kano",
+    "bn": "কানো"
+   },
+   "country": "NG",
+   "admin": "Kano State",
+   "lat": 12.0001,
+   "lng": 8.5167,
+   "tz": "Africa/Lagos",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2335204
+  },
+  {
+   "slug": "nairobi",
+   "name": {
+    "en": "Nairobi",
+    "bn": "নাইরোবি"
+   },
+   "country": "KE",
+   "admin": "Nairobi County",
+   "lat": -1.2833,
+   "lng": 36.8167,
+   "tz": "Africa/Nairobi",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 184745
+  },
+  {
+   "slug": "addis-ababa",
+   "name": {
+    "en": "Addis Ababa",
+    "bn": "আদ্দিস আবাবা"
+   },
+   "country": "ET",
+   "admin": "Addis Ababa",
+   "lat": 9.025,
+   "lng": 38.7469,
+   "tz": "Africa/Addis_Ababa",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 344979
+  },
+  {
+   "slug": "dakar",
+   "name": {
+    "en": "Dakar",
+    "bn": "ডাকার"
+   },
+   "country": "SN",
+   "admin": "Dakar",
+   "lat": 14.6937,
+   "lng": -17.4441,
+   "tz": "Africa/Dakar",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 2253354
+  },
+  {
+   "slug": "mogadishu",
+   "name": {
+    "en": "Mogadishu",
+    "bn": "মোগাদিশু"
+   },
+   "country": "SO",
+   "admin": "Banaadir",
+   "lat": 2.0371,
+   "lng": 45.3438,
+   "tz": "Africa/Mogadishu",
+   "method": "MuslimWorldLeague",
+   "madhab": "shafi",
+   "geonamesId": 53654
+  }
+ ]
+}

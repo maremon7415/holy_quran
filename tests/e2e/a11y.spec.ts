@@ -9,7 +9,7 @@ const known: Known = JSON.parse(fs.readFileSync(path.join(__dirname, 'a11y-known
 const ROUTES = [
   '/', '/quran', '/surah/al-mulk', '/surah/al-baqarah/255', '/topics', '/topics/patience', '/dua', '/dua/dua-morning-asbahna',
   '/names-of-allah', '/names-of-allah/ar-rahman', '/search?q=mercy', '/hifz', '/journey', '/prayer-times', '/qibla', '/calendar',
-  '/dhikr', '/saved', '/settings', '/about', '/listen',
+  '/dhikr', '/saved', '/settings', '/about', '/listen', '/mcp', '/developers',
 ]
 
 /** wait until no element is mid-fade (entrance animations blend colours and skew contrast results) */

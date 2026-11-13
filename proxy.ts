@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { chapters, resolveChapterId } from '@/lib/quran/chapters'
 
 const slugs = new Set(chapters.map((c) => c.slug))
+/** /2:255, /2.255, /2/255, /2:255-257, optionally under /bn */
+const SHORT_REF = /^(\/bn)?\/(\d{1,3})(?::|%3A|\.|\/)(\d{1,3})(?:-\d{1,3})?$/i
 
 /** Render the app's not-found page with a real 404 status (avoids soft-404s from the streamed reader routes). */
 function notFound(req: NextRequest) {
@@ -15,6 +17,19 @@ function notFound(req: NextRequest) {
  *    (the pages stream behind a loading.tsx Suspense boundary, so notFound() there would come after a 200)
  */
 export function proxy(req: NextRequest) {
+  const path = req.nextUrl.pathname
+  // Markdown alternates for LLMs: /surah/al-baqarah/255.md → /md/surah/al-baqarah/255 (route handler validates and 404s)
+  if (path.endsWith('.md')) return NextResponse.rewrite(new URL(`/md${path.slice(0, -3)}`, req.url))
+  // Short citation URLs: /2:255, /2/255, /2.255 (and /bn/…) → 308 to the canonical ayah page; ranges go to the first ayah
+  const short = path.match(SHORT_REF)
+  if (short) {
+    const [, bnPrefix, s, a] = short
+    const id = +s, n = +a
+    if (id < 1 || id > 114 || n < 1 || n > chapters[id - 1].versesCount) return notFound(req)
+    const url = req.nextUrl.clone()
+    url.pathname = `${bnPrefix ?? ''}/surah/${chapters[id - 1].slug}/${n}`
+    return NextResponse.redirect(url, 308)
+  }
   // /bn/surah/* (Bangla twins) is handled exactly like /surah/*, keeping the /bn prefix on redirects.
   const bn = req.nextUrl.pathname.startsWith('/bn/')
   const parts = req.nextUrl.pathname.split('/')
@@ -41,4 +56,14 @@ export function proxy(req: NextRequest) {
   return NextResponse.redirect(url, 308)
 }
 
-export const config = { matcher: ['/surah/:path*', '/bn/surah/:path*'] }
+export const config = {
+  matcher: [
+    '/surah/:path*',
+    '/bn/surah/:path*',
+    // markdown alternates of juz / topic / dua / name pages (surah + ayah .md are covered above)
+    '/((?:bn/)?(?:juz|topics|dua|names-of-allah)/[^/]+\\.md)',
+    // short ayah URLs
+    '/((?:bn/)?\\d{1,3}(?::|%3A|%3a|\\.)\\d{1,3}(?:-\\d{1,3})?)',
+    '/((?:bn/)?\\d{1,3}/\\d{1,3})',
+  ],
+}

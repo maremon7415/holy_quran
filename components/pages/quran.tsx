@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { getChapters, getJuzs } from '@/lib/quran/data'
 import { surahHref } from '@/lib/quran/chapters'
 import { absoluteUrl, site } from '@/lib/site'
-import { breadcrumbLd, quranBookLd } from '@/lib/reader/seo'
+import { breadcrumbLd } from '@/lib/reader/seo'
+import { publisherRef, quranBookRef } from '@/lib/seo/structured'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ContinueReading, QuranIndex, SearchTrigger } from '@/components/reader/quran-index'
 import { alternatesFor, localeHref, type Locale } from '@/lib/i18n/routes'
@@ -51,7 +52,7 @@ export async function QuranPage({ locale }: { locale: Locale }) {
         name: isBn ? `সূরা ${surahNamesBn[c.id - 1]} (${c.nameArabic})` : `Surah ${c.nameSimple} (${c.nameArabic}) — ${c.meaning}`,
       })),
     },
-    { '@context': 'https://schema.org', ...quranBookLd(), numberOfPages: 604, hasPart: { '@type': 'ItemList', numberOfItems: 114 } },
+    { '@context': 'https://schema.org', ...quranBookRef(locale), numberOfPages: 604, publisher: publisherRef(), hasPart: { '@type': 'ItemList', numberOfItems: 114 } },
     breadcrumbLd(isBn ? [{ name: 'হোম', path: '/bn' }, { name: 'কুরআন', path: '/bn/quran' }] : [{ name: 'Home', path: '/' }, { name: 'Quran', path: '/quran' }]),
   ]
 

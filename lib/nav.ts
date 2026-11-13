@@ -16,6 +16,7 @@ export const primaryNav: NavItem[] = [
 
 export const moreNav: NavItem[] = [
   { href: '/names-of-allah', icon: 'names', label: { en: '99 Names of Allah', bn: 'আল্লাহর ৯৯ নাম', ar: 'أسماء الله الحسنى' }, desc: { en: 'Asma ul Husna with meanings', bn: 'আসমাউল হুসনা ও অর্থ', ar: 'الأسماء الحسنى ومعانيها' } },
+  { href: '/hadith', icon: 'read', label: { en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' }, desc: { en: 'Bukhari, Muslim & more with Bangla', bn: 'বুখারী, মুসলিমসহ বাংলা অনুবাদ', ar: 'البخاري ومسلم وغيرهما' } },
   { href: '/prayer-times', icon: 'prayer', label: { en: 'Prayer Times', bn: 'নামাজের সময়', ar: 'مواقيت الصلاة' }, desc: { en: 'Accurate times for your city', bn: 'আপনার শহরের সঠিক সময়', ar: 'مواقيت دقيقة لمدينتك' } },
   { href: '/qibla', icon: 'qibla', label: { en: 'Qibla', bn: 'কিবলা', ar: 'القبلة' }, desc: { en: 'Live compass to the Kaaba', bn: 'কাবার দিক নির্ণয়', ar: 'بوصلة حية نحو الكعبة' } },
   { href: '/calendar', icon: 'calendar', label: { en: 'Hijri Calendar', bn: 'হিজরি ক্যালেন্ডার', ar: 'التقويم الهجري' }, desc: { en: 'Islamic dates & events', bn: 'ইসলামিক তারিখ ও দিবস', ar: 'التواريخ والمناسبات الإسلامية' } },

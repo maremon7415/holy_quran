@@ -14,6 +14,8 @@ const POPULAR_PAGES: { href: string; label: Tr }[] = [
   { href: '/surah/al-baqarah/285', label: { en: 'Last two ayahs of Al-Baqarah', bn: 'সূরা বাকারার শেষ দুই আয়াত', ar: 'خواتيم سورة البقرة' } },
   { href: '/names-of-allah', label: { en: '99 Names of Allah', bn: 'আল্লাহর ৯৯ নাম', ar: 'أسماء الله الحسنى' } },
   { href: '/dua', label: { en: 'Daily Duas from Quran & Sunnah', bn: 'কুরআন ও সুন্নাহর দৈনন্দিন দোয়া', ar: 'أدعية يومية من القرآن والسنة' } },
+  { href: '/hadith', label: { en: 'Hadith: Bukhari, Muslim & more', bn: 'হাদিস: বুখারী, মুসলিমসহ', ar: 'الحديث: البخاري ومسلم وغيرهما' } },
+  { href: '/hadith/bukhari/1', label: { en: 'Sahih al-Bukhari 1: Actions by intentions', bn: 'সহীহ বুখারী ১: নিয়তের হাদিস', ar: 'صحيح البخاري ١: إنما الأعمال بالنيات' } },
   { href: '/topics', label: { en: 'What the Quran says about…', bn: 'বিষয়ভিত্তিক কুরআন', ar: 'ماذا يقول القرآن عن…' } },
   { href: '/hifz', label: { en: 'Memorise the Quran (Hifz)', bn: 'কুরআন হিফজ করুন', ar: 'احفظ القرآن' } },
   { href: '/juz/30', label: { en: 'Juz Amma (Para 30)', bn: 'আমপারা (৩০ নম্বর পারা)', ar: 'جزء عمّ (الجزء ٣٠)' } },
@@ -28,6 +30,7 @@ const BANGLA_LINKS = [
   { href: '/dua/dua-before-sleeping', label: 'ঘুমানোর দোয়া' },
   { href: '/names-of-allah', label: 'আল্লাহর ৯৯ নাম অর্থসহ' },
   { href: '/dua', label: 'দৈনন্দিন দোয়া' },
+  { href: '/hadith', label: 'হাদিস সমগ্র: বুখারী, মুসলিম' },
   { href: '/topics/anxiety', label: 'দুশ্চিন্তা দূর করার আয়াত' },
 ].map((l) => ({ ...l, href: localeHref('bn', l.href) }))
 

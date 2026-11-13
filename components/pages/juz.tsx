@@ -8,8 +8,10 @@ import { chapters, juzHref, surahHref, surahNamesBn, toArabicDigits, toBanglaDig
 import { getJuzs, getJuzVerses, getUccharon } from '@/lib/quran/data'
 import { absoluteUrl, site } from '@/lib/site'
 import { getJuzName } from '@/lib/reader/juz'
-import { breadcrumbLd, publisherLd, quranBookLd } from '@/lib/reader/seo'
+import { breadcrumbLd } from '@/lib/reader/seo'
 import { JsonLd } from '@/components/seo/json-ld'
+import { markdownAlternate } from '@/lib/content/seo'
+import { publisherRef, quranBookRef } from '@/lib/seo/structured'
 import { UiIcon } from '@/components/ui-icon'
 import { Breadcrumbs, Chip } from '@/components/reader/surah-header'
 import { Bismillah, VerseBlock, needsBismillah } from '@/components/reader/verse'
@@ -48,14 +50,14 @@ export async function juzMeta(locale: Locale, { params }: Props): Promise<Metada
       title: { absolute: bnTitle },
       description: bnDesc,
       keywords: [`পারা ${toBanglaDigits(n)}`, `${toBanglaDigits(n)} পারা বাংলা`, name.bn, ...(n === 30 ? ['আমপারা', 'আমপারা বাংলা উচ্চারণ'] : []), `Juz ${n} Bangla`],
-      alternates: alternatesFor(juzHref(n), 'bn'),
+      alternates: { ...alternatesFor(juzHref(n), 'bn'), types: markdownAlternate(localeHref('bn', juzHref(n))) },
       openGraph: { type: 'article', title: bnTitle, description: bnDesc, url: localeHref('bn', juzHref(n)), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${juzHref(n)}/opengraph-image`, width: 1200, height: 630 }] },
     }
   }
   return {
     title: { absolute: title },
     description,
-    alternates: alternatesFor(juzHref(n), 'en'),
+    alternates: { ...alternatesFor(juzHref(n), 'en'), types: markdownAlternate(juzHref(n)) },
     openGraph: { type: 'article', title, description, url: juzHref(n), siteName: site.name },
   }
 }
@@ -84,8 +86,8 @@ export async function JuzPage({ params, locale }: Props & { locale: Locale }) {
       url: absoluteUrl(h(juzHref(n))),
       position: n,
       inLanguage: isBn ? ['ar', 'bn'] : ['ar', 'en', 'bn'],
-      isPartOf: quranBookLd(),
-      publisher: publisherLd(),
+      isPartOf: quranBookRef(locale),
+      publisher: publisherRef(),
       hasPart: chapterIds.map((s) => ({ '@type': 'Chapter', name: `Surah ${chapters[s - 1].nameSimple}`, url: absoluteUrl(h(surahHref(s))) })),
     },
     breadcrumbLd(isBn ? [{ name: 'হোম', path: '/bn' }, { name: 'কুরআন', path: h('/quran') }, { name: `পারা ${toBanglaDigits(n)}`, path: h(juzHref(n)) }] : [{ name: 'Home', path: '/' }, { name: 'Quran', path: '/quran' }, { name: `Juz ${n}`, path: juzHref(n) }]),

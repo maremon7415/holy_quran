@@ -5,6 +5,7 @@ import { topics } from '@/data/content/topics'
 import { duas } from '@/data/content/duas'
 import { asmaUlHusna } from '@/data/content/asma-ul-husna'
 import { hasBnTwin, localeHref, type Locale } from '@/lib/i18n/routes'
+import { HADITH_SITEMAP_FILES, hadithSitemapChunk } from '@/lib/hadith/sitemap'
 
 const CHUNK = 5000 // well under the 50,000-URL sitemap limit
 const TOTAL_AYAH = chapters.reduce((a, c) => a + c.versesCount, 0) // 6236
@@ -18,9 +19,12 @@ const BN_AYAHS = hasBnTwin('/surah/al-fatihah/1')
  *   1 … A        English ayah pages, 5,000 per file
  *   A+1          Bangla (/bn) twins of the core pages
  *   A+2 … 2A+1   Bangla ayah pages (once /bn ayah pages exist)
+ *   then H files of English hadith URLs (index, collections, books, every hadith; 5,000 per file) followed by the same H files for /bn
  * Every URL that has a twin carries hreflang alternates (en, bn, x-default).
  */
-export const SITEMAP_COUNT = 2 + AYAH_SITEMAPS * (BN_AYAHS ? 2 : 1)
+const QURAN_SITEMAPS = 2 + AYAH_SITEMAPS * (BN_AYAHS ? 2 : 1)
+const HADITH_FILES = HADITH_SITEMAP_FILES()
+export const SITEMAP_COUNT = QURAN_SITEMAPS + HADITH_FILES * 2
 
 export async function generateSitemaps() {
   return Array.from({ length: SITEMAP_COUNT }, (_, id) => ({ id }))
@@ -55,6 +59,8 @@ function corePages(): [string, number, Entry['changeFrequency']][] {
     ['/calendar', 0.6, 'monthly'],
     ['/dhikr', 0.6, 'yearly'],
     ['/about', 0.4, 'yearly'],
+    ['/developers', 0.5, 'monthly'],
+    ['/mcp', 0.5, 'monthly'],
     ...chapters.map((c) => [surahHref(c.id), 0.85, 'monthly'] as const),
     ...Array.from({ length: 30 }, (_, i) => [juzHref(i + 1), 0.7, 'monthly'] as const),
     ...topics.map((t) => [`/topics/${t.slug}`, 0.8, 'monthly'] as const),
@@ -71,6 +77,11 @@ function ayahPaths(chunk: number) {
 
 export default async function sitemap(props: { id: Promise<string> }): Promise<MetadataRoute.Sitemap> {
   const id = Number(await props.id)
+  if (id >= QURAN_SITEMAPS) {
+    const k = id - QURAN_SITEMAPS
+    const locale: Locale = k >= HADITH_FILES ? 'bn' : 'en'
+    return hadithSitemapChunk(k % HADITH_FILES).map((u) => e(u.path, u.priority, 'yearly', locale))
+  }
   if (id === 0) return corePages().map(([p, pr, f]) => e(p, pr, f))
   if (id <= AYAH_SITEMAPS) return ayahPaths(id - 1).map((p) => e(p, 0.5, 'yearly'))
   if (id === AYAH_SITEMAPS + 1) return corePages().filter(([p]) => hasBnTwin(p)).map(([p, pr, f]) => e(p, pr, f, 'bn'))

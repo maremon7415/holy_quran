@@ -20,6 +20,8 @@ export const BN_ROUTES = [
   '/surah/*', '/surah/*/*',
   '/juz/*',
   '/prayer-times',
+  '/hadith', '/hadith/*', '/hadith/*/*', '/hadith/*/book/*', '/hadith/*/book/*/page/*',
+  '/mcp', '/developers',
 ] as const
 
 const patterns = BN_ROUTES.map((p) => new RegExp('^' + p.replace(/\*/g, '[^/]+') + '$'))

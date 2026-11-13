@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { JsonLd } from '@/components/seo/json-ld'
+import { CiteThis } from '@/components/seo/cite-this'
+import { nameTermLd, namesTermSetLd } from '@/lib/seo/structured'
+import { absoluteUrl } from '@/lib/site'
 import { AyahCard } from '@/components/content/ayah-card'
 import { Faq } from '@/components/content/faq'
 import { PageHero, pageShell } from '@/components/content/page-hero'
@@ -53,6 +56,7 @@ export function NamesIndexPage({ locale }: { locale: Locale }) {
   const items = asmaUlHusna.map(({ ref: _r, attr: _a, ...n }) => n)
   return (
     <div className={pageShell}>
+      <JsonLd data={namesTermSetLd(locale, asmaUlHusna)} />
       <JsonLd data={collectionLd({
         name: bn ? 'আল্লাহর ৯৯ নাম' : '99 Names of Allah', description: indexCopy[locale].description, path: h('/names-of-allah'), inLanguage: bn ? 'bn' : undefined,
         items: asmaUlHusna.map((n) => ({ name: bn ? `${n.tlBn} (${n.ar}) – ${n.bn}` : `${n.tl} (${n.ar}) – ${n.en}`, href: h(`/names-of-allah/${n.slug}`) })),
@@ -108,14 +112,14 @@ export async function nameMeta(locale: Locale, { params }: SlugProps): Promise<M
     return buildMeta({
       title: `${n.tlBn} (${n.ar}) অর্থ কী? আল্লাহর ${bnNum(n.n)} নম্বর নাম | ${n.tl}`,
       description: clip(`${n.tlBn} (${n.ar}) অর্থ “${n.bn}”। ${n.expBn} আল্লাহর ৯৯ নামের ${bnNum(n.n)} নম্বর নাম, কুরআনের রেফারেন্সসহ।`, 165),
-      path, locale, type: 'article', ogImage: `${localeHref(locale, path)}/opengraph-image`,
+      path, locale, type: 'article', markdown: true, ogImage: `${localeHref(locale, path)}/opengraph-image`,
       keywords: [`${n.tlBn} অর্থ`, `${n.tlBn} আল্লাহর নাম`, `${n.tlBn} নামের অর্থ`, `${n.tl} meaning`, 'আল্লাহর ৯৯ নাম', 'আসমাউল হুসনা'],
     })
   }
   return buildMeta({
     title: `${n.tl} (${n.ar}) — Meaning of the Name of Allah | ${n.tlBn} অর্থ`,
     description: clip(`${n.tl} (${n.ar}) means “${n.en}”. ${n.expEn} Name ${n.n} of the 99 Names of Allah, with Quran reference. ${n.tlBn} অর্থ: ${n.bn}।`, 165),
-    path, type: 'article',
+    path, type: 'article', markdown: true,
     keywords: [`${n.tl} meaning`, `${n.tl} name of Allah`, `${n.tl} ${n.ar}`, `${n.tlBn} অর্থ`, `${n.tlBn} আল্লাহর নাম`, '99 names of Allah'],
   })
 }
@@ -158,6 +162,7 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
   )
   return (
     <div className={pageShell}>
+      <JsonLd data={nameTermLd(locale, n)} />
       <JsonLd data={articleLd({
         headline: bn ? `${n.tlBn} (${n.ar}) – আল্লাহর নামের অর্থ` : `${n.tl} (${n.ar}) – Meaning of the Name of Allah`,
         description: bn ? `${n.tlBn} অর্থ ${n.bn}। ${n.expBn}` : `${n.tl} means ${n.en}. ${n.expEn}`,
@@ -198,6 +203,8 @@ export async function NamePage({ locale, params }: SlugProps & { locale: Locale 
       </section>
 
       <Faq faqs={faqs} locale={bn ? 'bn' : undefined} />
+
+      <CiteThis locale={locale} title={bn ? `${n.tlBn} (${n.ar}) — আল্লাহর ${bnNum(n.n)} নম্বর নাম` : `${n.tl} (${n.ar}), “${n.en}” — Name ${n.n} of the 99 Names of Allah`} url={absoluteUrl(h(path))} />
 
       <Labelled as="nav" label={{ en: 'Previous and next Name', bn: 'আগের ও পরের নাম', ar: 'الاسم السابق والتالي' }} className="mt-12 grid gap-3 sm:grid-cols-2">
         <Link href={h(`/names-of-allah/${prev.slug}`)} className="card-soft lift rounded-3xl p-4"><span className="text-xs text-muted-foreground"><span className="inline-block rtl:rotate-180">←</span> {bn ? bnNum(prev.n) : prev.n}</span><span className="mt-1 flex items-baseline justify-between"><span className="font-semibold">{bn ? prev.tlBn : <NotAr>{prev.tl}</NotAr>}</span><span lang="ar" className="font-arabic text-2xl">{prev.ar}</span></span></Link>

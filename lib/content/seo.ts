@@ -6,6 +6,7 @@ type Json = Record<string, unknown>
 
 export const publisherLd = {
   '@type': 'Organization',
+  '@id': `${site.url}/#organization`,
   name: site.name,
   url: site.url,
   logo: { '@type': 'ImageObject', url: absoluteUrl('/logo_tab.png') },
@@ -87,9 +88,10 @@ export function clip(s: string, max = 158) {
  * `path` is the English path; with `locale: 'bn'` the canonical/OG URL become `/bn/...`.
  * Pages with a Bangla twin automatically get `alternates.languages` (en / bn / x-default).
  */
-export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article'; locale?: Locale; ogImage?: string }): Metadata {
+export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article'; locale?: Locale; ogImage?: string; markdown?: boolean }): Metadata {
   const locale = m.locale ?? 'en'
-  const alternates = hasBnTwin(m.path) ? alternatesFor(m.path, locale) : { canonical: localeHref(locale, m.path) }
+  const alternates: Metadata['alternates'] & { canonical: string } = hasBnTwin(m.path) ? alternatesFor(m.path, locale) : { canonical: localeHref(locale, m.path) }
+  if (m.markdown) alternates.types = markdownAlternate(alternates.canonical)
   const url = absoluteUrl(alternates.canonical)
   const ogLocale = locale === 'bn' ? 'bn_BD' : site.locale
   const altLocales = locale === 'bn' ? ['en_US'] : [...site.alternateLocales]
@@ -103,6 +105,9 @@ export function buildMeta(m: { title: string; description: string; path: string;
     ...(m.noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }
+
+/** `<link rel="alternate" type="text/markdown">` for LLMs (served by app/md via proxy.ts). Pass the page's own (localized) path. */
+export const markdownAlternate = (path: string) => ({ 'text/markdown': `${path === '/' ? '' : path}.md` })
 
 /** "Ayatul Kursi (Quran 2:255)" stays whole; "Title: subtitle" and "Title — subtitle" are cut at the separator. */
 export const shortTitle = (t: string) => t.split(/:\s| — /)[0].trim()

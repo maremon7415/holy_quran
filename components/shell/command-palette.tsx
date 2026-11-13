@@ -11,6 +11,9 @@ import { useTx } from '@/lib/lang'
 import { moreNav, primaryNav } from '@/lib/nav'
 import { UiIcon } from '@/components/ui-icon'
 import { useLocalizedHref } from '@/lib/i18n/locale-context'
+import { parseHadithReference } from '@/lib/hadith/search-utils'
+import { collectionMeta } from '@/lib/hadith/collections'
+import { hadithUrl } from '@/lib/hadith/url'
 
 interface Hit { key: string; surah: number; ayah: number; surahName: string; ar: string; en: string; bn: string }
 
@@ -73,6 +76,9 @@ export function CommandPalette() {
     return { s, a, c }
   }, [q])
 
+  // "Bukhari 1", "বুখারী হাদিস ১", "muslim 2564" → straight to that hadith
+  const hadithRef = useMemo(() => parseHadithReference(q), [q])
+
   const surahMatches = useMemo(() => {
     const nq = normalizeLatin(q)
     if (!q.trim()) return chapters.slice(0, 0)
@@ -133,6 +139,14 @@ export function CommandPalette() {
                   </Command.Group>
                 )}
 
+                {hadithRef && (
+                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
+                    <Item onSelect={() => go(hadithUrl(hadithRef.collection, hadithRef.number))} icon="read"
+                      title={`${t({ en: collectionMeta(hadithRef.collection)!.cite, bn: collectionMeta(hadithRef.collection)!.name.bn, ar: collectionMeta(hadithRef.collection)!.name.ar })} ${hadithRef.number}`}
+                      sub={t({ en: 'Open this hadith', bn: 'হাদিসটি খুলুন', ar: 'افتح هذا الحديث' })} right={collectionMeta(hadithRef.collection)!.name.ar} />
+                  </Command.Group>
+                )}
+
                 {!q.trim() && (
                   <>
                     <Command.Group heading={t({ en: 'Popular', bn: 'জনপ্রিয়', ar: 'الأكثر قراءة' })}>
@@ -152,6 +166,12 @@ export function CommandPalette() {
                     {surahMatches.map((c) => (
                       <Item key={c.id} icon="quran" onSelect={() => go(surahHref(c.id))} title={`${c.id}. ${t({ en: c.nameSimple, bn: surahNamesBn[c.id - 1], ar: c.nameArabic })}`} sub={`${c.meaning} · ${c.versesCount} ${t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}`} right={c.nameArabic} />
                     ))}
+                  </Command.Group>
+                )}
+
+                {q.trim().length >= 2 && (
+                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
+                    <Item icon="search" onSelect={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} title={t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })} />
                   </Command.Group>
                 )}
 

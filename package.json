@@ -14,11 +14,14 @@
     "test:e2e": "playwright test --trace off",
     "validate:content": "node --experimental-strip-types scripts/validate-content.mjs",
     "verify:hadith": "node --experimental-strip-types scripts/verify-hadith-sources.mjs",
-    "check": "pnpm typecheck && pnpm test && pnpm validate:content"
+    "check": "pnpm typecheck && pnpm test && pnpm validate:content",
+    "indexnow": "node scripts/indexnow.mjs",
+    "wikidata:surahs": "node scripts/build-wikidata-surahs.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.2",
     "@hookform/resolvers": "^3.9.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "1.1.15",
     "@radix-ui/react-aspect-ratio": "1.1.8",

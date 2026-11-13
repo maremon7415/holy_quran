@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { JsonLd } from '@/components/seo/json-ld'
+import { CiteThis } from '@/components/seo/cite-this'
+import { absoluteUrl } from '@/lib/site'
 import { Faq } from '@/components/content/faq'
 import { PageHero, pageShell } from '@/components/content/page-hero'
 import { Reveal } from '@/components/content/reveal'
@@ -21,6 +23,7 @@ import { refLabelL } from '@/lib/i18n/quran'
 import { T, NotAr } from '@/lib/i18n/text'
 import { RefLabel } from '@/lib/i18n/surah-name'
 import { Source } from '@/lib/i18n/source'
+import { HadithSourceLink } from '@/components/hadith/hadith-source-link'
 
 /* ───────────────────────────── /dua ───────────────────────────── */
 
@@ -109,14 +112,14 @@ export async function duaMeta(locale: Locale, { params }: SlugProps): Promise<Me
     return buildMeta({
       title: `${d.title.bn} | আরবি, বাংলা উচ্চারণ ও অর্থ`,
       description: clip(`${r.meaning.bn} — ${d.source}। আরবি দোয়া, বাংলা উচ্চারণ, অর্থ ও কখন পড়বেন।`, 165),
-      path, locale, type: 'article', ogImage: `${localeHref(locale, path)}/opengraph-image`,
+      path, locale, type: 'article', markdown: true, ogImage: `${localeHref(locale, path)}/opengraph-image`,
       keywords: [d.title.bn, `${shortTitle(d.title.bn)} বাংলা অর্থসহ`, `${shortTitle(d.title.bn)} উচ্চারণ`, ...(d.keywords ?? []).filter((k) => /[ঀ-৿]/.test(k)), 'দোয়া', 'দোয়া বাংলা'],
     })
   }
   return buildMeta({
     title: `${d.title.en} | Arabic, Meaning & Source | ${d.title.bn}`,
     description: clip(`${r.meaning.en} — ${d.source}. Arabic text, transliteration and Bangla meaning. ${r.meaning.bn}`, 165),
-    path, type: 'article',
+    path, type: 'article', markdown: true,
     keywords: [d.title.en, d.title.bn, ...(d.keywords ?? []), 'dua', 'দোয়া', 'dua meaning', 'dua in Arabic'],
   })
 }
@@ -176,7 +179,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
   return (
     <div className={pageShell}>
       <JsonLd data={[
-        articleLd({ headline: bn ? d.title.bn : d.title.en, description: bn ? d.meaning.bn : d.meaning.en, path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? 'দোয়া' : 'Dua', inLanguage: bn ? 'bn' : undefined, keywords: [...(d.keywords ?? [])] }),
+        { ...articleLd({ headline: bn ? d.title.bn : d.title.en, description: bn ? d.meaning.bn : d.meaning.en, path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? 'দোয়া' : 'Dua', inLanguage: bn ? 'bn' : undefined, keywords: [...(d.keywords ?? [])] }), citation: d.source, text: d.ar },
         howToLd({ name: bn ? `যেভাবে পড়বেন: ${d.title.bn}` : `How to recite: ${d.title.en}`, description: bn ? `কখন ও কীভাবে এই দোয়া পড়বেন। ${d.source}।` : `When and how to make this dua. ${d.source}.`, path: h(path), steps, inLanguage: bn ? 'bn' : undefined }),
       ]} />
       <Breadcrumbs locale={locale} items={[{ name: bn ? 'দোয়া' : 'Duas', ar: 'الأدعية', href: '/dua' }, { name: bn ? cat.title.bn : cat.title.en, ar: cat.title.ar, href: `/dua#${cat.id}` }, { name: shortTitle(bn ? d.title.bn : d.title.en), ar: d.title.ar, href: path }]} className="mb-4" />
@@ -211,7 +214,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Reveal><section className="card-soft h-full rounded-3xl p-5">
           <h2 className="flex items-center gap-2 text-sm font-semibold"><UiIcon name="info" size={18} /> {bn ? 'উৎস' : <><T en="Source" ar="المصدر" /><NotAr> · উৎস</NotAr></>}</h2>
-          <p className="mt-2 text-[15px] font-medium"><Source s={d.source} bn={bn} /></p>
+          <p className="mt-2 text-[15px] font-medium"><HadithSourceLink s={d.source} bn={bn} /></p>
           {d.verses && (
             <p className="mt-2 flex flex-wrap gap-2 text-xs">
               {d.refs!.map((r) => { const [s, a] = r.split(':'); const first = +a.split('-')[0]; return (
@@ -287,6 +290,7 @@ export async function DuaPage({ locale, params }: SlugProps & { locale: Locale }
       )}
 
       <Faq faqs={faqs} locale={bn ? 'bn' : undefined} />
+      <CiteThis locale={locale} title={bn ? d.title.bn : d.title.en} note={d.source} url={absoluteUrl(h(path))} />
       <p className="mt-8 text-center text-xs text-muted-foreground"><Link href={h('/dua')} className="font-semibold text-primary hover:underline"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'সব দোয়া' : <><T en="All duas" ar="كل الأدعية" /><NotAr> · সব দোয়া</NotAr></>}</Link></p>
     </div>
   )

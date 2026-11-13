@@ -9,9 +9,13 @@ import type { Verse } from '@/lib/quran/types'
 import { absoluteUrl, site } from '@/lib/site'
 import { curatedAyahKeys, getFamousAyah } from '@/lib/reader/famous'
 import { getTafsirForAyah, getWordsForAyah } from '@/lib/reader/server-api'
-import { breadcrumbLd, publisherLd, quranBookLd } from '@/lib/reader/seo'
+import { breadcrumbLd } from '@/lib/reader/seo'
 import { tokenizeArabic } from '@/lib/reader/words'
 import { JsonLd } from '@/components/seo/json-ld'
+import { CiteThis } from '@/components/seo/cite-this'
+import { markdownAlternate } from '@/lib/content/seo'
+import { tafsirSummary } from '@/lib/content/answers'
+import { ayahQuotationLd } from '@/lib/seo/structured'
 import { UiIcon } from '@/components/ui-icon'
 import { AyahActions } from '@/components/reader/ayah-actions'
 import { Breadcrumbs, Chip } from '@/components/reader/surah-header'
@@ -65,7 +69,7 @@ export async function ayahMeta(locale: Locale, { params }: Props): Promise<Metad
       title: { absolute: bnTitle },
       description: bnDesc,
       keywords: [`সূরা ${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} আয়াত`, `${surahNamesBn[p.id - 1]} ${toBanglaDigits(p.n)} বাংলা উচ্চারণ`, ...(f && !f.en.startsWith('Surah ') ? [f.bn, `${f.bn} বাংলা অর্থসহ`, `${f.bn} বাংলা উচ্চারণ`] : []), `Quran ${key} Bangla`],
-      alternates: alternatesFor(url, 'bn'),
+      alternates: { ...alternatesFor(url, 'bn'), types: markdownAlternate(localeHref('bn', url)) },
       openGraph: { type: 'article', title: bnTitle, description: bnDesc, url: localeHref('bn', url), siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${localeHref('bn', url)}/opengraph-image`, width: 1200, height: 630 }] },
       twitter: { card: 'summary_large_image', title: bnTitle, description: bnDesc },
     }
@@ -73,7 +77,7 @@ export async function ayahMeta(locale: Locale, { params }: Props): Promise<Metad
   return {
     title: { absolute: `${title} | ${bnRef}` },
     description,
-    alternates: alternatesFor(url, 'en'),
+    alternates: { ...alternatesFor(url, 'en'), types: markdownAlternate(url) },
     openGraph: { type: 'article', title, description, url, siteName: site.name, locale: 'en_US', alternateLocale: ['bn_BD', 'ar_SA'] },
     twitter: { card: 'summary_large_image', title, description },
   }
@@ -131,25 +135,11 @@ export async function AyahPage({ params, locale }: Props & { locale: Locale }) {
   ]
   const faqs = isBn ? faqsBn : faqsEn
 
-  const chapterRef = { '@type': 'Chapter', name: isBn ? `সূরা ${bnName}` : `Surah ${c.nameSimple}`, url: absoluteUrl(h(surahHref(p.id))), position: p.id, isPartOf: quranBookLd() }
+  const sumSrc = tafsirs.find((t) => t.lang === (isBn ? 'bn' : 'en')) ?? null
+  const summary = sumSrc ? tafsirSummary(sumSrc.html) : ''
+  const famousName = f && !f.en.startsWith('Surah ') ? f.en : undefined
   const ld = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Quotation',
-      '@id': `${url}#ayah`,
-      name: `Quran ${key}${f && !f.en.startsWith('Surah ') ? ` — ${f.en}` : ''}`,
-      headline: isBn ? `সূরা ${bnName} ${toBanglaDigits(p.n)} আয়াত — বাংলা উচ্চারণ ও অর্থ` : title,
-      text: v.ar,
-      inLanguage: 'ar',
-      url,
-      isPartOf: chapterRef,
-      publisher: publisherLd(),
-      workTranslation: [
-        { '@type': 'CreativeWork', name: 'Saheeh International', inLanguage: 'en', text: v.en },
-        { '@type': 'CreativeWork', name: 'M.A.S. Abdel Haleem', inLanguage: 'en', text: v.enH },
-        { '@type': 'CreativeWork', name: 'Taisirul Quran', inLanguage: 'bn', text: v.bn },
-      ],
-    },
+    ayahQuotationLd({ surah: p.id, ayah: p.n, ar: v.ar, en: v.en, enH: v.enH, bn: v.bn, locale, title: isBn ? `সূরা ${bnName} ${toBanglaDigits(p.n)} আয়াত — বাংলা উচ্চারণ ও অর্থ` : title, famous: famousName, summary: summary || undefined }),
     {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -245,6 +235,14 @@ export async function AyahPage({ params, locale }: Props & { locale: Locale }) {
         </div>
       </section>
 
+      {summary && sumSrc && (
+        <section id="ayah-summary" aria-labelledby="summary-h" className="mt-8 rounded-3xl border border-gold/30 bg-gold-soft/40 p-5 sm:p-6">
+          <h2 id="summary-h" className="flex items-center gap-2 font-display text-xl font-semibold"><UiIcon name="sparkle" size={22} /> {lt(locale, { en: 'Summary', bn: 'সংক্ষেপে', ar: 'الخلاصة' })}</h2>
+          <p lang={sumSrc.lang} className={`mt-2 text-[15px] leading-relaxed ${sumSrc.lang === 'bn' ? 'font-bangla' : ''}`}>{summary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">— {lt(locale, { en: 'from', bn: 'সূত্র:', ar: 'من' })} <span className={sumSrc.lang === 'bn' ? 'font-bangla' : ''}>{sumSrc.name}</span></p>
+        </section>
+      )}
+
       {/* Word by word */}
       {words.length > 0 && (
         <section aria-labelledby="wbw" className="mt-10">
@@ -309,6 +307,13 @@ export async function AyahPage({ params, locale }: Props & { locale: Locale }) {
           ))}
         </div>
       </section>
+
+      <CiteThis
+        locale={locale}
+        title={isBn ? `সূরা ${bnName} ${toBanglaDigits(p.id)}:${toBanglaDigits(p.n)} (Quran ${key})` : `Quran ${key}, Surah ${c.nameSimple} (${c.meaning}), Ayah ${p.n}${famousName ? ` — ${famousName}` : ''}`}
+        note={isBn ? 'Taisirul Quran Bangla translation' : 'Saheeh International translation'}
+        url={url}
+      />
 
       <nav aria-label={isBn ? 'আয়াত নেভিগেশন' : 'Ayah navigation'} className="mt-10 flex items-center justify-between gap-3 text-sm font-semibold">
         {prev ? <Link href={h(surahHref(p.id, prev.n))} className="flex items-center gap-1.5 rounded-full border bg-card px-4 py-2.5 transition hover:border-primary/40"><ArrowLeft className="size-4 rtl:rotate-180" /> {isBn ? bnNum(prev.k) : prev.k}</Link> : <span />}
