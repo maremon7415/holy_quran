@@ -59,6 +59,7 @@ export const duaTitleAr: Record<string, string> = {
   'dua-allahumma-qini-adhabaka': 'اللهم قني عذابك',
   'dua-before-eating': 'دعاء قبل الطعام: بسم الله',
   'dua-after-eating': 'دعاء بعد الطعام: الحمد لله الذي أطعمني هذا',
+  'dua-for-breaking-fast-iftar': 'دعاء الإفطار: ذهب الظمأ وابتلت العروق',
   'dua-for-travel': 'دعاء السفر: سبحان الذي سخر لنا هذا',
   'dua-entering-home': 'دعاء دخول البيت',
   'dua-leaving-home': 'دعاء الخروج من البيت',

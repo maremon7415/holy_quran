@@ -7,7 +7,11 @@ import { chapters, resolveChapterId, surahHref, surahNamesBn } from '@/lib/quran
 import { getChapter, getChapterInfo, getUccharon, getVerses } from '@/lib/quran/data'
 import { absoluteUrl, site } from '@/lib/site'
 import { htmlToText } from '@/lib/reader/sanitize'
-import { breadcrumbLd, publisherLd, quranBookLd } from '@/lib/reader/seo'
+import { breadcrumbLd } from '@/lib/reader/seo'
+import { clip, markdownAlternate } from '@/lib/content/seo'
+import { publisherRef, quranBookRef } from '@/lib/seo/structured'
+import { surahSameAs } from '@/lib/seo/wikidata'
+import { SurahKeyFacts } from '@/components/seo/surah-key-facts'
 import { JsonLd } from '@/components/seo/json-ld'
 import { SurahHeader } from '@/components/reader/surah-header'
 import { Bismillah, VerseBlock, needsBismillah } from '@/components/reader/verse'
@@ -41,17 +45,18 @@ export async function surahMeta(locale: Locale, { params }: Props): Promise<Meta
   const bn = surahNamesBn[id - 1]
   const title = `Surah ${c.nameSimple} (${c.nameArabic}) — Read with Bangla & English Translation | সূরা ${bn}`
   const summary = c.summaryEn ? htmlToText(c.summaryEn, 170) : ''
-  const description = `Read Surah ${c.nameSimple} (${c.meaning}), surah ${c.id} of the Quran — ${c.versesCount} ayahs, ${c.revelationPlace === 'makkah' ? 'Meccan' : 'Medinan'}. Arabic text with English (Saheeh International, Abdel Haleem) & Bangla translation, Bangla uccharon (pronunciation), transliteration, word-by-word, tajweed, tafsir and audio. ${summary}`.slice(0, 300)
+  // ≤ ~160 chars so the snippet is not truncated; the full summary is in the Chapter JSON-LD and Key facts
+  const description = clip(`Surah ${c.nameSimple} (${c.meaning}): surah ${c.id}, ${c.versesCount} ayahs, ${c.revelationPlace === 'makkah' ? 'Meccan' : 'Medinan'}. Arabic with English & Bangla translation, uccharon, word-by-word, tafsir and audio. ${summary}`, 160)
   const url = surahHref(id)
   if (locale === 'bn') {
     const bnTitle = `সূরা ${bn} বাংলা উচ্চারণ ও অর্থসহ (${c.nameArabic}) — ${bnNum(c.versesCount)} আয়াত | Surah ${c.nameSimple}`
-    const bnDesc = `সূরা ${bn} (${c.nameArabic}) — কুরআনের ${bnNum(c.id)} নম্বর সূরা, ${bnNum(c.versesCount)} আয়াত, ${c.revelationPlace === 'makkah' ? 'মাক্কী' : 'মাদানী'}। আরবি পাঠ, বাংলা উচ্চারণ, বাংলা ও ইংরেজি অনুবাদ, শব্দে শব্দে অর্থ, তাজবীদ, তাফসীর ও তিলাওয়াত।${c.summaryBn ? ' ' + htmlToText(c.summaryBn, 140) : ''}`.slice(0, 300)
+    const bnDesc = clip(`সূরা ${bn} (${c.nameArabic}) — কুরআনের ${bnNum(c.id)} নম্বর সূরা, ${bnNum(c.versesCount)} আয়াত, ${c.revelationPlace === 'makkah' ? 'মাক্কী' : 'মাদানী'}। আরবি, বাংলা উচ্চারণ, বাংলা ও ইংরেজি অনুবাদ, তাফসীর ও তিলাওয়াত।${c.summaryBn ? ' ' + htmlToText(c.summaryBn, 140) : ''}`, 160)
     const bnUrl = localeHref('bn', url)
     return {
       title: { absolute: bnTitle },
       description: bnDesc,
       keywords: [`সূরা ${bn}`, `সূরা ${bn} বাংলা উচ্চারণ`, `সূরা ${bn} বাংলা অর্থসহ`, `সূরা ${bn} আরবি`, `সূরা ${bn} তিলাওয়াত`, `Surah ${c.nameSimple} Bangla`, c.nameArabic],
-      alternates: alternatesFor(url, 'bn'),
+      alternates: { ...alternatesFor(url, 'bn'), types: markdownAlternate(bnUrl) },
       openGraph: { type: 'article', title: `সূরা ${bn} (${c.nameArabic}) — বাংলা উচ্চারণ ও অর্থ`, description: bnDesc, url: bnUrl, siteName: `${site.name} · নূর কুরআন`, locale: 'bn_BD', alternateLocale: ['en_US'], images: [{ url: `${localeHref('bn', url)}/opengraph-image`, width: 1200, height: 630 }] },
       twitter: { card: 'summary_large_image', title: `সূরা ${bn} — বাংলা উচ্চারণ ও অর্থ`, description: bnDesc },
     }
@@ -60,7 +65,7 @@ export async function surahMeta(locale: Locale, { params }: Props): Promise<Meta
     title: { absolute: title },
     description,
     keywords: [`Surah ${c.nameSimple}`, `${c.nameSimple} translation`, `${c.nameSimple} Bangla`, `সূরা ${bn}`, `সূরা ${bn} বাংলা উচ্চারণ`, c.nameArabic, `Surah ${c.id}`, c.meaning, 'Quran'],
-    alternates: alternatesFor(url, 'en'),
+    alternates: { ...alternatesFor(url, 'en'), types: markdownAlternate(url) },
     openGraph: {
       type: 'article',
       title: `Surah ${c.nameSimple} (${c.nameArabic}) — ${c.meaning}`,
@@ -97,8 +102,9 @@ export async function SurahPage({ params, locale }: Props & { locale: Locale }) 
     url,
     inLanguage: isBn ? ['ar', 'bn'] : ['ar', 'en', 'bn'],
     description: isBn && c.summaryBn ? htmlToText(c.summaryBn, 500) : c.summaryEn ? htmlToText(c.summaryEn, 500) : `${c.meaning} — ${c.versesCount} ayahs`,
-    isPartOf: quranBookLd(),
-    publisher: publisherLd(),
+    isPartOf: quranBookRef(locale),
+    publisher: publisherRef(),
+    sameAs: surahSameAs(id, locale),
     pageStart: c.pages[0],
     pageEnd: c.pages[1],
     about: { '@type': 'Thing', name: c.meaning },
@@ -114,6 +120,7 @@ export async function SurahPage({ params, locale }: Props & { locale: Locale }) 
 
         <div className="mx-auto w-full max-w-[860px] min-w-0">
           <SurahHeader chapter={c} juzFrom={juzFrom} juzTo={juzTo} info={info} locale={locale} />
+          <SurahKeyFacts chapter={c} juzFrom={juzFrom} juzTo={juzTo} locale={locale} />
           <TajweedNotice className="xl:hidden" />
           {needsBismillah(id) && <Bismillah className="mt-6" locale={locale} />}
           <TranslationCredits className={needsBismillah(id) ? '' : 'mt-6'} />

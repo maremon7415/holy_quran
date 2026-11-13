@@ -27,3 +27,5 @@ jobs:
       - run: pnpm validate:content
       - name: Verify hadith duas against source collections
         run: pnpm verify:hadith
+      - name: Verify hadith cited on the /learn pages
+        run: pnpm verify:learn

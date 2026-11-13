@@ -1,0 +1,17 @@
+/* Colours for tajweed classes that the Quran.com markup does not provide (see scripts/build-tajweed-examples.mjs). */
+.tajweed-on .quran-text tajweed.izhar, .tajweed-on .quran-text tajweed.izhar_shafawi { color: #d97706; }
+.tajweed-on .quran-text tajweed.qamariyyah { color: #0d9488; }
+.tajweed-on .quran-text tajweed.tafkheem { color: #ea580c; }
+.tajweed-on .quran-text tajweed.tarqeeq { color: #2563eb; }
+.tajweed-on .quran-text tajweed.waqf { color: #dc2626; font-size: 1.15em; }
+.dark .tajweed-on .quran-text tajweed.tarqeeq, .dusk .tajweed-on .quran-text tajweed.tarqeeq, .black .tajweed-on .quran-text tajweed.tarqeeq { color: #6ea8ff; }
+.dark .tajweed-on .quran-text tajweed.qamariyyah, .dusk .tajweed-on .quran-text tajweed.qamariyyah, .black .tajweed-on .quran-text tajweed.qamariyyah { color: #2dd4bf; }
+.dark .tajweed-on .quran-text tajweed.izhar, .dusk .tajweed-on .quran-text tajweed.izhar, .black .tajweed-on .quran-text tajweed.izhar,
+.dark .tajweed-on .quran-text tajweed.izhar_shafawi, .dusk .tajweed-on .quran-text tajweed.izhar_shafawi, .black .tajweed-on .quran-text tajweed.izhar_shafawi { color: #fbbf24; }
+.dark .tajweed-on .quran-text tajweed.waqf, .dusk .tajweed-on .quran-text tajweed.waqf, .black .tajweed-on .quran-text tajweed.waqf { color: #f87171; }
+.dark .tajweed-on .quran-text tajweed.madda_obligatory, .dusk .tajweed-on .quran-text tajweed.madda_obligatory, .black .tajweed-on .quran-text tajweed.madda_obligatory { color: #6f9bff; }
+.dark .tajweed-on .quran-text tajweed.madda_permissible, .dusk .tajweed-on .quran-text tajweed.madda_permissible, .black .tajweed-on .quran-text tajweed.madda_permissible { color: #7d8aff; }
+.dark .tajweed-on .quran-text tajweed.qalaqah, .dusk .tajweed-on .quran-text tajweed.qalaqah, .black .tajweed-on .quran-text tajweed.qalaqah { color: #ff5a60; }
+.dark .tajweed-on .quran-text tajweed.ikhafa, .dusk .tajweed-on .quran-text tajweed.ikhafa, .black .tajweed-on .quran-text tajweed.ikhafa,
+.dark .tajweed-on .quran-text tajweed.ikhafa_shafawi, .dusk .tajweed-on .quran-text tajweed.ikhafa_shafawi, .black .tajweed-on .quran-text tajweed.ikhafa_shafawi { color: #d17bf0; }
+.dark .tajweed-on .quran-text tajweed.madda_normal, .dusk .tajweed-on .quran-text tajweed.madda_normal, .black .tajweed-on .quran-text tajweed.madda_normal { color: #7fa0ff; }

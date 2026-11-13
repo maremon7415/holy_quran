@@ -8,10 +8,11 @@ const bots = ['Googlebot', 'Bingbot', 'GPTBot', 'OAI-SearchBot', 'ChatGPT-User',
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/api/'] },
-      ...bots.map((userAgent) => ({ userAgent, allow: '/', disallow: ['/api/'] })),
+      // the public read-only API (/api/v1, OpenAPI at /openapi.json) is fine to fetch; other /api routes are not
+      { userAgent: '*', allow: ['/', '/api/v1/'], disallow: ['/api/'] },
+      ...bots.map((userAgent) => ({ userAgent, allow: ['/', '/api/v1/'], disallow: ['/api/'] })),
     ],
-    sitemap: Array.from({ length: SITEMAP_COUNT }, (_, i) => `${site.url}/sitemap/${i}.xml`),
+    sitemap: [...Array.from({ length: SITEMAP_COUNT }, (_, i) => `${site.url}/sitemap/${i}.xml`), `${site.url}/sitemap-places.xml`],
     host: site.url,
   }
 }

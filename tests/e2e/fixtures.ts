@@ -79,5 +79,9 @@ export async function seedStorage(page: Page, entries: Record<string, unknown>) 
 /** The main user-facing routes used by the console-error and a11y sweeps. */
 export const MAIN_ROUTES = [
   '/', '/quran', '/surah/al-mulk', '/surah/al-baqarah/255', '/juz/30', '/topics', '/topics/patience', '/dua', '/names-of-allah',
-  '/search?q=mercy', '/hifz', '/journey', '/prayer-times', '/qibla', '/calendar', '/dhikr', '/saved', '/settings', '/about',
+  '/search?q=mercy', '/hadith', '/hadith/bukhari/1', '/hifz', '/journey', '/prayer-times', '/qibla', '/calendar', '/dhikr', '/saved', '/settings', '/about',
+  '/mcp', '/developers', '/ask',
+  '/prayer-times/dhaka', '/hijri-date', '/zakat-calculator',
+  '/events', '/events/eid-al-adha/2027',
+  '/learn', '/learn/salah', '/learn/wudu', '/learn/tajweed', '/learn/tajweed/ikhfa', '/learn/kalima', '/learn/arabic-alphabet',
 ]

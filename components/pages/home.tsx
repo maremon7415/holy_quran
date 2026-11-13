@@ -14,7 +14,11 @@ import { T, NotAr } from '@/lib/i18n/text'
 import { SurahName, SurahMeaning } from '@/lib/i18n/surah-name'
 
 export function homeMeta(locale: Locale): Metadata {
-  if (locale !== 'bn') return { alternates: alternatesFor('/', 'en') }
+  if (locale !== 'bn') {
+    const title = `${site.name} — Read Al Quran Online in Bangla & English`
+    const description = 'Read the Holy Quran with Arabic, Bangla & English translation, word-by-word, tajweed, tafsir and audio, plus duas, the 99 Names and prayer times. Free, ad-free.'
+    return { title: { absolute: title }, description, alternates: alternatesFor('/', 'en'), twitter: { card: 'summary_large_image', title, description } }
+  }
   const title = 'নূর কুরআন — বাংলা অর্থসহ আল কুরআন পড়ুন, শুনুন ও মুখস্থ করুন'
   return {
     title: { absolute: title },
@@ -178,6 +182,16 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 </Link>
               ))}
             </div>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <Link href={h('/ask')} className="card-soft lift group mx-auto mt-8 flex max-w-xl items-center gap-4 rounded-3xl p-5 text-start">
+              <UiIcon name="sparkle" size={36} />
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-lg font-semibold">{bn ? 'কুরআনে প্রশ্ন করুন' : <T en="Ask the Quran" ar="اسأل القرآن" />}</span>
+                <span className="block text-sm text-muted-foreground">{bn ? 'নিজের ভাষায় প্রশ্ন লিখুন — অর্থ অনুযায়ী আয়াত খুঁজে দেব' : <T en="Ask in your own words — find verses by meaning" ar="اسأل بكلماتك — نجد الآيات بالمعنى" />}</span>
+              </span>
+              <span aria-hidden className="text-primary transition group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1">→</span>
+            </Link>
           </Reveal>
         </section>
 

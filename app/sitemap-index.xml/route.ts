@@ -8,6 +8,7 @@ export async function GET() {
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${ids.map(({ id }) => `  <sitemap><loc>${absoluteUrl(`/sitemap/${id}.xml`)}</loc><lastmod>${now}</lastmod></sitemap>`).join('\n')}
+  <sitemap><loc>${absoluteUrl('/sitemap-places.xml')}</loc><lastmod>${now}</lastmod></sitemap>
 </sitemapindex>
 `
   return new Response(body, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=86400' } })

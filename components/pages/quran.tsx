@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { getChapters, getJuzs } from '@/lib/quran/data'
 import { surahHref } from '@/lib/quran/chapters'
 import { absoluteUrl, site } from '@/lib/site'
-import { breadcrumbLd, quranBookLd } from '@/lib/reader/seo'
+import { breadcrumbLd } from '@/lib/reader/seo'
+import { publisherRef, quranBookRef } from '@/lib/seo/structured'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ContinueReading, QuranIndex, SearchTrigger } from '@/components/reader/quran-index'
 import { alternatesFor, localeHref, type Locale } from '@/lib/i18n/routes'
@@ -11,11 +12,12 @@ import { lt } from '@/lib/i18n/lt'
 import { surahNamesBn } from '@/lib/quran/chapters'
 
 const metaEn: Metadata = {
-  title: { absolute: `Read Al Quran Online — All 114 Surahs with Bangla & English Translation | আল কুরআন | ${site.name}` },
+  title: { absolute: `Read Al Quran Online: All 114 Surahs in Bangla & English | ${site.name}` },
   description:
-    'Read the Holy Quran online: all 114 surahs and 30 juz (para) with Arabic text, English (Saheeh International, Abdel Haleem) and Bangla translation, transliteration, word-by-word meaning, tajweed colours, tafsir and recitation audio.',
+    'Read all 114 surahs and 30 juz (para) of the Holy Quran: Arabic text, English & Bangla translation, transliteration, word-by-word, tajweed, tafsir and audio.',
   alternates: alternatesFor('/quran', 'en'),
-  openGraph: { type: 'website', title: 'Read Al Quran Online — 114 Surahs with Translation', url: '/quran', siteName: site.name },
+  openGraph: { type: 'website', title: 'Read Al Quran Online — 114 Surahs with Translation', description: 'All 114 surahs and 30 juz with Arabic, English & Bangla translation, word-by-word, tajweed, tafsir and audio.', url: '/quran', siteName: site.name, images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', title: 'Read Al Quran Online — 114 Surahs with Translation', description: 'All 114 surahs and 30 juz with Arabic, English & Bangla translation, word-by-word, tajweed, tafsir and audio.', images: ['/opengraph-image'] },
 }
 
 const bnTitle = 'আল কুরআন বাংলা অর্থসহ — ১১৪টি সূরা, ৩০ পারা, বাংলা উচ্চারণ | নূর কুরআন'
@@ -51,7 +53,7 @@ export async function QuranPage({ locale }: { locale: Locale }) {
         name: isBn ? `সূরা ${surahNamesBn[c.id - 1]} (${c.nameArabic})` : `Surah ${c.nameSimple} (${c.nameArabic}) — ${c.meaning}`,
       })),
     },
-    { '@context': 'https://schema.org', ...quranBookLd(), numberOfPages: 604, hasPart: { '@type': 'ItemList', numberOfItems: 114 } },
+    { '@context': 'https://schema.org', ...quranBookRef(locale), numberOfPages: 604, publisher: publisherRef(), hasPart: { '@type': 'ItemList', numberOfItems: 114 } },
     breadcrumbLd(isBn ? [{ name: 'হোম', path: '/bn' }, { name: 'কুরআন', path: '/bn/quran' }] : [{ name: 'Home', path: '/' }, { name: 'Quran', path: '/quran' }]),
   ]
 

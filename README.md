@@ -9,8 +9,10 @@ A fast, beautiful, SEO-first Quran web app: read, listen, understand and memoris
 - **Hifz Studio** – listen → read → fade → recall steps, SM-2 spaced repetition, optional voice recitation check.
 - **My Journey** – streaks, daily goal, 365-day heatmap, achievements, Khatam planner over the 604 mushaf pages.
 - **Knowledge** – 40 Quran topics ("What does the Quran say about…", incl. feelings), 80 authentic duas with sources, 99 Names of Allah with quiz & flashcards.
+- **Learn** – step-by-step guides (`/learn`): how to pray salah (Hanafi, with notes where schools differ), wudu with diagrams, 17 tajweed rules with coloured real Quran examples and audio, the six kalimas, and the Arabic alphabet with a practice quiz (en / bn / ar).
 - **Daily life** – prayer times, Qibla compass, Hijri calendar, tasbih counter, masayel.
 - **Search** – ⌘K command palette: surah names (EN/BN/AR), `2:255` references and full-text search across Arabic, English and Bangla.
+- **Ask the Quran** – `/ask`: ask a question in Bangla, English or Arabic and find verses by meaning (open EmbeddingGemma model, precomputed ayah vectors, hybrid word/topic boosts; optional on-device mode; graceful fallback to word search). Also `/api/v1/ask` and the MCP tool `ask_quran`. Eval: `pnpm eval:ask`.
 - **Share as image** – beautiful 1080×1350 ayah cards.
 - **SEO / AI visibility** – every surah, juz, topic, dua and name is pre-rendered; 6,236 single-ayah landing pages; JSON-LD (Book/Chapter, Quotation, FAQPage, BreadcrumbList, Article); sitemaps; `robots.txt` welcoming AI crawlers; `/llms.txt` and `/llms-full.txt`; dynamic OG images.
 - **Languages** – full UI in English, **Bangla** (`/bn/…` server-rendered twins of every content page, hreflang, Bangla uccharon = Arabic pronunciation in Bangla script shown by default, Bangla OG images where the glyphs shape correctly) and **Arabic** (RTL, mirrored layout, Arabic names for topics, duas, the 99 Names, reciters and famous ayahs).
@@ -34,6 +36,33 @@ Set `NEXT_PUBLIC_SITE_URL` to your production URL (used for canonical URLs, site
 - Icons: `node scripts/icons/render.mjs` re-renders the PNG icon set from SVG sources.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for conventions.
+
+## SEO & AI visibility
+
+Noor is built to be the source search engines and AI assistants retrieve and cite for Quran ayahs, duas, the 99 Names and Quran topics.
+
+| Surface | Where | Notes |
+| --- | --- | --- |
+| **MCP server** | `POST /api/mcp` (docs: `/mcp`, `/bn/mcp`) | Streamable HTTP, stateless, no auth. Tools: `search_quran`, `get_ayah`, `get_surah`, `get_tafsir` (Quran.com, cached), `find_dua`, `get_topic_verses`, `get_name_of_allah`, `get_learn_guide` (salah, wudu, tajweed, kalimas, Arabic alphabet), plus `search`/`fetch` for ChatGPT connectors & deep research. Hadith tools plug in via `lib/mcp/providers.ts` (`HadithProvider`, `lib/mcp/extensions.ts`). |
+| **JSON API** | `/api/v1/ayah/{ref}`, `/surah/{id}`, `/surahs`, `/search?q=`, `/duas`, `/duas/{slug}`, `/topics`, `/topics/{slug}`, `/names`, `/names/{id}` | CORS `*`, `s-maxage=86400`, JSON errors with real 400/404. OpenAPI 3.1 at `/openapi.json`; human docs at `/developers`. |
+| **Markdown alternates** | append `.md` to any ayah, surah, juz, topic, dua or Name page (`/surah/al-baqarah/255.md`, `/bn/topics/patience.md`) | `proxy.ts` rewrites to `app/md/[...path]`; pages advertise `<link rel="alternate" type="text/markdown">`; listed in `llms.txt` / `llms-full.txt`. |
+| **Citations** | “Cite this” block on ayah, dua, name and topic pages | Plain / APA / MLA / Markdown, canonical URL. Short links `/2:255`, `/2/255`, `/2.255` → 308 to the ayah page. |
+| **Structured data** | `lib/seo/structured.ts`, `lib/seo/wikidata.ts` | Organization + WebSite (`sameAs` GitHub), Book/Chapter with Wikidata + Wikipedia `sameAs` for all 114 surahs (`lib/seo/wikidata-surahs.json`, rebuilt with `pnpm wikidata:surahs`, every mapping verified by ≥2 Wikidata signals), Quotation (+`isPartOf`, `citation`, `speakable`) for ayahs, DefinedTerm/DefinedTermSet for the 99 Names, Dataset on `/developers`, FAQPage, BreadcrumbList — Bangla variants on `/bn`. |
+| **Answer-first content** | topic “Quick answer”, ayah “Summary” (first sentences of the tafsir, attributed), surah “Key facts” | Server-rendered, built only from existing content (`lib/content/answers.ts`). |
+| **IndexNow** | key at `/{INDEXNOW_KEY}.txt`; `pnpm indexnow` (`scripts/indexnow.mjs`) | Submits changed URLs in batches of ≤ 10,000 to `api.indexnow.org` (Bing → ChatGPT search & Copilot, Yandex, Seznam). Modes: `--changed-from <sha>` (URLs affected by the changed files, ≤ 10,000), `--core` (default: the core pages + /bn twins), `--all` (every sitemap URL, manual only). `.github/workflows/indexnow.yml`: on push to `master` (after waiting for the deploy) it submits only the URLs changed by the push; a manual dispatch submits the core pages, `changed_from`, or everything with the `full` input. HTTP 429 is logged, not a failure; it skips when the secrets are unset. |
+| **Verification** | `metadata.verification` from env | `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` (`msvalidate.01`), `YANDEX_VERIFICATION`. |
+
+| Variable | Where | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | deployment | Canonical origin for every URL and citation |
+| `INDEXNOW_KEY` | deployment **and** GitHub secret | IndexNow key file + submissions |
+| `SITE_URL` | GitHub secret (or shell) | Origin `pnpm indexnow` reads the sitemaps from |
+| `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` / `YANDEX_VERIFICATION` | deployment | Search-console verification meta tags |
+
+```bash
+INDEXNOW_KEY=… SITE_URL=https://your.site pnpm indexnow --changed-from HEAD~1 --dry-run   # list what would be submitted
+claude mcp add --transport http noor-quran https://your.site/api/mcp  # try the MCP server
+```
 
 ## Accounts & sync (optional)
 
@@ -63,6 +92,7 @@ pnpm test               # vitest unit + API-route tests (tests/unit/**), ~3 s
 pnpm test:e2e           # Playwright, chromium (tests/e2e/**)
 pnpm validate:content   # every Quran ref in topics / duas / names resolves against data/quran
 pnpm verify:hadith      # checks hadith duas against the open hadith corpus (needs internet; weekly in CI)
+pnpm verify:learn       # checks every hadith cited on /learn against the same corpus (needs internet)
 ```
 
 **Unit tests** (`tests/unit`, vitest, node env) cover the pure logic: chapter/slug resolution, ref parsing, search ranking,

@@ -6,6 +6,7 @@ type Json = Record<string, unknown>
 
 export const publisherLd = {
   '@type': 'Organization',
+  '@id': `${site.url}/#organization`,
   name: site.name,
   url: site.url,
   logo: { '@type': 'ImageObject', url: absoluteUrl('/logo_tab.png') },
@@ -87,22 +88,28 @@ export function clip(s: string, max = 158) {
  * `path` is the English path; with `locale: 'bn'` the canonical/OG URL become `/bn/...`.
  * Pages with a Bangla twin automatically get `alternates.languages` (en / bn / x-default).
  */
-export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article'; locale?: Locale; ogImage?: string }): Metadata {
+export function buildMeta(m: { title: string; description: string; path: string; keywords?: string[]; noindex?: boolean; type?: 'website' | 'article'; locale?: Locale; ogImage?: string; markdown?: boolean }): Metadata {
   const locale = m.locale ?? 'en'
-  const alternates = hasBnTwin(m.path) ? alternatesFor(m.path, locale) : { canonical: localeHref(locale, m.path) }
+  const alternates: Metadata['alternates'] & { canonical: string } = hasBnTwin(m.path) ? alternatesFor(m.path, locale) : { canonical: localeHref(locale, m.path) }
+  if (m.markdown) alternates.types = markdownAlternate(alternates.canonical)
   const url = absoluteUrl(alternates.canonical)
   const ogLocale = locale === 'bn' ? 'bn_BD' : site.locale
+  // every page gets a share image: the page's own, else the site card (Bangla card on /bn)
+  const ogImage = m.ogImage ?? (locale === 'bn' ? '/bn/opengraph-image' : '/opengraph-image')
   const altLocales = locale === 'bn' ? ['en_US'] : [...site.alternateLocales]
   return {
     title: { absolute: m.title },
     description: m.description,
     keywords: m.keywords,
     alternates,
-    openGraph: { type: m.type ?? 'website', siteName: locale === 'bn' ? `${site.name} · নূর কুরআন` : site.name, title: m.title, description: m.description, url, locale: ogLocale, alternateLocale: altLocales, ...(m.ogImage ? { images: [{ url: m.ogImage, width: 1200, height: 630 }] } : {}) },
-    twitter: { card: 'summary_large_image', title: m.title, description: m.description, ...(m.ogImage ? { images: [m.ogImage] } : {}) },
+    openGraph: { type: m.type ?? 'website', siteName: locale === 'bn' ? `${site.name} · নূর কুরআন` : site.name, title: m.title, description: m.description, url, locale: ogLocale, alternateLocale: altLocales, images: [{ url: ogImage, width: 1200, height: 630 }] },
+    twitter: { card: 'summary_large_image', title: m.title, description: m.description, images: [ogImage] },
     ...(m.noindex ? { robots: { index: false, follow: true } } : {}),
   }
 }
+
+/** `<link rel="alternate" type="text/markdown">` for LLMs (served by app/md via proxy.ts). Pass the page's own (localized) path. */
+export const markdownAlternate = (path: string) => ({ 'text/markdown': `${path === '/' ? '' : path}.md` })
 
 /** "Ayatul Kursi (Quran 2:255)" stays whole; "Title: subtitle" and "Title — subtitle" are cut at the separator. */
 export const shortTitle = (t: string) => t.split(/:\s| — /)[0].trim()

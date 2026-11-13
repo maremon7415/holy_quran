@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { PrayerView } from '@/components/prayer/prayer-view'
+import { CityDirectory } from '@/components/places/city-directory'
 import { JsonLd } from '@/components/seo/json-ld'
 import { buildMeta } from '@/lib/content/seo'
 import { absoluteUrl } from '@/lib/site'
@@ -25,6 +26,7 @@ export function PrayerTimesPage({ locale }: { locale: Locale }) {
     <div>
       <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebPage', name: copy[locale].title, description: copy[locale].description, url: absoluteUrl(localeHref(locale, '/prayer-times')), inLanguage: locale }} />
       <PrayerView />
+      <CityDirectory locale={locale} />
     </div>
   )
 }

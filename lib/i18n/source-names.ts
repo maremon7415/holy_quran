@@ -7,6 +7,7 @@ const NAMES: Record<string, { bn: string; ar: string }> = {
   'Sunan Abi Dawud': { bn: 'সুনানে আবী দাউদ', ar: 'سنن أبي داود' },
   'Sunan Ibn Majah': { bn: 'সুনানে ইবনে মাজাহ', ar: 'سنن ابن ماجه' },
   "Sunan an-Nasa'i": { bn: 'সুনানে নাসাঈ', ar: 'سنن النسائي' },
+  'Muwatta Malik': { bn: 'মুয়াত্তা ইমাম মালিক', ar: 'موطأ مالك' },
   Quran: { bn: 'কুরআন', ar: 'القرآن' },
 }
 

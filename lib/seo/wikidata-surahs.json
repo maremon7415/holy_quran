@@ -1,0 +1,691 @@
+{
+ "source": "https://query.wikidata.org/sparql (instance of Q234262 surah)",
+ "generated": "2026-11-13",
+ "count": 114,
+ "surahs": {
+  "1": {
+   "wikidata": "Q219669",
+   "en": "https://en.wikipedia.org/wiki/Al-Fatiha",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A6%BE%E0%A6%A4%E0%A6%BF%E0%A6%B9%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D8%A7%D8%AA%D8%AD%D8%A9"
+  },
+  "2": {
+   "wikidata": "Q219675",
+   "en": "https://en.wikipedia.org/wiki/Al-Baqarah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AC%E0%A6%BE%E0%A6%95%E0%A6%BE%E0%A6%B0%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A8%D9%82%D8%B1%D8%A9"
+  },
+  "3": {
+   "wikidata": "Q219682",
+   "en": "https://en.wikipedia.org/wiki/Al_Imran",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B2-%E0%A6%87%E0%A6%AE%E0%A6%B0%E0%A6%BE%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A2%D9%84_%D8%B9%D9%85%D8%B1%D8%A7%D9%86"
+  },
+  "4": {
+   "wikidata": "Q219696",
+   "en": "https://en.wikipedia.org/wiki/An-Nisa",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BF%E0%A6%B8%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1"
+  },
+  "5": {
+   "wikidata": "Q219701",
+   "en": "https://en.wikipedia.org/wiki/Al-Ma%27idah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A6%BE%E0%A6%AF%E0%A6%BC%E0%A6%BF%E0%A6%A6%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%A7%D8%A6%D8%AF%D8%A9"
+  },
+  "6": {
+   "wikidata": "Q219707",
+   "en": "https://en.wikipedia.org/wiki/Al-An%27am",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%A8%E0%A6%86%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D9%86%D8%B9%D8%A7%D9%85"
+  },
+  "7": {
+   "wikidata": "Q219713",
+   "en": "https://en.wikipedia.org/wiki/Al-A%27raf_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B0%E0%A6%BE%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D8%B9%D8%B1%D8%A7%D9%81"
+  },
+  "8": {
+   "wikidata": "Q219720",
+   "en": "https://en.wikipedia.org/wiki/Al-Anfal",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%A8%E0%A6%AB%E0%A6%BE%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D9%86%D9%81%D8%A7%D9%84"
+  },
+  "9": {
+   "wikidata": "Q219738",
+   "en": "https://en.wikipedia.org/wiki/At-Tawbah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%93%E0%A6%AC%E0%A6%BE%E0%A6%B9%E0%A7%8D%E2%80%8C",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D9%88%D8%A8%D8%A9"
+  },
+  "10": {
+   "wikidata": "Q219752",
+   "en": "https://en.wikipedia.org/wiki/Yunus_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%89%E0%A6%A8%E0%A7%81%E0%A6%B8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%8A%D9%88%D9%86%D8%B3"
+  },
+  "11": {
+   "wikidata": "Q219786",
+   "en": "https://en.wikipedia.org/wiki/Hud_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A7%81%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%87%D9%88%D8%AF"
+  },
+  "12": {
+   "wikidata": "Q219815",
+   "en": "https://en.wikipedia.org/wiki/Yusuf_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%89%E0%A6%B8%E0%A7%81%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%8A%D9%88%D8%B3%D9%81"
+  },
+  "13": {
+   "wikidata": "Q219871",
+   "en": "https://en.wikipedia.org/wiki/Ar-Ra%27d",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B0%E0%A6%BE%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B1%D8%B9%D8%AF"
+  },
+  "14": {
+   "wikidata": "Q219906",
+   "en": "https://en.wikipedia.org/wiki/Ibrahim_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%AC%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%B9%E0%A7%80%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A5%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85"
+  },
+  "15": {
+   "wikidata": "Q219933",
+   "en": "https://en.wikipedia.org/wiki/Al_Hejr",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BF%E0%A6%9C%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%AC%D8%B1"
+  },
+  "16": {
+   "wikidata": "Q220495",
+   "en": "https://en.wikipedia.org/wiki/An-Nahl",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%B9%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%AD%D9%84"
+  },
+  "17": {
+   "wikidata": "Q220678",
+   "en": "https://en.wikipedia.org/wiki/Al-Isra%27",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AC%E0%A6%A8%E0%A6%BF_%E0%A6%87%E0%A6%B8%E0%A6%B0%E0%A6%BE%E0%A6%87%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A5%D8%B3%D8%B1%D8%A7%D8%A1"
+  },
+  "18": {
+   "wikidata": "Q220706",
+   "en": "https://en.wikipedia.org/wiki/Al-Kahf",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BE%E0%A6%B9%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%83%D9%87%D9%81"
+  },
+  "19": {
+   "wikidata": "Q220716",
+   "en": "https://en.wikipedia.org/wiki/Maryam_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A6%BE%E0%A6%B0%E0%A6%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%85%D8%B1%D9%8A%D9%85"
+  },
+  "20": {
+   "wikidata": "Q220733",
+   "en": "https://en.wikipedia.org/wiki/Ta-Ha",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A7%8D%E0%A6%AC%E0%A7%8B%E0%A6%AF%E0%A6%BC%E0%A6%BE-%E0%A6%B9%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%B7%D9%87"
+  },
+  "21": {
+   "wikidata": "Q220757",
+   "en": "https://en.wikipedia.org/wiki/Al-Anbiya",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%AE%E0%A7%8D%E0%A6%AC%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D9%86%D8%A8%D9%8A%D8%A7%D8%A1"
+  },
+  "22": {
+   "wikidata": "Q220770",
+   "en": "https://en.wikipedia.org/wiki/Al-Hajj",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BE%E0%A6%9C%E0%A7%8D%E0%A6%9C%E0%A7%8D%E0%A6%AC",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%AC"
+  },
+  "23": {
+   "wikidata": "Q220785",
+   "en": "https://en.wikipedia.org/wiki/Al-Mu%CA%BCminun",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%27%E0%A6%AE%E0%A6%BF%E0%A6%A8%E0%A7%82%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%A4%D9%85%D9%86%D9%88%D9%86"
+  },
+  "24": {
+   "wikidata": "Q220809",
+   "en": "https://en.wikipedia.org/wiki/An-Nur",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A7%82%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D9%88%D8%B1"
+  },
+  "25": {
+   "wikidata": "Q220983",
+   "en": "https://en.wikipedia.org/wiki/Al-Furqan",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A7%81%E0%A6%B0%E0%A6%95%E0%A6%BE%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D8%B1%D9%82%D8%A7%D9%86"
+  },
+  "26": {
+   "wikidata": "Q221013",
+   "en": "https://en.wikipedia.org/wiki/Ash-Shu%27ara",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B6%E0%A7%81%E0%A6%86%E0%A6%B0%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%D8%A7%D8%A1"
+  },
+  "27": {
+   "wikidata": "Q221025",
+   "en": "https://en.wikipedia.org/wiki/An-Naml",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%AE%E0%A7%8D%E2%80%8C%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D9%85%D9%84"
+  },
+  "28": {
+   "wikidata": "Q221044",
+   "en": "https://en.wikipedia.org/wiki/Al-Qasas",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BE%E0%A6%B8%E0%A6%BE%E0%A6%B8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D8%B5%D8%B5"
+  },
+  "29": {
+   "wikidata": "Q221060",
+   "en": "https://en.wikipedia.org/wiki/Al-Ankabut",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%A8%E0%A6%95%E0%A6%BE%E0%A6%AC%E0%A7%81%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B9%D9%86%D9%83%D8%A8%D9%88%D8%AA"
+  },
+  "30": {
+   "wikidata": "Q221081",
+   "en": "https://en.wikipedia.org/wiki/Ar-Rum",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B0%E0%A7%81%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B1%D9%88%D9%85"
+  },
+  "31": {
+   "wikidata": "Q223754",
+   "en": "https://en.wikipedia.org/wiki/Luqman_(s%C5%ABrah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B2%E0%A7%8B%E0%A6%95%E0%A6%AE%E0%A6%BE%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%84%D9%82%D9%85%D8%A7%D9%86"
+  },
+  "32": {
+   "wikidata": "Q229842",
+   "en": "https://en.wikipedia.org/wiki/As-Sajdah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B8%E0%A6%BF%E0%A6%9C%E0%A6%A6%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B3%D8%AC%D8%AF%D8%A9"
+  },
+  "33": {
+   "wikidata": "Q229923",
+   "en": "https://en.wikipedia.org/wiki/Al-A%E1%B8%A5z%C4%81b",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B9%E0%A6%AF%E0%A6%BE%E0%A6%AC",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D8%AD%D8%B2%D8%A7%D8%A8"
+  },
+  "34": {
+   "wikidata": "Q229959",
+   "en": "https://en.wikipedia.org/wiki/Saba_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B8%E0%A6%BE%E0%A6%AC%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%B3%D8%A8%D8%A3"
+  },
+  "35": {
+   "wikidata": "Q229998",
+   "en": "https://en.wikipedia.org/wiki/Fatir",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A6%BE%E0%A6%A4%E0%A6%BF%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%81%D8%A7%D8%B7%D8%B1"
+  },
+  "36": {
+   "wikidata": "Q230014",
+   "en": "https://en.wikipedia.org/wiki/Ya-Sin",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B8%E0%A7%80%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%8A%D8%B3"
+  },
+  "37": {
+   "wikidata": "Q230107",
+   "en": "https://en.wikipedia.org/wiki/As-Saaffat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B8%E0%A6%BE%E0%A6%AB%E0%A6%AB%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B5%D8%A7%D9%81%D8%A7%D8%AA"
+  },
+  "38": {
+   "wikidata": "Q230133",
+   "en": "https://en.wikipedia.org/wiki/Surah_Sad",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%9B%E0%A7%8B%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%B5"
+  },
+  "39": {
+   "wikidata": "Q230153",
+   "en": "https://en.wikipedia.org/wiki/Az-Zumar",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%AF_%E0%A6%AF%E0%A7%81%E0%A6%AE%E0%A6%BE%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B2%D9%85%D8%B1"
+  },
+  "40": {
+   "wikidata": "Q230178",
+   "en": "https://en.wikipedia.org/wiki/Ghafir",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%27%E0%A6%AE%E0%A6%BF%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%BA%D8%A7%D9%81%D8%B1"
+  },
+  "41": {
+   "wikidata": "Q230436",
+   "en": "https://en.wikipedia.org/wiki/Fussilat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BE-%E0%A6%AE%E0%A7%80%E0%A6%AE_%E0%A6%B8%E0%A7%87%E0%A6%9C%E0%A6%A6%E0%A6%BE%E0%A6%B9%E0%A7%8D",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%81%D8%B5%D9%84%D8%AA"
+  },
+  "42": {
+   "wikidata": "Q230466",
+   "en": "https://en.wikipedia.org/wiki/Ash-Shura",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B6-%E0%A6%B6%E0%A7%82%E0%A6%B0%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B4%D9%88%D8%B1%D9%89"
+  },
+  "43": {
+   "wikidata": "Q230490",
+   "en": "https://en.wikipedia.org/wiki/Az-Zukhruf",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AF%E0%A7%81%E0%A6%96%E0%A6%B0%E0%A7%81%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B2%D8%AE%D8%B1%D9%81"
+  },
+  "44": {
+   "wikidata": "Q230538",
+   "en": "https://en.wikipedia.org/wiki/Ad-Dukhan",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A6%E0%A7%8B%E0%A6%96%E0%A6%BE%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AF%D8%AE%D8%A7%D9%86"
+  },
+  "45": {
+   "wikidata": "Q230560",
+   "en": "https://en.wikipedia.org/wiki/Al-Jathiya",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%9C%E0%A6%BE%E0%A6%B8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AC%D8%A7%D8%AB%D9%8A%D8%A9"
+  },
+  "46": {
+   "wikidata": "Q230579",
+   "en": "https://en.wikipedia.org/wiki/Al-Ahqaf",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B9%E0%A6%95%E0%A6%BE%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D8%AD%D9%82%D8%A7%D9%81"
+  },
+  "47": {
+   "wikidata": "Q230604",
+   "en": "https://en.wikipedia.org/wiki/Muhammad_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%B9%E0%A6%BE%E0%A6%AE%E0%A7%8D%E0%A6%AE%E0%A6%BE%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%85%D8%AD%D9%85%D8%AF"
+  },
+  "48": {
+   "wikidata": "Q230638",
+   "en": "https://en.wikipedia.org/wiki/Al-Fath",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A6%BE%E0%A6%A4%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D8%AA%D8%AD"
+  },
+  "49": {
+   "wikidata": "Q230657",
+   "en": "https://en.wikipedia.org/wiki/Al-Hujurat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A7%81%E0%A6%9C%E0%A7%81%E0%A6%B0%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA"
+  },
+  "50": {
+   "wikidata": "Q230687",
+   "en": "https://en.wikipedia.org/wiki/Qaf_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%82"
+  },
+  "51": {
+   "wikidata": "Q230743",
+   "en": "https://en.wikipedia.org/wiki/Adh-Dhariyat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AF%E0%A6%BE%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B0%D8%A7%D8%B1%D9%8A%D8%A7%D8%AA"
+  },
+  "52": {
+   "wikidata": "Q230802",
+   "en": "https://en.wikipedia.org/wiki/At-Tur",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A7%82%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B7%D9%88%D8%B1"
+  },
+  "53": {
+   "wikidata": "Q230829",
+   "en": "https://en.wikipedia.org/wiki/An-Najm",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%9C%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%AC%D9%85"
+  },
+  "54": {
+   "wikidata": "Q230856",
+   "en": "https://en.wikipedia.org/wiki/Al-Qamar",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AE%E0%A6%BE%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D9%85%D8%B1"
+  },
+  "55": {
+   "wikidata": "Q230910",
+   "en": "https://en.wikipedia.org/wiki/Ar-Rahman",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B0-%E0%A6%B0%E0%A6%B9%E0%A6%AE%E0%A6%BE%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B1%D8%AD%D9%85%D9%86"
+  },
+  "56": {
+   "wikidata": "Q230944",
+   "en": "https://en.wikipedia.org/wiki/Al-Waqi%27a",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%93%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%95%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%88%D8%A7%D9%82%D8%B9%D8%A9"
+  },
+  "57": {
+   "wikidata": "Q231561",
+   "en": "https://en.wikipedia.org/wiki/Al-Hadid",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BE%E0%A6%A6%E0%A7%80%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%AF%D9%8A%D8%AF"
+  },
+  "58": {
+   "wikidata": "Q231664",
+   "en": "https://en.wikipedia.org/wiki/Al-Mujadila",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%9C%E0%A6%BE%E0%A6%A6%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%AC%D8%A7%D8%AF%D9%84%D8%A9"
+  },
+  "59": {
+   "wikidata": "Q231700",
+   "en": "https://en.wikipedia.org/wiki/Al-Hashr",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BE%E0%A6%B6%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%B4%D8%B1"
+  },
+  "60": {
+   "wikidata": "Q231728",
+   "en": "https://en.wikipedia.org/wiki/Al-Mumtahanah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%AE%E0%A6%A4%E0%A6%BE%E0%A6%B9%E0%A6%BF%E0%A6%A8%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D9%85%D8%AA%D8%AD%D9%86%D8%A9"
+  },
+  "61": {
+   "wikidata": "Q235662",
+   "en": "https://en.wikipedia.org/wiki/As-Saff",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B8%E0%A6%BE%E0%A6%AB",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B5%D9%81"
+  },
+  "62": {
+   "wikidata": "Q231779",
+   "en": "https://en.wikipedia.org/wiki/Al-Jumu%27ah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%9C%E0%A7%81%E0%A6%AE%E0%A7%81%E0%A6%86",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D8%A9"
+  },
+  "63": {
+   "wikidata": "Q231926",
+   "en": "https://en.wikipedia.org/wiki/Al-Munafiqun",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%A8%E0%A6%BE%E0%A6%AB%E0%A6%BF%E0%A6%95%E0%A7%81%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D9%86%D8%A7%D9%81%D9%82%D9%88%D9%86"
+  },
+  "64": {
+   "wikidata": "Q231955",
+   "en": "https://en.wikipedia.org/wiki/At-Taghabun",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%97%E0%A6%BE%E0%A6%AC%E0%A7%81%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D8%BA%D8%A7%D8%A8%D9%86"
+  },
+  "65": {
+   "wikidata": "Q231975",
+   "en": "https://en.wikipedia.org/wiki/At-Talaq",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%95",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B7%D9%84%D8%A7%D9%82"
+  },
+  "66": {
+   "wikidata": "Q235785",
+   "en": "https://en.wikipedia.org/wiki/At-Tahrim",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%B9%E0%A6%B0%E0%A7%80%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D8%AD%D8%B1%D9%8A%D9%85"
+  },
+  "67": {
+   "wikidata": "Q231999",
+   "en": "https://en.wikipedia.org/wiki/Al-Mulk",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%B2%E0%A6%95",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D9%84%D9%83"
+  },
+  "68": {
+   "wikidata": "Q232023",
+   "en": "https://en.wikipedia.org/wiki/Al-Qalam",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%B2%E0%A6%AE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D9%84%D9%85"
+  },
+  "69": {
+   "wikidata": "Q232063",
+   "en": "https://en.wikipedia.org/wiki/Al-Haqqa",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A6%BE%E0%A6%95%E0%A7%8D%E0%A6%95%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AD%D8%A7%D9%82%D8%A9"
+  },
+  "70": {
+   "wikidata": "Q232123",
+   "en": "https://en.wikipedia.org/wiki/Al-Maarij",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A6%BE%E0%A6%86%E0%A6%B0%E0%A6%BF%E0%A6%9C",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D8%B1%D8%AC"
+  },
+  "71": {
+   "wikidata": "Q232455",
+   "en": "https://en.wikipedia.org/wiki/N%C5%AB%E1%B8%A5",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A7%82%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%86%D9%88%D8%AD"
+  },
+  "72": {
+   "wikidata": "Q232473",
+   "en": "https://en.wikipedia.org/wiki/Al-Jinn",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%9C%E0%A7%8D%E0%A6%AC%E0%A6%BF%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AC%D9%86"
+  },
+  "73": {
+   "wikidata": "Q232497",
+   "en": "https://en.wikipedia.org/wiki/Al-Muzzammil",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%9C%E0%A6%BE%E0%A6%AE%E0%A7%8D%E0%A6%AE%E0%A6%BF%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%B2%D9%85%D9%84"
+  },
+  "74": {
+   "wikidata": "Q232579",
+   "en": "https://en.wikipedia.org/wiki/Al-Muddaththir",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%A6%E0%A7%8D%E0%A6%A6%E0%A6%BE%E0%A6%B8%E0%A7%8D%E0%A6%B8%E0%A6%BF%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%AF%D8%AB%D8%B1"
+  },
+  "75": {
+   "wikidata": "Q232605",
+   "en": "https://en.wikipedia.org/wiki/Al-Qiyama",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%AE%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D9%8A%D8%A7%D9%85%D8%A9"
+  },
+  "76": {
+   "wikidata": "Q232623",
+   "en": "https://en.wikipedia.org/wiki/Al-Insan",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A6%E0%A6%BE%E0%A6%B9%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A5%D9%86%D8%B3%D8%A7%D9%86"
+  },
+  "77": {
+   "wikidata": "Q232647",
+   "en": "https://en.wikipedia.org/wiki/Al-Mursalat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%B0%E0%A6%B8%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%B1%D8%B3%D9%84%D8%A7%D8%AA"
+  },
+  "78": {
+   "wikidata": "Q232670",
+   "en": "https://en.wikipedia.org/wiki/An-Naba",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%AC%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%A8%D8%A3"
+  },
+  "79": {
+   "wikidata": "Q232690",
+   "en": "https://en.wikipedia.org/wiki/An-Nazi%27at",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%AF%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%A7%D8%B2%D8%B9%D8%A7%D8%AA"
+  },
+  "80": {
+   "wikidata": "Q232706",
+   "en": "https://en.wikipedia.org/wiki/Abasa",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%AC%E0%A6%BE%E0%A6%B8%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%B9%D8%A8%D8%B3"
+  },
+  "81": {
+   "wikidata": "Q232820",
+   "en": "https://en.wikipedia.org/wiki/At-Takwir",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%95%E0%A6%AD%E0%A7%80%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D9%83%D9%88%D9%8A%D8%B1"
+  },
+  "82": {
+   "wikidata": "Q232864",
+   "en": "https://en.wikipedia.org/wiki/Al-Infitar",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%A8%E0%A6%AB%E0%A6%BF%E0%A6%A4%E0%A6%BE%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A7%D9%86%D9%81%D8%B7%D8%A7%D8%B1"
+  },
+  "83": {
+   "wikidata": "Q232878",
+   "en": "https://en.wikipedia.org/wiki/Al-Mutaffifin",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A7%81%E0%A6%A4%E0%A6%BE%E0%A6%AB%E0%A7%8D%E2%80%8C%E0%A6%AB%E0%A6%BF%E0%A6%AB%E0%A7%80%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%B7%D9%81%D9%81%D9%8A%D9%86"
+  },
+  "84": {
+   "wikidata": "Q232904",
+   "en": "https://en.wikipedia.org/wiki/Al-Inshiqaq",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%A8%E2%80%8C%E0%A6%B6%E0%A6%BF%E0%A6%95%E0%A6%BE%E0%A6%95",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A7%D9%86%D8%B4%D9%82%D8%A7%D9%82"
+  },
+  "85": {
+   "wikidata": "Q232924",
+   "en": "https://en.wikipedia.org/wiki/Al-Burooj",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AC%E0%A7%81%E0%A6%B0%E0%A7%81%E0%A6%9C",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A8%D8%B1%D9%88%D8%AC"
+  },
+  "86": {
+   "wikidata": "Q233041",
+   "en": "https://en.wikipedia.org/wiki/At-Tariq",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%B0%E0%A6%BF%E0%A6%95%E0%A7%8D%E0%A6%AC",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B7%D8%A7%D8%B1%D9%82"
+  },
+  "87": {
+   "wikidata": "Q233073",
+   "en": "https://en.wikipedia.org/wiki/Al-Ala",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E2%80%99%E0%A6%B2%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A3%D8%B9%D9%84%D9%89"
+  },
+  "88": {
+   "wikidata": "Q233093",
+   "en": "https://en.wikipedia.org/wiki/Al-Ghashiyah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%97%E0%A6%BE%E0%A6%B6%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B9%E0%A7%8D%E2%80%8C",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%BA%D8%A7%D8%B4%D9%8A%D8%A9"
+  },
+  "89": {
+   "wikidata": "Q233123",
+   "en": "https://en.wikipedia.org/wiki/Al-Fajr_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A6%BE%E0%A6%9C%E0%A7%8D%E2%80%8C%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D8%AC%D8%B1"
+  },
+  "90": {
+   "wikidata": "Q233146",
+   "en": "https://en.wikipedia.org/wiki/Al-Balad",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AC%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%A6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A8%D9%84%D8%AF"
+  },
+  "91": {
+   "wikidata": "Q233170",
+   "en": "https://en.wikipedia.org/wiki/Ash-Shams",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B6%E0%A6%BE%E0%A6%AE%E0%A7%8D%E2%80%8C%E0%A6%B8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B4%D9%85%D8%B3"
+  },
+  "92": {
+   "wikidata": "Q233250",
+   "en": "https://en.wikipedia.org/wiki/Al-Lail",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B2%E0%A6%BE%E0%A6%87%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%84%D9%8A%D9%84"
+  },
+  "93": {
+   "wikidata": "Q233275",
+   "en": "https://en.wikipedia.org/wiki/Ad-Dhuha",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%A6-%E0%A6%A6%E0%A7%81%E0%A6%B9%E0%A6%BE",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B6%D8%AD%D9%89"
+  },
+  "94": {
+   "wikidata": "Q233296",
+   "en": "https://en.wikipedia.org/wiki/Ash-Sharh",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%A8%E0%A6%B6%E0%A6%BF%E0%A6%B0%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B4%D8%B1%D8%AD"
+  },
+  "95": {
+   "wikidata": "Q233314",
+   "en": "https://en.wikipedia.org/wiki/At-Tin",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A7%8D%E0%A6%AC%E0%A7%80%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D9%8A%D9%86"
+  },
+  "96": {
+   "wikidata": "Q233580",
+   "en": "https://en.wikipedia.org/wiki/Al-Alaq",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%B2%E0%A6%BE%E0%A6%95%E0%A7%8D%E0%A6%AC",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B9%D9%84%D9%82"
+  },
+  "97": {
+   "wikidata": "Q233600",
+   "en": "https://en.wikipedia.org/wiki/Al-Qadr_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A7%8D%E0%A6%AC%E0%A6%A6%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D8%AF%D8%B1"
+  },
+  "98": {
+   "wikidata": "Q233624",
+   "en": "https://en.wikipedia.org/wiki/Al-Bayyina",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AC%E0%A6%BE%E0%A6%87%E0%A6%AF%E0%A6%BC%E0%A7%8D%E0%A6%AF%E0%A6%BF%E0%A6%A8%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A8%D9%8A%D9%86%D8%A9"
+  },
+  "99": {
+   "wikidata": "Q233653",
+   "en": "https://en.wikipedia.org/wiki/Al-Zalzalah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AF%E0%A6%BF%E0%A6%B2%E0%A6%AF%E0%A6%BE%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B2%D9%84%D8%B2%D9%84%D8%A9"
+  },
+  "100": {
+   "wikidata": "Q233673",
+   "en": "https://en.wikipedia.org/wiki/Al-Adiyat",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%A6%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A4",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B9%D8%A7%D8%AF%D9%8A%D8%A7%D8%AA"
+  },
+  "101": {
+   "wikidata": "Q233695",
+   "en": "https://en.wikipedia.org/wiki/Al-Qaria",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BE%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%82%D8%A7%D8%B1%D8%B9%D8%A9"
+  },
+  "102": {
+   "wikidata": "Q233712",
+   "en": "https://en.wikipedia.org/wiki/At-Takathur",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A4%E0%A6%BE%E0%A6%95%E0%A6%BE%E0%A6%B8%E0%A7%81%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%AA%D9%83%D8%A7%D8%AB%D8%B1"
+  },
+  "103": {
+   "wikidata": "Q233731",
+   "en": "https://en.wikipedia.org/wiki/Al-Asr",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%86%E0%A6%9B%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%B9%D8%B5%D8%B1"
+  },
+  "104": {
+   "wikidata": "Q233747",
+   "en": "https://en.wikipedia.org/wiki/Al-Humazah",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B9%E0%A7%81%E0%A6%AE%E0%A6%BE%E0%A6%AF%E0%A6%BE%E0%A6%B9",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%87%D9%85%D8%B2%D8%A9"
+  },
+  "105": {
+   "wikidata": "Q233766",
+   "en": "https://en.wikipedia.org/wiki/Al-Fil",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A7%80%E0%A6%B2",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D9%8A%D9%84"
+  },
+  "106": {
+   "wikidata": "Q233788",
+   "en": "https://en.wikipedia.org/wiki/Quraysh_(surah)",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A7%81%E0%A6%B0%E0%A6%BE%E0%A6%87%E0%A6%B6",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D9%82%D8%B1%D9%8A%D8%B4"
+  },
+  "107": {
+   "wikidata": "Q233800",
+   "en": "https://en.wikipedia.org/wiki/Al-Ma%27un",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AE%E0%A6%BE%E0%A6%89%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%A7%D8%B9%D9%88%D9%86"
+  },
+  "108": {
+   "wikidata": "Q233811",
+   "en": "https://en.wikipedia.org/wiki/Al-Kawthar",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BE%E0%A6%93%E0%A6%B8%E0%A6%BE%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%83%D9%88%D8%AB%D8%B1"
+  },
+  "109": {
+   "wikidata": "Q24000496",
+   "en": "https://en.wikipedia.org/wiki/Al-Kafirun",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%95%E0%A6%BE%E0%A6%AB%E0%A6%BF%E0%A6%B0%E0%A7%81%E0%A6%A8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%83%D8%A7%D9%81%D8%B1%D9%88%D9%86"
+  },
+  "110": {
+   "wikidata": "Q233842",
+   "en": "https://en.wikipedia.org/wiki/An-Nasr",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%B8%E0%A6%B0",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%B5%D8%B1"
+  },
+  "111": {
+   "wikidata": "Q234196",
+   "en": "https://en.wikipedia.org/wiki/Al-Masad",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%B2%E0%A6%BE%E0%A6%B9%E0%A6%BE%E0%A6%AC",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%85%D8%B3%D8%AF"
+  },
+  "112": {
+   "wikidata": "Q234214",
+   "en": "https://en.wikipedia.org/wiki/Al-Ikhlas",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%87%E0%A6%96%E0%A6%B2%E0%A6%BE%E0%A6%B8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D8%A5%D8%AE%D9%84%D8%A7%D8%B5"
+  },
+  "113": {
+   "wikidata": "Q234228",
+   "en": "https://en.wikipedia.org/wiki/Al-Falaq",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%AB%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%95",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%81%D9%84%D9%82"
+  },
+  "114": {
+   "wikidata": "Q234248",
+   "en": "https://en.wikipedia.org/wiki/Al-Nas",
+   "bn": "https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A7%82%E0%A6%B0%E0%A6%BE_%E0%A6%A8%E0%A6%BE%E0%A6%B8",
+   "ar": "https://ar.wikipedia.org/wiki/%D8%B3%D9%88%D8%B1%D8%A9_%D8%A7%D9%84%D9%86%D8%A7%D8%B3"
+  }
+ }
+}

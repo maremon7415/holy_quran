@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/seo/breadcrumbs'
 import { JsonLd } from '@/components/seo/json-ld'
+import { CiteThis } from '@/components/seo/cite-this'
+import { topicQuickAnswer } from '@/lib/content/answers'
+import { absoluteUrl } from '@/lib/site'
 import { AyahCard } from '@/components/content/ayah-card'
 import { Faq } from '@/components/content/faq'
 import { PageHero, pageShell } from '@/components/content/page-hero'
@@ -161,14 +164,14 @@ export async function topicMeta(locale: Locale, { params }: SlugProps): Promise<
     return buildMeta({
       title: `${t.bn} সম্পর্কে কুরআন কী বলে? ${bnNum(t.refs.length)}টি আয়াত বাংলা অর্থসহ`,
       description: clip(`${t.introBn} আয়াতগুলো আরবি, বাংলা ও ইংরেজি অনুবাদসহ পড়ুন।`, 165),
-      path, locale, type: 'article', ogImage: `${localeHref(locale, path)}/opengraph-image`,
+      path, locale, type: 'article', markdown: true, ogImage: `${localeHref(locale, path)}/opengraph-image`,
       keywords: [`${t.bn} নিয়ে কুরআনের আয়াত`, `${t.bn} সম্পর্কে কুরআন`, `${t.bn} ইসলাম`, `${t.bn} আয়াত বাংলা অর্থসহ`, ...t.keywords.filter((k) => /[ঀ-৿]/.test(k))],
     })
   }
   return buildMeta({
     title: `What Does the Quran Say About ${cap(t.en)}? ${t.bn} | ${t.refs.length} Verses`,
     description: clip(`${t.introEn} Read the verses in Arabic with English and Bangla translation. ${t.bn} সম্পর্কে কুরআনের আয়াত।`, 165),
-    path, type: 'article',
+    path, type: 'article', markdown: true,
     keywords: [`Quran verses about ${t.en}`, `what does the Quran say about ${t.en}`, `${t.en} in Islam`, `${t.bn} কুরআনের আয়াত`, `${t.bn} নিয়ে কুরআন`, ...t.keywords],
   })
 }
@@ -206,9 +209,10 @@ export async function TopicPage({ locale, params }: SlugProps & { locale: Locale
       ]
 
   const headline = bn ? `${t.bn} সম্পর্কে কুরআন কী বলে?` : `What does the Quran say about ${t.en}?`
+  const quick = topicQuickAnswer(locale, t, verses)
   return (
     <div className={pageShell}>
-      <JsonLd data={articleLd({ headline, description: bn ? t.introBn : t.introEn, path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? t.bn : t.en, inLanguage: bn ? 'bn' : undefined, keywords: bn ? [t.bn, t.en, ...t.keywords] : [t.en, t.bn, ...t.keywords] })} />
+      <JsonLd data={{ ...articleLd({ headline, description: bn ? t.introBn : t.introEn, path: h(path), image: `${h(path)}/opengraph-image`, about: bn ? t.bn : t.en, inLanguage: bn ? 'bn' : undefined, keywords: bn ? [t.bn, t.en, ...t.keywords] : [t.en, t.bn, ...t.keywords] }), abstract: quick, citation: t.refs.map((r) => `Quran ${r}`) }} />
       <Breadcrumbs locale={locale} items={[{ name: bn ? 'বিষয়ভিত্তিক' : 'Topics', ar: 'المواضيع', href: '/topics' }, { name: bn ? t.bn : cap(t.en), ar: t.ar, href: path }]} className="mb-4" />
 
       {bn ? (
@@ -238,6 +242,11 @@ export async function TopicPage({ locale, params }: SlugProps & { locale: Locale
           </div>
         </PageHero>
       )}
+
+      <section id="quick-answer" aria-labelledby="quick-h" className="mt-6 rounded-3xl border border-primary/25 bg-accent/50 p-5 sm:p-6">
+        <h2 id="quick-h" className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">{bn ? 'সংক্ষিপ্ত উত্তর' : <T en="Quick answer" ar="إجابة مختصرة" />}</h2>
+        <p lang={bn ? 'bn' : 'en'} className={`mt-2 text-[15px] leading-relaxed sm:text-base ${bn ? 'font-bangla' : ''}`}>{quick}</p>
+      </section>
 
       <Labelled as="nav" label={{ en: 'Verses on this page', bn: 'এই পাতার আয়াত', ar: 'آيات هذه الصفحة' }} className="mt-6 flex flex-wrap gap-2">
         {t.refs.map((r) => {
@@ -302,6 +311,8 @@ export async function TopicPage({ locale, params }: SlugProps & { locale: Locale
       )}
 
       <Faq faqs={faqs} locale={bn ? 'bn' : undefined} />
+
+      <CiteThis locale={locale} title={headline} note={bn ? 'Quran verses with Taisirul Quran Bangla translation' : 'Quran verses with Saheeh International translation'} url={absoluteUrl(h(path))} />
 
       <Labelled as="nav" label={{ en: 'Previous and next topic', bn: 'আগের ও পরের বিষয়', ar: 'الموضوع السابق والتالي' }} className="mt-12 grid gap-3 sm:grid-cols-2">
         <Link href={h(`/topics/${prev.slug}`)} className="card-soft lift rounded-3xl p-4 text-sm"><span className="text-xs text-muted-foreground"><span className="inline-block rtl:rotate-180">←</span> {bn ? 'আগের বিষয়' : <T en="Previous topic" ar="الموضوع السابق" />}</span><span className="mt-1 block font-semibold capitalize">{bn ? prev.bn : <T en={prev.en} ar={prev.ar} />}</span></Link>

@@ -101,6 +101,13 @@ const rawDuas: Dua[] = [
     source: 'Sunan Abi Dawud 4023; Jami at-Tirmidhi 3458', when: { en: 'After finishing a meal.', bn: 'খাবার শেষে।' },
     virtue: { en: 'The Prophet ﷺ said that whoever says this after eating, his previous sins are forgiven.', bn: 'নবী ﷺ বলেছেন, যে খাওয়ার পর এটি বলে, তার পূর্ববর্তী গুনাহ ক্ষমা করা হয়।' }, keywords: ['খাওয়ার পরের দোয়া'], related: ['dua-before-eating'] },
 
+  { slug: 'dua-for-breaking-fast-iftar', cat: 'eating', title: { en: 'Dua for breaking the fast (iftar): Dhahabaz-zama’u wabtallatil-‘uruq', bn: 'ইফতারের দোয়া: যাহাবায যামাউ ওয়াবতাল্লাতিল উরূক' },
+    ar: 'ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ',
+    tl: 'Dhahabaz-zama’u wabtallatil-‘uruqu wa thabatal-ajru in sha’ Allah.',
+    meaning: { en: 'The thirst has gone, the veins are moistened, and the reward is confirmed, if Allah wills.', bn: 'পিপাসা দূর হয়েছে, শিরাগুলো সিক্ত হয়েছে এবং ইনশাআল্লাহ প্রতিদান নিশ্চিত হয়েছে।' },
+    source: 'Sunan Abi Dawud 2357', when: { en: 'Said by the Prophet ﷺ when he broke his fast, after the first sip or bite at iftar.', bn: 'নবী ﷺ রোজা ভাঙার সময় এটি বলতেন — ইফতারের প্রথম চুমুক বা লোকমার পর।' },
+    keywords: ['iftar dua', 'dua for breaking fast', 'ইফতারের দোয়া', 'রোজা ভাঙার দোয়া', 'ramadan dua'], related: ['dua-before-eating', 'dua-after-eating', 'dua-laylatul-qadr'] },
+
   // ───────── Travel
   { slug: 'dua-for-travel', cat: 'travel', refs: ['43:13-14'], title: { en: 'Dua for travel: Subhanalladhi sakhkhara lana hadha', bn: 'সফরের দোয়া: সুবহানাল্লাযী সাখখারা লানা হাযা' },
     source: 'Quran 43:13–14; Sahih Muslim 1342', when: { en: 'When boarding a vehicle, car, plane or ship, as the Prophet ﷺ taught. He would then add a dua asking Allah for righteousness and piety in the journey.', bn: 'বাহনে (গাড়ি, বিমান বা জাহাজে) উঠার সময়, নবী ﷺ যেভাবে শিখিয়েছেন। এরপর তিনি সফরে নেকি ও তাকওয়া চেয়ে দোয়া যোগ করতেন।' }, keywords: ['travelling dua', 'সফরের দোয়া', 'গাড়িতে উঠার দোয়া'], related: ['dua-leaving-home', 'dua-for-protection'] },

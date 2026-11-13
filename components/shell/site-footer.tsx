@@ -14,9 +14,12 @@ const POPULAR_PAGES: { href: string; label: Tr }[] = [
   { href: '/surah/al-baqarah/285', label: { en: 'Last two ayahs of Al-Baqarah', bn: 'সূরা বাকারার শেষ দুই আয়াত', ar: 'خواتيم سورة البقرة' } },
   { href: '/names-of-allah', label: { en: '99 Names of Allah', bn: 'আল্লাহর ৯৯ নাম', ar: 'أسماء الله الحسنى' } },
   { href: '/dua', label: { en: 'Daily Duas from Quran & Sunnah', bn: 'কুরআন ও সুন্নাহর দৈনন্দিন দোয়া', ar: 'أدعية يومية من القرآن والسنة' } },
+  { href: '/hadith', label: { en: 'Hadith: Bukhari, Muslim & more', bn: 'হাদিস: বুখারী, মুসলিমসহ', ar: 'الحديث: البخاري ومسلم وغيرهما' } },
+  { href: '/hadith/bukhari/1', label: { en: 'Sahih al-Bukhari 1: Actions by intentions', bn: 'সহীহ বুখারী ১: নিয়তের হাদিস', ar: 'صحيح البخاري ١: إنما الأعمال بالنيات' } },
   { href: '/topics', label: { en: 'What the Quran says about…', bn: 'বিষয়ভিত্তিক কুরআন', ar: 'ماذا يقول القرآن عن…' } },
   { href: '/hifz', label: { en: 'Memorise the Quran (Hifz)', bn: 'কুরআন হিফজ করুন', ar: 'احفظ القرآن' } },
   { href: '/juz/30', label: { en: 'Juz Amma (Para 30)', bn: 'আমপারা (৩০ নম্বর পারা)', ar: 'جزء عمّ (الجزء ٣٠)' } },
+  { href: '/learn', label: { en: 'Learn: salah, wudu, tajweed & kalimas', bn: 'শিক্ষা: নামাজ, অজু, তাজবীদ ও কালেমা', ar: 'تعلّم: الصلاة والوضوء والتجويد' } },
   { href: '/prayer-times', label: { en: 'Prayer times today', bn: 'আজকের নামাজের সময়', ar: 'مواقيت الصلاة اليوم' } },
 ]
 
@@ -28,8 +31,28 @@ const BANGLA_LINKS = [
   { href: '/dua/dua-before-sleeping', label: 'ঘুমানোর দোয়া' },
   { href: '/names-of-allah', label: 'আল্লাহর ৯৯ নাম অর্থসহ' },
   { href: '/dua', label: 'দৈনন্দিন দোয়া' },
+  { href: '/hadith', label: 'হাদিস সমগ্র: বুখারী, মুসলিম' },
   { href: '/topics/anxiety', label: 'দুশ্চিন্তা দূর করার আয়াত' },
+  { href: '/learn/salah', label: 'নামাজ শিক্ষা' },
+  { href: '/learn/kalima', label: '৬ কালেমা বাংলা উচ্চারণ সহ' },
+  { href: '/learn/wudu', label: 'অজুর নিয়ম' },
+  { href: '/learn/tajweed', label: 'তাজবীদ শিক্ষা' },
+  { href: '/events/eid-al-adha', label: 'ঈদুল আজহা কবে' },
+  { href: '/events/laylatul-qadr', label: 'শবে কদর কবে' },
+  { href: '/events/eid-al-fitr', label: 'ঈদুল ফিতর কবে' },
 ].map((l) => ({ ...l, href: localeHref('bn', l.href) }))
+
+/** Popular city timetables (static labels: the footer must not pull the 150-city dataset into every page). */
+const POPULAR_CITIES: { slug: string; label: Tr }[] = [
+  { slug: 'dhaka', label: { en: 'Dhaka', bn: 'ঢাকা', ar: 'دكا' } },
+  { slug: 'chattogram', label: { en: 'Chattogram', bn: 'চট্টগ্রাম', ar: 'شيتاغونغ' } },
+  { slug: 'sylhet', label: { en: 'Sylhet', bn: 'সিলেট', ar: 'سيلهيت' } },
+  { slug: 'rajshahi', label: { en: 'Rajshahi', bn: 'রাজশাহী', ar: 'راجشاهي' } },
+  { slug: 'khulna', label: { en: 'Khulna', bn: 'খুলনা', ar: 'خولنا' } },
+  { slug: 'london', label: { en: 'London', bn: 'লন্ডন', ar: 'لندن' } },
+  { slug: 'new-york', label: { en: 'New York', bn: 'নিউ ইয়র্ক', ar: 'نيويورك' } },
+  { slug: 'makkah', label: { en: 'Makkah', bn: 'মক্কা', ar: 'مكة المكرمة' } },
+]
 
 const C = {
   popularSurahs: { en: 'Popular Surahs', bn: 'জনপ্রিয় সূরা', ar: 'سور مختارة' },
@@ -79,6 +102,16 @@ export function SiteFooter() {
           <a href={site.github} className="hover:text-foreground" rel="noopener">{t(C.github)}</a>
         </FooterCol>
       </div>
+      <nav aria-label={t({ en: 'Prayer times by city', bn: 'শহরভিত্তিক নামাজের সময়', ar: 'مواقيت الصلاة حسب المدينة' })} className="relative mx-auto mt-12 max-w-7xl px-4 sm:px-6">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground">{t({ en: 'Prayer times', bn: 'নামাজের সময়সূচি', ar: 'مواقيت الصلاة' })}</h2>
+        <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          {POPULAR_CITIES.map((c) => <li key={c.slug}><Link href={`/prayer-times/${c.slug}`} className="hover:text-foreground">{t(c.label)}</Link></li>)}
+          <li><Link href="/ramadan" className="hover:text-foreground">{t({ en: 'Ramadan timetable', bn: 'রমজানের সময়সূচি', ar: 'جدول رمضان' })}</Link></li>
+          <li><Link href="/events" className="hover:text-foreground">{t({ en: 'Islamic events & Eid dates', bn: 'ইসলামি দিবস ও ঈদের তারিখ', ar: 'المناسبات الإسلامية' })}</Link></li>
+          <li><Link href="/hijri-date" className="hover:text-foreground">{t({ en: 'Hijri date today', bn: 'আজকের হিজরি তারিখ', ar: 'التاريخ الهجري' })}</Link></li>
+          <li><Link href="/zakat-calculator" className="hover:text-foreground">{t({ en: 'Zakat calculator', bn: 'যাকাত ক্যালকুলেটর', ar: 'حاسبة الزكاة' })}</Link></li>
+        </ul>
+      </nav>
       <div className="relative mx-auto mt-14 flex max-w-7xl flex-col gap-2 px-4 text-xs text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
         <p>{t(C.credits)}</p>
         <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> {t({ en: site.name, bn: 'নূর কুরআন', ar: 'نور القرآن' })}</p>

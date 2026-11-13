@@ -9,7 +9,11 @@ const known: Known = JSON.parse(fs.readFileSync(path.join(__dirname, 'a11y-known
 const ROUTES = [
   '/', '/quran', '/surah/al-mulk', '/surah/al-baqarah/255', '/topics', '/topics/patience', '/dua', '/dua/dua-morning-asbahna',
   '/names-of-allah', '/names-of-allah/ar-rahman', '/search?q=mercy', '/hifz', '/journey', '/prayer-times', '/qibla', '/calendar',
-  '/dhikr', '/saved', '/settings', '/about', '/listen',
+  '/dhikr', '/saved', '/settings', '/about', '/listen', '/mcp', '/developers', '/ask',
+  '/prayer-times/dhaka', '/hijri-date', '/zakat-calculator',
+  '/events', '/events/laylatul-qadr/2027',
+  '/hadith', '/hadith/bukhari', '/hadith/bukhari/1', '/hadith/abudawud/5095', '/hadith/search?q=intended&c=nawawi40',
+  '/learn', '/learn/salah', '/learn/wudu', '/learn/tajweed', '/learn/tajweed/ikhfa', '/learn/tajweed/waqf-signs', '/learn/kalima', '/learn/arabic-alphabet',
 ]
 
 /** wait until no element is mid-fade (entrance animations blend colours and skew contrast results) */
@@ -29,15 +33,15 @@ async function audit(page: import('@playwright/test').Page, theme: string, lang:
 }
 
 interface Case { theme: string; lang: 'en' | 'ar'; route: string; include?: string[] }
-const BN_ROUTES = ['/bn', '/bn/quran', '/bn/surah/al-mulk', '/bn/dua', '/bn/names-of-allah', '/bn/hifz', '/bn/prayer-times']
+const BN_ROUTES = ['/bn', '/bn/quran', '/bn/surah/al-mulk', '/bn/dua', '/bn/names-of-allah', '/bn/hifz', '/bn/prayer-times', '/bn/hadith/bukhari/1']
 const cases: Case[] = [
   ...ROUTES.map((route) => ({ theme: 'light', lang: 'en' as const, route })),
   // /juz/30 renders ~560 ayahs (axe takes ~40s on the whole page): audit the shell + the first ayahs only
   { theme: 'light', lang: 'en', route: '/juz/30', include: ['header', 'main > :first-child', 'article[data-ayah]:nth-of-type(-n+8)'] },
   // every theme is audited on the pages that use the most token pairs
-  ...['sand', 'dusk', 'dark', 'black'].flatMap((theme) => ['/', '/surah/al-mulk', '/dua', '/hifz', '/quran'].map((route) => ({ theme, lang: 'en' as const, route }))),
+  ...['sand', 'dusk', 'dark', 'black'].flatMap((theme) => ['/', '/surah/al-mulk', '/dua', '/hifz', '/quran', '/hadith/bukhari/1'].map((route) => ({ theme, lang: 'en' as const, route }))),
   ...BN_ROUTES.map((route) => ({ theme: 'light', lang: 'en' as const, route })),
-  ...['/', '/surah/al-mulk', '/dua', '/settings', '/hifz'].map((route) => ({ theme: 'light', lang: 'ar' as const, route })),
+  ...['/', '/surah/al-mulk', '/dua', '/settings', '/hifz', '/hadith/bukhari/1'].map((route) => ({ theme: 'light', lang: 'ar' as const, route })),
 ]
 
 for (const { theme, lang, route, include } of cases) {

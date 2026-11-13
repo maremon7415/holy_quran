@@ -20,6 +20,8 @@ import { AttrLocalizer } from '@/components/shell/attr-localizer'
 import { site, absoluteUrl } from '@/lib/site'
 import { T } from '@/lib/i18n/text'
 import { JsonLd } from '@/components/seo/json-ld'
+import { organizationLd, ORG_ID, WEBSITE_ID } from '@/lib/seo/structured'
+import { verificationMeta } from '@/lib/seo/verification'
 
 const ui = Manrope({ subsets: ['latin'], variable: '--font-ui', display: 'swap' })
 const display = Fraunces({ subsets: ['latin'], variable: '--font-display-serif', display: 'swap', axes: ['opsz', 'SOFT'] })
@@ -59,6 +61,8 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: site.name },
   icons: { apple: '/apple-icon.png' },
   category: 'religion',
+  // search-console ownership tags from env (GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION, YANDEX_VERIFICATION)
+  verification: verificationMeta(),
 }
 
 export const viewport: Viewport = {
@@ -74,11 +78,14 @@ export const viewport: Viewport = {
 const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': WEBSITE_ID,
   name: site.name,
   alternateName: ['Noor Quran', 'নূর কুরআন', 'Al Quran Online'],
   url: site.url,
   description: site.description,
   inLanguage: ['en', 'bn', 'ar'],
+  publisher: { '@id': ORG_ID },
+  sameAs: [site.github],
   potentialAction: {
     '@type': 'SearchAction',
     target: { '@type': 'EntryPoint', urlTemplate: `${absoluteUrl('/search')}?q={search_term_string}` },
@@ -93,7 +100,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: readerPrefsScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeScript }} />
-        <JsonLd data={websiteLd} />
+        <JsonLd data={[organizationLd(), websiteLd]} />
       </head>
       <body className="min-h-dvh">
         <ReaderIconSprite />

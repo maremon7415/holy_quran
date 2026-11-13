@@ -2,7 +2,7 @@ import { computeSchedule, REMINDER_NAMES, type ReminderKey } from './times'
 import type { ReminderCfg } from '@/lib/stores/prayer'
 
 const z = (ms: number) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n')
 /** RFC 5545 line folding at 75 octets (UTF-8 aware). */
 function fold(line: string) {
   const enc = new TextEncoder()

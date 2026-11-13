@@ -11,6 +11,10 @@ import { useTx } from '@/lib/lang'
 import { moreNav, primaryNav } from '@/lib/nav'
 import { UiIcon } from '@/components/ui-icon'
 import { useLocalizedHref } from '@/lib/i18n/locale-context'
+import { parseHadithReference } from '@/lib/hadith/search-utils'
+import { looksLikeQuestion } from '@/lib/ask/text'
+import { collectionMeta } from '@/lib/hadith/collections'
+import { hadithUrl } from '@/lib/hadith/url'
 
 interface Hit { key: string; surah: number; ayah: number; surahName: string; ar: string; en: string; bn: string }
 
@@ -21,6 +25,15 @@ const POPULAR = [
   { ref: '18', en: 'Surah Kahf', bn: 'সূরা কাহফ', ar: 'سورة الكهف' },
   { ref: '55', en: 'Surah Rahman', bn: 'সূরা আর-রহমান', ar: 'سورة الرحمن' },
   { ref: '2:285', en: 'Last 2 ayahs of Al-Baqarah', bn: 'সূরা বাকারার শেষ দুই আয়াত', ar: 'خواتيم سورة البقرة' },
+]
+
+/** Quick links to the learning guides (searches like "namaz sikkha", "tajweed", "6 kalima"). */
+const LEARN_LINKS = [
+  { href: '/learn/salah', icon: 'mosque', en: 'How to pray salah', bn: 'নামাজ শিক্ষা', ar: 'تعلّم الصلاة' },
+  { href: '/learn/wudu', icon: 'hands', en: 'How to perform wudu', bn: 'অজুর নিয়ম', ar: 'كيفية الوضوء' },
+  { href: '/learn/tajweed', icon: 'tajweed', en: 'Tajweed rules', bn: 'তাজবীদ শিক্ষা', ar: 'أحكام التجويد' },
+  { href: '/learn/kalima', icon: 'sparkle', en: 'Six Kalimas', bn: '৬ কালেমা', ar: 'الكلمات الست' },
+  { href: '/learn/arabic-alphabet', icon: 'read', en: 'Arabic alphabet', bn: 'আরবি বর্ণমালা', ar: 'الحروف العربية' },
 ]
 
 export function CommandPalette() {
@@ -73,6 +86,9 @@ export function CommandPalette() {
     return { s, a, c }
   }, [q])
 
+  // "Bukhari 1", "বুখারী হাদিস ১", "muslim 2564" → straight to that hadith
+  const hadithRef = useMemo(() => parseHadithReference(q), [q])
+
   const surahMatches = useMemo(() => {
     const nq = normalizeLatin(q)
     if (!q.trim()) return chapters.slice(0, 0)
@@ -123,13 +139,34 @@ export function CommandPalette() {
               </div>
               <Command.List className="overflow-y-auto overscroll-contain p-2 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground">
                 <Command.Empty className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  {!loading && q.trim().length >= 3 && (
+                    <button type="button" onClick={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} className="mb-3 block w-full text-sm font-semibold text-primary hover:underline">
+                      {t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })}
+                    </button>
+                  )}
                   {loading ? t({ en: 'Searching 6,236 ayahs…', bn: '৬,২৩৬ আয়াতে খোঁজা হচ্ছে…', ar: 'جارٍ البحث في ٦٢٣٦ آية…' }) : t({ en: 'No results. Try another word or a reference like 2:255.', bn: 'কিছু পাওয়া যায়নি। অন্য শব্দ বা ২:২৫৫ এর মতো লিখুন।', ar: 'لا نتائج. جرّب كلمة أخرى أو مرجعًا مثل 2:255.' })}
                 </Command.Empty>
+
+                {looksLikeQuestion(q) && (
+                  <Command.Group heading={t({ en: 'Ask', bn: 'প্রশ্ন', ar: 'اسأل' })}>
+                    <Item icon="sparkle" onSelect={() => go(`/ask?q=${encodeURIComponent(q.trim())}`)}
+                      title={t({ en: `Ask the Quran: “${q.trim()}”`, bn: `কুরআনে প্রশ্ন করুন: “${q.trim()}”`, ar: `اسأل القرآن: «${q.trim()}»` })}
+                      sub={t({ en: 'Find verses by meaning', bn: 'অর্থ অনুযায়ী আয়াত খুঁজুন', ar: 'ابحث عن الآيات بالمعنى' })} />
+                  </Command.Group>
+                )}
 
                 {ref && (
                   <Command.Group heading={t({ en: 'Go to', bn: 'যান', ar: 'انتقل إلى' })}>
                     <Item onSelect={() => go(ref.a ? readerHref(ref.s, ref.a) : surahHref(ref.s))} icon="read"
                       title={ref.a ? `${ref.c.nameSimple} ${ref.s}:${ref.a}` : `${ref.s}. ${ref.c.nameSimple}`} sub={ref.c.meaning} right={ref.c.nameArabic} />
+                  </Command.Group>
+                )}
+
+                {hadithRef && (
+                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
+                    <Item onSelect={() => go(hadithUrl(hadithRef.collection, hadithRef.number))} icon="read"
+                      title={`${t({ en: collectionMeta(hadithRef.collection)!.cite, bn: collectionMeta(hadithRef.collection)!.name.bn, ar: collectionMeta(hadithRef.collection)!.name.ar })} ${hadithRef.number}`}
+                      sub={t({ en: 'Open this hadith', bn: 'হাদিসটি খুলুন', ar: 'افتح هذا الحديث' })} right={collectionMeta(hadithRef.collection)!.name.ar} />
                   </Command.Group>
                 )}
 
@@ -140,6 +177,9 @@ export function CommandPalette() {
                         const [s, a] = p.ref.split(':').map(Number)
                         return <Item key={p.ref} icon="sparkle" onSelect={() => go(a ? surahHref(s, a) : surahHref(s))} title={t(p)} sub={p.ref} right={chapters[s - 1].nameArabic} />
                       })}
+                    </Command.Group>
+                    <Command.Group heading={t({ en: 'Learn', bn: 'শিক্ষা', ar: 'تعلّم' })}>
+                      {LEARN_LINKS.map((l) => <Item key={l.href} icon={l.icon} onSelect={() => go(l.href)} title={t(l)} />)}
                     </Command.Group>
                     <Command.Group heading={t({ en: 'Explore', bn: 'এক্সপ্লোর', ar: 'استكشف' })}>
                       {[...primaryNav, ...moreNav].map((n) => <Item key={n.href} icon={n.icon} onSelect={() => go(n.href)} title={t(n.label)} sub={n.desc ? t(n.desc) : undefined} />)}
@@ -170,6 +210,12 @@ export function CommandPalette() {
                     )}
                   </Command.Group>
                 )}
+                {q.trim().length >= 3 && (hits.length > 0 || surahMatches.length > 0) && (
+                  <Command.Group heading={t({ en: 'Hadith', bn: 'হাদিস', ar: 'الحديث' })}>
+                    <Item icon="search" onSelect={() => go(`/hadith/search?q=${encodeURIComponent(q.trim())}`)} title={t({ en: `Search hadith for “${q.trim()}”`, bn: `“${q.trim()}” হাদিসে খুঁজুন`, ar: `ابحث في الأحاديث عن «${q.trim()}»` })} />
+                  </Command.Group>
+                )}
+
               </Command.List>
               <div className="hidden items-center gap-4 border-t px-4 py-2 text-[11px] text-muted-foreground sm:flex">
                 <span><kbd className="rounded border px-1">↑↓</kbd> {t({ en: 'navigate', bn: 'নেভিগেট', ar: 'تنقّل' })}</span>

@@ -1,0 +1,87 @@
+name: IndexNow
+
+# Pings IndexNow (Bing → ChatGPT search & Copilot, Yandex, Seznam …) with CHANGED URLs.
+#  - push to master: only the URLs affected by the pushed commits (`scripts/indexnow.mjs --changed-from <before>`
+#    maps changed files to URL sets; site code without a narrower set → the core pages; never every URL).
+#  - manual run: the core pages by default, the URLs changed since a given commit, or (explicit `full` input) every
+#    sitemap URL (~79k — use sparingly, IndexNow throttles sites that resubmit unchanged URLs).
+# HTTP 429 from IndexNow is logged and the job still succeeds.
+# Needs repository secrets INDEXNOW_KEY and SITE_URL (and INDEXNOW_KEY set on the deployment so
+# /{key}.txt is served). Skips gracefully when they are not configured.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'List URLs only, do not submit'
+        type: boolean
+        default: false
+      full:
+        description: 'Submit EVERY sitemap URL (~79k). Leave off unless the whole site changed.'
+        type: boolean
+        default: false
+      changed_from:
+        description: 'Submit only URLs affected since this commit SHA (empty = core pages)'
+        type: string
+        default: ''
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # a newer push supersedes a run that is still waiting for its deployment
+    concurrency:
+      group: indexnow
+      cancel-in-progress: true
+    env:
+      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+      SITE_URL: ${{ secrets.SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # the changed-file mapping diffs <before>..HEAD
+          fetch-depth: 0
+      - name: Check configuration
+        id: cfg
+        run: |
+          if [ -z "$INDEXNOW_KEY" ] || [ -z "$SITE_URL" ]; then
+            echo "::notice::IndexNow skipped: set the INDEXNOW_KEY and SITE_URL repository secrets to enable it."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.cfg.outputs.enabled == 'true'
+        with:
+          node-version: 22
+      # On a push, give the deployment time to go live; wait until the key file answers.
+      - name: Wait for deployment
+        if: steps.cfg.outputs.enabled == 'true' && github.event_name == 'push'
+        run: |
+          sleep 180
+          for i in $(seq 1 30); do
+            if [ "$(curl -fsS "$SITE_URL/$INDEXNOW_KEY.txt" || true)" = "$INDEXNOW_KEY" ]; then exit 0; fi
+            sleep 20
+          done
+          echo "::warning::$SITE_URL/$INDEXNOW_KEY.txt does not serve the key; continuing (the script will fail clearly)."
+      - name: Submit URLs
+        if: steps.cfg.outputs.enabled == 'true'
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          FULL: ${{ inputs.full }}
+          CHANGED_FROM: ${{ inputs.changed_from }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          set --
+          if [ "$EVENT" = "push" ]; then set -- --changed-from "$BEFORE"
+          elif [ "$FULL" = "true" ]; then set -- --all
+          elif [ -n "$CHANGED_FROM" ]; then set -- --changed-from "$CHANGED_FROM"
+          else set -- --core
+          fi
+          if [ "$DRY" = "true" ]; then set -- "$@" --dry-run; fi
+          node scripts/indexnow.mjs "$@"
