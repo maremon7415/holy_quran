@@ -44,6 +44,7 @@ export function Panel({
   const desktop = useIsDesktop()
   const drag = useDragControls()
   const contentRef = useRef<HTMLDivElement>(null)
+  const returnTo = useRef<HTMLElement | null>(null)
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -58,7 +59,7 @@ export function Panel({
                 transition={{ duration: 0.25 }}
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount aria-modal="true" onOpenAutoFocus={(e) => { e.preventDefault(); contentRef.current?.focus({ preventScroll: true }) }}>
+            <Dialog.Content asChild forceMount aria-modal="true" onOpenAutoFocus={(e) => { e.preventDefault(); returnTo.current = document.activeElement as HTMLElement | null; contentRef.current?.focus({ preventScroll: true }) }} onCloseAutoFocus={(e) => { e.preventDefault(); const t = returnTo.current; returnTo.current = null; if (t?.isConnected) t.focus({ preventScroll: true }) }}>
               <motion.div
                 key={desktop ? 'side' : 'sheet'}
                 ref={contentRef}

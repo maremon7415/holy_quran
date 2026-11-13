@@ -67,7 +67,7 @@ test.describe('duas', () => {
 test.describe('99 names of Allah', () => {
   test('grid renders 99 names; search filters; detail page works', async ({ page }) => {
     await page.goto('/names-of-allah')
-    const cards = page.locator('ul li button[aria-label$="Flip card"]')
+    const cards = page.locator('ul li button[aria-pressed]').filter({ hasText: /Flip card/ })
     await expect(cards).toHaveCount(99)
     await page.getByPlaceholder(/Search: Rahman/i).fill('Rahman')
     await expect.poll(() => cards.count()).toBeLessThan(10)

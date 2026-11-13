@@ -163,7 +163,7 @@ function FullChrome({ surah, chapterIds, title, titleAr, total }: ReaderChromePr
       {/* sticky mini header */}
       <motion.div
         initial={false}
-        animate={{ y: showBar ? (headerShown ? 64 : 0) : -80, opacity: showBar ? 1 : 0 }}
+        animate={showBar ? { y: headerShown ? 64 : 0, opacity: 1, visibility: 'visible' } : { y: -80, opacity: 0, transitionEnd: { visibility: 'hidden' } }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
         className="reader-chrome fixed inset-x-0 top-0 z-40 border-b bg-background/90 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-22px_rgb(var(--shadow-color)/0.5)]"
         style={{ pointerEvents: showBar ? 'auto' : 'none' }}

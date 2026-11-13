@@ -38,7 +38,7 @@ test.describe('keyboard', () => {
     test(`reader ${name} sheet: focus stays inside, Escape returns focus to its trigger`, async ({ page }) => {
       await page.goto('/surah/al-fatihah')
       await page.waitForLoadState('networkidle')
-      const trigger = page.getByRole('button', { name: button }).locator('visible=true').first()
+      const trigger = page.getByRole('button', { name: button }).last()
       await trigger.focus()
       await page.keyboard.press('Enter')
       const dlg = page.getByRole('dialog')
@@ -62,7 +62,7 @@ test.describe('keyboard', () => {
     await page.setViewportSize({ width: 390, height: 800 })
     await page.goto('/surah/al-fatihah')
     await page.waitForLoadState('networkidle')
-    await page.getByRole('button', { name: /reading settings/i }).locator('visible=true').first().click()
+    await page.getByRole('button', { name: /reading settings/i }).last().click()
     const dlg = page.getByRole('dialog')
     await expect(dlg).toBeVisible()
     await expect.poll(() => dlg.evaluate((el) => { const b = el.getBoundingClientRect(); return b.bottom <= innerHeight + 1 && b.left >= -1 && b.right <= innerWidth + 1 })).toBe(true)

@@ -12,9 +12,15 @@ const ROUTES = [
   '/dhikr', '/saved', '/settings', '/about', '/listen',
 ]
 
+/** wait until no element is mid-fade (entrance animations blend colours and skew contrast results) */
+const settled = (page: import('@playwright/test').Page) =>
+  page.waitForFunction(() => ![...document.querySelectorAll<HTMLElement>('body *')].some((e) => { const o = parseFloat(getComputedStyle(e).opacity); return o > 0.02 && o < 0.98 && !e.closest('[aria-hidden="true"]') }), null, { timeout: 8000 }).catch(() => {})
+
 const serious = (impact?: string | null) => impact === 'serious' || impact === 'critical'
 
 async function audit(page: import('@playwright/test').Page, theme: string, lang: string) {
+  // `.reveal` fades content in with a scroll-driven animation (partially transparent text just below the fold); audit the settled state
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await page.evaluate(([t, l]) => {
     localStorage.setItem('theme', t)
@@ -41,6 +47,7 @@ for (const { theme, lang, route, include } of cases) {
       await page.goto(route)
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(700) // entrance animations (opacity transitions skew contrast results)
+      await settled(page)
       let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       for (const sel of include ?? []) builder = builder.include(sel)
       const results = await builder.analyze()
@@ -70,11 +77,13 @@ test.describe('a11y: overlays', () => {
     return r.violations.filter((v) => serious(v.impact)).map((v) => `${v.id}: ${v.nodes[0]?.target?.join(' ')}`)
   }
   test('command palette (open)', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await page.keyboard.press('Control+k')
     await expect(page.getByRole('dialog', { name: /search the quran/i })).toBeVisible()
     await page.waitForTimeout(700)
+    await settled(page)
     expect(await run(page)).toEqual([])
   })
   for (const [name, vp] of [['desktop', { width: 1280, height: 800 }], ['mobile', { width: 390, height: 800 }]] as const) {
@@ -82,9 +91,10 @@ test.describe('a11y: overlays', () => {
       await page.setViewportSize(vp)
       await page.goto('/surah/al-fatihah')
       await page.waitForLoadState('networkidle')
-      await page.getByRole('button', { name: /reading settings/i }).locator('visible=true').first().click()
+      await page.getByRole('button', { name: /reading settings/i }).last().click()
       await expect(page.getByRole('dialog')).toBeVisible()
       await page.waitForTimeout(800)
+      await settled(page)
       expect(await run(page)).toEqual([])
     })
   }

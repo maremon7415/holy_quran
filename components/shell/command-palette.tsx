@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Command } from 'cmdk'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -30,6 +30,7 @@ export function CommandPalette() {
   const t = useTx()
   const loc = useLocalizedHref()
   const [q, setQ] = useState('')
+  const returnTo = useRef<HTMLElement | null>(null)
   const [hits, setHits] = useState<Hit[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -94,6 +95,8 @@ export function CommandPalette() {
             </Dialog.Overlay>
             <Dialog.Content
               asChild forceMount aria-describedby={undefined} aria-modal="true"
+              onOpenAutoFocus={() => { returnTo.current = document.activeElement as HTMLElement | null }}
+              onCloseAutoFocus={(e) => { e.preventDefault(); const t = returnTo.current; returnTo.current = null; if (t?.isConnected) t.focus({ preventScroll: true }) }}
               aria-label={t({ en: 'Search the Quran', bn: 'কুরআনে খুঁজুন', ar: 'ابحث في القرآن' })}
             >
               <motion.div
@@ -111,7 +114,7 @@ export function CommandPalette() {
               <div className="flex items-center gap-3 border-b px-4">
                 <UiIcon name="search" size={22} />
                 <Command.Input
-                  autoFocus value={q} onValueChange={setQ}
+                  value={q} onValueChange={setQ}
                   placeholder={t({ en: 'Search surah, 2:255, “mercy”, رحمة, ধৈর্য…', bn: 'সূরা, ২:২৫৫, “ধৈর্য”, رحمة খুঁজুন…', ar: 'ابحث: سورة، 2:255، «رحمة»، mercy…' })}
                   className="h-14 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
                 />
