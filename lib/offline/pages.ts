@@ -12,6 +12,8 @@ export interface PagesProgress {
   bytes: number
   failed: number
   current?: string
+  /** true for the automatic post-deploy refresh */
+  refresh?: boolean
 }
 
 export const allPagePaths = (withJuz: boolean) => [

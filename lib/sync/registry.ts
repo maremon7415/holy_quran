@@ -6,6 +6,7 @@ import { useHifz } from '@/lib/stores/hifz'
 import { useJourney } from '@/lib/stores/journey'
 import { useDhikr } from '@/lib/stores/dhikr'
 import { usePrayerPrefs } from '@/lib/stores/prayer'
+import { usePlayerPrefs } from '@/lib/audio/prefs'
 import type { SyncKey } from './types'
 
 /** Which zustand stores take part in sync, and which fields of them stay on the device. */
@@ -23,6 +24,7 @@ export const SYNCED_STORES: SyncedStore[] = [
   { key: 'noor-journey', store: useJourney as unknown as StoreApi<Record<string, unknown>>, exclude: [] },
   { key: 'noor-dhikr', store: useDhikr as unknown as StoreApi<Record<string, unknown>>, exclude: [] },
   { key: 'noor-prayer-prefs', store: usePrayerPrefs as unknown as StoreApi<Record<string, unknown>>, exclude: [] },
+  { key: 'noor-player', store: usePlayerPrefs as unknown as StoreApi<Record<string, unknown>>, exclude: [] },
 ]
 
 /** JSON-safe snapshot of a store's data (no functions, no excluded fields). */

@@ -27,15 +27,15 @@ export function ReciterPicker({ onClose }: { onClose: () => void }) {
       transition={{ type: 'spring', stiffness: 380, damping: 34 }}
     >
       <div className="mx-auto flex w-full max-w-2xl items-center gap-2 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <button onClick={onClose} aria-label={t({ en: 'Back', bn: 'পিছনে', ar: 'رجوع' })} className="grid size-10 place-items-center rounded-full hover:bg-muted"><ChevronLeft className="size-5" /></button>
+        <button onClick={onClose} aria-label={t({ en: 'Back', bn: 'পিছনে', ar: 'رجوع' })} className="grid size-10 place-items-center rounded-full hover:bg-muted"><ChevronLeft className="size-5 rtl:rotate-180" /></button>
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t({ en: 'Search reciters…', bn: 'ক্বারী খুঁজুন…', ar: 'ابحث عن قارئ…' })}
-            className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-ring/20"
+            className="h-11 w-full rounded-full border border-border bg-card ps-10 pe-4 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-ring/20"
           />
         </div>
       </div>
@@ -48,7 +48,7 @@ export function ReciterPicker({ onClose }: { onClose: () => void }) {
               <li key={r.id}>
                 <button
                   onClick={() => { useReader.getState().set({ reciterId: r.id }); onClose() }}
-                  className={cn('flex w-full items-center gap-3 rounded-2xl border p-2.5 text-left transition active:scale-[0.99]', active ? 'border-primary/40 bg-accent' : 'border-transparent hover:bg-muted')}
+                  className={cn('flex w-full items-center gap-3 rounded-2xl border p-2.5 text-start transition active:scale-[0.99]', active ? 'border-primary/40 bg-accent' : 'border-transparent hover:bg-muted')}
                 >
                   <ReciterMonogram name={r.name} active={active} size={46} />
                   <span className="min-w-0 flex-1">

@@ -1,6 +1,6 @@
 'use client'
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLang, useMounted, useTx } from '@/lib/lang'
 import { useAppStore } from '@/lib/store'
@@ -40,7 +40,7 @@ function Portion({ from, to }: { from: number; to: number }) {
   const [s2, a2] = pageEnd(to)
   return (
     <span>
-      {sn(s1)} {a1} <span className="text-muted-foreground">→</span> {sn(s2)} {a2}
+      {sn(s1)} {a1} <span className="inline-block text-muted-foreground rtl:rotate-180">→</span> {sn(s2)} {a2}
     </span>
   )
 }
@@ -214,9 +214,9 @@ function ActivePlan({ k }: { k: Khatam }) {
       <h4 className="mb-3 mt-7 text-sm font-semibold">{t({ en: 'Timeline', bn: 'সময়রেখা', ar: 'الجدول الزمني' })}</h4>
       <Timeline k={k} dayIndex={st.dayIndex} />
       <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-muted-foreground">
-        <span><i className="mr-1 inline-block h-2.5 w-2.5 rounded bg-primary" />{t({ en: 'Done', bn: 'সম্পন্ন', ar: 'تم' })}</span>
-        <span><i className="mr-1 inline-block h-2.5 w-2.5 rounded border border-gold bg-gold-soft" />{t({ en: 'Today', bn: 'আজ', ar: 'اليوم' })}</span>
-        <span><i className="mr-1 inline-block h-2.5 w-2.5 rounded bg-destructive/30" />{t({ en: 'Missed', bn: 'বাদ', ar: 'فائت' })}</span>
+        <span><i className="me-1 inline-block h-2.5 w-2.5 rounded bg-primary" />{t({ en: 'Done', bn: 'সম্পন্ন', ar: 'تم' })}</span>
+        <span><i className="me-1 inline-block h-2.5 w-2.5 rounded border border-gold bg-gold-soft" />{t({ en: 'Today', bn: 'আজ', ar: 'اليوم' })}</span>
+        <span><i className="me-1 inline-block h-2.5 w-2.5 rounded bg-destructive/30" />{t({ en: 'Missed', bn: 'বাদ', ar: 'فائت' })}</span>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4 text-sm">
@@ -224,7 +224,7 @@ function ActivePlan({ k }: { k: Khatam }) {
           <input value={manual} onChange={(e) => setManual(e.target.value.replace(/\D/g, ''))} inputMode="numeric" placeholder={t({ en: 'I have read up to page…', bn: 'আমি পড়েছি পৃষ্ঠা… পর্যন্ত', ar: 'قرأت حتى الصفحة…' })} className="h-9 w-44 rounded-full border border-border bg-card px-3 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring" />
           <button className="h-9 rounded-full bg-muted px-3 text-xs font-medium">{t({ en: 'Set', bn: 'সেট', ar: 'تعيين' })}</button>
         </form>
-        <span className="ml-auto" />
+        <span className="ms-auto" />
         <button onClick={() => archive(k.id)} className="text-xs text-muted-foreground hover:text-foreground">{t({ en: 'Archive', bn: 'আর্কাইভ', ar: 'أرشفة' })}</button>
         {confirmDel ? (
           <button onClick={() => remove(k.id)} className="text-xs font-semibold text-destructive">{t({ en: 'Confirm delete', bn: 'মুছে ফেলুন', ar: 'تأكيد الحذف' })}</button>

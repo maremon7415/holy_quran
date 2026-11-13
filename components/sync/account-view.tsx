@@ -1,6 +1,6 @@
 'use client'
 import { useRef, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { toast } from 'sonner'
 import { RefreshCw, Smartphone, Download, Upload, LogOut, Trash2, Cloud } from 'lucide-react'
 import { UiIcon } from '@/components/ui-icon'
@@ -128,7 +128,7 @@ export function AccountView() {
                   <li key={d.id} className="flex items-center gap-3 rounded-2xl bg-surface-2 p-3">
                     <Smartphone className="size-5 shrink-0 text-primary" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{d.name}{d.id === deviceId && <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">{t({ en: 'This device', bn: 'এই ডিভাইস', ar: 'هذا الجهاز' })}</span>}</p>
+                      <p className="truncate text-sm font-semibold">{d.name}{d.id === deviceId && <span className="ms-2 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">{t({ en: 'This device', bn: 'এই ডিভাইস', ar: 'هذا الجهاز' })}</span>}</p>
                       <p className="text-xs text-muted-foreground">{t({ en: 'Last synced', bn: 'শেষ সিঙ্ক', ar: 'آخر مزامنة' })} {timeAgo(d.lastSyncedAt, lang)}</p>
                     </div>
                   </li>

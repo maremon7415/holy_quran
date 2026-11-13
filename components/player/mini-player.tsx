@@ -68,12 +68,12 @@ export function MiniPlayer() {
           <div
             role="region"
             aria-label={t({ en: 'Audio player', bn: 'অডিও প্লেয়ার', ar: 'مشغّل الصوت' })}
-            className="glass pointer-events-auto relative flex w-full max-w-xl items-center gap-2 overflow-hidden rounded-full border border-border py-1.5 pl-1.5 pr-2 shadow-[0_18px_50px_-14px_rgb(var(--shadow-color)/0.45)]"
+            className="glass pointer-events-auto relative flex w-full max-w-xl items-center gap-2 overflow-hidden rounded-full border border-border py-1.5 ps-1.5 pe-2 shadow-[0_18px_50px_-14px_rgb(var(--shadow-color)/0.45)]"
           >
             <div aria-hidden className="bg-pattern pointer-events-none absolute inset-0" />
             <button
               onClick={() => p().setExpanded(true)}
-              className="relative flex min-w-0 flex-1 items-center gap-3 rounded-full text-left"
+              className="relative flex min-w-0 flex-1 items-center gap-3 rounded-full text-start"
               aria-label={t({ en: 'Open full player', bn: 'পূর্ণ প্লেয়ার খুলুন', ar: 'فتح المشغّل الكامل' })}
             >
               <span className="relative grid size-11 shrink-0 place-items-center rounded-full bg-gold-soft/70 ring-1 ring-gold/30">

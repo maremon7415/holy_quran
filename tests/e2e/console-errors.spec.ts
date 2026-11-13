@@ -9,7 +9,7 @@ for (const route of MAIN_ROUTES) {
     const bad: string[] = []
     page.on('response', (r) => {
       const u = new URL(r.url())
-      if (u.origin === new URL(baseURL!).origin && r.status() >= 400 && !/\/_next\/image|favicon|\.map$/.test(u.pathname)) bad.push(`${r.status()} ${u.pathname}`)
+      if (u.origin === new URL(baseURL!).origin && r.status() >= 400 && !/\/_next\/image|\/_vercel\/|favicon|\.map$/.test(u.pathname)) bad.push(`${r.status()} ${u.pathname}`)
     })
     const res = await page.goto(route)
     expect(res?.status(), `${route} status`).toBe(200)

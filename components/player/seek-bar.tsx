@@ -38,7 +38,7 @@ export function SeekBar() {
   const dragAyah = drag != null ? Math.max(1, Math.min(count, (ticks.filter((x) => x <= drag + 1e-6).length || 1))) : ayah
 
   return (
-    <div className="select-none">
+    <div className="select-none" dir="ltr">
       <div
         ref={ref}
         role="slider"

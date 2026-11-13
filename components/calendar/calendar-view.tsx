@@ -103,7 +103,7 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
         <section className="card-soft relative overflow-hidden rounded-[2rem] p-4 sm:p-6">
           <div aria-hidden className="bg-pattern pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_bottom,black,transparent_35%)]" />
           <div className="relative flex items-center justify-between gap-2">
-            <button onClick={() => go(-1)} aria-label={t({ en: 'Previous month', bn: 'আগের মাস', ar: 'الشهر السابق' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronLeft className="size-5" /></button>
+            <button onClick={() => go(-1)} aria-label={t({ en: 'Previous month', bn: 'আগের মাস', ar: 'الشهر السابق' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronLeft className="size-5 rtl:rotate-180" /></button>
             <div className="text-center">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={`${h0.y}-${h0.m}`} initial={{ opacity: 0, x: dir * 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -dir * 24 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
@@ -112,7 +112,7 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
                 </motion.div>
               </AnimatePresence>
             </div>
-            <button onClick={() => go(1)} aria-label={t({ en: 'Next month', bn: 'পরের মাস', ar: 'الشهر التالي' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronRight className="size-5" /></button>
+            <button onClick={() => go(1)} aria-label={t({ en: 'Next month', bn: 'পরের মাস', ar: 'الشهر التالي' })} className="grid size-11 place-items-center rounded-full border bg-card transition hover:border-primary/40 active:scale-95"><ChevronRight className="size-5 rtl:rotate-180" /></button>
           </div>
 
           <div className="relative mt-5 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2">
@@ -138,7 +138,7 @@ export function CalendarView({ events }: { events: IslamicEvent[] }) {
                     <span className="font-display text-lg font-semibold leading-none sm:text-2xl">{nf(h.d)}</span>
                     <span className={cn('mt-1 text-[10px] leading-none sm:text-xs', t0 ? 'text-primary-foreground/80' : 'text-muted-foreground')}>{nf(d.getDate())}</span>
                     {ev && <span className={cn('absolute bottom-1.5 size-1.5 rounded-full', t0 ? 'bg-primary-foreground' : 'bg-gold')} />}
-                    {[13, 14, 15].includes(h.d) && !t0 && <span aria-hidden className="absolute right-1.5 top-1.5 size-1 rounded-full bg-primary/50" />}
+                    {[13, 14, 15].includes(h.d) && !t0 && <span aria-hidden className="absolute end-1.5 top-1.5 size-1 rounded-full bg-primary/50" />}
                   </button>
                 )
               })}

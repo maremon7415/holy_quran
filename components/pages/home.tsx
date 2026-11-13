@@ -10,6 +10,7 @@ import { JsonLd } from '@/components/seo/json-ld'
 import { site } from '@/lib/site'
 import { localeHref, alternatesFor, type Locale } from '@/lib/i18n/routes'
 import { bnNum } from '@/lib/i18n/t'
+import { T } from '@/lib/i18n/text'
 
 export function homeMeta(locale: Locale): Metadata {
   if (locale !== 'bn') return { alternates: alternatesFor('/', 'en') }
@@ -27,15 +28,15 @@ export function homeMeta(locale: Locale): Metadata {
 const DAILY = ['2:255', '94:5', '13:28', '65:3', '39:53', '2:186', '3:139', '2:152', '29:69', '93:5', '40:60', '2:286', '8:46', '3:159', '17:24', '49:13', '55:13', '16:97', '20:114', '21:87', '28:24', '2:201', '14:7', '3:173', '25:63', '31:17', '57:4', '50:16', '7:56', '10:62']
 
 const FEATURES = [
-  { href: '/quran', icon: 'quran', en: 'Read the Quran', bn: 'কুরআন পড়ুন', d: 'Uthmani script, Bangla & English, tajweed colours, word-by-word', dBn: 'উসমানি লিপি, বাংলা ও ইংরেজি অনুবাদ, তাজবীদ রং, শব্দে শব্দে অর্থ', span: 'sm:col-span-2 sm:row-span-2' },
-  { href: '/listen', icon: 'listen', en: 'Listen', bn: 'তিলাওয়াত', d: '20+ reciters, word-synced highlighting', dBn: '২০+ ক্বারী, শব্দে শব্দে হাইলাইট' },
-  { href: '/hifz', icon: 'hifz', en: 'Hifz Studio', bn: 'হিফজ স্টুডিও', d: 'Memorise with spaced repetition & voice check', dBn: 'স্পেসড রিপিটেশন ও ভয়েস চেকসহ মুখস্থ করুন' },
-  { href: '/topics', icon: 'topics', en: 'Quran by Topic', bn: 'বিষয়ভিত্তিক', d: 'What the Quran says about life’s questions', dBn: 'জীবনের প্রশ্নে কুরআন কী বলে' },
-  { href: '/dua', icon: 'dua', en: 'Duas', bn: 'দোয়া', d: 'Authentic duas with sources', dBn: 'উৎসসহ প্রামাণ্য দোয়া' },
-  { href: '/names-of-allah', icon: 'names', en: '99 Names', bn: '৯৯ নাম', d: 'Asma ul Husna with meanings', dBn: 'আসমাউল হুসনা অর্থসহ' },
-  { href: '/prayer-times', icon: 'prayer', en: 'Prayer Times', bn: 'নামাজের সময়', d: 'For your exact location', dBn: 'আপনার অবস্থান অনুযায়ী' },
-  { href: '/qibla', icon: 'qibla', en: 'Qibla', bn: 'কিবলা', d: 'Live compass', dBn: 'লাইভ কম্পাস' },
-  { href: '/journey', icon: 'journey', en: 'Khatam Planner', bn: 'খতম পরিকল্পনা', d: 'Streaks, goals & progress', dBn: 'স্ট্রিক, লক্ষ্য ও অগ্রগতি' },
+  { href: '/quran', icon: 'quran', en: 'Read the Quran', ar: 'اقرأ القرآن', bn: 'কুরআন পড়ুন', d: 'Uthmani script, Bangla & English, tajweed colours, word-by-word', dBn: 'উসমানি লিপি, বাংলা ও ইংরেজি অনুবাদ, তাজবীদ রং, শব্দে শব্দে অর্থ', span: 'sm:col-span-2 sm:row-span-2' },
+  { href: '/listen', icon: 'listen', en: 'Listen', ar: 'استماع', bn: 'তিলাওয়াত', d: '20+ reciters, word-synced highlighting', dBn: '২০+ ক্বারী, শব্দে শব্দে হাইলাইট' },
+  { href: '/hifz', icon: 'hifz', en: 'Hifz Studio', ar: 'استوديو الحفظ', bn: 'হিফজ স্টুডিও', d: 'Memorise with spaced repetition & voice check', dBn: 'স্পেসড রিপিটেশন ও ভয়েস চেকসহ মুখস্থ করুন' },
+  { href: '/topics', icon: 'topics', en: 'Quran by Topic', ar: 'القرآن حسب الموضوع', bn: 'বিষয়ভিত্তিক', d: 'What the Quran says about life’s questions', dBn: 'জীবনের প্রশ্নে কুরআন কী বলে' },
+  { href: '/dua', icon: 'dua', en: 'Duas', ar: 'الأدعية', bn: 'দোয়া', d: 'Authentic duas with sources', dBn: 'উৎসসহ প্রামাণ্য দোয়া' },
+  { href: '/names-of-allah', icon: 'names', en: '99 Names', ar: 'الأسماء الحسنى', bn: '৯৯ নাম', d: 'Asma ul Husna with meanings', dBn: 'আসমাউল হুসনা অর্থসহ' },
+  { href: '/prayer-times', icon: 'prayer', en: 'Prayer Times', ar: 'مواقيت الصلاة', bn: 'নামাজের সময়', d: 'For your exact location', dBn: 'আপনার অবস্থান অনুযায়ী' },
+  { href: '/qibla', icon: 'qibla', en: 'Qibla', ar: 'القبلة', bn: 'কিবলা', d: 'Live compass', dBn: 'লাইভ কম্পাস' },
+  { href: '/journey', icon: 'journey', en: 'Khatam Planner', ar: 'مخطط الختمة', bn: 'খতম পরিকল্পনা', d: 'Streaks, goals & progress', dBn: 'স্ট্রিক, লক্ষ্য ও অগ্রগতি' },
 ]
 
 const MOODS = [
@@ -79,10 +80,10 @@ export async function HomePage({ locale }: { locale: Locale }) {
           ) : (
             <>
               <h1 className="mx-auto mt-6 max-w-4xl animate-fade-up font-display text-[2.6rem] font-semibold leading-[1.05] tracking-tight [animation-delay:120ms] sm:text-7xl">
-                The Holy Quran, <span className="text-gradient-gold animate-shimmer italic">beautifully</span> understood.
+                <T en="The Holy Quran, " ar="القرآن الكريم، " /><span className="text-gradient-gold animate-shimmer italic"><T en="beautifully" ar="فهمٌ" /></span> <T en="understood." ar="أعمق وأجمل." />
               </h1>
               <p className="mx-auto mt-5 max-w-2xl animate-fade-up text-base text-muted-foreground [animation-delay:240ms] sm:text-lg">
-                Read in Arabic with Bangla &amp; English, listen with word-by-word highlighting, explore tafsir, and memorise with a coach that remembers for you.
+                <T en="Read in Arabic with Bangla & English, listen with word-by-word highlighting, explore tafsir, and memorise with a coach that remembers for you." ar="اقرأ بالعربية مع الترجمة البنغالية والإنجليزية، واستمع مع تظليل كل كلمة، واستكشف التفسير، واحفظ مع مساعد يتذكّر عنك مواعيد المراجعة." />
               </p>
               <p className="mx-auto mt-2 max-w-2xl animate-fade-up font-bangla text-sm text-muted-foreground [animation-delay:300ms]">{site.taglineBn}</p>
             </>
@@ -90,13 +91,13 @@ export async function HomePage({ locale }: { locale: Locale }) {
           <div className="mt-8 animate-fade-up [animation-delay:380ms]"><HeroSearch /></div>
           <div className="mt-6 flex animate-fade-up flex-wrap items-center justify-center gap-3 [animation-delay:460ms]">
             <Link href={h('/quran')} className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 font-semibold text-primary-foreground shadow-[0_14px_30px_-12px_var(--glow)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-12px_var(--glow)] active:scale-[0.98]">
-              <UiIcon name="read" size={22} /> {bn ? 'পড়া শুরু করুন' : 'Start reading'}
+              <UiIcon name="read" size={22} /> {bn ? 'পড়া শুরু করুন' : <T en="Start reading" ar="ابدأ القراءة" />}
             </Link>
             <Link href={h('/surah/al-baqarah/255')} className="inline-flex h-12 items-center gap-2 rounded-full border bg-card/70 px-6 font-semibold transition hover:-translate-y-0.5 hover:border-primary/40">
-              {bn ? 'আয়াতুল কুরসি' : 'Ayatul Kursi'}
+              {bn ? 'আয়াতুল কুরসি' : <T en="Ayatul Kursi" ar="آية الكرسي" />}
             </Link>
             <Link href={h('/hifz')} className="inline-flex h-12 items-center gap-2 rounded-full border bg-card/70 px-6 font-semibold transition hover:-translate-y-0.5 hover:border-primary/40">
-              <UiIcon name="hifz" size={20} /> {bn ? 'মুখস্থ করুন' : 'Memorise'}
+              <UiIcon name="hifz" size={20} /> {bn ? 'মুখস্থ করুন' : <T en="Memorise" ar="احفظ" />}
             </Link>
           </div>
         </div>
@@ -112,7 +113,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
               <div aria-hidden className="bg-pattern absolute inset-0" />
               <div className="relative">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 id="votd" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary"><UiIcon name="sparkle" size={18} /> {bn ? 'আজকের আয়াত' : 'Ayah of the day'}</h2>
+                  <h2 id="votd" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary"><UiIcon name="sparkle" size={18} /> {bn ? 'আজকের আয়াত' : <T en="Ayah of the day" ar="آية اليوم" />}</h2>
                   <Link href={h(surahHref(s, a))} className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-foreground">{bn ? `${surahNamesBn[s - 1]} · ${bnNum(s)}:${bnNum(a)}` : `${ch.nameSimple} · ${verse.k}`}</Link>
                 </div>
                 <p dir="rtl" lang="ar" className="quran-text mt-8 text-center text-[1.9rem] sm:text-[2.6rem]">
@@ -132,8 +133,8 @@ export async function HomePage({ locale }: { locale: Locale }) {
                   )}
                 </div>
                 <div className="mt-8 flex justify-center gap-3">
-                  <Link href={h(readerHref(s, a))} className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:-translate-y-0.5">{bn ? 'প্রসঙ্গসহ পড়ুন' : 'Read in context'}</Link>
-                  <Link href={h(surahHref(s, a))} className="rounded-full border bg-card px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5">{bn ? 'তাফসীর ও অর্থ' : <>Tafsir &amp; meaning</>}</Link>
+                  <Link href={h(readerHref(s, a))} className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:-translate-y-0.5">{bn ? 'প্রসঙ্গসহ পড়ুন' : <T en="Read in context" ar="اقرأ في السياق" />}</Link>
+                  <Link href={h(surahHref(s, a))} className="rounded-full border bg-card px-5 py-2.5 text-sm font-semibold transition hover:-translate-y-0.5">{bn ? 'তাফসীর ও অর্থ' : <T en="Tafsir & meaning" ar="التفسير والمعنى" />}</Link>
                 </div>
               </div>
             </section>
@@ -142,7 +143,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
         {/* ---------------- FEATURES BENTO ---------------- */}
         <section aria-labelledby="explore">
-          <Reveal><SectionTitle id="explore" kicker={bn ? 'সবকিছু এক জায়গায়' : 'Everything in one place'} title={bn ? 'কুরআন চর্চার পূর্ণাঙ্গ সঙ্গী' : 'A complete Quran companion'} /></Reveal>
+          <Reveal><SectionTitle id="explore" kicker={bn ? 'সবকিছু এক জায়গায়' : <T en="Everything in one place" ar="كل شيء في مكان واحد" />} title={bn ? 'কুরআন চর্চার পূর্ণাঙ্গ সঙ্গী' : <T en="A complete Quran companion" ar="رفيقك المتكامل مع القرآن" />} /></Reveal>
           <div className="mt-8 grid auto-rows-[minmax(150px,auto)] grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {FEATURES.map((f, i) => (
               <Reveal key={f.href} delay={i * 0.04} className={f.span ?? ''}>
@@ -152,7 +153,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                     <UiIcon name={f.icon} size={f.span ? 56 : 38} />
                   </span>
                   <span className="relative mt-4 block">
-                    <span className={`block font-display font-semibold ${f.span ? 'text-3xl' : 'text-lg'}`}>{bn ? f.bn : f.en}</span>
+                    <span className={`block font-display font-semibold ${f.span ? 'text-3xl' : 'text-lg'}`}>{bn ? f.bn : <T en={f.en} ar={f.ar} />}</span>
                     <span className={`block text-sm text-primary ${bn ? '' : 'font-bangla'}`}>{bn ? f.en : f.bn}</span>
                     <span className={`mt-1 block text-muted-foreground ${f.span ? 'text-base' : 'hidden text-sm sm:block'}`}>{bn ? f.dBn : f.d}</span>
                   </span>
@@ -167,7 +168,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
         {/* ---------------- MOODS ---------------- */}
         <section aria-labelledby="feel" className="text-center">
-          <Reveal><SectionTitle id="feel" kicker={bn ? 'হৃদয়ের জন্য কুরআন' : 'Quran for the heart'} title={bn ? 'আজ আপনার মন কেমন?' : 'How are you feeling today?'} center /></Reveal>
+          <Reveal><SectionTitle id="feel" kicker={bn ? 'হৃদয়ের জন্য কুরআন' : <T en="Quran for the heart" ar="القرآن للقلب" />} title={bn ? 'আজ আপনার মন কেমন?' : <T en="How are you feeling today?" ar="كيف تشعر اليوم؟" />} center /></Reveal>
           <Reveal delay={0.1}>
             <div className="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2.5">
               {MOODS.map((m) => (
@@ -183,7 +184,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         <section aria-labelledby="popular">
           <Reveal>
             <div className="flex items-end justify-between gap-4">
-              <SectionTitle id="popular" kicker={bn ? 'সবচেয়ে বেশি পঠিত' : 'Most read'} title={bn ? 'জনপ্রিয় সূরা' : 'Popular surahs'} />
+              <SectionTitle id="popular" kicker={bn ? 'সবচেয়ে বেশি পঠিত' : <T en="Most read" ar="الأكثر قراءة" />} title={bn ? 'জনপ্রিয় সূরা' : <T en="Popular surahs" ar="سور مختارة" />} />
               <Link href={h('/quran')} className="shrink-0 text-sm font-semibold text-primary hover:underline">{bn ? 'সব ১১৪টি সূরা' : 'All 114'} <span className="inline-block rtl:rotate-180">→</span></Link>
             </div>
           </Reveal>
@@ -233,7 +234,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
   )
 }
 
-function SectionTitle({ id, kicker, title, center }: { id: string; kicker: string; title: string; center?: boolean }) {
+function SectionTitle({ id, kicker, title, center }: { id: string; kicker: React.ReactNode; title: React.ReactNode; center?: boolean }) {
   return (
     <div className={center ? 'text-center' : ''}>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{kicker}</p>

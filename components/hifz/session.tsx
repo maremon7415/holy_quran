@@ -153,7 +153,7 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
           {failed && (
             <p className="py-16 text-center text-muted-foreground">
               {t({ en: 'Could not load this surah. Check your connection and retry.', bn: 'সূরা লোড করা যায়নি। সংযোগ দেখে আবার চেষ্টা করুন।', ar: 'تعذّر تحميل هذه السورة. تحقق من اتصالك وأعد المحاولة.' })}
-              <button onClick={() => setIdx((i) => i)} className="ml-2 underline">Retry</button>
+              <button onClick={() => setIdx((i) => i)} className="ms-2 underline">{t({ en: 'Retry', bn: 'আবার চেষ্টা', ar: 'إعادة المحاولة' })}</button>
             </p>
           )}
           {!ctx && !failed && (
@@ -178,11 +178,11 @@ export function HifzSession({ plan, onExit }: { plan: Plan; onExit: () => void }
 
       <div className="mt-4 flex items-center justify-between">
         <button disabled={step === 0} onClick={() => setStep((s) => s - 1)} className="inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm font-medium text-muted-foreground transition hover:text-foreground disabled:opacity-30">
-          <ChevronLeft className="h-4 w-4" /> {t({ en: 'Back', bn: 'পেছনে', ar: 'رجوع' })}
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" /> {t({ en: 'Back', bn: 'পেছনে', ar: 'رجوع' })}
         </button>
         {step < 3 && (
           <button onClick={() => setStep((s) => s + 1)} className="inline-flex h-11 items-center gap-1 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition active:scale-95">
-            {t({ en: 'Next step', bn: 'পরের ধাপ', ar: 'الخطوة التالية' })} <ChevronRight className="h-4 w-4" />
+            {t({ en: 'Next step', bn: 'পরের ধাপ', ar: 'الخطوة التالية' })} <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </button>
         )}
       </div>

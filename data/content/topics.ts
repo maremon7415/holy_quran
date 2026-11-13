@@ -1,11 +1,11 @@
 import type { Topic, TopicCategory, L } from './types'
 
 export const topicCategories: { id: TopicCategory; title: L; blurb: L; icon: string }[] = [
-  { id: 'emotions', icon: 'heart', title: { en: 'Emotions & struggles', bn: 'অনুভূতি ও কঠিন সময়' }, blurb: { en: 'Verses for the heart on heavy days', bn: 'ভারী দিনে মনের জন্য আয়াত' } },
-  { id: 'character', icon: 'sparkle', title: { en: 'Character', bn: 'চরিত্র ও আচরণ' }, blurb: { en: 'The qualities the Quran invites us to build', bn: 'কুরআন যে গুণগুলো গড়ে তুলতে বলে' } },
-  { id: 'life', icon: 'home', title: { en: 'Life', bn: 'জীবন' }, blurb: { en: 'Family, work, wealth, health and knowledge', bn: 'পরিবার, কাজ, সম্পদ, স্বাস্থ্য ও জ্ঞান' } },
-  { id: 'faith', icon: 'crescent', title: { en: 'Faith', bn: 'ঈমান ও ইবাদত' }, blurb: { en: 'Belief, worship and the unseen', bn: 'বিশ্বাস, ইবাদত ও অদৃশ্য জগৎ' } },
-  { id: 'society', icon: 'hands', title: { en: 'Society', bn: 'সমাজ' }, blurb: { en: 'Our duties towards one another', bn: 'একে অপরের প্রতি আমাদের দায়িত্ব' } },
+  { id: 'emotions', icon: 'heart', title: { en: 'Emotions & struggles', bn: 'অনুভূতি ও কঠিন সময়', ar: 'المشاعر والمحن' }, blurb: { en: 'Verses for the heart on heavy days', bn: 'ভারী দিনে মনের জন্য আয়াত', ar: 'آيات للقلب في الأيام الثقيلة' } },
+  { id: 'character', icon: 'sparkle', title: { en: 'Character', bn: 'চরিত্র ও আচরণ', ar: 'الأخلاق' }, blurb: { en: 'The qualities the Quran invites us to build', bn: 'কুরআন যে গুণগুলো গড়ে তুলতে বলে', ar: 'الصفات التي يدعونا القرآن إلى بنائها' } },
+  { id: 'life', icon: 'home', title: { en: 'Life', bn: 'জীবন', ar: 'الحياة' }, blurb: { en: 'Family, work, wealth, health and knowledge', bn: 'পরিবার, কাজ, সম্পদ, স্বাস্থ্য ও জ্ঞান', ar: 'الأسرة والعمل والمال والصحة والعلم' } },
+  { id: 'faith', icon: 'crescent', title: { en: 'Faith', bn: 'ঈমান ও ইবাদত', ar: 'الإيمان والعبادة' }, blurb: { en: 'Belief, worship and the unseen', bn: 'বিশ্বাস, ইবাদত ও অদৃশ্য জগৎ', ar: 'العقيدة والعبادة والغيب' } },
+  { id: 'society', icon: 'hands', title: { en: 'Society', bn: 'সমাজ', ar: 'المجتمع' }, blurb: { en: 'Our duties towards one another', bn: 'একে অপরের প্রতি আমাদের দায়িত্ব', ar: 'واجباتنا تجاه بعضنا' } },
 ]
 
 type T = Omit<Topic, 'reflect'> & { reflect: [string, string] }

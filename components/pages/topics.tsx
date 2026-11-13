@@ -39,16 +39,16 @@ const indexCopy = {
 
 export const topicsIndexMeta = (locale: Locale): Metadata => buildMeta({ ...indexCopy[locale], path: '/topics', locale, ogImage: locale === 'bn' ? '/opengraph-image' : undefined })
 
-const moodDefs: { id: string; icon: string; label: { en: string; bn: string }; slug: string; refIndex?: number }[] = [
-  { id: 'anxious', icon: 'heart', label: { en: 'Anxious', bn: 'দুশ্চিন্তিত' }, slug: 'anxiety' },
-  { id: 'sad', icon: 'moon', label: { en: 'Sad', bn: 'মন খারাপ' }, slug: 'grief-sadness', refIndex: 1 },
-  { id: 'lonely', icon: 'lantern', label: { en: 'Lonely', bn: 'একাকী' }, slug: 'loneliness' },
-  { id: 'angry', icon: 'focus', label: { en: 'Angry', bn: 'রাগান্বিত' }, slug: 'anger' },
-  { id: 'hopeless', icon: 'sun', label: { en: 'Hopeless', bn: 'হতাশ' }, slug: 'hopelessness' },
-  { id: 'afraid', icon: 'kaaba', label: { en: 'Afraid', bn: 'ভীত' }, slug: 'fear' },
-  { id: 'guilty', icon: 'hands', label: { en: 'Guilty', bn: 'অনুতপ্ত' }, slug: 'guilt-forgiveness', refIndex: 2 },
-  { id: 'grateful', icon: 'sparkle', label: { en: 'Grateful', bn: 'কৃতজ্ঞ' }, slug: 'gratitude' },
-  { id: 'content', icon: 'crescent', label: { en: 'At peace', bn: 'প্রশান্ত' }, slug: 'contentment' },
+const moodDefs: { id: string; icon: string; label: { en: string; bn: string; ar?: string }; slug: string; refIndex?: number }[] = [
+  { id: 'anxious', icon: 'heart', label: { en: 'Anxious', bn: 'দুশ্চিন্তিত', ar: 'قلق' }, slug: 'anxiety' },
+  { id: 'sad', icon: 'moon', label: { en: 'Sad', bn: 'মন খারাপ', ar: 'حزين' }, slug: 'grief-sadness', refIndex: 1 },
+  { id: 'lonely', icon: 'lantern', label: { en: 'Lonely', bn: 'একাকী', ar: 'وحيد' }, slug: 'loneliness' },
+  { id: 'angry', icon: 'focus', label: { en: 'Angry', bn: 'রাগান্বিত', ar: 'غاضب' }, slug: 'anger' },
+  { id: 'hopeless', icon: 'sun', label: { en: 'Hopeless', bn: 'হতাশ', ar: 'يائس' }, slug: 'hopelessness' },
+  { id: 'afraid', icon: 'kaaba', label: { en: 'Afraid', bn: 'ভীত', ar: 'خائف' }, slug: 'fear' },
+  { id: 'guilty', icon: 'hands', label: { en: 'Guilty', bn: 'অনুতপ্ত', ar: 'نادم' }, slug: 'guilt-forgiveness', refIndex: 2 },
+  { id: 'grateful', icon: 'sparkle', label: { en: 'Grateful', bn: 'কৃতজ্ঞ', ar: 'شاكر' }, slug: 'gratitude' },
+  { id: 'content', icon: 'crescent', label: { en: 'At peace', bn: 'প্রশান্ত', ar: 'مطمئن' }, slug: 'contentment' },
 ]
 
 export async function TopicsIndexPage({ locale }: { locale: Locale }) {

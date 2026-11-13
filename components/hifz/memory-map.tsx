@@ -47,7 +47,7 @@ export function MemoryMap({ memory, onPick, selected }: { memory: SurahMemory[];
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => onPick(c.id)}
-              className={cn('relative overflow-hidden rounded-2xl border bg-card p-3 text-left', selected === c.id ? 'border-primary ring-1 ring-primary' : 'border-border')}
+              className={cn('relative overflow-hidden rounded-2xl border bg-card p-3 text-start', selected === c.id ? 'border-primary ring-1 ring-primary' : 'border-border')}
             >
               <div className="absolute inset-x-0 bottom-0 bg-primary/15" style={{ height: `${pct}%` }} />
               <div className="relative flex items-baseline justify-between">

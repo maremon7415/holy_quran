@@ -57,7 +57,7 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
     const unsub = subscribeProgress((p) => {
       lastMsg.current = Date.now()
       setProg(p)
-      if (p.state === 'done' || p.state === 'cancelled' || p.state === 'error') { void refresh(); if (p.state === 'done') toast.success(t({ en: 'The whole Quran is saved for offline reading.', bn: 'পুরো কুরআন অফলাইনে পড়ার জন্য সংরক্ষিত হয়েছে।' })) }
+      if (p.state === 'done' || p.state === 'cancelled' || p.state === 'error') { void refresh(); if (p.state === 'done' && !p.refresh) toast.success(t({ en: 'The whole Quran is saved for offline reading.', bn: 'পুরো কুরআন অফলাইনে পড়ার জন্য সংরক্ষিত হয়েছে।' })) }
       else if (p.phase === 'pages' && p.done % 10 === 0) void refresh()
     })
     return () => { alive = false; unsub() }
@@ -129,7 +129,9 @@ export function OfflineDownloads({ full = false }: { full?: boolean }) {
         <div className="mt-3">{bar(pagesPct)}</div>
         <p className="mt-2 text-xs text-muted-foreground tabular-nums" aria-live="polite">
           {running
-            ? prog!.phase === 'pages'
+            ? prog!.refresh
+              ? t({ en: 'Updating your saved Quran in the background…', bn: 'সংরক্ষিত কুরআন ব্যাকগ্রাউন্ডে আপডেট হচ্ছে…' })
+              : prog!.phase === 'pages'
               ? t({ en: `Saving surah pages… ${prog!.done}/${prog!.total}`, bn: `সূরার পৃষ্ঠা সংরক্ষণ হচ্ছে… ${prog!.done}/${prog!.total}` })
               : t({ en: `Saving app files… ${prog!.done}/${prog!.total}`, bn: `অ্যাপ ফাইল সংরক্ষণ হচ্ছে… ${prog!.done}/${prog!.total}` })
             : complete

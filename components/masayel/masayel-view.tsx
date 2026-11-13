@@ -39,9 +39,9 @@ export function MasayelView({ items }: { items: Masala[] }) {
       </header>
 
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search questions & answers…', bn: 'প্রশ্ন ও উত্তর খুঁজুন…', ar: 'ابحث في الأسئلة والأجوبة…' })} aria-label="Search" className="h-12 w-full rounded-full border bg-card pl-11 pr-11 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
-        {q && <button aria-label="Clear" onClick={() => setQ('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground hover:text-foreground"><X className="size-4" /></button>}
+        <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t({ en: 'Search questions & answers…', bn: 'প্রশ্ন ও উত্তর খুঁজুন…', ar: 'ابحث في الأسئلة والأجوبة…' })} aria-label="Search" className="h-12 w-full rounded-full border bg-card ps-11 pe-11 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/20" />
+        {q && <button aria-label="Clear" onClick={() => setQ('')} className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground hover:text-foreground"><X className="size-4" /></button>}
       </div>
       <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
         {cats.map((c) => (
@@ -55,7 +55,7 @@ export function MasayelView({ items }: { items: Masala[] }) {
             const isOpen = open === m.id
             return (
               <motion.article layout key={m.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="card-soft lift overflow-hidden">
-                <button onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full items-start gap-4 p-5 text-left">
+                <button onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full items-start gap-4 p-5 text-start">
                   <span className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-2xl bg-surface-2"><UiIcon name={m.category === 'Salah' ? 'prayer' : m.category === 'Sawm' ? 'moon' : 'heart'} size={26} /></span>
                   <span className="min-w-0 flex-1">
                     <span className="mb-1 inline-block rounded-full bg-gold-soft px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider">{catLabel(m.category)}</span>

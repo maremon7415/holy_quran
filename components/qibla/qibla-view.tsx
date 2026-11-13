@@ -102,7 +102,7 @@ export function QiblaView() {
             <UiIcon name="qibla" size={88} className="mx-auto" />
             <h1 className="mt-4 font-display text-2xl font-semibold">{t({ en: 'Find the Qibla', bn: 'কিবলা খুঁজুন', ar: 'حدّد القبلة' })}</h1>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">{t({ en: 'We need your location to point towards the Kaaba in Makkah.', bn: 'কাবার দিক দেখাতে আপনার অবস্থান প্রয়োজন।', ar: 'نحتاج إلى موقعك لنشير إلى الكعبة في مكة المكرمة.' })}</p>
-            <LocationPicker className="mt-6 text-left" />
+            <LocationPicker className="mt-6 text-start" />
           </div>
         </div>
       </div>

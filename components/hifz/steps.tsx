@@ -26,7 +26,7 @@ function Translation({ verses }: { verses: HifzVerse[] }) {
     <div className="mt-5 space-y-1.5 text-center text-[15px] leading-relaxed text-muted-foreground">
       {verses.map((v) => (
         <p key={v.n} className={lang === 'bn' ? 'font-bangla' : ''}>
-          <span className="mr-1 text-gold">{v.n}.</span>
+          <span className="me-1 text-gold">{v.n}.</span>
           {lang === 'bn' ? v.bn : v.en}
         </p>
       ))}
@@ -104,7 +104,7 @@ export function ListenStep({ ctx, defaultLoops }: { ctx: ChunkCtx; defaultLoops:
           aria-label={playing ? 'Pause' : 'Play'}
         >
           {playing && <span className="pulse-ring absolute inset-0 rounded-full" />}
-          {playing && running ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ml-0.5 h-6 w-6 fill-current" />}
+          {playing && running ? <Pause className="h-6 w-6 fill-current" /> : <Play className="ms-0.5 h-6 w-6 fill-current" />}
         </motion.button>
         <p className="text-sm text-muted-foreground">
           {t({ en: 'Listen', bn: 'শুনুন', ar: 'استمع' })} {Math.min(done + (running ? 1 : 0), loops)} / {loops}

@@ -1,20 +1,20 @@
 import type { Dua, DuaCategory, L } from './types'
 
 export const duaCategories: { id: DuaCategory; title: L; icon: string }[] = [
-  { id: 'morning-evening', title: { en: 'Morning & evening', bn: 'সকাল-সন্ধ্যা' }, icon: 'sun' },
-  { id: 'sleep', title: { en: 'Sleep & waking', bn: 'ঘুম ও জাগরণ' }, icon: 'moon' },
-  { id: 'eating', title: { en: 'Eating & drinking', bn: 'খাওয়া-দাওয়া' }, icon: 'sparkle' },
-  { id: 'travel', title: { en: 'Travel', bn: 'ভ্রমণ' }, icon: 'kaaba' },
-  { id: 'home-masjid', title: { en: 'Home & masjid', bn: 'ঘর ও মসজিদ' }, icon: 'mosque' },
-  { id: 'wudu-salah', title: { en: 'Wudu & salah', bn: 'ওযু ও নামাজ' }, icon: 'hands' },
-  { id: 'anxiety', title: { en: 'Anxiety & distress', bn: 'দুশ্চিন্তা ও বিপদ' }, icon: 'heart' },
-  { id: 'forgiveness', title: { en: 'Forgiveness', bn: 'ক্ষমা প্রার্থনা' }, icon: 'crescent' },
-  { id: 'family', title: { en: 'Parents & family', bn: 'মা-বাবা ও পরিবার' }, icon: 'home' },
-  { id: 'rizq', title: { en: 'Rizq & provision', bn: 'রিজিক' }, icon: 'chart' },
-  { id: 'knowledge', title: { en: 'Knowledge', bn: 'জ্ঞান' }, icon: 'read' },
-  { id: 'illness', title: { en: 'Illness & healing', bn: 'অসুস্থতা ও আরোগ্য' }, icon: 'lantern' },
-  { id: 'protection', title: { en: 'Protection', bn: 'হেফাজত' }, icon: 'focus' },
-  { id: 'rabbana', title: { en: 'Rabbana duas of the Quran', bn: 'কুরআনের রব্বানা দোয়া' }, icon: 'quran' },
+  { id: 'morning-evening', title: { en: 'Morning & evening', bn: 'সকাল-সন্ধ্যা', ar: 'أذكار الصباح والمساء' }, icon: 'sun' },
+  { id: 'sleep', title: { en: 'Sleep & waking', bn: 'ঘুম ও জাগরণ', ar: 'النوم والاستيقاظ' }, icon: 'moon' },
+  { id: 'eating', title: { en: 'Eating & drinking', bn: 'খাওয়া-দাওয়া', ar: 'الطعام والشراب' }, icon: 'sparkle' },
+  { id: 'travel', title: { en: 'Travel', bn: 'ভ্রমণ', ar: 'السفر' }, icon: 'kaaba' },
+  { id: 'home-masjid', title: { en: 'Home & masjid', bn: 'ঘর ও মসজিদ', ar: 'البيت والمسجد' }, icon: 'mosque' },
+  { id: 'wudu-salah', title: { en: 'Wudu & salah', bn: 'ওযু ও নামাজ', ar: 'الوضوء والصلاة' }, icon: 'hands' },
+  { id: 'anxiety', title: { en: 'Anxiety & distress', bn: 'দুশ্চিন্তা ও বিপদ', ar: 'الهم والكرب' }, icon: 'heart' },
+  { id: 'forgiveness', title: { en: 'Forgiveness', bn: 'ক্ষমা প্রার্থনা', ar: 'الاستغفار' }, icon: 'crescent' },
+  { id: 'family', title: { en: 'Parents & family', bn: 'মা-বাবা ও পরিবার', ar: 'الوالدان والأسرة' }, icon: 'home' },
+  { id: 'rizq', title: { en: 'Rizq & provision', bn: 'রিজিক', ar: 'الرزق' }, icon: 'chart' },
+  { id: 'knowledge', title: { en: 'Knowledge', bn: 'জ্ঞান', ar: 'العلم' }, icon: 'read' },
+  { id: 'illness', title: { en: 'Illness & healing', bn: 'অসুস্থতা ও আরোগ্য', ar: 'المرض والشفاء' }, icon: 'lantern' },
+  { id: 'protection', title: { en: 'Protection', bn: 'হেফাজত', ar: 'التحصين' }, icon: 'focus' },
+  { id: 'rabbana', title: { en: 'Rabbana duas of the Quran', bn: 'কুরআনের রব্বানা দোয়া', ar: 'أدعية «ربنا» في القرآن' }, icon: 'quran' },
 ]
 
 /** Quranic "Rabbana" style duas — text is rendered from the corpus using the ref. */

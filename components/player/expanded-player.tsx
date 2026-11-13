@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { BookOpen, ChevronDown, Loader2, Minus, Pause, Play, Plus, Repeat, Repeat1, SkipBack, SkipForward, X } from 'lucide-react'
 import { usePlayer, ayahCount } from '@/lib/stores/player'
@@ -25,13 +25,13 @@ function Ambient() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute -left-1/4 -top-1/3 size-[80vmax] rounded-full"
+        className="absolute -start-1/4 -top-1/3 size-[80vmax] rounded-full"
         style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--primary) 26%, transparent), transparent)' }}
         animate={{ x: [0, 80, -30, 0], y: [0, 50, 110, 0], scale: [1, 1.12, 0.95, 1] }}
         transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute -bottom-1/3 -right-1/4 size-[70vmax] rounded-full"
+        className="absolute -bottom-1/3 -end-1/4 size-[70vmax] rounded-full"
         style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--gold) 24%, transparent), transparent)' }}
         animate={{ x: [0, -70, 20, 0], y: [0, -60, -20, 0], scale: [1, 0.92, 1.1, 1] }}
         transition={{ duration: 38, repeat: Infinity, ease: 'easeInOut' }}
@@ -101,7 +101,7 @@ function VerseCard({ currentKey }: { currentKey: string }) {
             {loading && (
               <div className="space-y-3 py-4" aria-busy>
                 <div className="shimmer h-9 w-full rounded-xl bg-muted" />
-                <div className="shimmer ml-auto h-9 w-2/3 rounded-xl bg-muted" />
+                <div className="shimmer ms-auto h-9 w-2/3 rounded-xl bg-muted" />
               </div>
             )}
             {err && <p className="py-6 text-center text-sm text-muted-foreground">{t({ en: 'Could not load the ayah text (offline?). Audio keeps playing.', bn: 'আয়াতের লেখা লোড হয়নি। অডিও চলছে।', ar: 'تعذّر تحميل نص الآية (غير متصل؟). يستمر تشغيل الصوت.' })}</p>}
@@ -221,7 +221,7 @@ function Controls({ onPickReciter }: { onPickReciter: () => void }) {
 
   return (
     <div className="space-y-3">
-      <button onClick={onPickReciter} className="card-soft lift flex w-full items-center gap-3 bg-card/80 p-3 text-left backdrop-blur-sm">
+      <button onClick={onPickReciter} className="card-soft lift flex w-full items-center gap-3 bg-card/80 p-3 text-start backdrop-blur-sm">
         <ReciterMonogram name={r.name} size={48} active />
         <span className="min-w-0 flex-1">
           <span className="block text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{t({ en: 'Reciter', bn: 'ক্বারী', ar: 'القارئ' })}</span>

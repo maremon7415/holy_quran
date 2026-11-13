@@ -31,7 +31,13 @@ Next.js 16 (App Router, React 19, Turbopack), Tailwind CSS v4 (tokens in `app/gl
 - Radius: cards `rounded-3xl`, chips `rounded-full`.
 
 ## i18n
-UI language `en | bn` (`useAppStore().language`). In client components: `const t = useTx(); t({ en: 'Read', bn: 'পড়ুন' })`. Server components render English UI chrome, but content pages render Arabic + English + Bangla content together (SEO).
+- UI languages `en | bn | ar` (`useAppStore().language`). Client: `const t = useTx(); t({ en: 'Read', bn: 'পড়ুন', ar: 'اقرأ' })` (falls back to `en`). Pure/server-safe picker: `pick(lang, v)` in `lib/i18n/t.ts` (+ `bnNum`).
+- **Bangla URLs**: every main content page has a server-rendered twin under `/bn/...` (same slugs). Twin routes are listed in `BN_ROUTES` (`lib/i18n/routes.ts`); helpers `localeHref(locale, path)`, `alternatesFor(path, locale)`, `hasBnTwin`, `stripLocale`, `isBnPath`.
+  - Page bodies live in `components/pages/<name>.tsx` as `XPage({ locale })` + `xMeta(locale)`; `app/x/page.tsx` and `app/bn/x/page.tsx` are thin wrappers (segment config like `revalidate`/`dynamicParams` stays in each page file).
+  - `buildMeta({ ..., path: '/x', locale })` emits the canonical + `alternates.languages` (en/bn/x-default) automatically for twin routes. `Breadcrumbs`/`Faq`/`AyahCard` take `locale`.
+  - `app/bn/layout.tsx` (nested, not root) wraps pages in `LocaleProvider locale="bn"`. `useLang()` returns the URL locale first (provider, else `/bn` pathname — the shell lives outside the bn layout), then the store.
+  - Links: in client components use `import Link from '@/lib/i18n/link'` (keeps users inside `/bn` when a twin exists) or `useLocalizedHref()`; in server pages use `localeHref(locale, href)`.
+- **Arabic** is UI-only (no URLs), RTL. `lib/i18n/script.ts` (`localeScript`, runs before paint after the reader prefs script) sets `<html lang dir class="lang-ar">`; `HtmlLangSync` keeps it in sync. Use logical Tailwind utilities (`ms/me ps/pe start/end text-start/end rounded-s/e border-s/e`) and `rtl:rotate-180` on directional arrows/chevrons. Quran text keeps explicit `dir="rtl"`; English/Bangla content blocks (`lang="en|bn"`, `data-tr`) stay LTR inside the RTL UI via CSS.
 
 ## State
 - `lib/store.ts` – legacy app store (reading stats, bookmarks `importantAyahs`, progress, language…). Persisted as `quran-store`.

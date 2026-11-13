@@ -46,6 +46,9 @@ export const test = base.extend<{ problems: Problems }>({
     page.on('console', (m) => {
       if (m.type() !== 'error') return
       const text = m.text()
+      // Vercel Analytics script only exists on Vercel (/_vercel/insights/script.js 404s everywhere else) — not an app bug
+      if (/_vercel\//.test(m.location().url) || /_vercel\//.test(text)) return
+      if (/Failed to load resource: the server responded with a status of 404/.test(text) && /_vercel\//.test(m.location().url)) return
       // resource-load noise for the third-party hosts we deliberately block
       if (/ERR_BLOCKED_BY_CLIENT|Failed to load resource/.test(text) && !/localhost|127\.0\.0\.1/.test(m.location().url)) return
       problems.list.push(`console.error: ${text}`)

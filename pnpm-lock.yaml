@@ -219,9 +219,6 @@ importers:
       '@types/sanitize-html':
         specifier: ^2.16.2
         version: 2.16.2
-      happy-dom:
-        specifier: ^21.0.4
-        version: 21.0.4
       mongodb-memory-server:
         specifier: ^11.3.0
         version: 11.3.0(bare-buffer@3.7.2)
@@ -3896,7 +3893,8 @@ snapshots:
 
   '@types/webidl-conversions@7.0.3': {}
 
-  '@types/whatwg-mimetype@3.0.2': {}
+  '@types/whatwg-mimetype@3.0.2':
+    optional: true
 
   '@types/whatwg-url@13.0.0':
     dependencies:
@@ -3905,6 +3903,7 @@ snapshots:
   '@types/ws@8.18.2':
     dependencies:
       '@types/node': 22.19.11
+    optional: true
 
   '@vercel/analytics@1.6.1(next@16.2.0(@playwright/test@1.63.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
     optionalDependencies:
@@ -4011,6 +4010,7 @@ snapshots:
   buffer-image-size@0.6.4:
     dependencies:
       '@types/node': 22.19.11
+    optional: true
 
   call-bind-apply-helpers@1.0.2:
     dependencies:
@@ -4155,7 +4155,8 @@ snapshots:
       graceful-fs: 4.2.11
       tapable: 2.3.0
 
-  entities@7.0.1: {}
+  entities@7.0.1:
+    optional: true
 
   entities@8.1.0: {}
 
@@ -4277,6 +4278,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   has-symbols@1.1.0: {}
 
@@ -5009,7 +5011,8 @@ snapshots:
 
   webidl-conversions@7.0.0: {}
 
-  whatwg-mimetype@3.0.0: {}
+  whatwg-mimetype@3.0.0:
+    optional: true
 
   whatwg-url@14.2.0:
     dependencies:
@@ -5018,7 +5021,8 @@ snapshots:
 
   why-is-node-running@3.2.1: {}
 
-  ws@8.23.0: {}
+  ws@8.23.0:
+    optional: true
 
   yauzl@3.4.0:
     dependencies:

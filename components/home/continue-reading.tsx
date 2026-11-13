@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/lib/store'
 import { useMounted, useTx } from '@/lib/lang'
@@ -39,7 +39,7 @@ export function ContinueReading() {
           <motion.div className="h-full rounded-full bg-gradient-to-r from-primary to-gold" initial={{ width: 0 }} animate={{ width: `${Math.max(4, surahPct * 100)}%` }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} />
         </div>
         <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-          {t({ en: 'Resume', bn: 'শুরু করুন', ar: 'متابعة' })} <span className="transition-transform group-hover:translate-x-1">→</span>
+          {t({ en: 'Resume', bn: 'শুরু করুন', ar: 'متابعة' })} <span className="inline-block transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1">→</span>
         </span>
       </Link>
 

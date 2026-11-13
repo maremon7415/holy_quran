@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { UiIcon } from '@/components/ui-icon'
 import { useTx } from '@/lib/lang'
 import { useSyncState } from '@/lib/sync/state'

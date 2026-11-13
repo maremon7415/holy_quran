@@ -9,8 +9,8 @@ export const EST_AUDIO_ALL_MB = 360
 
 export const hasCacheApi = () => typeof caches !== 'undefined'
 
-/** Find the current versioned cache ('pages' | 'dl' | 'assets' | 'api'), highest version wins. */
-export async function findCache(kind: 'pages' | 'dl' | 'assets' | 'api'): Promise<Cache | null> {
+/** Find the current versioned cache ('pages' | 'assets' | 'api'), highest version wins. */
+export async function findCache(kind: 'pages' | 'assets' | 'api'): Promise<Cache | null> {
   if (!hasCacheApi()) return null
   try {
     const keys = (await caches.keys()).filter((k) => new RegExp(`^noor-v2[A-Za-z0-9]*-${kind}$`).test(k))
@@ -23,8 +23,8 @@ export async function findCache(kind: 'pages' | 'dl' | 'assets' | 'api'): Promis
 /** Pathnames of every page stored by the offline download (and browsed pages). */
 export async function cachedPagePaths(): Promise<Set<string>> {
   const out = new Set<string>()
-  for (const kind of ['dl', 'pages'] as const) {
-    const c = await findCache(kind)
+  const stable = hasCacheApi() ? await caches.open('noor-downloads-v1').catch(() => null) : null
+  for (const c of [stable, await findCache('pages')]) {
     if (!c) continue
     for (const r of await c.keys()) out.add(new URL(r.url).pathname)
   }
@@ -33,7 +33,7 @@ export async function cachedPagePaths(): Promise<Set<string>> {
 
 export async function deleteDownloadedPages() {
   if (!hasCacheApi()) return
-  for (const k of await caches.keys()) if (/^noor-v2[A-Za-z0-9]*-(dl|pages)$/.test(k)) await caches.delete(k)
+  for (const k of await caches.keys()) if (/^noor-v2[A-Za-z0-9]*-pages$/.test(k) || k === 'noor-downloads-v1' || k === 'noor-downloads-assets-v1') await caches.delete(k)
 }
 
 export async function storageEstimate(): Promise<{ usage: number; quota: number } | null> {

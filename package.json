@@ -6,7 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --trace off",
+    "validate:content": "node --experimental-strip-types scripts/validate-content.mjs",
+    "verify:hadith": "node --experimental-strip-types scripts/verify-hadith-sources.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm validate:content"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.2",
@@ -81,7 +89,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.2",
-    "happy-dom": "^21.0.4",
     "mongodb-memory-server": "^11.3.0",
     "postcss": "^8.5",
     "tailwindcss": "^4.2.0",

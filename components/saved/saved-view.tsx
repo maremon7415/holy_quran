@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Trash2 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
@@ -104,7 +104,7 @@ export function SavedView() {
             </div>
           </div>
         ) : (
-          <button onClick={() => { setEditing(k); setDraft(a.note ?? '') }} className={cn('mt-3 flex w-full items-start gap-2 rounded-2xl p-3 text-left text-sm transition', a.note ? 'bg-gold-soft/60' : withNote ? 'hidden' : 'border border-dashed text-muted-foreground hover:border-primary/40')}>
+          <button onClick={() => { setEditing(k); setDraft(a.note ?? '') }} className={cn('mt-3 flex w-full items-start gap-2 rounded-2xl p-3 text-start text-sm transition', a.note ? 'bg-gold-soft/60' : withNote ? 'hidden' : 'border border-dashed text-muted-foreground hover:border-primary/40')}>
             <UiIcon name="note" size={20} />
             <span>{a.note || t({ en: 'Add a note', bn: 'নোট যোগ করুন', ar: 'أضف ملاحظة' })}</span>
           </button>
@@ -148,7 +148,7 @@ export function SavedView() {
                       <span className="block truncate font-semibold">{sName(id)}</span>
                       <span className="block truncate text-xs text-muted-foreground">{chapters[id - 1].meaning} · {nf(chapters[id - 1].versesCount)} {t({ en: 'ayahs', bn: 'আয়াত', ar: 'آية' })}</span>
                     </span>
-                    <span lang="ar" className="font-arabic ml-auto text-2xl text-gold">{chapters[id - 1].nameArabic}</span>
+                    <span lang="ar" className="font-arabic ms-auto text-2xl text-gold">{chapters[id - 1].nameArabic}</span>
                   </Link>
                   <button aria-label={t({ en: 'Remove', bn: 'মুছুন', ar: 'إزالة' })} onClick={() => toggleFavoriteSurah(id)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
                 </motion.div>

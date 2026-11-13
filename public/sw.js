@@ -4,7 +4,7 @@
  * activate wipes all older noor-* caches except noor-audio-v1, so stale HTML can never reference deleted chunks):
  *   {V}-core    precache (/, /quran, /offline) — never trimmed
  *   {V}-pages   pages you visited (network-first, 3s timeout, bounded)
- *   {V}-dl      pages stored by "Download the whole Quran" (never trimmed)
+ *   noor-downloads-v1 / noor-downloads-assets-v1  pages + assets stored by "Download the whole Quran" (UNversioned, never trimmed, refreshed in the background after a deploy)
  *   {V}-assets  _next/static, icons, fonts (cache-first, bounded)
  *   {V}-api     api.quran.com / api.qurancdn.com JSON (stale-while-revalidate, bounded)
  *   noor-audio-v1   recitation mp3s saved by the page (NOT versioned — survives deploys; only the page writes to it)
@@ -17,13 +17,15 @@ const BUILD = ((new URL(self.location.href)).searchParams.get('v') || 'dev').rep
 const VERSION = `noor-v2${BUILD}`
 const CORE = `${VERSION}-core`
 const PAGES = `${VERSION}-pages`
-const DL = `${VERSION}-dl`
+// Offline-download caches are NOT versioned: they survive deploys and are refreshed in the background (refreshDownloads).
+const DL = 'noor-downloads-v1' // downloaded page HTML
+const DLA = 'noor-downloads-assets-v1' // every _next asset those pages reference (kept self-consistent with DL)
 const ASSETS = `${VERSION}-assets`
 const API = `${VERSION}-api`
 const AUDIO = 'noor-audio-v1'
 const PRECACHE = ['/', '/quran', '/offline', '/manifest.json', '/brand/logo.svg']
 const NAV_TIMEOUT = 3000
-const KEEP = new Set([CORE, PAGES, DL, ASSETS, API, AUDIO])
+const KEEP = new Set([CORE, PAGES, DL, DLA, ASSETS, API, AUDIO])
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -95,7 +97,7 @@ self.addEventListener('fetch', (e) => {
   if (url.pathname.startsWith('/_next/static') || /\.(png|svg|woff2?|ttf|ico|webp|jpg)$/.test(url.pathname)) {
     e.respondWith(
       caches.open(ASSETS).then(async (c) => {
-        const hit = await c.match(req)
+        const hit = (await c.match(req)) || (await (await caches.open(DLA)).match(req))
         if (hit) return hit
         const res = await fetch(req)
         if (cacheable(res)) { c.put(req, res.clone()); trim(ASSETS, 1500) }
@@ -146,9 +148,26 @@ self.addEventListener('message', (e) => {
   const d = e.data || {}
   if (d.type === 'noor:dl-start') e.waitUntil(runDownload(d))
   else if (d.type === 'noor:dl-cancel') job.cancel = true
+  else if (d.type === 'noor:refresh-downloads') e.waitUntil(refreshDownloads())
   else if (d.type === 'noor:prayer-check') e.waitUntil(checkPrayers(true))
   else if (d.type === 'noor:ping') post({ type: 'pong', running: job.running })
 })
+
+/** After a deploy: re-fetch every downloaded page + newly referenced chunks (throttled), then prune unreferenced assets. Once per build. */
+async function refreshDownloads() {
+  if (job.running) return
+  try {
+    const last = await idbRun('kv', 'readonly', (s) => s.get('downloads-build')).catch(() => undefined)
+    if (last === BUILD) return
+    const dl = await caches.open(DL)
+    const urls = (await dl.keys()).map((r) => { const u = new URL(r.url); return u.pathname + u.search })
+    if (!urls.length) { await idbRun('kv', 'readwrite', (s) => s.put(BUILD, 'downloads-build')).catch(() => {}); return }
+    await runDownload({ jobId: 'refresh-' + BUILD, urls, force: true, refresh: true })
+    // only mark done if it finished cleanly (the job reports via BroadcastChannel; check by re-running cheaply next time otherwise)
+    if (!job.cancel && lastRefreshOk) await idbRun('kv', 'readwrite', (s) => s.put(BUILD, 'downloads-build')).catch(() => {})
+  } catch (_) {}
+}
+let lastRefreshOk = false
 
 const cssUrls = (text, base) => {
   const out = []
@@ -180,17 +199,17 @@ async function fetchRetry(req, tries = 3) {
   throw err
 }
 
-async function runDownload({ jobId, urls, force }) {
-  if (job.running) { post({ type: 'progress', jobId, phase: 'pages', state: 'busy', done: 0, total: urls.length, bytes: 0, failed: 0 }); return }
+async function runDownload({ jobId, urls, force, refresh }) {
+  if (job.running) { post({ type: 'progress', refresh: !!refresh, jobId, phase: 'pages', state: 'busy', done: 0, total: urls.length, bytes: 0, failed: 0 }); return }
   job = { running: true, cancel: false }
   const dl = await caches.open(DL)
-  const assets = await caches.open(ASSETS)
+  const assets = await caches.open(DLA)
   let bytes = 0
   let done = 0
   let failed = 0
   const total = urls.length
   const assetSet = new Set()
-  const report = (phase, state, extra = {}) => post({ type: 'progress', jobId, phase, state, done, total: phase === 'pages' ? total : assetSet.size, bytes, failed, ...extra })
+  const report = (phase, state, extra = {}) => post({ type: 'progress', refresh: !!refresh, jobId, phase, state, done, total: phase === 'pages' ? total : assetSet.size, bytes, failed, ...extra })
   report('pages', 'running')
   try {
     let i = 0
@@ -218,9 +237,10 @@ async function runDownload({ jobId, urls, force }) {
         }
         done++
         report('pages', 'running', { current: u })
+        if (refresh) await new Promise((r) => setTimeout(r, 150))
       }
     }
-    await Promise.all([worker(), worker(), worker()])
+    await Promise.all(refresh ? [worker(), worker()] : [worker(), worker(), worker()])
     if (job.cancel) { report('pages', 'cancelled'); return }
 
     // phase 2: the JS/CSS/font files those pages reference (cache-first at runtime, so this just warms the cache)
@@ -268,6 +288,14 @@ async function runDownload({ jobId, urls, force }) {
       }
     }
     await Promise.all([aworker(), aworker(), aworker()])
+    if (refresh && !job.cancel && failed === 0 && assetSet.size) {
+      // drop chunks no downloaded page references any more (assetSet is the full closure: pages -> js/css -> lazy chunks/fonts)
+      for (const k of await assets.keys()) {
+        const u = new URL(k.url)
+        if (!assetSet.has(u.pathname + u.search)) await assets.delete(k)
+      }
+    }
+    lastRefreshOk = !job.cancel && failed === 0
     report('assets', job.cancel ? 'cancelled' : 'done')
   } catch (e) {
     report('pages', 'error', { message: String(e && e.message) })

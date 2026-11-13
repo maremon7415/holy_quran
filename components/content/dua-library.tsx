@@ -1,6 +1,6 @@
 'use client'
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, X } from 'lucide-react'
 import { UiIcon } from '@/components/ui-icon'
@@ -74,15 +74,15 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
       <div className="sticky top-14 z-20 -mx-4 bg-background/85 px-4 pb-3 pt-2 backdrop-blur-md sm:top-16 sm:-mx-6 sm:px-6">
         <label className="relative block">
           <span className="sr-only">Search duas</span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t({ en: 'Search duas: anxiety, sleep, رب, রিজিক…', bn: 'দোয়া খুঁজুন: দুশ্চিন্তা, ঘুম, رب, রিজিক…', ar: 'ابحث في الأدعية: القلق، النوم، ربّنا…' })}
-            className="h-12 w-full rounded-full border border-border bg-card pl-11 pr-11 text-[15px] shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
+            className="h-12 w-full rounded-full border border-border bg-card ps-11 pe-11 text-[15px] shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />
           {q && (
-            <button type="button" aria-label="Clear" onClick={() => setQ('')} className="absolute right-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>
+            <button type="button" aria-label="Clear" onClick={() => setQ('')} className="absolute end-3 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full hover:bg-muted"><X className="size-4" /></button>
           )}
         </label>
         <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Dua categories">
@@ -110,7 +110,7 @@ export function DuaLibrary({ duas, cats }: { duas: DuaItem[]; cats: DuaCat[] }) 
                   <Link href={`/dua/${d.slug}`} className="font-display text-[17px] font-semibold leading-snug after:absolute after:inset-0 after:content-[''] group-hover:text-primary">
                     {t(d.title)}
                   </Link>
-                  <div className="relative z-10 -mr-1.5 -mt-1.5"><DuaBookmark slug={d.slug} /></div>
+                  <div className="relative z-10 -me-1.5 -mt-1.5"><DuaBookmark slug={d.slug} /></div>
                 </div>
                 <p lang="ar" dir="rtl" className="font-arabic mt-3 line-clamp-2 text-right text-[22px] leading-[2] text-arabic">{d.ar}</p>
                 <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{t(d.meaning)}</p>

@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { RefreshCw } from 'lucide-react'
 import { UiIcon } from '@/components/ui-icon'
 import { useLang, useTx } from '@/lib/lang'
@@ -32,7 +32,7 @@ export function AccountSyncCard() {
               <p className="truncate text-sm font-semibold">{user.name || user.email}</p>
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             </div>
-            <SyncStatusPill className="ml-auto shrink-0" />
+            <SyncStatusPill className="ms-auto shrink-0" />
           </div>
           {status === 'error' && error && <p className="text-sm text-destructive">{error}</p>}
           <p className="text-xs text-muted-foreground">{t({ en: 'Last synced', bn: 'শেষ সিঙ্ক', ar: 'آخر مزامنة' })}: {timeAgo(lastSyncedAt, lang)}</p>

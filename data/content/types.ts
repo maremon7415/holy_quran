@@ -1,5 +1,5 @@
 /** Bilingual string used by all hand-written content. */
-export interface L { en: string; bn: string }
+export interface L { en: string; bn: string; ar?: string }
 
 export type TopicCategory = 'emotions' | 'character' | 'life' | 'faith' | 'society'
 

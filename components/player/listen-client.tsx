@@ -1,6 +1,6 @@
 'use client'
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { motion } from 'framer-motion'
 import { Check, Loader2, Pause, Play, Search } from 'lucide-react'
 import { usePlayer } from '@/lib/stores/player'
@@ -76,7 +76,7 @@ export function ReciterGallery() {
               onClick={() => useReader.getState().set({ reciterId: r.id })}
               aria-pressed={active}
               className={cn(
-                'lift card-soft relative flex items-center gap-3.5 p-3.5 text-left',
+                'lift card-soft relative flex items-center gap-3.5 p-3.5 text-start',
                 active && '!border-primary/50 bg-accent ring-2 ring-primary/20'
               )}
             >
@@ -89,7 +89,7 @@ export function ReciterGallery() {
                   {r.note && <span className="truncate text-[11px] text-muted-foreground">{r.note}</span>}
                 </span>
               </span>
-              {active && <span className="absolute right-3 top-3 grid size-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3" /></span>}
+              {active && <span className="absolute end-3 top-3 grid size-5 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3" /></span>}
             </button>
           )
         })}
@@ -108,7 +108,7 @@ function SurahRow({ id }: { id: number }) {
   const loading = isCurrent && status === 'loading'
   return (
     <li className="min-w-0">
-      <div className={cn('group flex items-center gap-3 rounded-2xl border p-2.5 pr-3 transition', isCurrent ? 'border-primary/40 bg-accent' : 'border-transparent hover:border-border hover:bg-card')}>
+      <div className={cn('group flex items-center gap-3 rounded-2xl border p-2.5 pe-3 transition', isCurrent ? 'border-primary/40 bg-accent' : 'border-transparent hover:border-border hover:bg-card')}>
         <button
           onClick={() => (isCurrent ? usePlayer.getState().toggle() : usePlayer.getState().playSurah(id))}
           aria-label={`${playing ? t({ en: 'Pause', bn: 'বিরতি', ar: 'إيقاف مؤقت' }) : t({ en: 'Play', bn: 'চালান', ar: 'تشغيل' })} ${c.nameSimple}`}
@@ -147,13 +147,13 @@ export function SurahAudioList() {
           <UiIcon name="listen" size={30} /> {t({ en: 'All 114 surahs', bn: 'সকল ১১৪ সূরা', ar: 'جميع السور الـ١١٤' })}
         </h2>
         <div className="relative w-full sm:w-72">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t({ en: 'Search surah…', bn: 'সূরা খুঁজুন…', ar: 'ابحث عن سورة…' })}
             aria-label={t({ en: 'Search surah', bn: 'সূরা খুঁজুন', ar: 'ابحث عن سورة' })}
-            className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-ring/20"
+            className="h-11 w-full rounded-full border border-border bg-card ps-10 pe-4 text-sm outline-none focus:border-primary/50 focus:ring-2 focus:ring-ring/20"
           />
         </div>
       </div>

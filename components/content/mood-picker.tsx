@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { UiIcon } from '@/components/ui-icon'
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 export interface Mood {
   id: string
   icon: string
-  label: { en: string; bn: string }
+  label: { en: string; bn: string; ar?: string }
   topicSlug: string
   topicTitle: { en: string; bn: string }
   ayah: { ref: string; ar: string; en: string; bn: string; href: string }
@@ -70,7 +70,7 @@ export function MoodPicker({ moods }: { moods: Mood[] }) {
               <Link href={mood.ayah.href} className="mt-1 inline-block text-xs font-semibold text-primary hover:underline">{mood.ayah.ref}</Link>
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <Link href={`/topics/${mood.topicSlug}`} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-90 active:scale-95">
-                  {t({ en: 'More on', bn: 'আরও দেখুন:', ar: 'المزيد عن' })} {t(mood.topicTitle)} <ArrowRight className="size-4" />
+                  {t({ en: 'More on', bn: 'আরও দেখুন:', ar: 'المزيد عن' })} {t(mood.topicTitle)} <ArrowRight className="size-4 rtl:rotate-180" />
                 </Link>
                 {mood.duaSlug && mood.duaTitle && (
                   <Link href={`/dua/${mood.duaSlug}`} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition hover:bg-accent active:scale-95">

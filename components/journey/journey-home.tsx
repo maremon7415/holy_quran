@@ -1,6 +1,6 @@
 'use client'
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/lib/i18n/link'
 import { motion } from 'framer-motion'
 import { Minus, Plus } from 'lucide-react'
 import { useLang, useMounted, useTx } from '@/lib/lang'
