@@ -23,7 +23,7 @@ export function Clock({ ms, tz, locale, className = '' }: { ms: number; tz: stri
 const cardCls = 'card-soft relative rounded-3xl p-4 text-center transition data-[current=true]:ring-2 data-[current=true]:ring-primary/50 data-[next=true]:bg-accent'
 
 /** The six times of one day, plus the Shafi'i/standard Asr for regions that default to Hanafi. */
-export function PrayerGrid({ city, day, locale }: { city: City; day: CityDay; locale: Locale }) {
+export function PrayerGrid({ city, day, locale }: { city: Pick<City, 'tz' | 'madhab'>; day: CityDay; locale: Locale }) {
   const slots: SlotKey[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']
   const both = city.madhab === 'hanafi'
   return (
@@ -56,7 +56,7 @@ export function PrayerGrid({ city, day, locale }: { city: City; day: CityDay; lo
 }
 
 /** Sehri end (= Fajr start) and Iftar (= Maghrib) with an honest label: no invented safety margin. */
-export function SehriIftar({ city, day, locale }: { city: City; day: CityDay; locale: Locale }) {
+export function SehriIftar({ city, day, locale }: { city: Pick<City, 'tz'>; day: CityDay; locale: Locale }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <div className="rounded-3xl border border-border bg-gradient-to-br from-accent to-card p-5">

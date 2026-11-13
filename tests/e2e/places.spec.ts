@@ -83,6 +83,40 @@ test.describe('monthly timetable', () => {
   })
 })
 
+test.describe('city page after local midnight', () => {
+  test('a page rendered for yesterday switches grid, sehri/iftar, date and FAQ to the city’s new day', async ({ page, problems }) => {
+    // The server renders for the real "today" (row 0). The browser clock is then set to 00:05 on the NEXT day in Dhaka (UTC+6),
+    // i.e. the HTML the visitor receives is "yesterday's" page.
+    await page.goto('/prayer-times/dhaka')
+    const rows = page.locator('table tbody tr[data-date]')
+    const norm = (t: string) => t.replace(/\s+/g, ' ').trim()
+    const d0 = (await rows.nth(0).getAttribute('data-date'))!
+    const d1 = (await rows.nth(1).getAttribute('data-date'))!
+    // Dhaka is a Hanafi region: table cells = Fajr, Sunrise, Dhuhr, Asr (Hanafi), Asr (Std), Maghrib, Isha
+    const rowTimes = async (i: number) => (await rows.nth(i).locator('td').allInnerTexts()).map(norm)
+    const gridTimes = async () => (await page.locator('[data-prayer] > p.font-display time').allInnerTexts()).map(norm) // Fajr … Isha (6 cards)
+    const r0 = await rowTimes(0), r1 = await rowTimes(1)
+    expect(r0.join('|')).not.toBe(r1.join('|')) // the days differ, so the swap is observable
+    expect(await gridTimes()).toEqual([r0[0], r0[1], r0[2], r0[3], r0[5], r0[6]])
+
+    await page.clock.setFixedTime(new Date(`${d1}T00:05:00+06:00`))
+    await page.reload()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByTestId('today-date')).toContainText(new RegExp(`\\b${Number(d1.slice(8))}\\b`))
+    expect(d0).not.toBe(d1)
+    await expect.poll(gridTimes).toEqual([r1[0], r1[1], r1[2], r1[3], r1[5], r1[6]])
+    const sehri = page.locator('#sehri-h ~ div > div')
+    await expect(sehri.nth(0).locator('time')).toHaveText(r1[0])
+    await expect(sehri.nth(1).locator('time')).toHaveText(r1[5])
+    await expect(rows.nth(1)).toHaveAttribute('data-today', 'true')
+    // FAQ answers quote the new day's date and Fajr
+    const faq = page.locator('#faq-h ~ div details').first()
+    await expect(faq).toContainText(r1[0])
+    expect(problems.list).toEqual([])
+  })
+})
+
 test.describe('Ramadan', () => {
   test('/ramadan → upcoming Ramadan year → city timetable with day-numbering toggle', async ({ page, request }) => {
     const r = await request.get('/ramadan', { maxRedirects: 0 })
@@ -106,6 +140,54 @@ test.describe('Ramadan', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText('রাজশাহীর সেহরি ও ইফতারের সময়সূচি')
     expect((await request.get('/ramadan/1999/dhaka')).status()).toBe(404)
     expect((await request.get('/ramadan/abcd')).status()).toBe(404)
+  })
+})
+
+test.describe('Ramadan: years with two Ramadans (2030 = 1451 AH + 1452 AH)', () => {
+  const canonical = (page: Page) => page.evaluate(() => new URL(document.querySelector('link[rel="canonical"]')!.getAttribute('href')!).pathname)
+
+  test('/ramadan/2030 is a chooser; each Ramadan has its own page, canonical and /bn twin', async ({ page, request }) => {
+    await page.goto('/ramadan/2030')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Ramadan 2030')
+    expect(await canonical(page)).toBe('/ramadan/2030')
+    await expect(page.getByRole('link', { name: /timetable 1451 AH/ })).toHaveAttribute('href', '/ramadan/1451-ah')
+    await expect(page.getByRole('link', { name: /timetable 1452 AH/ })).toHaveAttribute('href', '/ramadan/1452-ah')
+    await expect(page.getByText('Why are there two Ramadans in 2030?')).toBeVisible()
+
+    await page.goto('/ramadan/1452-ah')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Ramadan 2030 (1452 AH)')
+    await expect(page.getByText('Thursday, 26 December 2030').first()).toBeVisible() // 1 Ramadan 1452
+    expect(await canonical(page)).toBe('/ramadan/1452-ah')
+    expect(await alternates(page)).toEqual({ en: '/ramadan/1452-ah', bn: '/bn/ramadan/1452-ah', 'x-default': '/ramadan/1452-ah' })
+    await expect(page.getByRole('link', { name: 'Ramadan 2030 (1451 AH)' })).toHaveAttribute('href', '/ramadan/1451-ah')
+
+    await page.goto('/ramadan/1451-ah/rajshahi')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Rajshahi Sehri & Iftar Time 2030 (1451 AH)')
+    expect(await page.locator('table tbody tr').count()).toBeGreaterThanOrEqual(30)
+    await page.goto('/ramadan/1452-ah/rajshahi')
+    await expect(page.locator('table tbody tr').first()).toContainText('26 Dec')
+    expect(await canonical(page)).toBe('/ramadan/1452-ah/rajshahi')
+
+    await page.goto('/bn/ramadan/1452-ah')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('রমজান ২০৩০ (১৪৫২ হিজরি)')
+    await page.goto('/bn/ramadan/2030')
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('দুটি রমজান')
+
+    // a city under the bare year goes to the running / upcoming Ramadan of that year
+    const r = await request.get('/ramadan/2030/rajshahi', { maxRedirects: 0 })
+    expect(r.status()).toBe(307)
+    expect(r.headers().location).toMatch(/\/ramadan\/145[12]-ah\/rajshahi$/)
+    // single-Ramadan years keep the plain year URL; the Hijri form redirects there
+    const h = await request.get('/ramadan/1448-ah', { maxRedirects: 0 })
+    expect(h.status()).toBe(308)
+    expect(h.headers().location).toMatch(/\/ramadan\/2027$/)
+    for (const u of ['/ramadan/2029', '/ramadan/2031', '/ramadan/2027']) expect((await request.get(u)).status(), u).toBe(200)
+    for (const u of ['/ramadan/1999-ah', '/ramadan/1452-AH', '/ramadan/2030-2', '/ramadan/1300-ah']) expect((await request.get(u)).status(), u).toBe(404)
+  })
+
+  test('sitemap lists the Ramadan pages', async ({ request }) => {
+    const xml = await (await request.get('/sitemap-places.xml')).text()
+    expect(xml).toMatch(/\/ramadan\/(20\d\d|14\d\d-ah)<\/loc>/)
   })
 })
 

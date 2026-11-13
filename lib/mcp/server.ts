@@ -14,6 +14,7 @@ import { eventJson, eventsListJson, resolveEventName } from '@/lib/events/servic
 import { askApi } from '@/lib/ask'
 import { absoluteUrl, site } from '@/lib/site'
 import type { HadithProvider } from './extensions'
+import { MCP_LIMITS } from './limits'
 import { hadithProvider as defaultHadith } from './providers'
 
 export const MCP_SERVER_NAME = 'noor-quran'
@@ -25,7 +26,37 @@ Use ask_quran for natural-language questions answered by meaning ("what does the
 
 const RO = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const
 
-const ok = (data: unknown): CallToolResult => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] })
+const utf8 = (s: string) => Buffer.byteLength(s, 'utf8')
+
+/**
+ * Tool result as JSON text, capped at MCP_LIMITS.toolTextBytes (pretty → compact → an error asking for a smaller
+ * request). Tools that return documents truncate them first (`clipDocument`), so this cap is only a backstop.
+ */
+export const ok = (data: unknown): CallToolResult => {
+  let text = JSON.stringify(data, null, 2)
+  if (utf8(text) > MCP_LIMITS.toolTextBytes) text = JSON.stringify(data)
+  if (utf8(text) > MCP_LIMITS.toolTextBytes) return fail(`Result too large (${utf8(text)} bytes, max ${MCP_LIMITS.toolTextBytes}). Ask for fewer items or a smaller range.`)
+  return { content: [{ type: 'text', text }] }
+}
+
+/**
+ * Longest prefix of a markdown document whose JSON-escaped UTF-8 size fits `maxBytes` (cut at a line break), plus a
+ * note with the URL of the full page. Long documents (Surah Al-Baqarah ≈ 430 KB) are truncated instead of returned whole.
+ */
+export function clipDocument(body: string, url: string, maxBytes: number = MCP_LIMITS.toolTextBytes - 8_000): { text: string; truncated: boolean; bytes: number } {
+  const size = (t: string) => utf8(JSON.stringify(t))
+  const bytes = utf8(body)
+  if (size(body) <= maxBytes) return { text: body, truncated: false, bytes }
+  const note = `\n\n---\n\n> **Truncated:** this document is ${Math.round(bytes / 1024)} KB, only the beginning is shown. Read the full page at ${url} (markdown: ${url}.md), or fetch a smaller part (e.g. a single ayah "/surah/al-baqarah/255" or a juz "/juz/1").\n`
+  const budget = maxBytes - size(note)
+  let lo = 0, hi = body.length
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (size(body.slice(0, mid)) <= budget) lo = mid; else hi = mid - 1 }
+  let cut = body.slice(0, lo)
+  const nl = cut.lastIndexOf('\n')
+  if (nl > lo * 0.8) cut = cut.slice(0, nl)
+  return { text: cut + note, truncated: true, bytes }
+}
+
 const fail = (message: string, extra: Record<string, unknown> = {}): CallToolResult => ({ isError: true, content: [{ type: 'text', text: JSON.stringify({ error: message, ...extra }) }] })
 
 export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
@@ -48,10 +79,10 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     inputSchema: {
       question: z.string().min(2).max(300).describe('A natural-language question or theme'),
       lang: z.enum(['en', 'bn', 'ar']).optional().describe('Translation to return with the Arabic (default: English + Bangla)'),
-      limit: z.number().int().min(1).max(20).optional().describe('Max results (default 8)'),
+      limit: z.number().int().min(1).max(MCP_LIMITS.askLimit).optional().describe(`Max results (default 8, max ${MCP_LIMITS.askLimit})`),
     },
     annotations: RO,
-  }, async ({ question, lang, limit }) => ok(await askApi(question, { lang, limit: limit ?? 8 })))
+  }, async ({ question, lang, limit }) => ok(await askApi(question, { lang, limit: Math.min(limit ?? 8, MCP_LIMITS.askLimit) })))
 
   server.registerTool('get_ayah', {
     title: 'Get ayah(s) by reference',
@@ -163,7 +194,7 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
 
   server.registerTool('fetch', {
     title: 'Fetch a Noor Quran document',
-    description: 'Fetch a document by id returned from `search` (a site path such as "/surah/al-baqarah/255", "/topics/patience", "/dua/dua-for-anxiety", "/names-of-allah/ar-rahman"; prefix "/bn" for Bangla). Returns {id,title,text,url,metadata}.',
+    description: 'Fetch a document by id returned from `search` (a site path such as "/surah/al-baqarah/255", "/topics/patience", "/dua/dua-for-anxiety", "/names-of-allah/ar-rahman"; prefix "/bn" for Bangla). Returns {id,title,text,url,metadata}. Documents over ~100 KB (e.g. a whole long surah) are truncated with a note and the URL of the full page; fetch single ayahs or a juz for long surahs.',
     inputSchema: { id: z.string().min(1).max(200) },
     annotations: RO,
   }, async ({ id }) => {
@@ -171,7 +202,8 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     const doc = await markdownFor(path.startsWith('/') ? path : `/${path}`)
     if (!doc) return fail(`No document "${id}".`)
     const title = doc.body.match(/^# (.+)$/m)?.[1] ?? id
-    return ok({ id: path, title, text: doc.body, url: doc.canonical, metadata: { source: site.name, format: 'text/markdown' } })
+    const clip = clipDocument(doc.body, doc.canonical)
+    return ok({ id: path, title, text: clip.text, url: doc.canonical, metadata: { source: site.name, format: 'text/markdown', ...(clip.truncated ? { truncated: true, fullBytes: clip.bytes } : {}) } })
   })
 
   server.registerTool('get_learn_guide', {
@@ -189,7 +221,7 @@ export function createMcpServer(opts: { hadith?: HadithProvider | null } = {}) {
     const locale = lang === 'bn' ? 'bn' : 'en'
     const doc = await learnMd(a, b, locale)
     if (!doc) return fail(`No learning guide matches "${topic}".`)
-    return ok({ topic: path.replace(/^\/learn\/?/, '') || 'learn', title: doc.body.match(/^# (.+)$/m)?.[1] ?? topic, url: doc.canonical, markdownUrl: `${absoluteUrl(localeHref(locale, path))}.md`, markdown: doc.body, citation: `${doc.body.match(/^# (.+)$/m)?.[1] ?? topic}. ${site.name}. ${doc.canonical}` })
+    return ok({ topic: path.replace(/^\/learn\/?/, '') || 'learn', title: doc.body.match(/^# (.+)$/m)?.[1] ?? topic, url: doc.canonical, markdownUrl: `${absoluteUrl(localeHref(locale, path))}.md`, markdown: clipDocument(doc.body, doc.canonical).text, citation: `${doc.body.match(/^# (.+)$/m)?.[1] ?? topic}. ${site.name}. ${doc.canonical}` })
   })
 
   registerHadithTools(server, opts.hadith === undefined ? defaultHadith : opts.hadith)

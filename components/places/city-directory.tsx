@@ -4,7 +4,7 @@ import { CityChips, chipCls } from './city-ui'
 import { lt } from '@/lib/i18n/lt'
 import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { bdCities, cities, countryName, divisionalCities, worldCities } from '@/lib/places/cities'
-import { currentOrNextRamadan } from '@/lib/places/hijri'
+import { currentOrNextRamadan, ramadanLabel, ramadanPath } from '@/lib/places/hijri'
 import { zonedYmd } from '@/lib/places/dates'
 
 const finder = cities.map((c) => ({ slug: c.slug, en: c.name.en, bn: c.name.bn, country: countryName(c.country, 'en'), lat: c.lat, lng: c.lng }))
@@ -35,7 +35,7 @@ export function CityDirectory({ locale }: { locale: Locale }) {
         ))}
       </div>
       <div className="mt-8 flex flex-wrap gap-2">
-        <Link href={localeHref(locale, `/ramadan/${r.start.y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${r.start.y} sehri & iftar timetable`, bn: `রমজান ${r.start.y} সেহরি ও ইফতারের সময়সূচি`, ar: `جدول رمضان ${r.start.y}` })}</Link>
+        <Link href={localeHref(locale, ramadanPath(r))} className={chipCls}>{lt(locale, { en: `Ramadan ${ramadanLabel(r, 'en')} sehri & iftar timetable`, bn: `রমজান ${ramadanLabel(r, 'bn')} সেহরি ও ইফতারের সময়সূচি`, ar: `جدول رمضان ${ramadanLabel(r, 'ar')}` })}</Link>
         <Link href={localeHref(locale, '/hijri-date')} className={chipCls}>{lt(locale, { en: 'Today’s Hijri date', bn: 'আজকের হিজরি তারিখ', ar: 'التاريخ الهجري' })}</Link>
         <Link href={localeHref(locale, '/zakat-calculator')} className={chipCls}>{lt(locale, { en: 'Zakat calculator', bn: 'যাকাত ক্যালকুলেটর', ar: 'حاسبة الزكاة' })}</Link>
       </div>

@@ -79,7 +79,9 @@ test.describe('hadith library', () => {
   })
 
   test('out-of-range, gap, introduction and malformed numbers return 404', async ({ request }) => {
-    for (const p of ['/hadith/bukhari/7564', '/hadith/bukhari/99999', '/hadith/bukhari/0', '/hadith/muslim/7', '/hadith/muslim/3034', '/hadith/nawawi40/43', '/hadith/qudsi40/41', '/hadith/bukhari/abc', '/hadith/bukhari/01', '/hadith/bukhari/1.5', '/hadith/unknown/1', '/hadith/unknown', '/bn/hadith/bukhari/99999', '/hadith/bukhari/book/999', '/hadith/bukhari/book/1/page/2', '/hadith/bukhari/book/1/page/1', '/hadith/bukhari/5710']) {
+    for (const p of ['/hadith/bukhari/7564', '/hadith/bukhari/99999', '/hadith/bukhari/0', '/hadith/muslim/7', '/hadith/muslim/3034', '/hadith/nawawi40/43', '/hadith/qudsi40/41', '/hadith/bukhari/abc', '/hadith/bukhari/01', '/hadith/bukhari/1.5', '/hadith/unknown/1', '/hadith/unknown', '/bn/hadith/bukhari/99999', '/hadith/bukhari/book/999', '/hadith/bukhari/book/1/page/2', '/hadith/bukhari/book/1/page/1', '/hadith/bukhari/5710',
+      // blank in Arabic + English (only the unused Bangla edition has text): was in the sitemap and prerendered as an error page
+      '/hadith/malik/470', '/hadith/malik/1762', '/bn/hadith/malik/994', '/hadith/malik/470.md']) {
       expect((await request.get(p)).status(), p).toBe(404)
     }
   })
@@ -161,6 +163,7 @@ test.describe('hadith library', () => {
     expect(en).toMatch(/hreflang="bn"\s+href="[^"]*\/bn\/hadith\/bukhari\/1"/)
     expect(bn).toContain('/bn/hadith/muslim/2564</loc>')
     expect(en).not.toContain('/hadith/muslim/7</loc>')
+    for (const n of [470, 485, 522, 671, 694, 994, 1389, 1597, 1762]) expect(en, `malik ${n}`).not.toContain(`/hadith/malik/${n}</loc>`)
     const llms = await (await request.get('/llms.txt')).text()
     expect(llms).toContain('/hadith/{collection}/{number}')
     expect(llms).toContain('/hadith/muslim/2564')

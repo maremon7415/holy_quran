@@ -137,3 +137,22 @@ describe('buildPrayerIcs', () => {
     expect(out.find((l) => l.startsWith('LOCATION:'))).toBe('LOCATION:23.810\\, ' + (90.4125).toFixed(3))
   })
 })
+
+describe('buildPrayerIcs text escaping', () => {
+  it('escapes ; , \\ and newlines in names and locations', () => {
+    const ics = buildPrayerIcs({ ...DHAKA, city: 'A;B,C\\D\nE\r\nF', reminders: cfgs(), days: 1 })
+    const L = lines(ics)
+    const want = 'A\\;B\\,C\\\\D\\nE\\nF'
+    expect(L.find((l) => l.startsWith('X-WR-CALNAME:'))).toBe(`X-WR-CALNAME:Prayer times — ${want}`)
+    expect(L.find((l) => l.startsWith('LOCATION:'))).toBe(`LOCATION:${want}`)
+    expect(L.find((l) => l.startsWith('DESCRIPTION:Fajr'))).toContain(`Fajr · ${want} · Karachi / Hanafi`)
+    for (const l of L.filter((x) => /^(SUMMARY|LOCATION|DESCRIPTION|X-WR-CALNAME):/.test(x))) {
+      const v = l.slice(l.indexOf(':') + 1)
+      expect(v).not.toMatch(/[\r\n]/)
+      expect(v.replace(/\\./g, '')).not.toMatch(/[;\\]/)
+    }
+    // the default "lat, lon" location contains a comma, which must be escaped as well
+    const plain = lines(buildPrayerIcs({ ...DHAKA, city: null, reminders: cfgs(), days: 1 }))
+    expect(plain.find((l) => l.startsWith('LOCATION:'))).toBe('LOCATION:23.810\\, 90.412')
+  })
+})

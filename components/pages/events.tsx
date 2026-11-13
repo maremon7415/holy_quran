@@ -20,6 +20,8 @@ import { getVersesByRefs } from '@/lib/quran/data'
 import { resolveDua } from '@/lib/content/resolve'
 import { duas } from '@/data/content/duas'
 import { bnDigits, cmpYmd, zonedYmd, type Ymd } from '@/lib/places/dates'
+import { ramadanOf, ramadanPath } from '@/lib/places/hijri'
+import { validRamadanYear } from '@/components/pages/ramadan'
 import { EVENT_SLUGS, eventYears, futureOccurrences, instantIso, isEventSlug, nextOccurrence, occurrencesInYear, upcomingTimeline, validEventYear, daysBetween, type EventOccurrence, type EventSlug } from '@/lib/events/calendar'
 import { BN_SHORT, EVENTS, eventTitle, type EventContent, type Tr3 } from '@/lib/events/content'
 import { EVENT_HADITH } from '@/lib/events/hadith-refs'
@@ -383,7 +385,7 @@ export function EventsHubPage({ locale }: { locale: Locale }) {
           })}
         </ul>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link href={localeHref(locale, `/ramadan/${nextOccurrence('ramadan-start', today).primary.saudi.y}`)} className={chipCls}>{T3(locale, 'Ramadan sehri & iftar timetable', 'রমজানের সেহরি ও ইফতারের সময়সূচি', 'جدول رمضان')}</Link>
+          <Link href={localeHref(locale, ramadanPath(ramadanOf(nextOccurrence('ramadan-start', today).hijriYear)))} className={chipCls}>{T3(locale, 'Ramadan sehri & iftar timetable', 'রমজানের সেহরি ও ইফতারের সময়সূচি', 'جدول رمضان')}</Link>
           <Link href={localeHref(locale, '/hijri-date')} className={chipCls}>{T3(locale, 'Hijri date today', 'আজকের হিজরি তারিখ', 'التاريخ الهجري اليوم')}</Link>
           <Link href={localeHref(locale, '/dua')} className={chipCls}>{T3(locale, 'Duas', 'দোয়া', 'الأدعية')}</Link>
         </div>
@@ -438,6 +440,12 @@ export async function EventYearPage({ locale, params }: { locale: Locale } & Eve
   const { slug, y, occs } = loadYear(p.event, p.year)
   const today = nowYmd()
   return <EventView locale={locale} slug={slug} year={y} occs={occs} focus={focusOf(occs, today)} today={today} />
+}
+
+/** Ramadan / Laylatul Qadr / Eid al-Fitr link to the timetable of the Ramadan they belong to (the generic /ramadan redirect when that page does not exist). */
+const ramadanHref = (o: Pick<EventOccurrence, 'hijriYear'>) => {
+  const r = ramadanOf(o.hijriYear)
+  return validRamadanYear(r.start.y) ? ramadanPath(r) : '/ramadan'
 }
 
 function EventView({ locale, slug, year, occs, focus: o, today }: { locale: Locale; slug: EventSlug; year: number | null; occs: EventOccurrence[]; focus: EventOccurrence; today: Ymd }) {
@@ -526,7 +534,12 @@ function EventView({ locale, slug, year, occs, focus: o, today }: { locale: Loca
       <section className="mt-12" aria-labelledby="more-h">
         <h2 id="more-h" className="font-display mb-3 text-2xl font-semibold">{T3(locale, 'Related', 'আরও দেখুন', 'ذات صلة')}</h2>
         <div className="flex flex-wrap gap-2">
-          {c.related.map((r) => <Link key={r.href} href={localeHref(locale, r.href)} className={chipCls}>{L(locale, r.label)}</Link>)}
+          {c.related.flatMap((r) => {
+            if (r.href !== '/ramadan') return [<Link key={r.href} href={localeHref(locale, r.href)} className={chipCls}>{L(locale, r.label)}</Link>]
+            // one chip per Ramadan the page covers (a Gregorian year can hold two)
+            const rams = [...new Set((year ? occs : [o]).map((x) => x.hijriYear))]
+            return rams.map((hy) => <Link key={`${r.href}-${hy}`} href={localeHref(locale, ramadanHref({ hijriYear: hy }))} className={chipCls}>{L(locale, r.label)}{rams.length > 1 ? ` (${hy} AH)` : ''}</Link>)
+          })}
         </div>
         {year && (
           <div className="mt-4 flex flex-wrap gap-2" aria-label={bn ? 'বছর' : 'Years'}>

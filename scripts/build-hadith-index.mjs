@@ -17,6 +17,12 @@ fs.mkdirSync(cache, { recursive: true })
 
 // slug (our URL slug) → API key
 const COLLECTIONS = { bukhari: 'bukhari', muslim: 'muslim', abudawud: 'abudawud', tirmidhi: 'tirmidhi', nasai: 'nasai', ibnmajah: 'ibnmajah', malik: 'malik', nawawi40: 'nawawi', qudsi40: 'qudsi' }
+// Languages the app actually serves per collection (lib/hadith/collections.ts `langs`): a number is "dead" (not served,
+// not in sitemaps) when its text is blank in every one of THESE languages. E.g. Muwatta Malik has a Bangla edition in
+// the corpus but the app does not use it, so a Malik number with only Bangla text is blank on the site.
+const { COLLECTIONS: META } = await import(pathToFileURL(path.join(root, 'lib/hadith/collections.ts')).href)
+const SERVED = Object.fromEntries(META.map((m) => [m.slug, Object.keys(m.langs).filter((l) => m.langs[l])]))
+for (const slug of Object.keys(COLLECTIONS)) if (!SERVED[slug]?.length) throw new Error(`no served languages for ${slug}`)
 const GRADER = { abudawud: 'Al-Albani', tirmidhi: 'Al-Albani', nasai: 'Al-Albani', ibnmajah: 'Al-Albani', malik: 'Salim al-Hilali' }
 
 async function get(name, url) {
@@ -66,7 +72,7 @@ for (const [slug, key] of Object.entries(COLLECTIONS)) {
   texts[slug] = groups
 
   const nums = [...groups.keys()].sort((a, b) => a - b)
-  const dead = nums.filter((n) => { const g = groups.get(n); return !g.ar && !g.en && !g.bn })
+  const dead = nums.filter((n) => { const g = groups.get(n); return SERVED[slug].every((l) => !g[l]) })
   const sectionNames = info[key].metadata.sections
   // books: each entry's `reference.book` when set; otherwise (the corpus has book 0 for hundreds of Bukhari / Nasa'i / Ibn
   // Majah entries) the section whose hadithnumber range contains it, else the previous entry's book.

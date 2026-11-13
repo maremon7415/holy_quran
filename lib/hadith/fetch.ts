@@ -22,30 +22,54 @@ export interface ApiHadith {
 }
 export interface ApiSection { metadata: { name: string; section?: Record<string, string> }; hadiths: ApiHadith[] }
 
-interface Opts { /** Next data-cache lifetime in seconds; `false` = do not use the data cache (very large editions). */ revalidate?: number | false; timeoutMs?: number }
+interface Opts {
+  /** Next data-cache lifetime in seconds; `false` = do not use the data cache (very large editions). */
+  revalidate?: number | false
+  timeoutMs?: number
+  /** Extra rounds over the URL list after a transient failure (default: 2 during `next build`, 1 at runtime). */
+  retries?: number
+}
 
-async function tryUrl(url: string, o: Opts): Promise<unknown | null> {
+type Attempt = { ok: true; data: unknown } | { ok: false; transient: boolean }
+
+async function tryUrl(url: string, o: Opts): Promise<Attempt> {
   try {
     const init: RequestInit & { next?: { revalidate: number } } = { signal: AbortSignal.timeout(o.timeoutMs ?? 12000), headers: { accept: 'application/json' } }
     if (o.revalidate === false) init.cache = 'no-store'
     else init.next = { revalidate: o.revalidate ?? REVALIDATE }
     const res = await fetch(url, init)
-    if (!res.ok) return null
-    return await res.json()
+    // 404/410 = the file does not exist (not worth retrying); 408/429/5xx = transient
+    if (!res.ok) return { ok: false, transient: res.status === 408 || res.status === 429 || res.status >= 500 }
+    const data = await res.json()
+    return data ? { ok: true, data } : { ok: false, transient: true }
   } catch {
-    return null
+    return { ok: false, transient: true } // network error, timeout, truncated JSON
   }
 }
 
+const isBuild = () => process.env.NEXT_PHASE === 'phase-production-build'
+/** Backoff between rounds (ms); overridable in tests. */
+export const retryDelay = { base: 400 }
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 /**
  * Fetch `{path}.min.json` from jsDelivr, falling back to `{path}.json` (the API README recommends this),
- * then to the raw GitHub copy. Throws HadithFetchError when every attempt fails.
+ * then to the raw GitHub copy. When every URL fails with a transient error (network, timeout, 429, 5xx) the whole
+ * list is retried with exponential backoff (so a briefly flaky CDN does not fail a prerender during `next build`).
+ * Throws HadithFetchError when every attempt fails.
  */
 export async function fetchApi<T>(path: string, o: Opts = {}): Promise<T> {
   const urls = [`${HADITH_CDN}/${path}.min.json`, `${HADITH_CDN}/${path}.json`, `${FALLBACK_CDN}/${path}.json`]
-  for (const u of urls) {
-    const data = await tryUrl(u, o)
-    if (data) return data as T
+  const retries = o.retries ?? (isBuild() ? 2 : 1)
+  for (let round = 0; round <= retries; round++) {
+    if (round > 0) await sleep(retryDelay.base * 3 ** (round - 1))
+    let transient = false
+    for (const u of urls) {
+      const r = await tryUrl(u, o)
+      if (r.ok) return r.data as T
+      transient ||= r.transient
+    }
+    if (!transient) break // every copy answered "not found": retrying will not help
   }
   throw new HadithFetchError(path)
 }

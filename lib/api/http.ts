@@ -31,3 +31,12 @@ export function intParam(v: string | null, fallback: number, min: number, max: n
   if (!Number.isFinite(n)) return Number(v) === Infinity ? max : fallback
   return Math.max(min, Math.min(max, n))
 }
+
+/**
+ * decodeURIComponent that never throws: malformed percent-encoding (e.g. "%E0%A4", a truncated UTF-8 sequence) → null,
+ * so callers answer 404/400 instead of crashing with a URIError (500). Route params arrive already decoded from Next;
+ * use this only on raw strings.
+ */
+export function safeDecode(s: string): string | null {
+  try { return decodeURIComponent(s) } catch { return null }
+}

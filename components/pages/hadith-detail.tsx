@@ -26,20 +26,22 @@ import { getHadith, type Hadith } from '@/lib/hadith/hadith'
 import { duaSlugsForHadith } from '@/lib/hadith/dua-sources'
 import { parseHadithNumber } from '@/lib/hadith/numbering'
 import { bookUrl, collectionUrl, hadithUrl } from '@/lib/hadith/url'
-import { HadithFetchError } from '@/lib/hadith/fetch'
 import { clipText } from '@/lib/hadith/text'
 
 
 export type HadithProps = { params: Promise<{ collection: string; number: string }> }
 
-/** Pre-rendered hadiths: the curated famous ones + the first hadith of every book. Everything else is generated on first request (ISR). */
+/**
+ * Pre-rendered hadiths: only the curated famous ones (≈ 46 per locale). Everything else is generated on first request
+ * (ISR). Kept small on purpose: every prerender fetches the corpus from jsDelivr, and a page whose texts cannot be
+ * loaded now throws (see `load`), so a long list would make `next build` fragile when the CDN is briefly flaky.
+ */
 export function hadithParams() {
   const seen = new Set<string>()
   const out: { collection: string; number: string }[] = []
-  const add = (c: string, n: number) => { const k = `${c}/${n}`; if (!seen.has(k) && isServable(c as never, n)) { seen.add(k); out.push({ collection: c, number: String(n) }) } }
-  for (const f of featured) add(f.c, f.n)
-  for (const c of ['bukhari', 'muslim', 'abudawud', 'tirmidhi', 'nasai', 'ibnmajah', 'malik', 'nawawi40', 'qudsi40'] as const) {
-    for (const b of collectionIndex(c).books) add(c, b[2])
+  for (const f of featured) {
+    const k = `${f.c}/${f.n}`
+    if (!seen.has(k) && isServable(f.c as never, f.n)) { seen.add(k); out.push({ collection: f.c, number: String(f.n) }) }
   }
   return out
 }
@@ -50,10 +52,12 @@ async function load(p: { collection: string; number: string }) {
   if (!r || n === null) return null
   const meta = collectionMeta(r.slug)!
   if (!isServable(r.slug, n)) return null
-  let hadith: Hadith | null = null
-  let error = false
-  try { hadith = await getHadith(r.slug, n) } catch (e) { if (e instanceof HadithFetchError) error = true; else throw e }
-  return { r, n, meta, hadith, error }
+  // A HadithFetchError (corpus unreachable) is deliberately NOT caught: the render fails, Next answers 500 for this
+  // request and ISR keeps serving the last good version instead of caching an error page (with noindex) for hours.
+  // null = the number has no text in any served language → 404.
+  const hadith: Hadith | null = await getHadith(r.slug, n)
+  if (!hadith) return null
+  return { r, n, meta, hadith }
 }
 
 const tl = (locale: Locale, en: string, bn: string) => (locale === 'bn' ? bn : en)
@@ -64,9 +68,6 @@ export async function hadithMeta(locale: Locale, { params }: HadithProps): Promi
   const { n, meta, hadith } = x
   const path = `/hadith/${meta.slug}/${n}`
   const bn = locale === 'bn'
-  if (!hadith) {
-    return buildMeta({ title: bn ? `${meta.name.bn} হাদিস ${bnNum(n)}` : `${meta.cite} ${n} | ${meta.name.bn} ${bnNum(n)}`, description: bn ? `${meta.name.bn} ${bnNum(n)} নং হাদিস।` : `${meta.cite} hadith ${n}.`, path, locale, noindex: true, type: 'article' })
-  }
   const first = hadith.entries[0]
   const t = clipText(hadith.title, 62)
   const tBn = hadith.titleBn
@@ -122,7 +123,7 @@ export async function HadithPage({ locale, params }: { locale: Locale } & Hadith
   const p = await params
   const x = await load(p)
   if (!x) notFound()
-  const { r, n, meta, hadith, error } = x
+  const { r, n, meta, hadith } = x
   if (!r.canonical) permanentRedirect(hadithUrl(r.slug, n, locale))
   const bn = locale === 'bn'
   const h = (u: string) => localeHref(locale, u)
@@ -136,25 +137,6 @@ export async function HadithPage({ locale, params }: { locale: Locale } & Hadith
     { name: bn ? `হাদিস ${bnNum(n)}` : `Hadith ${n}`, ar: `الحديث ${n}`, href: path },
   ]
   const url = absoluteUrl(h(path))
-
-  if (!hadith) {
-    const nb = error ? { prev: n > 1 && isServable(meta.slug, n - 1) ? n - 1 : null, next: isServable(meta.slug, n + 1) ? n + 1 : null } : { prev: null, next: null }
-    return (
-      <div className="mx-auto max-w-[860px] px-3 pb-36 pt-3 sm:px-6 sm:pt-6 lg:pb-20">
-        <Breadcrumbs locale={locale} items={crumbs} className="mb-4" />
-        <div className="card-soft rounded-[2rem] p-8 text-center" role="status">
-          <UiIcon name="info" size={40} className="mx-auto opacity-80" />
-          <h1 className="font-display mt-3 text-2xl font-semibold">{bn ? `${meta.name.bn} ${bnNum(n)}` : `${meta.cite} ${n}`}</h1>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{lt(locale, { en: 'The hadith text could not be loaded right now. This is usually temporary: please try again in a moment.', bn: 'হাদিসের পাঠ এই মুহূর্তে লোড করা যাচ্ছে না। সাধারণত এটি সাময়িক; একটু পরে আবার চেষ্টা করুন।', ar: 'تعذّر تحميل نص الحديث الآن. غالبًا ما يكون ذلك مؤقتًا، فحاول مرة أخرى بعد قليل.' })}</p>
-          <div className="mt-5 flex flex-wrap justify-center gap-2">
-            <Link href={h(path)} className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground" prefetch={false}>{lt(locale, { en: 'Try again', bn: 'আবার চেষ্টা করুন', ar: 'حاول مرة أخرى' })}</Link>
-            <Link href={collectionUrl(meta.slug, locale)} className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold">{name}</Link>
-          </div>
-          {(nb.prev || nb.next) && <p className="mt-4 text-xs text-muted-foreground">{nb.prev && <Link className="hover:text-primary" href={hadithUrl(meta.slug, nb.prev, locale)}>← {N(nb.prev)}</Link>}{nb.prev && nb.next && ' · '}{nb.next && <Link className="hover:text-primary" href={hadithUrl(meta.slug, nb.next, locale)}>{N(nb.next)} →</Link>}</p>}
-        </div>
-      </div>
-    )
-  }
 
   const first = hadith.entries[0]
   const allGrades = hadith.entries.flatMap((e) => e.grades)

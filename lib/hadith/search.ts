@@ -9,7 +9,7 @@ import { fetchApi, type ApiHadith } from './fetch'
 import { urlNumberOf } from './numbering'
 import { cleanEnglish } from './text'
 import { hadithUrl } from './url'
-import { parseHadithReference, parseQuery, tokenRegex, detectLang } from './search-utils'
+import { MAX_HADITH_QUERY, parseHadithReference, parseQuery, tokenRegex, detectLang } from './search-utils'
 
 const EDITION: Record<HadithLang, string> = { ar: 'ara', en: 'eng', bn: 'ben' }
 /** Max characters kept across all cached editions (≈ 70 MB of text). Least-recently-used editions are evicted. */
@@ -108,7 +108,8 @@ function snippetOf(text: string, re: RegExp, len = 260): string {
   return (start > 0 ? '… ' : '') + text.slice(start, end).trim() + (end < text.length ? ' …' : '')
 }
 
-export async function searchHadith(q: string, opts: SearchOptions = {}): Promise<SearchResponse> {
+export async function searchHadith(rawQ: string, opts: SearchOptions = {}): Promise<SearchResponse> {
+  const q = rawQ.slice(0, MAX_HADITH_QUERY)
   const limit = Math.min(Math.max(opts.limit ?? 20, 1), 100)
   const offset = Math.max(opts.offset ?? 0, 0)
   const lang = opts.lang ?? detectLang(q)

@@ -15,42 +15,64 @@ import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { absoluteUrl } from '@/lib/site'
 import { bdCities, bnGenitive, cities, cityTitle, countryName, divisionalCities, nearbyCities, resolveCity, worldCities, type City } from '@/lib/places/cities'
 import { bnDigits, cityDay, citySpan, fmtClock, fmtDate, WEEKDAYS, zonedYmd } from '@/lib/places/times'
-import { currentOrNextRamadan, fmtHijri, ramadanInGregorianYear, type RamadanRange } from '@/lib/places/hijri'
+import { currentOrNextRamadan, fmtHijri, parseRamadanSlug, ramadanForYear, ramadanLabel, ramadanOf, ramadanPath, ramadanSlug, ramadansInGregorianYear, type RamadanRange } from '@/lib/places/hijri'
+import { addDays, ymdKey } from '@/lib/places/dates'
 import { monthKey } from '@/lib/places/export'
 
 const DHAKA = cities.find((c) => c.slug === 'dhaka')!
-const nowRange = () => currentOrNextRamadan(zonedYmd(Date.now(), DHAKA.tz)).range
+const todayYmd = () => zonedYmd(Date.now(), DHAKA.tz)
+const nowRange = () => currentOrNextRamadan(todayYmd()).range
 
-/** Gregorian years whose Ramadan pages exist: last Ramadan … five after the upcoming one. */
+/** Gregorian years whose Ramadan pages exist: last Ramadan … five after the upcoming one (and a Ramadan must start in them). */
 export function validRamadanYear(y: number) {
   const y0 = nowRange().start.y
-  return Number.isInteger(y) && y >= y0 - 1 && y <= y0 + 5 && ramadanInGregorianYear(y) !== null
+  return Number.isInteger(y) && y >= y0 - 1 && y <= y0 + 5 && ramadansInGregorianYear(y).length > 0
 }
 
 export type YearProps = { params: Promise<{ year: string }> }
 export type RamadanCityProps = { params: Promise<{ year: string; city: string }> }
 
+/**
+ * URL scheme (see docs/ARCHITECTURE.md): `/ramadan/{gregorianYear}` while only one Ramadan starts in that year,
+ * `/ramadan/{hijriYear}-ah` for each of two Ramadans in one year (2030: 1451-ah + 1452-ah), and `/ramadan/{gregorianYear}`
+ * then becomes a chooser. `/ramadan/1448-ah` for a single-Ramadan year redirects to `/ramadan/2027`.
+ */
+type Target = { kind: 'ramadan'; r: RamadanRange } | { kind: 'chooser'; year: number; list: RamadanRange[] }
+
+function loadTarget(slug: string, locale: Locale, rest = ''): Target {
+  const s = parseRamadanSlug(slug)
+  if (!s) notFound()
+  if (s.kind === 'year') {
+    if (!validRamadanYear(s.year)) notFound()
+    const list = ramadansInGregorianYear(s.year)
+    if (list.length > 1) return { kind: 'chooser', year: s.year, list }
+    return { kind: 'ramadan', r: list[0] }
+  }
+  const r = ramadanOf(s.hijriYear)
+  if (!validRamadanYear(r.start.y)) notFound()
+  const only = ramadansInGregorianYear(r.start.y).length < 2
+  if (only) permanentRedirect(localeHref(locale, `/ramadan/${r.start.y}${rest}`))
+  return { kind: 'ramadan', r }
+}
+
 export const ramadanYearParams = () => {
   const y0 = nowRange().start.y
-  return [y0, y0 + 1].filter(validRamadanYear).map((y) => ({ year: String(y) }))
+  return [y0, y0 + 1].filter(validRamadanYear).flatMap((y) => {
+    const list = ramadansInGregorianYear(y)
+    return [{ year: String(y) }, ...(list.length > 1 ? list.map((r) => ({ year: ramadanSlug(r) })) : [])]
+  })
 }
 export const ramadanCityParams = () => {
-  const y0 = nowRange().start.y
-  return cities.map((c) => ({ year: String(y0), city: c.slug }))
+  const slug = ramadanSlug(nowRange())
+  return cities.map((c) => ({ year: slug, city: c.slug }))
 }
 
 const nm = (locale: Locale, y: number | string) => (locale === 'bn' ? bnDigits(y) : String(y))
 const p = (locale: Locale, en: string, bn: string) => (locale === 'bn' ? bn : en)
 
-function loadRange(year: string) {
-  const y = Number(year)
-  if (!/^\d{4}$/.test(year) || !validRamadanYear(y)) notFound()
-  return ramadanInGregorianYear(y)!
-}
-
 /** /ramadan → the running or upcoming Ramadan. */
 export function RamadanIndexPage({ locale }: { locale: Locale }): never {
-  redirect(localeHref(locale, `/ramadan/${nowRange().start.y}`))
+  redirect(localeHref(locale, ramadanPath(nowRange())))
 }
 
 function Notice({ locale, r }: { locale: Locale; r: RamadanRange }) {
@@ -110,13 +132,13 @@ function Duas({ locale }: { locale: Locale }) {
   )
 }
 
-function YearLinks({ locale, year, city }: { locale: Locale; year: number; city?: City }) {
-  const ys = [year - 1, year + 1].filter(validRamadanYear)
-  if (!ys.length) return null
+function YearLinks({ locale, r, city }: { locale: Locale; r: RamadanRange; city?: City }) {
+  const rs = [ramadanOf(r.hijriYear - 1), ramadanOf(r.hijriYear + 1)].filter((x) => validRamadanYear(x.start.y))
+  if (!rs.length) return null
   return (
     <div data-print-hide className="mt-6 flex flex-wrap gap-2">
-      {ys.map((y) => (
-        <Link key={y} href={localeHref(locale, `/ramadan/${y}${city ? `/${city.slug}` : ''}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${y}`, bn: `রমজান ${bnDigits(y)}`, ar: `رمضان ${y}` })}</Link>
+      {rs.map((x) => (
+        <Link key={x.hijriYear} href={localeHref(locale, `${ramadanPath(x)}${city ? `/${city.slug}` : ''}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${ramadanLabel(x, 'en')}`, bn: `রমজান ${ramadanLabel(x, 'bn')}`, ar: `رمضان ${ramadanLabel(x, 'ar')}` })}</Link>
       ))}
     </div>
   )
@@ -126,61 +148,69 @@ function YearLinks({ locale, year, city }: { locale: Locale; year: number; city?
 
 export async function ramadanYearMeta(locale: Locale, { params }: YearProps): Promise<Metadata> {
   const { year } = await params
-  const r = loadRange(year)
+  const t = loadTarget(year, locale)
+  if (t.kind === 'chooser') return chooserMeta(locale, t.year, t.list)
+  const r = t.r
   const y = r.start.y
+  const yl = ramadanLabel(r, 'en'), yb = ramadanLabel(r, 'bn'), ya = ramadanLabel(r, 'ar')
   return buildMeta({
     title: locale === 'bn'
-      ? `রমজান ${bnDigits(y)} — সেহরি ও ইফতারের সময়সূচি, রমজান কবে শুরু | বাংলাদেশের সব জেলা`
-      : `Ramadan ${y} — Start Date, Sehri & Iftar Timetable for Bangladesh & the World | রমজান ${bnDigits(y)}`,
+      ? `রমজান ${yb} — সেহরি ও ইফতারের সময়সূচি, রমজান কবে শুরু | বাংলাদেশের সব জেলা`
+      : `Ramadan ${yl} — Start Date, Sehri & Iftar Timetable for Bangladesh & the World | রমজান ${yb}`,
     description: locale === 'bn'
-      ? `রমজান ${bnDigits(y)} (${bnDigits(r.hijriYear)} হিজরি) উম্মুল কুরা অনুযায়ী ${fmtDate(r.start, 'bn')} থেকে শুরু। ঢাকা, চট্টগ্রাম, রাজশাহী, সিলেটসহ ৬৪ জেলা ও বিশ্বের শহরের সেহরি ও ইফতারের সময়সূচি। চাঁদ দেখার উপর নির্ভর করে ±১ দিন পার্থক্য হতে পারে।`
-      : `Ramadan ${y} (${r.hijriYear} AH) begins around ${fmtDate(r.start, 'en')} by the Umm al-Qura calendar. Sehri and iftar timetables for Dhaka, Chattogram, Rajshahi, Sylhet and all 64 districts of Bangladesh plus major world cities. Start depends on moon sighting (±1 day).`,
-    keywords: [`Ramadan ${y}`, `Ramadan ${y} calendar`, `Ramadan ${y} start date`, `sehri iftar time ${y}`, `Ramadan timetable ${y} Bangladesh`, `রমজান ${bnDigits(y)}`, `সেহরি ইফতারের সময়সূচি ${bnDigits(y)}`, `রমজানের ক্যালেন্ডার ${bnDigits(y)}`, 'রমজান কবে শুরু'],
-    path: `/ramadan/${y}`,
+      ? `রমজান ${yb} (${bnDigits(r.hijriYear)} হিজরি) উম্মুল কুরা অনুযায়ী ${fmtDate(r.start, 'bn')} থেকে শুরু। ঢাকা, চট্টগ্রাম, রাজশাহী, সিলেটসহ ৬৪ জেলা ও বিশ্বের শহরের সেহরি ও ইফতারের সময়সূচি। চাঁদ দেখার উপর নির্ভর করে ±১ দিন পার্থক্য হতে পারে।`
+      : `Ramadan ${yl} (${r.hijriYear} AH) begins around ${fmtDate(r.start, 'en')} by the Umm al-Qura calendar. Sehri and iftar timetables for Dhaka, Chattogram, Rajshahi, Sylhet and all 64 districts of Bangladesh plus major world cities. Start depends on moon sighting (±1 day).`,
+    keywords: [`Ramadan ${yl}`, `Ramadan ${yl} calendar`, `Ramadan ${yl} start date`, `sehri iftar time ${yl}`, `Ramadan timetable ${yl} Bangladesh`, `রমজান ${yb}`, `সেহরি ইফতারের সময়সূচি ${yb}`, `রমজানের ক্যালেন্ডার ${yb}`, 'রমজান কবে শুরু'],
+    path: `/ramadan/${ramadanSlug(r)}`,
     locale,
   })
 }
 
 export async function RamadanYearPage({ locale, params }: { locale: Locale } & YearProps) {
   const { year } = await params
-  const r = loadRange(year)
+  const t = loadTarget(year, locale)
+  if (t.kind === 'chooser') return <RamadanChooser locale={locale} year={t.year} list={t.list} />
+  const r = t.r
   const y = r.start.y
+  const yl = ramadanLabel(r, 'en'), yb = ramadanLabel(r, 'bn'), ya = ramadanLabel(r, 'ar')
+  const slug = ramadanSlug(r)
+  const qy = addDays(r.start, 25).y
   const bn = locale === 'bn'
-  const path = localeHref(locale, `/ramadan/${y}`)
+  const path = localeHref(locale, `/ramadan/${slug}`)
   const first = (c: City) => cityDay(c, r.start)
   const days = r.days
   const faqs = bn
     ? [
-        { q: `রমজান ${bnDigits(y)} কবে শুরু?`, a: `উম্মুল কুরা (সৌদি) ক্যালেন্ডার অনুযায়ী ১ রমজান ${bnDigits(r.hijriYear)} হিজরি = ${fmtDate(r.start, 'bn', { weekday: true })}। বাংলাদেশে চাঁদ দেখা সাপেক্ষে প্রায়ই একদিন পরে শুরু হয়; সরকারি ঘোষণা অনুসরণ করুন।` },
-        { q: `রমজান ${bnDigits(y)} কত দিনের হবে?`, a: `উম্মুল কুরা অনুযায়ী ${bnDigits(days)} দিন; চাঁদ দেখার ভিত্তিতে ২৯ বা ৩০ দিন হয়।` },
-        { q: `ঈদুল ফিতর ${bnDigits(y)} কবে?`, a: `উম্মুল কুরা অনুযায়ী ১ শাওয়াল = ${fmtDate(r.eid, 'bn', { weekday: true })}। চাঁদ দেখার উপর নির্ভর করে একদিন আগে-পরে হতে পারে।` },
+        { q: `রমজান ${yb} কবে শুরু?`, a: `উম্মুল কুরা (সৌদি) ক্যালেন্ডার অনুযায়ী ১ রমজান ${bnDigits(r.hijriYear)} হিজরি = ${fmtDate(r.start, 'bn', { weekday: true })}। বাংলাদেশে চাঁদ দেখা সাপেক্ষে প্রায়ই একদিন পরে শুরু হয়; সরকারি ঘোষণা অনুসরণ করুন।` },
+        { q: `রমজান ${yb} কত দিনের হবে?`, a: `উম্মুল কুরা অনুযায়ী ${bnDigits(days)} দিন; চাঁদ দেখার ভিত্তিতে ২৯ বা ৩০ দিন হয়।` },
+        { q: `ঈদুল ফিতর ${yb} কবে?`, a: `উম্মুল কুরা অনুযায়ী ১ শাওয়াল = ${fmtDate(r.eid, 'bn', { weekday: true })}। চাঁদ দেখার উপর নির্ভর করে একদিন আগে-পরে হতে পারে।` },
         { q: `সেহরির শেষ সময় ও ইফতারের সময় কীভাবে নির্ধারিত হয়?`, a: `সেহরির শেষ সময় ফজরের ওয়াক্ত শুরুর সময় এবং ইফতারের সময় সূর্যাস্ত (মাগরিব)। শহরভেদে কয়েক মিনিট পার্থক্য থাকে, তাই আপনার শহরের সময়সূচি দেখুন।` },
       ]
     : [
-        { q: `When does Ramadan ${y} start?`, a: `By the Umm al-Qura (Saudi) calendar, 1 Ramadan ${r.hijriYear} AH is ${fmtDate(r.start, 'en', { weekday: true })}. Countries that rely on local moon sighting, including Bangladesh, India and Pakistan, often start a day later — follow your national announcement.` },
-        { q: `How many days is Ramadan ${y}?`, a: `${days} days by the Umm al-Qura calendar; with moon sighting it is 29 or 30 days.` },
-        { q: `When is Eid al-Fitr ${y}?`, a: `1 Shawwal ${r.hijriYear} AH falls on ${fmtDate(r.eid, 'en', { weekday: true })} by Umm al-Qura, and may differ by a day depending on moon sighting.` },
+        { q: `When does Ramadan ${yl} start?`, a: `By the Umm al-Qura (Saudi) calendar, 1 Ramadan ${r.hijriYear} AH is ${fmtDate(r.start, 'en', { weekday: true })}. Countries that rely on local moon sighting, including Bangladesh, India and Pakistan, often start a day later — follow your national announcement.` },
+        { q: `How many days is Ramadan ${yl}?`, a: `${days} days by the Umm al-Qura calendar; with moon sighting it is 29 or 30 days.` },
+        { q: `When is Eid al-Fitr ${yl}?`, a: `1 Shawwal ${r.hijriYear} AH falls on ${fmtDate(r.eid, 'en', { weekday: true })} by Umm al-Qura, and may differ by a day depending on moon sighting.` },
         { q: `How are sehri and iftar times determined?`, a: `Sehri ends when Fajr begins and iftar is at sunset (Maghrib). Times differ by a few minutes between cities, so open the timetable for your city.` },
       ]
 
   return (
     <div className={pageShell}>
       <PrintStyles />
-      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebPage', name: `Ramadan ${y}`, url: absoluteUrl(path), inLanguage: locale, dateModified: new Date().toISOString(), about: { '@type': 'Event', name: `Ramadan ${y}`, startDate: `${r.start.y}-${String(r.start.m).padStart(2, '0')}-${String(r.start.d).padStart(2, '0')}`, endDate: `${r.end.y}-${String(r.end.m).padStart(2, '0')}-${String(r.end.d).padStart(2, '0')}` } }} />
-      <Breadcrumbs locale={locale} items={[{ name: bn ? 'রমজান' : 'Ramadan', ar: 'رمضان', href: '/ramadan' }, { name: `${y}`, href: `/ramadan/${y}` }]} className="mb-4" />
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebPage', name: `Ramadan ${yl}`, url: absoluteUrl(path), inLanguage: locale, dateModified: new Date().toISOString(), about: { '@type': 'Event', name: `Ramadan ${yl}`, startDate: `${r.start.y}-${String(r.start.m).padStart(2, '0')}-${String(r.start.d).padStart(2, '0')}`, endDate: `${r.end.y}-${String(r.end.m).padStart(2, '0')}-${String(r.end.d).padStart(2, '0')}` } }} />
+      <Breadcrumbs locale={locale} items={[{ name: bn ? 'রমজান' : 'Ramadan', ar: 'رمضان', href: '/ramadan' }, { name: bn ? yb : yl, href: `/ramadan/${slug}` }]} className="mb-4" />
       <PageHero
         eyebrow={lt(locale, { en: `${r.hijriYear} AH`, bn: `${bnDigits(r.hijriYear)} হিজরি`, ar: `${r.hijriYear} هـ` })}
         icon="crescent"
-        title={bn ? <>রমজান {bnDigits(y)} — সেহরি ও ইফতারের সময়সূচি</> : <>Ramadan {y} — Sehri &amp; Iftar Timetable</>}
+        title={bn ? <>রমজান {yb} — সেহরি ও ইফতারের সময়সূচি</> : <>Ramadan {yl} — Sehri &amp; Iftar Timetable</>}
         subtitle={bn
           ? <>উম্মুল কুরা অনুযায়ী ১ রমজান: {fmtDate(r.start, 'bn', { weekday: true })} · শেষ রোজা: {fmtDate(r.end, 'bn')} · ঈদুল ফিতর: {fmtDate(r.eid, 'bn')}</>
           : <>1 Ramadan (Umm al-Qura): {fmtDate(r.start, 'en', { weekday: true })} · last fast: {fmtDate(r.end, 'en')} · Eid al-Fitr: {fmtDate(r.eid, 'en')}</>}
       />
       <div className="mt-6"><Notice locale={locale} r={r} /></div>
       <div data-print-hide className="mt-4 flex flex-wrap gap-2" aria-label={bn ? 'সংশ্লিষ্ট ইসলামি দিবস' : 'Related Islamic events'}>
-        <Link href={localeHref(locale, `/events/ramadan-start/${y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${y} start date`, bn: `রমজান ${bnDigits(y)} কবে শুরু`, ar: `بداية رمضان ${y}` })}</Link>
-        <Link href={localeHref(locale, `/events/laylatul-qadr/${y}`)} className={chipCls}>{lt(locale, { en: `Laylatul Qadr ${y}`, bn: `শবে কদর ${bnDigits(y)} কবে`, ar: `ليلة القدر ${y}` })}</Link>
-        <Link href={localeHref(locale, `/events/eid-al-fitr/${y}`)} className={chipCls}>{lt(locale, { en: `Eid ul Fitr ${y}`, bn: `ঈদুল ফিতর ${bnDigits(y)} কবে`, ar: `عيد الفطر ${y}` })}</Link>
+        <Link href={localeHref(locale, `/events/ramadan-start/${r.start.y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${r.start.y} start date`, bn: `রমজান ${bnDigits(r.start.y)} কবে শুরু`, ar: `بداية رمضان ${r.start.y}` })}</Link>
+        <Link href={localeHref(locale, `/events/laylatul-qadr/${qy}`)} className={chipCls}>{lt(locale, { en: `Laylatul Qadr ${qy}`, bn: `শবে কদর ${bnDigits(qy)} কবে`, ar: `ليلة القدر ${qy}` })}</Link>
+        <Link href={localeHref(locale, `/events/eid-al-fitr/${r.eid.y}`)} className={chipCls}>{lt(locale, { en: `Eid ul Fitr ${r.eid.y}`, bn: `ঈদুল ফিতর ${bnDigits(r.eid.y)} কবে`, ar: `عيد الفطر ${r.eid.y}` })}</Link>
         <Link href={localeHref(locale, '/events')} className={chipCls}>{lt(locale, { en: 'All Islamic events', bn: 'সব ইসলামি দিবস', ar: 'كل المناسبات' })}</Link>
       </div>
 
@@ -189,7 +219,7 @@ export async function RamadanYearPage({ locale, params }: { locale: Locale } & Y
         <p className="mb-4 text-sm text-muted-foreground">{lt(locale, { en: `Times for ${fmtDate(r.start, 'en')}. Tap a city for the full 30-day timetable.`, bn: `${fmtDate(r.start, 'bn')} তারিখের সময়। পূর্ণ ৩০ দিনের সময়সূচির জন্য শহরে ট্যাপ করুন।`, ar: 'اضغط على المدينة لعرض الجدول كاملًا.' })}</p>
         <div className="overflow-x-auto rounded-3xl border border-border bg-card">
           <table className="w-full min-w-[420px] border-collapse text-sm">
-            <caption className="sr-only">{p(locale, `First day of Ramadan ${y}, sehri and iftar by division`, `রমজান ${bnDigits(y)} প্রথম দিনের সেহরি ও ইফতার`)}</caption>
+            <caption className="sr-only">{p(locale, `First day of Ramadan ${yl}, sehri and iftar by division`, `রমজান ${yb} প্রথম দিনের সেহরি ও ইফতার`)}</caption>
             <thead className="bg-surface-2/70"><tr>
               <th scope="col" className="px-3 py-2.5 text-start text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{lt(locale, { en: 'City', bn: 'শহর', ar: 'المدينة' })}</th>
               <th scope="col" className="px-3 py-2.5 text-start text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{lt(locale, { en: 'Sehri ends', bn: 'সেহরির শেষ', ar: 'نهاية السحور' })}</th>
@@ -200,7 +230,7 @@ export async function RamadanYearPage({ locale, params }: { locale: Locale } & Y
                 const d = first(c)
                 return (
                   <tr key={c.slug} className="odd:bg-surface-2/30">
-                    <th scope="row" className="px-3 py-2.5 text-start font-medium"><Link href={localeHref(locale, `/ramadan/${y}/${c.slug}`)} className="text-primary hover:underline">{bn ? c.name.bn : cityTitle(c, 'en')}</Link></th>
+                    <th scope="row" className="px-3 py-2.5 text-start font-medium"><Link href={localeHref(locale, `/ramadan/${slug}/${c.slug}`)} className="text-primary hover:underline">{bn ? c.name.bn : cityTitle(c, 'en')}</Link></th>
                     <td className="px-3 py-2.5 tabular-nums">{fmtClock(d.fajr, c.tz, locale)}</td>
                     <td className="px-3 py-2.5 tabular-nums">{fmtClock(d.maghrib, c.tz, locale)}</td>
                   </tr>
@@ -212,59 +242,124 @@ export async function RamadanYearPage({ locale, params }: { locale: Locale } & Y
       </section>
 
       <section className="mt-10" aria-labelledby="bd-h">
-        <h2 id="bd-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `All 64 districts of Bangladesh — Ramadan ${y}`, bn: `বাংলাদেশের ৬৪ জেলা — রমজান ${bnDigits(y)}`, ar: `بنغلاديش — ٦٤ منطقة` })}</h2>
-        <CityChips list={bdCities} locale={locale} path={`/ramadan/${y}`} />
+        <h2 id="bd-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `All 64 districts of Bangladesh — Ramadan ${yl}`, bn: `বাংলাদেশের ৬৪ জেলা — রমজান ${yb}`, ar: `بنغلاديش — ٦٤ منطقة` })}</h2>
+        <CityChips list={bdCities} locale={locale} path={`/ramadan/${slug}`} />
       </section>
       <section className="mt-10" aria-labelledby="world-h">
-        <h2 id="world-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `World cities — Ramadan ${y}`, bn: `বিশ্বের শহর — রমজান ${bnDigits(y)}`, ar: 'مدن العالم' })}</h2>
-        <CityChips list={worldCities} locale={locale} path={`/ramadan/${y}`} />
+        <h2 id="world-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `World cities — Ramadan ${yl}`, bn: `বিশ্বের শহর — রমজান ${yb}`, ar: 'مدن العالم' })}</h2>
+        <CityChips list={worldCities} locale={locale} path={`/ramadan/${slug}`} />
       </section>
 
       <Duas locale={locale} />
       <Faq faqs={faqs} locale={locale} />
-      <YearLinks locale={locale} year={y} />
+      <YearLinks locale={locale} r={r} />
+    </div>
+  )
+}
+
+/* ───────────── /ramadan/{year} when two Ramadans start in that Gregorian year ───────────── */
+
+function chooserMeta(locale: Locale, year: number, list: RamadanRange[]): Metadata {
+  const [a, b] = list
+  const bn = locale === 'bn'
+  return buildMeta({
+    title: bn
+      ? `রমজান ${bnDigits(year)} — দুটি রমজান: ${bnDigits(a.hijriYear)} ও ${bnDigits(b.hijriYear)} হিজরি | সেহরি ও ইফতারের সময়সূচি`
+      : `Ramadan ${year} — Two Ramadans: ${a.hijriYear} AH (${fmtDate(a.start, 'en', { year: false })}) & ${b.hijriYear} AH (${fmtDate(b.start, 'en', { year: false })}) | Sehri & Iftar Timetable`,
+    description: bn
+      ? `${bnDigits(year)} সালে দুবার রমজান শুরু হয়: ${bnDigits(a.hijriYear)} হিজরি (${fmtDate(a.start, 'bn')}) এবং ${bnDigits(b.hijriYear)} হিজরি (${fmtDate(b.start, 'bn')})। প্রতিটির সেহরি ও ইফতারের সময়সূচি দেখুন।`
+      : `Two Ramadans begin in ${year}: ${a.hijriYear} AH on ${fmtDate(a.start, 'en')} and ${b.hijriYear} AH on ${fmtDate(b.start, 'en')} (Umm al-Qura). Pick one for its sehri and iftar timetable.`,
+    keywords: [`Ramadan ${year}`, `Ramadan ${year} start date`, `Ramadan ${year} calendar`, `রমজান ${bnDigits(year)}`, `Ramadan ${a.hijriYear}`, `Ramadan ${b.hijriYear}`],
+    path: `/ramadan/${year}`,
+    locale,
+  })
+}
+
+function RamadanChooser({ locale, year, list }: { locale: Locale; year: number; list: RamadanRange[] }) {
+  const bn = locale === 'bn'
+  const path = localeHref(locale, `/ramadan/${year}`)
+  const [a, b] = list
+  const faqs = bn
+    ? [
+        { q: `${bnDigits(year)} সালে কেন দুবার রমজান?`, a: `হিজরি বছর প্রায় ৩৫৪ দিনের, ইংরেজি বছরের চেয়ে প্রায় ১১ দিন ছোট। তাই রমজান প্রতি বছর প্রায় ১১ দিন এগিয়ে আসে; ${bnDigits(year)} সালের শুরুতে (${fmtDate(a.start, 'bn')}) ও শেষে (${fmtDate(b.start, 'bn')}) দুটি রমজান শুরু হয়।` },
+        { q: `${bnDigits(year)} সালের আগামী রমজান কোনটি?`, a: `যেটি চলমান বা সামনে আসছে সেটির পাতা খুলুন: ${bnDigits(a.hijriYear)} হিজরি (${fmtDate(a.start, 'bn')} – ${fmtDate(a.end, 'bn')}) অথবা ${bnDigits(b.hijriYear)} হিজরি (${fmtDate(b.start, 'bn')} – ${fmtDate(b.end, 'bn')})।` },
+      ]
+    : [
+        { q: `Why are there two Ramadans in ${year}?`, a: `A Hijri year is about 354 days, roughly 11 days shorter than a Gregorian year, so Ramadan moves about 11 days earlier every year. In ${year} one Ramadan starts at the beginning of the year (${fmtDate(a.start, 'en')}) and the next at the end (${fmtDate(b.start, 'en')}).` },
+        { q: `Which Ramadan of ${year} is the next one?`, a: `Open the one that is running or still ahead: ${a.hijriYear} AH (${fmtDate(a.start, 'en')} – ${fmtDate(a.end, 'en')}) or ${b.hijriYear} AH (${fmtDate(b.start, 'en')} – ${fmtDate(b.end, 'en')}).` },
+      ]
+  return (
+    <div className={pageShell}>
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'CollectionPage', name: `Ramadan ${year}`, url: absoluteUrl(path), inLanguage: locale, hasPart: list.map((r) => ({ '@type': 'Event', name: `Ramadan ${r.hijriYear} AH`, url: absoluteUrl(localeHref(locale, ramadanPath(r))), startDate: ymdKey(r.start), endDate: ymdKey(r.end) })) }} />
+      <Breadcrumbs locale={locale} items={[{ name: bn ? 'রমজান' : 'Ramadan', ar: 'رمضان', href: '/ramadan' }, { name: `${year}`, href: `/ramadan/${year}` }]} className="mb-4" />
+      <PageHero
+        eyebrow={lt(locale, { en: 'Two Ramadans in one year', bn: 'এক বছরে দুই রমজান', ar: 'رمضانان في سنة ميلادية واحدة' })}
+        icon="crescent"
+        title={bn ? <>রমজান {bnDigits(year)} — দুটি রমজান</> : <>Ramadan {year} — two Ramadans</>}
+        subtitle={bn ? <>{bnDigits(year)} সালে {bnDigits(a.hijriYear)} ও {bnDigits(b.hijriYear)} হিজরির রমজান শুরু হয়। যেটি দেখতে চান বেছে নিন।</> : <>Ramadan {a.hijriYear} AH and {b.hijriYear} AH both begin in {year}. Choose the one you need.</>}
+      />
+      <div className="mt-8 grid gap-4 md:grid-cols-2">
+        {list.map((r) => (
+          <article key={r.hijriYear} className="card-soft rounded-3xl p-6">
+            <h2 className="font-display text-2xl font-semibold">{lt(locale, { en: `Ramadan ${r.hijriYear} AH`, bn: `রমজান ${bnDigits(r.hijriYear)} হিজরি`, ar: `رمضان ${r.hijriYear} هـ` })}</h2>
+            <dl className="mt-3 space-y-1 text-sm text-muted-foreground">
+              <div><dt className="inline font-medium text-foreground">{lt(locale, { en: '1 Ramadan', bn: '১ রমজান', ar: '١ رمضان' })}: </dt><dd className="inline">{fmtDate(r.start, bn ? 'bn' : 'en', { weekday: true })}</dd></div>
+              <div><dt className="inline font-medium text-foreground">{lt(locale, { en: 'Last fast', bn: 'শেষ রোজা', ar: 'آخر يوم' })}: </dt><dd className="inline">{fmtDate(r.end, bn ? 'bn' : 'en')}</dd></div>
+              <div><dt className="inline font-medium text-foreground">{lt(locale, { en: 'Eid al-Fitr', bn: 'ঈদুল ফিতর', ar: 'عيد الفطر' })}: </dt><dd className="inline">{fmtDate(r.eid, bn ? 'bn' : 'en')}</dd></div>
+            </dl>
+            <Link href={localeHref(locale, ramadanPath(r))} className={`${chipCls} mt-4`}>{lt(locale, { en: `Sehri & iftar timetable ${r.hijriYear} AH`, bn: `সেহরি ও ইফতারের সময়সূচি ${bnDigits(r.hijriYear)} হিজরি`, ar: `جدول رمضان ${r.hijriYear} هـ` })}</Link>
+          </article>
+        ))}
+      </div>
+      <Faq faqs={faqs} locale={locale} />
     </div>
   )
 }
 
 /* ───────────── /ramadan/{year}/{city} ───────────── */
 
-function loadCity(slug: string, year: string, locale: Locale) {
-  const r = loadRange(year)
-  const city = resolveCity(slug)
+function loadCity(citySlug: string, year: string, locale: Locale) {
+  const t = loadTarget(year, locale, `/${citySlug}`)
+  const city = resolveCity(citySlug)
   if (!city) notFound()
-  if (city.slug !== slug) permanentRedirect(localeHref(locale, `/ramadan/${r.start.y}/${city.slug}`))
-  return { r, city }
+  // a bare year with two Ramadans has no city page of its own: go to the one running (or next) now
+  if (t.kind === 'chooser') redirect(localeHref(locale, `/ramadan/${ramadanSlug(ramadanForYear(t.year, todayYmd())!)}/${city.slug}`))
+  if (city.slug !== citySlug) permanentRedirect(localeHref(locale, `/ramadan/${ramadanSlug(t.r)}/${city.slug}`))
+  return { r: t.r, city }
 }
 
 export async function ramadanCityMeta(locale: Locale, { params }: RamadanCityProps): Promise<Metadata> {
-  const { year, city: slug } = await params
-  const { r, city } = loadCity(slug, year, locale)
+  const { year, city: citySlug } = await params
+  const { r, city } = loadCity(citySlug, year, locale)
   const y = r.start.y
+  const yl = ramadanLabel(r, 'en'), yb = ramadanLabel(r, 'bn'), ya = ramadanLabel(r, 'ar')
+  const slug0 = ramadanSlug(r)
   const en = cityTitle(city, 'en')
   const g = bnGenitive(city.name.bn)
   const d1 = cityDay(city, r.start)
   return buildMeta({
     title: locale === 'bn'
-      ? `${g} সেহরি ও ইফতারের সময়সূচি ${bnDigits(y)} — রমজান ${bnDigits(r.hijriYear)} | ${en} Ramadan Timetable`
-      : `${en} Sehri & Iftar Time ${y} — Ramadan Timetable | ${g} সেহরি ইফতারের সময়সূচি ${bnDigits(y)}`,
+      ? `${g} সেহরি ও ইফতারের সময়সূচি ${yb} — রমজান ${bnDigits(r.hijriYear)} | ${en} Ramadan Timetable`
+      : `${en} Sehri & Iftar Time ${yl} — Ramadan Timetable | ${g} সেহরি ইফতারের সময়সূচি ${yb}`,
     description: locale === 'bn'
-      ? `${g} রমজান ${bnDigits(y)}-এর সম্পূর্ণ সেহরি ও ইফতারের সময়সূচি। প্রথম রোজায় (${fmtDate(r.start, 'bn')}) সেহরির শেষ ${fmtClock(d1.fajr, city.tz, 'bn')}, ইফতার ${fmtClock(d1.maghrib, city.tz, 'bn')}। প্রিন্টযোগ্য; চাঁদ দেখার উপর নির্ভর করে ±১ দিন।`
-      : `Complete Ramadan ${y} sehri and iftar timetable for ${en}. First fast (${fmtDate(r.start, 'en')}): sehri ends ${fmtClock(d1.fajr, city.tz, 'en')}, iftar ${fmtClock(d1.maghrib, city.tz, 'en')}. Printable; start date depends on moon sighting (±1 day).`,
-    keywords: [`${city.name.en} sehri time`, `${city.name.en} iftar time`, `${city.name.en} Ramadan timetable ${y}`, `${en} sehri iftar time ${y}`, `${g} সেহরি ইফতারের সময়সূচি ${bnDigits(y)}`, `${g} সেহরির সময়`, `${g} ইফতারের সময়`, `সেহরি ইফতারের সময়সূচি ${bnDigits(y)} ${city.name.bn}`],
-    path: `/ramadan/${y}/${city.slug}`,
+      ? `${g} রমজান ${yb}-এর সম্পূর্ণ সেহরি ও ইফতারের সময়সূচি। প্রথম রোজায় (${fmtDate(r.start, 'bn')}) সেহরির শেষ ${fmtClock(d1.fajr, city.tz, 'bn')}, ইফতার ${fmtClock(d1.maghrib, city.tz, 'bn')}। প্রিন্টযোগ্য; চাঁদ দেখার উপর নির্ভর করে ±১ দিন।`
+      : `Complete Ramadan ${yl} sehri and iftar timetable for ${en}. First fast (${fmtDate(r.start, 'en')}): sehri ends ${fmtClock(d1.fajr, city.tz, 'en')}, iftar ${fmtClock(d1.maghrib, city.tz, 'en')}. Printable; start date depends on moon sighting (±1 day).`,
+    keywords: [`${city.name.en} sehri time`, `${city.name.en} iftar time`, `${city.name.en} Ramadan timetable ${yl}`, `${en} sehri iftar time ${yl}`, `${g} সেহরি ইফতারের সময়সূচি ${yb}`, `${g} সেহরির সময়`, `${g} ইফতারের সময়`, `সেহরি ইফতারের সময়সূচি ${yb} ${city.name.bn}`],
+    path: `/ramadan/${slug0}/${city.slug}`,
     locale,
   })
 }
 
 export async function RamadanCityPage({ locale, params }: { locale: Locale } & RamadanCityProps) {
-  const { year, city: slug } = await params
-  const { r, city } = loadCity(slug, year, locale)
+  const { year, city: citySlug } = await params
+  const { r, city } = loadCity(citySlug, year, locale)
   const y = r.start.y
+  const yl = ramadanLabel(r, 'en'), yb = ramadanLabel(r, 'bn'), ya = ramadanLabel(r, 'ar')
+  const slug = ramadanSlug(r)
   const bn = locale === 'bn'
   const name = cityTitle(city, locale)
   const g = bnGenitive(name)
-  const path = localeHref(locale, `/ramadan/${y}/${city.slug}`)
+  const path = localeHref(locale, `/ramadan/${slug}/${city.slug}`)
   const span = citySpan(city, r.start, r.days + 1)
   const wd = WEEKDAYS[bn ? 'bn' : 'en']
   const rows: RamadanRow[] = span.map((d, i) => ({
@@ -275,27 +370,27 @@ export async function RamadanCityPage({ locale, params }: { locale: Locale } & R
   const near = nearbyCities(city, 8)
   const faqs = bn
     ? [
-        { q: `${g} রমজান ${bnDigits(y)}-এর সেহরির সময় কখন?`, a: `প্রথম রোজায় (${fmtDate(r.start, 'bn')}) সেহরির শেষ সময় ${fmtClock(d1.fajr, city.tz, 'bn')} এবং ${bnDigits(r.days)}তম দিনে (${fmtDate(dl.ymd, 'bn')}) ${fmtClock(dl.fajr, city.tz, 'bn')}। প্রতিদিনের সময় উপরের সারণিতে।` },
+        { q: `${g} রমজান ${yb}-এর সেহরির সময় কখন?`, a: `প্রথম রোজায় (${fmtDate(r.start, 'bn')}) সেহরির শেষ সময় ${fmtClock(d1.fajr, city.tz, 'bn')} এবং ${bnDigits(r.days)}তম দিনে (${fmtDate(dl.ymd, 'bn')}) ${fmtClock(dl.fajr, city.tz, 'bn')}। প্রতিদিনের সময় উপরের সারণিতে।` },
         { q: `${g} ইফতারের সময় কখন?`, a: `প্রথম রোজায় ইফতার ${fmtClock(d1.maghrib, city.tz, 'bn')}-এ এবং শেষ রোজায় ${fmtClock(dl.maghrib, city.tz, 'bn')}-এ (সূর্যাস্তের সময়)।` },
         { q: `সেহরির শেষ সময় কি ফজরের সময়ের সমান?`, a: `এই সময়সূচিতে সেহরির শেষ সময় হিসাবকৃত ফজরের শুরুর সময়। কিছু স্থানীয় সময়সূচিতে সতর্কতাবশত কয়েক মিনিট আগে ধরা হয়; আমরা কোনো বাড়তি সময় যোগ করিনি।` },
-        { q: `রমজান ${bnDigits(y)} ${countryName(city.country, 'bn')}-এ কবে শুরু?`, a: `উম্মুল কুরা অনুযায়ী ${fmtDate(r.start, 'bn', { weekday: true })}। চাঁদ দেখার উপর নির্ভর করে বাংলাদেশে একদিন পরে শুরু হতে পারে; সরকারি ঘোষণা অনুসরণ করুন।` },
+        { q: `রমজান ${yb} ${countryName(city.country, 'bn')}-এ কবে শুরু?`, a: `উম্মুল কুরা অনুযায়ী ${fmtDate(r.start, 'bn', { weekday: true })}। চাঁদ দেখার উপর নির্ভর করে বাংলাদেশে একদিন পরে শুরু হতে পারে; সরকারি ঘোষণা অনুসরণ করুন।` },
       ]
     : [
-        { q: `What time is sehri in ${name} during Ramadan ${y}?`, a: `On the first fast (${fmtDate(r.start, 'en')}) sehri ends at ${fmtClock(d1.fajr, city.tz, 'en')}, and on day ${r.days} (${fmtDate(dl.ymd, 'en')}) at ${fmtClock(dl.fajr, city.tz, 'en')}. Every day is in the timetable above.` },
+        { q: `What time is sehri in ${name} during Ramadan ${yl}?`, a: `On the first fast (${fmtDate(r.start, 'en')}) sehri ends at ${fmtClock(d1.fajr, city.tz, 'en')}, and on day ${r.days} (${fmtDate(dl.ymd, 'en')}) at ${fmtClock(dl.fajr, city.tz, 'en')}. Every day is in the timetable above.` },
         { q: `What time is iftar in ${name}?`, a: `Iftar on the first fast is at ${fmtClock(d1.maghrib, city.tz, 'en')} and on the last fast at ${fmtClock(dl.maghrib, city.tz, 'en')} (sunset, Maghrib).` },
         { q: `Is the sehri end time the same as Fajr?`, a: `In this timetable, sehri ends at the calculated start of Fajr. Some local timetables end sehri a few minutes earlier as a precaution; no margin is added here.` },
-        { q: `When does Ramadan ${y} start in ${countryName(city.country, 'en')}?`, a: `By the Umm al-Qura calendar, ${fmtDate(r.start, 'en', { weekday: true })}. Where moon sighting decides, the start can be a day later (±1 day) — follow your national announcement.` },
+        { q: `When does Ramadan ${yl} start in ${countryName(city.country, 'en')}?`, a: `By the Umm al-Qura calendar, ${fmtDate(r.start, 'en', { weekday: true })}. Where moon sighting decides, the start can be a day later (±1 day) — follow your national announcement.` },
       ]
 
   return (
     <div className={pageShell}>
       <PrintStyles />
-      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebPage', name: `${name} Ramadan ${y} timetable`, url: absoluteUrl(path), inLanguage: locale, dateModified: new Date().toISOString(), about: { '@type': 'Place', name: city.name.en, geo: { '@type': 'GeoCoordinates', latitude: city.lat, longitude: city.lng } } }} />
-      <Breadcrumbs locale={locale} items={[{ name: bn ? 'রমজান' : 'Ramadan', ar: 'رمضان', href: '/ramadan' }, { name: `${y}`, href: `/ramadan/${y}` }, { name, href: `/ramadan/${y}/${city.slug}` }]} className="mb-4 print:hidden" />
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'WebPage', name: `${name} Ramadan ${yl} timetable`, url: absoluteUrl(path), inLanguage: locale, dateModified: new Date().toISOString(), about: { '@type': 'Place', name: city.name.en, geo: { '@type': 'GeoCoordinates', latitude: city.lat, longitude: city.lng } } }} />
+      <Breadcrumbs locale={locale} items={[{ name: bn ? 'রমজান' : 'Ramadan', ar: 'رمضان', href: '/ramadan' }, { name: bn ? yb : yl, href: `/ramadan/${slug}` }, { name, href: `/ramadan/${slug}/${city.slug}` }]} className="mb-4 print:hidden" />
       <PageHero
-        eyebrow={<>{lt(locale, { en: `Ramadan ${y}`, bn: `রমজান ${bnDigits(y)}`, ar: `رمضان ${y}` })} · {fmtHijri({ y: r.hijriYear, m: 9, d: 1 }, locale).replace(/^\S+ /, '')}</>}
+        eyebrow={<>{lt(locale, { en: `Ramadan ${yl}`, bn: `রমজান ${yb}`, ar: `رمضان ${ya}` })} · {fmtHijri({ y: r.hijriYear, m: 9, d: 1 }, locale).replace(/^\S+ /, '')}</>}
         icon="crescent"
-        title={bn ? <>{g} সেহরি ও ইফতারের সময়সূচি {bnDigits(y)}</> : <>{name} Sehri &amp; Iftar Time {y}</>}
+        title={bn ? <>{g} সেহরি ও ইফতারের সময়সূচি {yb}</> : <>{name} Sehri &amp; Iftar Time {yl}</>}
         subtitle={bn
           ? <>উম্মুল কুরা অনুযায়ী প্রথম রোজা {fmtDate(r.start, 'bn', { weekday: true })} · ঈদুল ফিতর {fmtDate(r.eid, 'bn')} · সময় {city.tz.replace(/_/g, ' ')}</>
           : <>First fast (Umm al-Qura) {fmtDate(r.start, 'en', { weekday: true })} · Eid al-Fitr {fmtDate(r.eid, 'en')} · times in {city.tz.replace(/_/g, ' ')}</>}
@@ -304,7 +399,7 @@ export async function RamadanCityPage({ locale, params }: { locale: Locale } & R
 
       <section className="mt-8" aria-labelledby="rt-h">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 id="rt-h" className="font-display text-2xl font-semibold">{lt(locale, { en: `Ramadan ${y} timetable for ${name}`, bn: `${g} রমজান ${bnDigits(y)}-এর সময়সূচি`, ar: `جدول رمضان ${y}` })}</h2>
+          <h2 id="rt-h" className="font-display text-2xl font-semibold">{lt(locale, { en: `Ramadan ${yl} timetable for ${name}`, bn: `${g} রমজান ${yb}-এর সময়সূচি`, ar: `جدول رمضان ${ya}` })}</h2>
           <PrintButton className={`${chipCls} print:hidden`} />
         </div>
         <RamadanTable rows={rows} tz={city.tz} cityName={name} startLabel={{ saudi: bn ? 'সৌদি (উম্মুল কুরা)' : 'Saudi (Umm al-Qura)', plusOne: bn ? '+১ দিন (চাঁদ দেখা)' : '+1 day (moon sighting)' }} />
@@ -319,11 +414,11 @@ export async function RamadanCityPage({ locale, params }: { locale: Locale } & R
         <div className="flex flex-wrap gap-2">
           <Link href={localeHref(locale, `/prayer-times/${city.slug}`)} className={chipCls}>{lt(locale, { en: 'Prayer times today', bn: 'আজকের নামাজের সময়', ar: 'مواقيت اليوم' })}</Link>
           {months.map((m) => <Link key={m} href={localeHref(locale, `/prayer-times/${city.slug}/${m}`)} className={chipCls}>{lt(locale, { en: `Monthly timetable ${m}`, bn: `মাসিক সময়সূচি ${bnDigits(m)}`, ar: `الجدول الشهري ${m}` })}</Link>)}
-          <Link href={localeHref(locale, `/ramadan/${y}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${y} — all cities`, bn: `রমজান ${bnDigits(y)} — সব শহর`, ar: 'كل المدن' })}</Link>
+          <Link href={localeHref(locale, `/ramadan/${slug}`)} className={chipCls}>{lt(locale, { en: `Ramadan ${yl} — all cities`, bn: `রমজান ${yb} — সব শহর`, ar: 'كل المدن' })}</Link>
         </div>
-        <YearLinks locale={locale} year={y} city={city} />
+        <YearLinks locale={locale} r={r} city={city} />
         <h3 className="mt-8 mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{lt(locale, { en: 'Nearby cities', bn: 'নিকটবর্তী শহর', ar: 'مدن قريبة' })}</h3>
-        <CityChips list={near} locale={locale} path={`/ramadan/${y}`} />
+        <CityChips list={near} locale={locale} path={`/ramadan/${slug}`} />
       </section>
     </div>
   )

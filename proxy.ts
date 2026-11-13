@@ -16,8 +16,28 @@ function notFound(req: NextRequest) {
  *  - real HTTP 404s for unknown surahs and out-of-range / malformed ayah numbers
  *    (the pages stream behind a loading.tsx Suspense boundary, so notFound() there would come after a 200)
  */
+/** True when every %XX sequence in the path decodes (malformed UTF-8 such as "%E0%A4" makes Next's own param decoding answer 500). */
+function decodable(path: string) {
+  if (!path.includes('%')) return true
+  try { decodeURIComponent(path); return true } catch { return false }
+}
+
+/** 404 for a malformed percent-encoded path, in the format of the surface that was asked for. */
+function malformed(req: NextRequest, path: string) {
+  const message = 'Malformed percent-encoding in the URL.'
+  if (path.startsWith('/api/')) {
+    return NextResponse.json({ error: { status: 404, code: 'not_found', message } }, { status: 404, headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=60, s-maxage=300' } })
+  }
+  if (path.endsWith('.md') || path.startsWith('/md/')) {
+    return new NextResponse(`# Not found\n\n${message}\n`, { status: 404, headers: { 'Content-Type': 'text/markdown; charset=utf-8' } })
+  }
+  return notFound(req)
+}
+
 export function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname
+  // Next decodes dynamic params itself and answers a bare 500 when that fails (e.g. /api/v1/ayah/%E0%A4): stop it here
+  if (!decodable(path)) return malformed(req, path)
   // Markdown alternates for LLMs: /surah/al-baqarah/255.md → /md/surah/al-baqarah/255 (route handler validates and 404s)
   if (path.endsWith('.md')) return NextResponse.rewrite(new URL(`/md${path.slice(0, -3)}`, req.url))
   // Short citation URLs: /2:255, /2/255, /2.255 (and /bn/…) → 308 to the canonical ayah page; ranges go to the first ayah
@@ -30,6 +50,8 @@ export function proxy(req: NextRequest) {
     url.pathname = `${bnPrefix ?? ''}/surah/${chapters[id - 1].slug}/${n}`
     return NextResponse.redirect(url, 308)
   }
+  // everything else that reached the proxy only for the decoding check (paths containing "%") goes on unchanged
+  if (!/^\/(?:bn\/)?surah(?:\/|$)/.test(path)) return NextResponse.next()
   // /bn/surah/* (Bangla twins) is handled exactly like /surah/*, keeping the /bn prefix on redirects.
   const bn = req.nextUrl.pathname.startsWith('/bn/')
   const parts = req.nextUrl.pathname.split('/')
@@ -66,6 +88,10 @@ export const config = {
     '/((?:bn/)?events(?:/[^/]+){0,2}\\.md)',
     // markdown alternates of the learning guides: /learn.md, /learn/salah.md, /learn/tajweed/izhar.md
     '/((?:bn/)?learn(?:/[^/]+){0,2}\\.md)',
+    // markdown alternates of single hadith pages: /hadith/bukhari/1.md, /bn/hadith/muslim/2564.md
+    '/((?:bn/)?hadith/[^/]+/\\d+\\.md)',
+    // any other path with a percent-escape: malformed encoding check (see `decodable`); assets never match
+    '/((?!_next/)[^?]*%.*)',
     // short ayah URLs
     '/((?:bn/)?\\d{1,3}(?::|%3A|%3a|\\.)\\d{1,3}(?:-\\d{1,3})?)',
     '/((?:bn/)?\\d{1,3}/\\d{1,3})',

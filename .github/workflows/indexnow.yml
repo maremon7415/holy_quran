@@ -1,6 +1,11 @@
 name: IndexNow
 
-# Pings IndexNow (Bing → ChatGPT search & Copilot, Yandex, Seznam …) with every sitemap URL.
+# Pings IndexNow (Bing → ChatGPT search & Copilot, Yandex, Seznam …) with CHANGED URLs.
+#  - push to master: only the URLs affected by the pushed commits (`scripts/indexnow.mjs --changed-from <before>`
+#    maps changed files to URL sets; site code without a narrower set → the core pages; never every URL).
+#  - manual run: the core pages by default, the URLs changed since a given commit, or (explicit `full` input) every
+#    sitemap URL (~79k — use sparingly, IndexNow throttles sites that resubmit unchanged URLs).
+# HTTP 429 from IndexNow is logged and the job still succeeds.
 # Needs repository secrets INDEXNOW_KEY and SITE_URL (and INDEXNOW_KEY set on the deployment so
 # /{key}.txt is served). Skips gracefully when they are not configured.
 on:
@@ -10,21 +15,25 @@ on:
         description: 'List URLs only, do not submit'
         type: boolean
         default: false
+      full:
+        description: 'Submit EVERY sitemap URL (~79k). Leave off unless the whole site changed.'
+        type: boolean
+        default: false
+      changed_from:
+        description: 'Submit only URLs affected since this commit SHA (empty = core pages)'
+        type: string
+        default: ''
   push:
     branches: [master]
-  # Vercel (and other hosts) report deployments back to GitHub; run as soon as production is live.
-  deployment_status:
 
 permissions:
   contents: read
 
 jobs:
   submit:
-    if: github.event_name != 'deployment_status' || (github.event.deployment_status.state == 'success' && contains(fromJSON('["Production","production"]'), github.event.deployment.environment))
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # job-level so skipped (preview) deployment events never cancel a running submission;
-    # a production deployment_status supersedes the push run that is still waiting for the deploy
+    # a newer push supersedes a run that is still waiting for its deployment
     concurrency:
       group: indexnow
       cancel-in-progress: true
@@ -33,6 +42,9 @@ jobs:
       SITE_URL: ${{ secrets.SITE_URL }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # the changed-file mapping diffs <before>..HEAD
+          fetch-depth: 0
       - name: Check configuration
         id: cfg
         run: |
@@ -46,7 +58,7 @@ jobs:
         if: steps.cfg.outputs.enabled == 'true'
         with:
           node-version: 22
-      # On a plain push, give the deployment time to go live; wait until the new key file answers.
+      # On a push, give the deployment time to go live; wait until the key file answers.
       - name: Wait for deployment
         if: steps.cfg.outputs.enabled == 'true' && github.event_name == 'push'
         run: |
@@ -56,6 +68,20 @@ jobs:
             sleep 20
           done
           echo "::warning::$SITE_URL/$INDEXNOW_KEY.txt does not serve the key; continuing (the script will fail clearly)."
-      - name: Submit sitemap URLs
+      - name: Submit URLs
         if: steps.cfg.outputs.enabled == 'true'
-        run: node scripts/indexnow.mjs ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          FULL: ${{ inputs.full }}
+          CHANGED_FROM: ${{ inputs.changed_from }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          set --
+          if [ "$EVENT" = "push" ]; then set -- --changed-from "$BEFORE"
+          elif [ "$FULL" = "true" ]; then set -- --all
+          elif [ -n "$CHANGED_FROM" ]; then set -- --changed-from "$CHANGED_FROM"
+          else set -- --core
+          fi
+          if [ "$DRY" = "true" ]; then set -- "$@" --dry-run; fi
+          node scripts/indexnow.mjs "$@"

@@ -14,7 +14,7 @@ export function openApiSpec() {
       title: `${site.name} API`,
       version: '1.0.0',
       summary: 'Read-only Quran, dua, topic and 99-Names data with canonical citation URLs.',
-      description: `Free, keyless, CORS-enabled JSON API over the ${site.name} corpus: the Quran (Uthmani Arabic, Saheeh International, Abdel Haleem, Taisirul Quran Bangla, transliteration, Bangla uccharon), authentic duas with sources, Quran topics and the 99 Names of Allah. Every object includes \`url\` — the canonical page on ${site.url} — and a \`citation\` string; please link to it when you quote. Responses are cached at the edge for 24h. AI agents can use the MCP server at ${site.url}/api/mcp instead.`,
+      description: `Free, keyless, CORS-enabled JSON API over the ${site.name} corpus: the Quran (Uthmani Arabic, Saheeh International, Abdel Haleem, Taisirul Quran Bangla, transliteration, Bangla uccharon), authentic duas with sources, Quran topics and the 99 Names of Allah. Every object includes \`url\` — the canonical page on ${site.url} — and a \`citation\` string; please link to it when you quote. Responses are cached at the edge for 24h. Fair use: 60 requests per minute per IP (20 per minute for /ask); over the limit you get HTTP 429 with \`Retry-After\`. AI agents can use the MCP server at ${site.url}/api/mcp instead.`,
       license: { name: 'Content: see sources (Quran.com API); code: open source', url: site.github },
       contact: { name: site.name, url: `${site.url}/developers` },
     },
@@ -78,7 +78,7 @@ export function openApiSpec() {
             { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
             { name: 'offset', in: 'query', schema: { type: 'integer', minimum: 0, default: 0 } },
           ],
-          responses: { 200: { description: 'Ranked hadiths with snippets' }, 400: err, 502: err },
+          responses: { 200: { description: 'Ranked hadiths with snippets. `failed` lists collections that could not be searched right now (partial results, cached for 60 s only).' }, 400: err, 429: err, 502: err },
         },
       },
       '/api/v1/duas': {

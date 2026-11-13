@@ -69,14 +69,50 @@ export function ramadanOf(hy: number): RamadanRange {
   return r
 }
 
-/** The Ramadan that starts in Gregorian year `gy` (null if none; first one if two). */
-export function ramadanInGregorianYear(gy: number): RamadanRange | null {
+/**
+ * Every Ramadan that STARTS in Gregorian year `gy`, earliest first. Usually one; the Hijri year is ~11 days shorter than
+ * the Gregorian one, so now and then (first: 2030 = 1451 on 5 Jan and 1452 on 26 Dec) a year holds two.
+ */
+export function ramadansInGregorianYear(gy: number): RamadanRange[] {
   const guess = Math.round((gy - 621.5744) / 0.970229)
-  for (const hy of [guess - 1, guess, guess + 1]) {
+  const out: RamadanRange[] = []
+  for (const hy of [guess - 2, guess - 1, guess, guess + 1, guess + 2]) {
     const r = ramadanOf(hy)
-    if (r.start.y === gy) return r
+    if (r.start.y === gy) out.push(r)
   }
-  return null
+  return out.sort((a, b) => a.hijriYear - b.hijriYear)
+}
+
+/**
+ * URL slug of a Ramadan page (`/ramadan/{slug}`), chosen for SEO ("Ramadan 2027"):
+ *  - the only Ramadan starting in a Gregorian year → that year (`2027`);
+ *  - one of two in the same year → its Hijri year (`1452-ah`), while `/ramadan/2030` becomes a chooser page.
+ */
+export function ramadanSlug(r: RamadanRange): string {
+  return ramadansInGregorianYear(r.start.y).length > 1 ? `${r.hijriYear}-ah` : String(r.start.y)
+}
+export const ramadanPath = (r: RamadanRange) => `/ramadan/${ramadanSlug(r)}`
+
+export type RamadanSlug = { kind: 'year'; year: number } | { kind: 'ah'; hijriYear: number }
+/** Parses `2030` / `1452-ah` (anything else → null). Hijri years are limited to the range Intl can convert. */
+export function parseRamadanSlug(s: string): RamadanSlug | null {
+  if (/^\d{4}$/.test(s)) return { kind: 'year', year: +s }
+  const m = /^(\d{4})-ah$/.exec(s)
+  return m && +m[1] >= 1300 && +m[1] <= 1600 ? { kind: 'ah', hijriYear: +m[1] } : null
+}
+
+/** The Ramadan a bare Gregorian year should lead to on `today`: the one running, else the next to start, else the last of that year. */
+export function ramadanForYear(gy: number, today: Ymd): RamadanRange | null {
+  const list = ramadansInGregorianYear(gy)
+  const t = Date.UTC(today.y, today.m - 1, today.d)
+  return list.find((r) => t <= Date.UTC(r.end.y, r.end.m - 1, r.end.d)) ?? list[list.length - 1] ?? null
+}
+
+/** Short title fragment: `2027`, or `2030 (1452 AH)` when the Gregorian year holds two Ramadans. */
+export function ramadanLabel(r: RamadanRange, lang: 'en' | 'bn' | 'ar' = 'en'): string {
+  const n = (v: number) => (lang === 'bn' ? bnD(v) : String(v))
+  if (ramadansInGregorianYear(r.start.y).length < 2) return n(r.start.y)
+  return `${n(r.start.y)} (${n(r.hijriYear)} ${lang === 'bn' ? 'হিজরি' : lang === 'ar' ? 'هـ' : 'AH'})`
 }
 
 /** Ramadan currently running, else the next one, relative to `today`. */

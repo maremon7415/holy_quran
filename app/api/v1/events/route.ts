@@ -1,10 +1,11 @@
 import { badRequest, json, notFound } from '@/lib/api/http'
 import { eventJson, eventsListJson, resolveEventName } from '@/lib/events/service'
+import { withRateLimit } from '@/lib/api/ratelimit'
 
 export { OPTIONS } from '@/lib/api/http'
 
 /** GET /api/v1/events — upcoming events (next 12 months) · ?year=2027 for one Gregorian year · ?event=eid-al-adha[&year=2027] for one event */
-export async function GET(req: Request) {
+export const GET = withRateLimit(async function GET(req: Request) {
   const sp = new URL(req.url).searchParams
   const yearRaw = sp.get('year')
   let year: number | null = null
@@ -21,4 +22,4 @@ export async function GET(req: Request) {
   }
   const r = eventsListJson(year)
   return r ? json(r) : notFound('Year out of range: events are available for the current year −1 … +4.')
-}
+})

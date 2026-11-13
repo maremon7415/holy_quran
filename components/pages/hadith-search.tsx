@@ -14,7 +14,7 @@ import { lt } from '@/lib/i18n/lt'
 import { T } from '@/lib/i18n/text'
 import { COLLECTIONS, collectionMeta } from '@/lib/hadith/collections'
 import { searchHadith } from '@/lib/hadith/search'
-import { highlightParts } from '@/lib/hadith/search-utils'
+import { highlightParts, MAX_HADITH_QUERY } from '@/lib/hadith/search-utils'
 import { featuredFor } from '@/lib/hadith/hadith'
 import { hadithUrl, searchUrl } from '@/lib/hadith/url'
 
@@ -34,7 +34,7 @@ export async function hadithSearchMeta(locale: Locale, { searchParams }: SearchP
 
 export async function HadithSearchPage({ locale, searchParams }: { locale: Locale } & SearchProps) {
   const sp = await searchParams
-  const q = one(sp.q).trim().slice(0, 200)
+  const q = one(sp.q).slice(0, MAX_HADITH_QUERY).trim()
   const cRaw = one(sp.c)
   const col = COLLECTIONS.find((c) => c.slug === cRaw)?.slug
   const page = Math.min(Math.max(parseInt(one(sp.page), 10) || 1, 1), 200)

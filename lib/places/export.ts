@@ -38,7 +38,7 @@ function fold(line: string) {
   out.push(cur)
   return out.join('\r\n ')
 }
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n')
 
 /** iCalendar file with an event per prayer (no alarms). Times are UTC instants, so any calendar app shows them in the viewer's zone. */
 export function monthIcs(city: City, y: number, m: number, stamp = Date.now()): string {

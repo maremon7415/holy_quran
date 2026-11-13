@@ -6,6 +6,9 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     // tests/e2e is Playwright's; never let vitest pick it up
     exclude: ['tests/e2e/**', 'node_modules/**'],
+    // per-IP API rate limits (lib/api/ratelimit.ts) would trip suites that call the handlers in a loop;
+    // tests/unit/api/rate-limit.test.ts turns them back on
+    env: { API_RATE_LIMIT: 'off' },
   },
   resolve: {
     alias: {

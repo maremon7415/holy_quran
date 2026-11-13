@@ -7,16 +7,19 @@ import { Faq } from '@/components/content/faq'
 import { PageHero, pageShell } from '@/components/content/page-hero'
 import { UiIcon } from '@/components/ui-icon'
 import { CityLive } from '@/components/places/city-live'
-import { CityChips, DownloadBar, PrayerGrid, SehriIftar, TimeTable, chipCls } from '@/components/places/city-ui'
+import { CityChips, DownloadBar, TimeTable, chipCls } from '@/components/places/city-ui'
 import { buildMeta } from '@/lib/content/seo'
 import { lt } from '@/lib/i18n/lt'
 import { localeHref, type Locale } from '@/lib/i18n/routes'
 import { absoluteUrl } from '@/lib/site'
 import { bdCities, bnGenitive, cities, cityTitle, compassPoint, countryName, METHOD_NAMES, nearbyCities, qiblaFor, resolveCity, type City } from '@/lib/places/cities'
-import { cityDay, citySpan, cityToday, fmtClock, fmtDate, fmtMonth, bnDigits, type CityDay } from '@/lib/places/times'
-import { hijriOf, fmtHijri, currentOrNextRamadan } from '@/lib/places/hijri'
+import { citySpan, cityToday, fmtClock, fmtDate, fmtMonth, bnDigits, type CityDay } from '@/lib/places/times'
+import { currentOrNextRamadan, ramadanLabel, ramadanPath } from '@/lib/places/hijri'
 import { monthKey } from '@/lib/places/export'
+import { faqsFor } from '@/lib/places/city-faqs'
+import { TodayFaqItems, TodayHeroDate, TodayPrayerGrid, TodaySehriIftar } from '@/components/places/city-today'
 
+export { faqsFor }
 export type CityProps = { params: Promise<{ city: string }> }
 export const cityParams = () => cities.map((c) => ({ city: c.slug }))
 
@@ -61,43 +64,14 @@ export async function cityMeta(locale: Locale, { params }: CityProps): Promise<M
   })
 }
 
-export function faqsFor(city: City, day: CityDay, locale: Locale, qibla: { bearing: number; distanceKm: number }) {
-  const t = (ms: number) => fmtClock(ms, city.tz, locale)
-  const name = cityTitle(city, locale)
-  const date = fmtDate(day.ymd, locale)
-  const m = METHOD_NAMES[city.method]
-  const asr = city.madhab === 'hanafi'
-  const km = Math.round(qibla.distanceKm).toLocaleString('en-US')
-  if (locale === 'bn') {
-    const g = bnGenitive(name)
-    return [
-      { q: `আজ ${g} ফজরের নামাজের সময় কখন?`, a: `${date} তারিখে ${g} ফজরের ওয়াক্ত শুরু হবে ${t(day.fajr)}-এ এবং সূর্যোদয় ${t(day.sunrise)}-এ ফজরের ওয়াক্ত শেষ হবে।` },
-      { q: `আজ ${g} ইফতারের (মাগরিব) সময় কখন?`, a: `${date} তারিখে ${g} সূর্যাস্ত ও মাগরিবের ওয়াক্ত শুরু ${t(day.maghrib)}-এ। রোজাদার এই সময়ে ইফতার করবেন।` },
-      { q: `${g} সেহরির শেষ সময় আজ কখন?`, a: `হিসাব অনুযায়ী সেহরির শেষ সময় ফজরের ওয়াক্ত শুরুর সময় অর্থাৎ ${t(day.fajr)}। কিছু স্থানীয় সময়সূচিতে সতর্কতাবশত কয়েক মিনিট আগে সেহরি শেষ করার কথা বলা হয়; আমরা কোনো বাড়তি সময় যোগ করিনি।` },
-      { q: `আসরের সময় কখন — হানাফি নাকি শাফেয়ি?`, a: `${g} আজ হানাফি মাযহাব অনুযায়ী আসরের ওয়াক্ত শুরু ${t(day.asrHanafi)}-এ এবং শাফেয়ি/স্ট্যান্ডার্ড হিসাবে ${t(day.asrStandard)}-এ।` },
-      { q: `এই সময়সূচি কোন পদ্ধতিতে হিসাব করা হয়েছে?`, a: `${m.bn} পদ্ধতিতে, ${asr ? 'হানাফি আসর সহ' : 'স্ট্যান্ডার্ড আসর সহ'}। অবস্থান: ${city.lat.toFixed(2)}°, ${city.lng.toFixed(2)}°। স্থানীয় মসজিদের সময়সূচি কয়েক মিনিট আলাদা হতে পারে। /prayer-times পাতা থেকে পদ্ধতি বদলানো যায়।` },
-      { q: `${g} থেকে কিবলার দিক কোনটি?`, a: `${g} থেকে কাবার দিক উত্তর থেকে ঘড়ির কাঁটার দিকে ${num(locale, qibla.bearing.toFixed(1))}° (${compassPoint(qibla.bearing, 'bn')}), দূরত্ব প্রায় ${num(locale, km)} কিলোমিটার।` },
-    ]
-  }
-  return [
-    { q: `What time is Fajr in ${name} today?`, a: `On ${date}, Fajr in ${name} begins at ${t(day.fajr)} and lasts until sunrise at ${t(day.sunrise)}.` },
-    { q: `What time is Maghrib and iftar in ${name} today?`, a: `On ${date}, sunset and the start of Maghrib in ${name} is at ${t(day.maghrib)}. A fasting person breaks the fast (iftar) at this time.` },
-    { q: `What is the sehri end time in ${name} today?`, a: `By calculation, sehri ends when Fajr begins: ${t(day.fajr)} on ${date}. Some local timetables end sehri a few minutes earlier as a precaution; no margin is added here.` },
-    { q: `When is Asr in ${name} — Hanafi or Shafi’i?`, a: `Today in ${name}, Asr starts at ${t(day.asrHanafi)} by the Hanafi reckoning (shadow twice the object’s height) and at ${t(day.asrStandard)} by the Shafi’i/Maliki/Hanbali reckoning.` },
-    { q: `Which calculation method are these prayer times based on?`, a: `${m.en}, with ${asr ? 'Hanafi' : 'standard (Shafi’i)'} Asr as the regional default, for coordinates ${city.lat.toFixed(2)}°, ${city.lng.toFixed(2)}° (${city.tz}).${city.country === 'GB' ? ' Mosques in the UK use different conventions, so check your local mosque timetable.' : ' Your local mosque may differ by a few minutes.'} You can change the method and madhab on the main prayer times page.` },
-    { q: `What is the Qibla direction in ${name}?`, a: `From ${name} the Kaaba lies at ${qibla.bearing.toFixed(1)}° clockwise from true north (${compassPoint(qibla.bearing)}), about ${km} km away.` },
-  ]
-}
-
 export async function CityPrayerPage({ locale, params }: { locale: Locale } & CityProps) {
   const { city, today, days, day } = await load(params, locale)
   const bn = locale === 'bn'
   const name = cityTitle(city, locale)
   const country = countryName(city.country, locale)
   const qibla = qiblaFor(city)
-  const hij = hijriOf(today)
   const r = currentOrNextRamadan(today).range
-  const ramadanPath = localeHref(locale, `/ramadan/${r.start.y}/${city.slug}`)
+  const ramadanHref = localeHref(locale, `${ramadanPath(r)}/${city.slug}`)
   const faqs = faqsFor(city, day, locale, qibla)
   const path = localeHref(locale, `/prayer-times/${city.slug}`)
   const nearby = nearbyCities(city, 10)
@@ -105,6 +79,8 @@ export async function CityPrayerPage({ locale, params }: { locale: Locale } & Ci
   const next = today.m === 12 ? { y: today.y + 1, m: 1 } : { y: today.y, m: today.m + 1 }
   const monthHref = (v: { y: number; m: number }) => localeHref(locale, `/prayer-times/${city.slug}/${monthKey(v.y, v.m)}`)
   const method = METHOD_NAMES[city.method]
+  // a few days are sent to the client islands, which pick the city's real "today" (the page may be older than the city's midnight)
+  const near3 = days.slice(0, 3)
   const live = days.slice(0, 3).map((d) => ({ date: d.date, fajr: d.fajr, dhuhr: d.dhuhr, asr: city.madhab === 'hanafi' ? d.asrHanafi : d.asr, maghrib: d.maghrib, isha: d.isha, friday: d.friday }))
   const sameDivision = city.country === 'BD' ? bdCities.filter((c) => c.division && c.slug !== city.slug) : []
 
@@ -120,14 +96,14 @@ export async function CityPrayerPage({ locale, params }: { locale: Locale } & Ci
         eyebrow={<>{lt(locale, { en: 'Prayer times', bn: 'নামাজের সময়', ar: 'مواقيت الصلاة' })} · {country}</>}
         icon="prayer"
         title={bn ? <>{bnGenitive(name)} নামাজের সময়সূচি আজ</> : <>{name} Prayer Times Today</>}
-        subtitle={<>{fmtDate(today, locale, { weekday: true })} · {fmtHijri(hij, locale)}{bn ? '' : ''}</>}
+        subtitle={<TodayHeroDate city={city} days={near3} locale={locale} />}
       >
         <CityLive tz={city.tz} cityName={name} days={live} />
       </PageHero>
 
       <section className="mt-8" aria-labelledby="today-h">
         <h2 id="today-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `Today’s prayer times in ${name}`, bn: `আজ ${bnGenitive(name)} নামাজের ওয়াক্ত`, ar: `مواقيت الصلاة اليوم` })}</h2>
-        <PrayerGrid city={city} day={day} locale={locale} />
+        <TodayPrayerGrid city={city} days={near3} locale={locale} />
         <p className="mt-3 text-sm text-muted-foreground">
           {lt(locale, { en: `Times are local time in ${name} (${city.tz.replace(/_/g, ' ')}).`, bn: `সময়গুলো ${bnGenitive(name)} স্থানীয় সময় (${city.tz.replace(/_/g, ' ')}) অনুযায়ী।`, ar: `الأوقات بالتوقيت المحلي (${city.tz.replace(/_/g, ' ')}).` })}
         </p>
@@ -135,9 +111,9 @@ export async function CityPrayerPage({ locale, params }: { locale: Locale } & Ci
 
       <section className="mt-8" aria-labelledby="sehri-h">
         <h2 id="sehri-h" className="font-display mb-4 text-2xl font-semibold">{lt(locale, { en: `Sehri & iftar time in ${name} today`, bn: `আজ ${bnGenitive(name)} সেহরি ও ইফতারের সময়`, ar: 'السحور والإفطار اليوم' })}</h2>
-        <SehriIftar city={city} day={day} locale={locale} />
+        <TodaySehriIftar city={city} days={near3} locale={locale} />
         <p className="mt-3 text-sm">
-          <Link href={ramadanPath} className="font-medium text-primary hover:underline">{lt(locale, { en: `Ramadan ${r.start.y} sehri & iftar timetable for ${name} →`, bn: `${bnGenitive(name)} রমজান ${bnDigits(r.start.y)} সেহরি ও ইফতারের সময়সূচি →`, ar: `جدول السحور والإفطار لرمضان ${r.start.y} ←` })}</Link>
+          <Link href={ramadanHref} className="font-medium text-primary hover:underline">{lt(locale, { en: `Ramadan ${ramadanLabel(r, 'en')} sehri & iftar timetable for ${name} →`, bn: `${bnGenitive(name)} রমজান ${ramadanLabel(r, 'bn')} সেহরি ও ইফতারের সময়সূচি →`, ar: `جدول السحور والإفطار لرمضان ${ramadanLabel(r, 'ar')} ←` })}</Link>
         </p>
       </section>
 
@@ -169,7 +145,7 @@ export async function CityPrayerPage({ locale, params }: { locale: Locale } & Ci
         <div className="mt-3"><DownloadBar locale={locale} csv={`/prayer-times/${city.slug}/${monthKey(ym.y, ym.m)}/calendar.csv`} ics={`/prayer-times/${city.slug}/${monthKey(ym.y, ym.m)}/calendar.ics`} /></div>
       </section>
 
-      <Faq faqs={faqs} locale={locale} />
+      <Faq faqs={faqs} locale={locale} items={<TodayFaqItems city={city} days={near3} locale={locale} qibla={qibla} />} />
 
       {sameDivision.length > 0 && (
         <section className="mt-12" aria-labelledby="div-h">

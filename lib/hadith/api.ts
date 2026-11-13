@@ -57,7 +57,8 @@ export async function searchHadithItems(q: string, opts: { collection?: string; 
     id: `${x.collection}:${x.number}`, collection: x.collection, collectionName: collectionMeta(x.collection)!.name.en, number: String(x.number),
     [field]: x.snippet, url: absoluteUrl(hadithUrl(x.collection, x.number)), citation: hadithCitation(x.collection, x.number), score: x.score,
   }))
-  return { query: r.query, language: r.lang, total: r.total, exact: r.exact ? { ...r.exact, url: absoluteUrl(r.exact.url) } : null, results }
+  // `failed`: collections that could not be searched right now (corpus unreachable) → the results are partial
+  return { query: r.query, language: r.lang, total: r.total, exact: r.exact ? { ...r.exact, url: absoluteUrl(r.exact.url) } : null, results, failed: r.failed }
 }
 
 /** MCP provider (lib/mcp/providers.ts). */
@@ -70,7 +71,7 @@ export const hadithMcpProvider: HadithProvider = {
   async searchHadith(query, opts = {}) {
     const col = opts.collection && resolveCollectionSlug(opts.collection)?.slug
     const r = await searchHadithItems(query, { collection: col || undefined, lang: opts.lang, limit: opts.limit })
-    return { total: r.total, results: r.exact ? [(await getHadithItem(r.exact.collection, r.exact.number))!, ...r.results].filter(Boolean) : r.results }
+    return { total: r.total, ...(r.failed.length ? { failed: r.failed } : {}), results: r.exact ? [(await getHadithItem(r.exact.collection, r.exact.number))!, ...r.results].filter(Boolean) : r.results }
   },
   collections: () => COLLECTIONS.map((c) => ({ id: c.slug, name: c.name.en, url: absoluteUrl(`/hadith/${c.slug}`) })),
 }

@@ -15,7 +15,8 @@ export async function hadithMd(collection: string, num: string, locale: Locale):
   const r = resolveCollectionSlug(collection)
   const n = parseHadithNumber(num)
   if (!r || !r.canonical || n === null) return null
-  const h = await getHadith(r.slug, n).catch(() => null)
+  // HadithFetchError propagates: the md route answers 503 (temporary) instead of a 404
+  const h = await getHadith(r.slug, n)
   if (!h) return null
   const m = collectionMeta(r.slug)!
   const bn = locale === 'bn'

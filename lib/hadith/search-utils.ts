@@ -110,17 +110,34 @@ const EN_FILLER = new Set(['hadith', 'hadis', 'hadeeth', 'no', 'no.', 'number', 
 const BN_FILLER = /হাদিস|হাদীস|শরীফ|সহীহ|সহিহ|সুনানে|সুনান|জামে|ইমাম|নং|নম্বর|নাম্বার|এর|-/g
 const AR_FILLER = /صحيح|حديث|رقم|سنن|جامع|كتاب|ال(?=\s)|\bال\b/g
 
+/** Longest accepted search / reference query; every entry point (page, API, MCP, palette) is cut to this. */
+export const MAX_HADITH_QUERY = 200
+
+const isDigit = (c: number) => c >= 48 && c <= 57
+/**
+ * The last run of ASCII digits (its last ≤ 5 digits), found with one backward scan — same result as
+ * `/(\d{1,5})(?!.*\d)/` without its quadratic backtracking on inputs like "1 1 1 1 …".
+ */
+export function lastDigitRun(s: string): { digits: string; index: number } | null {
+  let end = s.length
+  while (end > 0 && !isDigit(s.charCodeAt(end - 1))) end--
+  if (end === 0) return null
+  let start = end
+  while (start > 0 && end - start < 5 && isDigit(s.charCodeAt(start - 1))) start--
+  return { digits: s.slice(start, end), index: start }
+}
+
 /**
  * "Sahih Bukhari hadith 1", "বুখারী হাদিস ১", "bukhari:7", "صحيح مسلم 2564" → a direct hadith reference.
  * Deliberately strict: after removing filler words the rest must be exactly a collection name, so that
  * "muslim women 100" or "hadith about prayer 5" stay ordinary searches.
  */
 export function parseHadithReference(q: string): { collection: CollectionSlug; number: number } | null {
-  const s = asciiDigits(q).trim().replace(/\s+/g, ' ')
-  const nm = s.match(/(\d{1,5})(?!.*\d)/)
+  const s = asciiDigits(q.slice(0, MAX_HADITH_QUERY)).trim().replace(/\s+/g, ' ')
+  const nm = lastDigitRun(s)
   if (!nm) return null
-  const number = Number(nm[1])
-  const rest = (s.slice(0, nm.index) + ' ' + s.slice((nm.index ?? 0) + nm[1].length)).replace(/[:#/.,\-–—()]/g, ' ').replace(/\s+/g, ' ').trim()
+  const number = Number(nm.digits)
+  const rest = (s.slice(0, nm.index) + ' ' + s.slice(nm.index + nm.digits.length)).replace(/[:#/.,\-–—()]/g, ' ').replace(/\s+/g, ' ').trim()
   if (!rest) return null
   let slug: CollectionSlug | null = null
   if (/[\u0980-\u09FF]/.test(rest)) {

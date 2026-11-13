@@ -28,7 +28,7 @@ export interface HadithProvider {
   /** Look up one hadith by reference, e.g. "bukhari 6306", "Sahih Muslim 2723", "muslim:2723". */
   getHadith(reference: string): Promise<HadithItem | null>
   /** Full-text search. `collection` narrows to one collection id. */
-  searchHadith(query: string, opts?: { collection?: string; limit?: number; lang?: 'en' | 'bn' | 'ar' }): Promise<{ total: number; results: HadithItem[] }>
+  searchHadith(query: string, opts?: { collection?: string; limit?: number; lang?: 'en' | 'bn' | 'ar' }): Promise<{ total: number; results: HadithItem[]; /** collections that could not be searched (partial results) */ failed?: string[] }>
   /** Collection ids accepted by `searchHadith({ collection })`. */
   collections?(): Promise<{ id: string; name: string; url?: string }[]> | { id: string; name: string; url?: string }[]
 }

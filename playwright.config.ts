@@ -36,7 +36,8 @@ export default defineConfig({
           url: 'http://localhost:3000',
           timeout: 600_000,
           reuseExistingServer: false,
-          env: { NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://noor.example.test' },
+          // the e2e suite hits the API from one IP far faster than a real client; the limiter itself is unit-tested
+          env: { NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://noor.example.test', API_RATE_LIMIT: 'off' },
         }
       : undefined,
 })

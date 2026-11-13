@@ -30,6 +30,19 @@ const EXAMPLES = {
 type Status = 'idle' | 'loading' | 'done' | 'error'
 interface OfflineHit { key: string; surah: number; ayah: number; score: number }
 
+/** Once per page load: ask the server to start loading the Ask model while the visitor types (cold-start latency). */
+let warmed = false
+function warmServerModel() {
+  if (warmed || typeof window === 'undefined') return
+  warmed = true
+  // after the page has settled (hydration, fonts), so the request never competes with the first paint
+  // (the tiny body is read so the request completes — an unread body keeps it "in flight" for the browser)
+  const go = () => { fetch('/api/ask?warm=1').then((r) => r.text()).catch(() => {}) }
+  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }
+  if (w.requestIdleCallback) w.requestIdleCallback(go, { timeout: 3000 })
+  else setTimeout(go, 1500)
+}
+
 export function AskClient({ initialQuery = '' }: { initialQuery?: string }) {
   const t = useTx()
   const lang = useLang()
@@ -80,6 +93,8 @@ export function AskClient({ initialQuery = '' }: { initialQuery?: string }) {
       setStatus('error')
     }
   }, [lang, local, pathname])
+
+  useEffect(() => { if (!initialQuery) warmServerModel() }, [initialQuery])
 
   useEffect(() => {
     if (ranInitial.current || !initialQuery) return

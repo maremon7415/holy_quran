@@ -45,6 +45,26 @@ describe('CSV / iCalendar export', () => {
   })
 })
 
+describe('iCalendar text escaping (RFC 5545 §3.3.11)', () => {
+  const NASTY = 'A;B,C\\D\nE\r\nF'
+  const unfold = (s: string) => s.replace(/\r\n[ \t]/g, '')
+  it('escapes ; , \\ and newlines in every TEXT value', () => {
+    const city = { ...cityBySlug('dhaka')!, name: { en: NASTY, bn: 'x' } }
+    const L = unfold(monthIcs(city, 2026, 11, NOW)).split('\r\n')
+    const want = 'A\\;B\\,C\\\\D\\nE\\nF'
+    expect(L.find((l) => l.startsWith('X-WR-CALNAME:'))).toContain(`Prayer times — ${want} — November 2026`)
+    expect(L.find((l) => l.startsWith('LOCATION:'))).toBe(`LOCATION:${want}`)
+    expect(L.find((l) => l.startsWith('SUMMARY:'))).toBe(`SUMMARY:Fajr · ${want}`)
+    expect(L.find((l) => l.startsWith('DESCRIPTION:'))).toContain(`Fajr in ${want} (`)
+    // no raw newline survives inside a value, and no unescaped separator remains in the escaped fields
+    for (const l of L.filter((x) => /^(SUMMARY|LOCATION|DESCRIPTION):/.test(x))) {
+      const v = l.slice(l.indexOf(':') + 1)
+      expect(v).not.toMatch(/[\r\n]/)
+      expect(v.replace(/\\./g, '')).not.toMatch(/[;,\\]/)
+    }
+  })
+})
+
 describe('places sitemap', () => {
   it('lists city pages with hreflang pairs and only two monthly pages per city', () => {
     const entries = placeEntries(NOW)

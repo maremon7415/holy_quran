@@ -49,7 +49,7 @@ Noor is built to be the source search engines and AI assistants retrieve and cit
 | **Citations** | “Cite this” block on ayah, dua, name and topic pages | Plain / APA / MLA / Markdown, canonical URL. Short links `/2:255`, `/2/255`, `/2.255` → 308 to the ayah page. |
 | **Structured data** | `lib/seo/structured.ts`, `lib/seo/wikidata.ts` | Organization + WebSite (`sameAs` GitHub), Book/Chapter with Wikidata + Wikipedia `sameAs` for all 114 surahs (`lib/seo/wikidata-surahs.json`, rebuilt with `pnpm wikidata:surahs`, every mapping verified by ≥2 Wikidata signals), Quotation (+`isPartOf`, `citation`, `speakable`) for ayahs, DefinedTerm/DefinedTermSet for the 99 Names, Dataset on `/developers`, FAQPage, BreadcrumbList — Bangla variants on `/bn`. |
 | **Answer-first content** | topic “Quick answer”, ayah “Summary” (first sentences of the tafsir, attributed), surah “Key facts” | Server-rendered, built only from existing content (`lib/content/answers.ts`). |
-| **IndexNow** | key at `/{INDEXNOW_KEY}.txt`; `pnpm indexnow` (`scripts/indexnow.mjs`) | Submits every sitemap URL in batches of ≤ 10,000 to `api.indexnow.org` (Bing → ChatGPT search & Copilot, Yandex, Seznam). `.github/workflows/indexnow.yml` runs on manual dispatch, on push to `master` (after waiting for the deploy) and on a successful production `deployment_status`; it skips when the secrets are unset. |
+| **IndexNow** | key at `/{INDEXNOW_KEY}.txt`; `pnpm indexnow` (`scripts/indexnow.mjs`) | Submits changed URLs in batches of ≤ 10,000 to `api.indexnow.org` (Bing → ChatGPT search & Copilot, Yandex, Seznam). Modes: `--changed-from <sha>` (URLs affected by the changed files, ≤ 10,000), `--core` (default: the core pages + /bn twins), `--all` (every sitemap URL, manual only). `.github/workflows/indexnow.yml`: on push to `master` (after waiting for the deploy) it submits only the URLs changed by the push; a manual dispatch submits the core pages, `changed_from`, or everything with the `full` input. HTTP 429 is logged, not a failure; it skips when the secrets are unset. |
 | **Verification** | `metadata.verification` from env | `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` (`msvalidate.01`), `YANDEX_VERIFICATION`. |
 
 | Variable | Where | Purpose |
@@ -60,7 +60,7 @@ Noor is built to be the source search engines and AI assistants retrieve and cit
 | `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` / `YANDEX_VERIFICATION` | deployment | Search-console verification meta tags |
 
 ```bash
-INDEXNOW_KEY=… SITE_URL=https://your.site pnpm indexnow --dry-run   # list what would be submitted
+INDEXNOW_KEY=… SITE_URL=https://your.site pnpm indexnow --changed-from HEAD~1 --dry-run   # list what would be submitted
 claude mcp add --transport http noor-quran https://your.site/api/mcp  # try the MCP server
 ```
 

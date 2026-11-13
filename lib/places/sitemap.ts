@@ -2,7 +2,7 @@ import { absoluteUrl } from '@/lib/site'
 import { localeHref } from '@/lib/i18n/routes'
 import { cities } from './cities'
 import { monthKey } from './export'
-import { currentOrNextRamadan } from './hijri'
+import { currentOrNextRamadan, ramadanPath, ramadansInGregorianYear } from './hijri'
 import { cityToday, zonedYmd } from './times'
 import { EVENT_SLUGS, eventYears } from '@/lib/events/calendar'
 
@@ -23,8 +23,14 @@ export function placeEntries(now = Date.now()): Entry[] {
     out.push({ path: `/events/${s}`, changefreq: 'weekly', priority: 0.85 })
     for (const y of eventYears(cy)) out.push({ path: `/events/${s}/${y}`, changefreq: y >= cy ? 'weekly' : 'yearly', priority: y === cy || y === cy + 1 ? 0.8 : 0.6 })
   }
-  const ram = currentOrNextRamadan(zonedYmd(now, 'Asia/Dhaka')).range
-  out.push({ path: `/ramadan/${ram.start.y}`, changefreq: 'weekly', priority: 0.8 })
+  // Ramadan: the running / next one, plus both Ramadans (and the chooser) of a Gregorian year that holds two
+  const today = zonedYmd(now, 'Asia/Dhaka')
+  const t0 = Date.UTC(today.y, today.m - 1, today.d)
+  const cur = currentOrNextRamadan(today).range
+  const siblings = ramadansInGregorianYear(cur.start.y)
+  const rams = siblings.length > 1 ? siblings.filter((r) => Date.UTC(r.end.y, r.end.m - 1, r.end.d) >= t0) : [cur]
+  if (siblings.length > 1) out.push({ path: `/ramadan/${cur.start.y}`, changefreq: 'weekly', priority: 0.8 })
+  for (const r of rams) out.push({ path: ramadanPath(r), changefreq: 'weekly', priority: 0.8 })
   for (const c of cities) {
     const bd = c.country === 'BD'
     out.push({ path: `/prayer-times/${c.slug}`, changefreq: 'daily', priority: c.division || !bd ? 0.8 : 0.7 })
@@ -32,7 +38,7 @@ export function placeEntries(now = Date.now()): Entry[] {
     const next = t.m === 12 ? { y: t.y + 1, m: 1 } : { y: t.y, m: t.m + 1 }
     out.push({ path: `/prayer-times/${c.slug}/${monthKey(t.y, t.m)}`, changefreq: 'weekly', priority: 0.5 })
     out.push({ path: `/prayer-times/${c.slug}/${monthKey(next.y, next.m)}`, changefreq: 'weekly', priority: 0.5 })
-    out.push({ path: `/ramadan/${ram.start.y}/${c.slug}`, changefreq: 'weekly', priority: c.division || !bd ? 0.7 : 0.6 })
+    for (const r of rams) out.push({ path: `${ramadanPath(r)}/${c.slug}`, changefreq: 'weekly', priority: c.division || !bd ? 0.7 : 0.6 })
   }
   return out
 }

@@ -282,9 +282,13 @@ export async function CollectionPage({ locale, params }: { locale: Locale } & Co
 /* ───────────────────────────── /hadith/[collection]/book/[book](/page/[p]) ───────────────────────────── */
 
 export type BookProps = { params: Promise<{ collection: string; book: string; p?: string }> }
-/** One static param per book (page 1); later pages render on demand (ISR). */
+/**
+ * Prerendered at build: the first book of each collection (page 1). Every other book renders on first request (ISR).
+ * Kept small because each prerender fetches the corpus from jsDelivr and a failed fetch now fails the render (no
+ * cached error page), so a long list would make `next build` fragile when the CDN is briefly flaky.
+ */
 export function bookParams() {
-  return COLLECTIONS.flatMap((c) => collectionIndex(c.slug).books.map((b) => ({ collection: c.slug, book: String(b[0]) })))
+  return COLLECTIONS.flatMap((c) => collectionIndex(c.slug).books.slice(0, 1).map((b) => ({ collection: c.slug, book: String(b[0]) })))
 }
 
 /** `/book/3` → 1, `/book/3/page/2` → 2; "page/1", "page/0", "page/x" → null (404). */
@@ -320,20 +324,18 @@ export async function BookPage({ locale, params }: { locale: Locale } & BookProp
   const m = collectionMeta(r.slug)!
   const row = bookRow(r.slug, bk)
   if (!row) notFound()
-  let data = null
-  let error = false
-  try { data = await getBook(r.slug, bk, page) } catch (e) { if (e instanceof HadithFetchError) error = true; else throw e }
-  if (!data && !error) notFound()
+  // A HadithFetchError is NOT caught: the request fails (500) and ISR keeps the last good version instead of
+  // caching an error state for a day.
+  const data = await getBook(r.slug, bk, page)
+  if (!data) notFound()
   const bn = locale === 'bn'
   const h = (u: string) => localeHref(locale, u)
   const prevBook = collectionIndex(r.slug).books.filter((b) => b[0] < bk).slice(-1)[0]
   const nextBook = collectionIndex(r.slug).books.find((b) => b[0] > bk)
-  const pages = data?.pages ?? Math.max(1, Math.ceil(row[4] / BOOK_PAGE_SIZE))
+  const pages = data.pages
   return (
     <div className={pageShell}>
-      {data && (
-        <JsonLd data={collectionLd({ name: `${bn ? m.name.bn : m.cite} — ${row[1]}`, description: `${m.cite}, Book ${bk}: ${row[1]}`, path: h(`/hadith/${m.slug}/book/${bk}${page > 1 ? `/page/${page}` : ''}`), inLanguage: bn ? 'bn' : undefined, items: data.items.map((i) => ({ name: `${m.cite} ${i.number}${i.title ? ` — ${i.title}` : ''}`, href: hadithUrl(m.slug, i.number, locale) })) })} />
-      )}
+      <JsonLd data={collectionLd({ name: `${bn ? m.name.bn : m.cite} — ${row[1]}`, description: `${m.cite}, Book ${bk}: ${row[1]}`, path: h(`/hadith/${m.slug}/book/${bk}${page > 1 ? `/page/${page}` : ''}`), inLanguage: bn ? 'bn' : undefined, items: data.items.map((i) => ({ name: `${m.cite} ${i.number}${i.title ? ` — ${i.title}` : ''}`, href: hadithUrl(m.slug, i.number, locale) })) })} />
       <Breadcrumbs locale={locale} items={[
         { name: bn ? 'হাদিস' : 'Hadith', ar: 'الحديث', href: '/hadith' },
         { name: bn ? m.name.bn : m.name.en, ar: m.name.ar, href: `/hadith/${m.slug}` },
@@ -345,16 +347,9 @@ export async function BookPage({ locale, params }: { locale: Locale } & BookProp
           bn: `${m.name.bn}, হাদিস ${bnNum(row[2])}–${bnNum(row[3])} (এই অধ্যায়ে ${bnNum(row[4])}টি)${page > 1 ? `। পৃষ্ঠা ${bnNum(page)}/${bnNum(pages)}।` : '।'}`,
           ar: `${m.name.ar}، الأحاديث ${row[2]}–${row[3]} (${row[4]} حديثًا في هذا الكتاب)`,
         })} />
-      {error || !data ? (
-        <div className="card-soft mt-8 rounded-3xl p-8 text-center" role="status">
-          <p className="text-sm text-muted-foreground">{lt(locale, { en: 'The hadiths of this book could not be loaded right now. Please try again shortly.', bn: 'এই অধ্যায়ের হাদিস এখন লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।', ar: 'تعذّر تحميل أحاديث هذا الكتاب الآن. حاول مجددًا بعد قليل.' })}</p>
-          <Link className="mt-4 inline-block rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground" href={bookUrl(m.slug, bk, locale, page)} prefetch={false}>{lt(locale, { en: 'Try again', bn: 'আবার চেষ্টা করুন', ar: 'حاول مرة أخرى' })}</Link>
-        </div>
-      ) : (
-        <ol className="mt-8 grid gap-3" start={data.items[0]?.number} data-list="hadiths">
-          {data.items.map((i) => <HadithRow key={i.number} collection={m} number={i.number} title={i.title} entries={i.entries} locale={locale} />)}
-        </ol>
-      )}
+      <ol className="mt-8 grid gap-3" start={data.items[0]?.number} data-list="hadiths">
+        {data.items.map((i) => <HadithRow key={i.number} collection={m} number={i.number} title={i.title} entries={i.entries} locale={locale} />)}
+      </ol>
       <Pagination page={page} pages={pages} locale={locale} href={(pg) => bookUrl(m.slug, bk, locale, pg)} />
       <nav className="mt-10 flex items-center justify-between gap-3 text-sm font-semibold" aria-label={bn ? 'অধ্যায় নেভিগেশন' : 'Book navigation'}>
         {prevBook && prevBook[0] !== bk ? <Link href={bookUrl(m.slug, prevBook[0], locale)} className="flex min-w-0 items-center gap-1.5 rounded-full border bg-card px-4 py-2.5 hover:border-primary/40"><ArrowLeft className="size-4 shrink-0 rtl:rotate-180" /><span className="truncate" lang="en">{prevBook[0]}. {prevBook[1]}</span></Link> : <span />}

@@ -17,7 +17,7 @@ import { ayahCitation } from '@/lib/content/cite'
 import { cosineAll, decodeIndex, decodeQueryVector, rowOf, type VectorIndex } from './vectors'
 import { contentTerms, matchTopics, prepareAyahText, scriptOf, type AyahText, type Script } from './text'
 import { groupConsecutive, rank, type Weights } from './rank'
-import { embedModel, embedQuery } from './embed'
+import { embedModel, embedQuery, ModelLoadTimeoutError } from './embed'
 import type { Verse } from '@/lib/quran/types'
 
 export type AskLang = 'en' | 'bn' | 'ar'
@@ -61,6 +61,8 @@ export interface AskResponse {
   mode: 'semantic' | 'lexical'
   /** explanation when semantic ranking was unavailable */
   note?: string
+  /** why the answer is lexical: the model is still loading on a cold server (`model_loading`, retry soon) or unavailable */
+  fallback?: 'model_loading' | 'model_unavailable'
   model: string
   tookMs: number
   results: AskResult[]
@@ -97,7 +99,7 @@ const textCache = new Map<number, AyahText>()
 export const MAX_QUERY = 300
 
 /** Embed (or decode) the query vector; null + reason when unavailable. */
-async function queryVector(q: string, qv?: string | null): Promise<{ v: Float32Array | null; note?: string }> {
+async function queryVector(q: string, qv?: string | null): Promise<{ v: Float32Array | null; note?: string; fallback?: AskResponse['fallback'] }> {
   if (qv) {
     const v = decodeQueryVector(qv, header.dims)
     if (v) return { v }
@@ -106,7 +108,8 @@ async function queryVector(q: string, qv?: string | null): Promise<{ v: Float32A
     return { v: await embedQuery(q) }
   } catch (e) {
     if (process.env.ASK_DEBUG) console.warn('[ask] embedding failed:', e)
-    return { v: null, note: 'Meaning-based search is unavailable right now, so these results come from word matching.' }
+    if (e instanceof ModelLoadTimeoutError) return { v: null, fallback: 'model_loading', note: 'The meaning-based model is still starting up on the server, so these results come from word matching. Try again in a few seconds.' }
+    return { v: null, fallback: 'model_unavailable', note: 'Meaning-based search is unavailable right now, so these results come from word matching.' }
   }
 }
 
@@ -120,7 +123,7 @@ export async function askQuran(question: string, opts: AskOptions = {}): Promise
   if (q.length < 2) return { ...base, mode: 'lexical', tookMs: 0, results: [] }
 
   const terms = contentTerms(q, script)
-  const [{ v, note }, index, verses, lex] = await Promise.all([
+  const [{ v, note, fallback }, index, verses, lex] = await Promise.all([
     queryVector(q, opts.queryVector),
     loadIndex().catch(() => null),
     allVerses(),
@@ -168,7 +171,7 @@ export async function askQuran(question: string, opts: AskOptions = {}): Promise
       citation: ayahCitation(g.ref, c.nameSimple, url),
     }
   })
-  return { ...base, mode: semantic ? 'semantic' : 'lexical', ...(semantic ? {} : { note }), tookMs: Date.now() - t0, results }
+  return { ...base, mode: semantic ? 'semantic' : 'lexical', ...(semantic ? {} : { note, fallback: fallback ?? 'model_unavailable' }), tookMs: Date.now() - t0, results }
 }
 
 /** Public JSON API / MCP shape: every ayah range with canonical URLs (+ Bangla twin, markdown) and a citation. */
@@ -180,6 +183,7 @@ export async function askApi(question: string, opts: { lang?: AskLang; limit?: n
     query: r.query,
     mode: r.mode,
     ...(r.note ? { note: r.note } : {}),
+    ...(r.fallback ? { fallback: r.fallback } : {}),
     model: r.model,
     method: `Cosine similarity between ${r.model.split('/').pop()} embeddings of the question and of each ayah (English Saheeh International + Bangla Taisirul Quran), plus small boosts for shared words and curated topics. Consecutive matching ayahs are merged into ranges. No generated text.`,
     results: r.results.map((g) => ({
