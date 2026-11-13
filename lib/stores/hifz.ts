@@ -72,12 +72,14 @@ export const useHifz = create<HifzStore>()(
 
 /** Consecutive days (ending today or yesterday) with hifz activity. */
 export function hifzStreak(log: Record<string, DayLog>): number {
+  // Step by calendar day (setDate) rather than a fixed 24h so DST changes never skip or repeat a day.
   let streak = 0
-  let d = Date.now()
-  if (!log[dateStr(d)]) d -= DAY
-  while (log[dateStr(d)]) {
+  const d = new Date()
+  d.setHours(12, 0, 0, 0)
+  if (!log[dateStr(d.getTime())]) d.setDate(d.getDate() - 1)
+  while (log[dateStr(d.getTime())]) {
     streak++
-    d -= DAY
+    d.setDate(d.getDate() - 1)
   }
   return streak
 }

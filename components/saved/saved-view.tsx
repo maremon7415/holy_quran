@@ -8,9 +8,9 @@ import { useLang, useMounted, useTx } from '@/lib/lang'
 import { chapters, readerHref, surahHref, surahNamesBn, toArabicDigits } from '@/lib/quran/chapters'
 import { UiIcon } from '@/components/ui-icon'
 import { cn } from '@/lib/utils'
+import { duas as allDuas, duaCategories } from '@/data/content/duas'
 
 interface VerseText { ar: string; en?: string; bn?: string }
-interface Dua { id: string; category: string; arabic: string; transliteration: string; translation: { en: string; bn: string }; reference: string }
 type Tab = 'ayahs' | 'surahs' | 'duas' | 'notes'
 
 function Empty({ icon, title, body, href, cta }: { icon: string; title: string; body: string; href: string; cta: string }) {
@@ -34,7 +34,6 @@ export function SavedView() {
   const { importantAyahs, favoriteSurahs, bookmarkedDuas, removeImportantAyah, updateImportantAyah, toggleFavoriteSurah, toggleDuaBookmark } = useAppStore()
   const [tab, setTab] = useState<Tab>('ayahs')
   const [texts, setTexts] = useState<Record<string, VerseText>>({})
-  const [duas, setDuas] = useState<Dua[]>([])
   const [editing, setEditing] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
 
@@ -55,18 +54,21 @@ export function SavedView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keys.join(',')])
 
+  // Bookmarks store dua slugs (current data); very old installs stored numeric ids from the legacy list — drop those.
   useEffect(() => {
-    if (bookmarkedDuas.length && !duas.length) fetch('/data/duas.json').then((r) => r.json()).then(setDuas).catch(() => {})
-  }, [bookmarkedDuas.length, duas.length])
+    if (!mounted) return
+    const stale = bookmarkedDuas.filter((id) => /^\d+$/.test(id))
+    stale.forEach((id) => toggleDuaBookmark(id))
+  }, [mounted, bookmarkedDuas, toggleDuaBookmark])
 
   if (!mounted) return <div className="mx-auto max-w-3xl px-4 pb-32 pt-8"><div className="card-soft h-96 shimmer" /></div>
 
   const notes = importantAyahs.filter((a) => a.note?.trim())
-  const savedDuas = duas.filter((d) => bookmarkedDuas.includes(d.id))
+  const savedDuas = allDuas.filter((d) => bookmarkedDuas.includes(d.slug))
   const tabs: { id: Tab; en: string; bn: string; n: number; icon: string }[] = [
     { id: 'ayahs', en: 'Ayahs', bn: 'আয়াত', n: importantAyahs.length, icon: 'quran' },
     { id: 'surahs', en: 'Surahs', bn: 'সূরা', n: favoriteSurahs.length, icon: 'heart' },
-    { id: 'duas', en: 'Duas', bn: 'দোয়া', n: bookmarkedDuas.length, icon: 'dua' },
+    { id: 'duas', en: 'Duas', bn: 'দোয়া', n: savedDuas.length, icon: 'dua' },
     { id: 'notes', en: 'Notes', bn: 'নোট', n: notes.length, icon: 'note' },
   ]
   const nf = (n: number) => (lang === 'bn' ? String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[+d]) : String(n))
@@ -154,16 +156,17 @@ export function SavedView() {
             </div>
           ) : <Empty key="e2" icon="heart" title={t({ en: 'No favourite surahs', bn: 'কোনো প্রিয় সূরা নেই' })} body={t({ en: 'Favourite a surah from the surah list for one-tap access.', bn: 'সূরা তালিকা থেকে প্রিয় সূরা বেছে নিন।' })} href="/quran" cta={t({ en: 'Browse surahs', bn: 'সূরা দেখুন' })} />)}
 
-          {tab === 'duas' && (bookmarkedDuas.length ? savedDuas.map((d) => (
-            <motion.article layout key={d.id} {...fade} className="card-soft lift p-5">
+          {tab === 'duas' && (savedDuas.length ? savedDuas.map((d) => (
+            <motion.article layout key={d.slug} {...fade} className="card-soft lift p-5">
               <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold">{d.category}</span>
-                <button aria-label={t({ en: 'Remove', bn: 'মুছুন' })} onClick={() => toggleDuaBookmark(d.id)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
+                <span className="rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold">{t(duaCategories.find((c) => c.id === d.cat)?.title ?? { en: d.cat, bn: d.cat })}</span>
+                <button aria-label={t({ en: 'Remove', bn: 'মুছুন' })} onClick={() => toggleDuaBookmark(d.slug)} className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-4" /></button>
               </div>
-              <p dir="rtl" lang="ar" className="quran-text mt-4 text-right text-[1.5rem]">{d.arabic}</p>
-              <p className="mt-2 text-sm italic text-muted-foreground">{d.transliteration}</p>
-              <p className="mt-1 text-sm">{lang === 'bn' ? d.translation.bn : d.translation.en}</p>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-gold">{d.reference}</p>
+              <Link href={`/dua/${d.slug}`} className="mt-3 block font-display text-lg font-semibold hover:text-primary">{t(d.title)}</Link>
+              {d.ar && <p dir="rtl" lang="ar" className="quran-text mt-3 text-right text-[1.5rem]">{d.ar}</p>}
+              {d.tl && <p className="mt-2 text-sm italic text-muted-foreground">{d.tl}</p>}
+              {d.meaning && <p className="mt-1 text-sm">{t(d.meaning)}</p>}
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-gold">{d.source}</p>
             </motion.article>
           )) : <Empty key="e3" icon="dua" title={t({ en: 'No saved duas', bn: 'কোনো দোয়া সংরক্ষিত নেই' })} body={t({ en: 'Bookmark duas to find them quickly when you need them.', bn: 'দোয়া বুকমার্ক করুন, প্রয়োজনে দ্রুত খুঁজে পাবেন।' })} href="/dua" cta={t({ en: 'Explore duas', bn: 'দোয়া দেখুন' })} />)}
 

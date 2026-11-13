@@ -20,7 +20,7 @@ export async function generateMetadata({ searchParams }: { searchParams: SP }): 
   if (!q) {
     return buildMeta({ title: 'Search the Quran in Arabic, English & Bangla | কুরআন অনুসন্ধান', description: 'Search all 6,236 verses of the Quran by word or phrase in Arabic, English or Bangla.', path: '/search', noindex: true })
   }
-  return buildMeta({ title: `“${q}” in the Quran: Search Results | কুরআনে অনুসন্ধান`, description: `Verses of the Quran matching “${q}”, with Arabic text and English and Bangla translation.`, path: `/search?q=${encodeURIComponent(q)}` })
+  return buildMeta({ title: `“${q}” in the Quran: Search Results | কুরআনে অনুসন্ধান`, description: `Verses of the Quran matching “${q}”, with Arabic text and English and Bangla translation.`, path: `/search?q=${encodeURIComponent(q)}`, noindex: true })
 }
 
 const suggestions = ['patience', 'mercy', 'forgive', 'paradise', 'prayer', 'light', 'সবর', 'দয়া', 'رحمة', 'صبر']

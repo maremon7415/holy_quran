@@ -40,7 +40,6 @@ export const metadata: Metadata = {
   authors: [{ name: site.name, url: site.url }],
   creator: site.name,
   manifest: '/manifest.json',
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     siteName: site.name,

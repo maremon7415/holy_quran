@@ -12,7 +12,12 @@ const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g
 
 /** Resolve "2", "al-baqarah", "baqarah", "Baqara" → chapter id */
 export function resolveChapterId(input: string): number | null {
-  const s = decodeURIComponent(input).trim()
+  let s: string
+  try {
+    s = decodeURIComponent(input).trim()
+  } catch {
+    return null // malformed percent-encoding, e.g. /surah/%E0%A4
+  }
   if (/^\d+$/.test(s)) {
     const n = Number(s)
     return n >= 1 && n <= 114 ? n : null

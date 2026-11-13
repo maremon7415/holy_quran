@@ -69,7 +69,7 @@ export function JourneyHome() {
   const todayCount = mounted ? (stats.readingHistory.find((h) => h.date === today())?.versesRead ?? 0) : 0
   const goal = mounted ? dailyGoal : 7
   const pct = Math.min(100, Math.round((todayCount / Math.max(1, goal)) * 100))
-  const streakAlive = mounted && (stats.lastReadDate === today() || stats.lastReadDate === new Date(Date.now() - 86400000).toLocaleDateString('en-CA'))
+  const streakAlive = mounted && (stats.lastReadDate === today() || stats.lastReadDate === (() => { const y = new Date(); y.setHours(12, 0, 0, 0); y.setDate(y.getDate() - 1); return y.toLocaleDateString('en-CA') })())
   const streak = mounted && streakAlive ? stats.currentStreak : 0
   const completed = mounted ? Object.entries(progress).filter(([, p]) => p?.completed).map(([k]) => +k) : []
   const hifzKnown = mounted ? Object.values(cards).filter((c) => strength(c) > 0).length : 0
